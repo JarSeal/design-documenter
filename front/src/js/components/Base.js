@@ -1,12 +1,16 @@
 import baseHTML from './base.html';
 import Bbar from './bbar/Bbar';
 import State from '../State';
+import MainLoader from './loaders/MainLoader';
 
 class Base {
     constructor(parent) {
         parent.innerHTML = baseHTML;
-        this.elem = document.getElementById('base-id');
+        this.id = 'base-id';
+        this.elem = document.getElementById(this.id);
+        this.mainLoader = new MainLoader(this.elem);
         this.appState = this.initAppState();
+        new Bbar(this.appState, this.elem);
         this.loadData();
     }
 
@@ -20,15 +24,15 @@ class Base {
     }
 
     loadData() {
-        // Mock data loading
+        // Mock data loading with setTimeout
         setTimeout(() => {
             this.appState.set('loading.main', false);
-            new Bbar(this.appState, this.elem);
         }, 3000);
     }
 
-    loadingListener = (value) => {
-        console.log('Loading state changed!!!', value);
+    loadingListener = (value, oldValue) => {
+        console.log('Loading state changed!!!', value, oldValue);
+        this.mainLoader.toggle(value);
     }
 }
 

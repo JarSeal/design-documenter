@@ -1,0 +1,13 @@
+#main-loader {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    opacity: 0;
+    transition: opacity 2s ease-in-out;
+    user-select: none;
+    pointer-events: none;
+    transform: translate3d(-50%, -50%, 0);
+    &.show {
+        opacity: 1;
+    }
+}

@@ -47,6 +47,7 @@ class State {
     }
 
     addListener(key, callback) {
+        
         this.listeners.push(key);
         this.listenerCallbacks.push(callback);
     }
@@ -58,7 +59,9 @@ class State {
     _checkListeners(oldValue, value, key) {
         if(oldValue === value) return;
         const index = this.listeners.indexOf(key);
-        if(index > -1) this.listenerCallbacks[index](value, oldValue);
+        if(index > -1) {
+            this.listenerCallbacks[index](value, oldValue);
+        }
     }
 }
 
