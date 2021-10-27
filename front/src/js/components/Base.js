@@ -5,24 +5,30 @@ import MainLoader from './loaders/MainLoader';
 
 class Base {
     constructor(parent) {
-        parent.innerHTML = baseHTML;
         this.id = 'base-id';
+        this.parent = parent;
+        this.appState;
+        this.draw();
+        this.appState = this.initAppState();
+        this._initResizer();
+        this.loadData();
+    }
+
+    draw() {
+        this.parent.innerHTML = baseHTML;
         this.elem = document.getElementById(this.id);
         this.mainLoader = new MainLoader(
             document.getElementById('overlays')
         );
-        this.appState = this.initAppState();
-        this._initResizer();
-        this.loadData();
     }
 
     initAppState() {
         const state = new State({
             loading: { main: null },
             resizers: {},
+            orientationLand: true,
         });
-        state.addListener('loading.main', this.loadingListener);
-        state.set('loading.main', true);
+        state.set('loading.main', true, this.loadingListener);
         return state;
     }
 
@@ -34,15 +40,14 @@ class Base {
     }
 
     loadingListener = (value, oldValue) => {
-        console.log('Loading state changed!!!', value, oldValue);
         if(value === false) {
-            this.mainLoader.hide(this.startApp);
+            this.mainLoader.hide(this.drawApp);
             return;
         }
         this.mainLoader.toggle(value);
     }
 
-    startApp = () => {
+    drawApp = () => {
         new Bbar(this.appState, this.elem);
     }
 
@@ -53,11 +58,10 @@ class Base {
             resizeTimer = setTimeout(() => {
                 const resizers = this.appState.get('resizers');
                 const keys = Object.keys(resizers);
-                console.log('keys', keys)
-                // for(let i=0; i<fnsLength; i++) {
-                //     fns[i](this.sceneState);
-                // }
-            }, 500);
+                for(let i=0; i<keys.length; i++) {
+                    resizers[keys[i]]();
+                }
+            }, 50);
         });
     }
 }

@@ -6,9 +6,13 @@ class Bbar {
     constructor(appState, parent) {
         parent.innerHTML += bbar;
         this.elem = document.getElementById('bbar');
+        this.appState = appState;
+        
+        const resizers = appState.get('resizers');
+        resizers.bbar = this.onResize;
         appState.set(
             'resizers',
-            appState.get('resizers').bbar = this.onResize
+            resizers
         );
         this.onResize();
     }
@@ -29,6 +33,7 @@ class Bbar {
             this.baseElem.classList.remove('portrait');
             this.baseElem.style.marginTop = _CONST.bbarSize + 'px';
             this.baseElem.style.marginLeft = 0;
+            this.appState.set('orientationLand', true);
         } else {
             this.elem.style.width = w + 'px';
             this.elem.style.height = _CONST.bbarSize + 'px';
@@ -36,6 +41,7 @@ class Bbar {
             this.baseElem.classList.add('portrait');
             this.baseElem.style.marginTop = 0;
             this.baseElem.style.marginLeft = _CONST.bbarSize + 'px';
+            this.appState.set('orientationLand', false);
         }
     }
 }

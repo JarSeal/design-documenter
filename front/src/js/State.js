@@ -6,7 +6,9 @@ class State {
         this.listenerCallbacks = [];
     }
 
-    set(key, value) {
+    set(key, value, listenerCallback) {
+        if(listenerCallback) this.addListener(key, listenerCallback);
+
         const keys = key.split('.');
         let oldValue;
 
@@ -22,7 +24,7 @@ class State {
         let pos = this.state[keys[0]];
         for(let i=1; i<keys.length-1; i++) {
             if(pos[keys[i]] === undefined) {
-                console.error(`pos is undefined (index: ${i}, key: ${key})`); // TODO: Add to Logger
+                console.error(`pos is undefined (index: ${i}, key: ${key}) at set()`); // TODO: Add to Logger
             }
             pos = pos[keys[i]];
         }
@@ -32,8 +34,46 @@ class State {
     }
 
     get(key) {
-        // TODO: Do all key levels checking
-        return this.state[key];
+        const keys = key.split('.');
+        
+        // Flat keys (one level)
+        if(keys.length === 1) {
+            return this.state[key];
+        }
+
+        // Deep keys
+        let pos = this.state[keys[0]];
+        for(let i=1; i<keys.length; i++) {
+            if(pos[keys[i]] === undefined) {
+                console.error(`pos is undefined (index: ${i}, key: ${key}) at set()`); // TODO: Add to Logger
+            }
+            pos = pos[keys[i]];
+        }
+        
+        return pos;
+    }
+
+    remove(key) {
+        this.removeListener(key);
+        
+        const keys = key.split('.');
+        
+        // Flat keys (one level)
+        if(keys.length === 1) {
+            delete this.state[key];
+            return;
+        }
+
+        // Deep keys
+        let pos = this.state[keys[0]];
+        for(let i=1; i<keys.length-1; i++) {
+            if(pos[keys[i]] === undefined) {
+                console.error(`pos is undefined (index: ${i}, key: ${key}) at set()`); // TODO: Add to Logger
+            }
+            pos = pos[keys[i]];
+        }
+
+        delete pos[keys[keys.length-1]];
     }
 
     getObject() {
@@ -41,19 +81,17 @@ class State {
         return this.state;
     }
 
-    remove(key) {
-        // TODO: Do all key levels checking
-        delete this.state[key];
-    }
-
     addListener(key, callback) {
-        
         this.listeners.push(key);
         this.listenerCallbacks.push(callback);
     }
 
     removeListener(key) {
-        // TODO
+        const index = this.listeners.indexOf(key);
+        if(index > -1) {
+            this.listeners.splice(index, 1);
+            this.listenerCallbacks.splice(index, 1);
+        }
     }
     
     _checkListeners(oldValue, value, key) {
