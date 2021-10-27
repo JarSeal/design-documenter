@@ -3,9 +3,13 @@ class Landing {
         this.appState;
     }
 
-    drawContent(appState, parent) {
+    draw(appState, parent) {
         this.appState = appState;
         parent.innerHTML = `<div class="content">landing</div>`;
+    }
+
+    discard() {
+        // Remove listeners and other memory hogs when this content is not in view
     }
 }
 

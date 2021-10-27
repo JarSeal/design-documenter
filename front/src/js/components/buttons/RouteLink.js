@@ -3,6 +3,10 @@ class RouteLink {
         this.data = data;
         this.listener;
         this._initListener();
+        const html = `<button id="${data.id}">${data.text}</button>`;
+        const button = document.createElement('button');
+        button.id = this.data.id;
+        this.button = button;
     }
 
     _initListener() {
@@ -15,7 +19,11 @@ class RouteLink {
     }
 
     html() {
-        return `<button id="${this.data.id}">${this.data.text}</button>`;
+        return this.button;
+    }
+
+    discard() {
+        // Remove event listener
     }
 }
 

@@ -55,8 +55,10 @@ class Base {
         new Bbar(this.appState, this.elem);
         const routeData = this.appState.get('Router').getRouteData();
         const contentElem = document.getElementById('content-area');
+
         console.log('ROUTEDATA', routeData);
-        routeData.component.drawContent(this.appState, contentElem);
+        routeData.component.draw(this.appState, contentElem);
+        if(routeData.prevRouteData) routeData.prevRouteData.component.discard();
     }
 
     _initResizer() {

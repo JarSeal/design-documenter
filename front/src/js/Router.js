@@ -16,7 +16,7 @@ class Router {
     }
 
     initRouter(routes) {
-        console.log(location.protocol + '//' + location.host + location.pathname);
+        // console.log(location.protocol + '//' + location.host + location.pathname);
         this.setRoute();
         if(!routes) {
             this.notFound();
@@ -29,10 +29,10 @@ class Router {
             if(routes[i].route === this.curRoute) {
                 routeFound = true;
                 this.curRouteData = routes[i];
+                break;
             }
         }
         if(!routeFound) {
-            console.log('NOT FOUND', this.curRoute);
             this.notFound();
         }
     }
@@ -42,7 +42,7 @@ class Router {
     }
 
     getRouteData() {
-        return this.curRouteData;
+        return { ...this.curRouteData, prevRouteData: this.prevRouteData };
     }
 
     setRoute() {
