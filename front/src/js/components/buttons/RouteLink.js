@@ -1,29 +1,29 @@
 class RouteLink {
-    constructor(data) {
+    constructor(data, Router) {
         this.data = data;
-        this.listener;
+        this.Router = Router;
+        this.elem = document.getElementById(data.id);
+        this.createButton();
+    }
+
+    createButton() {
+        if(this.data.class) this.elem.classList.add(this.data.class);
+        if(this.data.text) this.elem.innerHTML = this.data.text;
         this._initListener();
-        const html = `<button id="${data.id}">${data.text}</button>`;
-        const button = document.createElement('button');
-        button.id = this.data.id;
-        this.button = button;
     }
 
     _initListener() {
-        // document.getElementById(this.data.id).addEventListener("click", this.click);
+        this.elem.addEventListener("click", this.click);
     }
 
     click = (e) => {
         e.preventDefault();
-        console.log('CLICK');
+        if(!this.data.link) return;
+        this.Router.changeRoute(this.data);
     }
 
-    html() {
-        return this.button;
-    }
-
-    discard() {
-        // Remove event listener
+    discard(fn) {
+        this.elem.removeEventListener("click", this.click);
     }
 }
 

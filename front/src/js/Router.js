@@ -37,6 +37,11 @@ class Router {
         }
     }
 
+    changeRoute(data) {
+        window.history.pushState(data.id, '', data.link);
+        this.setRoute();
+    }
+
     getRoute() {
         return this.curRoute;
     }
