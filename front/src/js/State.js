@@ -22,10 +22,9 @@ class State {
 
         // Deep keys
         let pos = this.state[keys[0]];
+        if(pos === undefined) this.state[keys[0]] = pos = {}; // Create a new object if not found
         for(let i=1; i<keys.length-1; i++) {
-            if(pos[keys[i]] === undefined) {
-                console.error(`pos is undefined (index: ${i}, key: ${key}) at set()`); // TODO: Add to Logger
-            }
+            if(pos[keys[i]] === undefined) pos[keys[i]] = {}; // Create a new object if not found
             pos = pos[keys[i]];
         }
         oldValue = pos[keys[keys.length-1]];
@@ -44,9 +43,7 @@ class State {
         // Deep keys
         let pos = this.state[keys[0]];
         for(let i=1; i<keys.length; i++) {
-            if(pos[keys[i]] === undefined) {
-                console.error(`pos is undefined (index: ${i}, key: ${key}) at set()`); // TODO: Add to Logger
-            }
+            if(pos === undefined || pos[keys[i]] === undefined) return undefined;
             pos = pos[keys[i]];
         }
         
@@ -55,11 +52,12 @@ class State {
 
     remove(key) {
         this.removeListener(key);
-        
+
         const keys = key.split('.');
         
         // Flat keys (one level)
         if(keys.length === 1) {
+            if(this.state[key] === undefined) return;
             delete this.state[key];
             return;
         }
@@ -67,11 +65,10 @@ class State {
         // Deep keys
         let pos = this.state[keys[0]];
         for(let i=1; i<keys.length-1; i++) {
-            if(pos[keys[i]] === undefined) {
-                console.error(`pos is undefined (index: ${i}, key: ${key}) at set()`); // TODO: Add to Logger
-            }
+            if(pos === undefined || pos[keys[i]] === undefined) return;
             pos = pos[keys[i]];
         }
+        if(pos === undefined) return;
 
         delete pos[keys[keys.length-1]];
     }
