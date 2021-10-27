@@ -22,7 +22,7 @@ class RouteLink {
         this.Router.changeRoute(this.data);
     }
 
-    discard(fn) {
+    discard() {
         this.elem.removeEventListener("click", this.click);
     }
 }

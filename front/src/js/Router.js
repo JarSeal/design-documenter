@@ -38,7 +38,20 @@ class Router {
     }
 
     changeRoute(data) {
+        console.log('data', data);
         window.history.pushState(data.id, '', data.link);
+        let routeFound = false;
+        for(let i=0; i<this.routes.length; i++) {
+            if(this.routes[i].route === this.curRoute) {
+                routeFound = true;
+                this.curRouteData = this.routes[i];
+                break;
+            }
+        }
+        if(!routeFound) {
+            this.notFound();
+            return;
+        }
         this.setRoute();
     }
 
