@@ -2,6 +2,9 @@ import baseHTML from './base.html';
 import Bbar from './bbar/Bbar';
 import State from '../State';
 import MainLoader from './loaders/MainLoader';
+import Router from '../Router';
+import { _CONST } from '../constants';
+import './Base.scss';
 
 class Base {
     constructor(parent) {
@@ -28,6 +31,7 @@ class Base {
             resizers: {},
             orientationLand: true,
         });
+        state.set('Router', new Router(_CONST.routes));
         state.set('loading.main', true, this.loadingListener);
         return state;
     }
@@ -49,6 +53,10 @@ class Base {
 
     drawApp = () => {
         new Bbar(this.appState, this.elem);
+        const routeData = this.appState.get('Router').getRouteData();
+        const contentElem = document.getElementById('content-area');
+        console.log('ROUTEDATA', routeData);
+        routeData.component.drawContent(this.appState, contentElem);
     }
 
     _initResizer() {
@@ -61,7 +69,7 @@ class Base {
                 for(let i=0; i<keys.length; i++) {
                     resizers[keys[i]]();
                 }
-            }, 50);
+            }, 0);
         });
     }
 }
