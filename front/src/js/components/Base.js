@@ -12,6 +12,7 @@ class Base {
             document.getElementById('overlays')
         );
         this.appState = this.initAppState();
+        this._initResizer();
         this.loadData();
     }
 
@@ -35,14 +36,29 @@ class Base {
     loadingListener = (value, oldValue) => {
         console.log('Loading state changed!!!', value, oldValue);
         if(value === false) {
-            this.mainLoader.hide(this.placeContent);
+            this.mainLoader.hide(this.startApp);
             return;
-        } 
+        }
         this.mainLoader.toggle(value);
     }
 
-    placeContent = () => {
+    startApp = () => {
         new Bbar(this.appState, this.elem);
+    }
+
+    _initResizer() {
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                const resizers = this.appState.get('resizers');
+                const keys = Object.keys(resizers);
+                console.log('keys', keys)
+                // for(let i=0; i<fnsLength; i++) {
+                //     fns[i](this.sceneState);
+                // }
+            }, 500);
+        });
     }
 }
 
