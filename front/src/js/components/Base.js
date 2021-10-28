@@ -33,7 +33,7 @@ class Base {
             orientationLand: true,
             curRoute: '/',
         });
-        state.set('Router', new Router(_CONST.routes, this.id, state));
+        state.set('Router', new Router(_CONST.routes, this.id, state, { appState: state }));
         state.set('loading.main', true, this.loadingListener);
         state.addListener('curRoute', this.routeListener);
         return state;
