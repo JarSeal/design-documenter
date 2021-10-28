@@ -1,29 +1,26 @@
-class RouteLink {
-    constructor(data, appState) {
-        this.data = data;
-        this.Router = appState.get('Router');
-        this.elem = document.getElementById(data.id);
-        this.createButton();
+import Component from "../../Component";
+
+class RouteLink extends Component {
+    constructor(data) {
+        super(data);
+        this.template = `<button></button>`;
+        this.appState = data.appState;
     }
 
-    createButton() {
-        if(this.data.class) this.elem.classList.add(this.data.class);
-        if(this.data.text) this.elem.innerHTML = this.data.text;
-        this._initListener();
-    }
-
-    _initListener() {
-        this.elem.addEventListener("click", this.click);
+    init(data) {
+        this.Router = this.appState.get('Router');
+        this.addListener({
+            id: 'back-to-root-click',
+            target: this.elem,
+            type: 'click',
+            fn: this.click,
+        });
     }
 
     click = (e) => {
         e.preventDefault();
-        if(!this.data.link) return;
+        console.log(this.Router, this.data.link);
         this.Router.changeRoute(this.data.link);
-    }
-
-    discard() {
-        this.elem.removeEventListener("click", this.click);
     }
 }
 

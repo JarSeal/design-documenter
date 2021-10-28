@@ -9,6 +9,17 @@ class Component {
         this.elem;
         this.listeners = {};
         this.children = {};
+        // ****************
+        // [ RESERVED KEYS ]
+        // data = {
+        //     id, (required, string)
+        //     parentId, (optional, string, used when addChild method is not possible)
+        //     replace, (optional, boolean, default=false, whether the Component should replace the parent's innerHTML or not)
+        //     class, (optional, string or array, element classe(s))
+        //     text, (optional, string, element innerHTML text/html)
+        //     tag, (optional, string, element tag name/type)
+        //     template (optional, string, default=<div id="${data.id}"></div>, element HTML)
+        // }
     }
 
     draw() { // Main Component drawing logic
@@ -16,6 +27,7 @@ class Component {
         const data = this.data;
         this.parent = document.getElementById(this.parentId);
         if(!this.template) this.template = data.template || this._createDefaultTemplate(this.id, data);
+        this.template = this._templateId(this.template, data);
         if(data.replace) {
             // Exclusive element draw to parent's innerHTML
             this.parent.innerHTML = this.template;
@@ -24,6 +36,7 @@ class Component {
             this.parent.innerHTML += this.template;
         }
         this.elem = document.getElementById(this.id);
+        this._setElemData(this.elem, data);
         this.init(data);
     }
 
@@ -58,9 +71,10 @@ class Component {
 
     addListener(listener) {
         const { id, target, type, fn } = listener;
-        if(!id || !target || !type || !fn) {
-            console.error('Could not add listener, id, target, type, and/or fn missing.');
+        if(!id || !type || !fn) {
+            console.error('Could not add listener, id, type, and/or fn missing.');
         }
+        if(!target) target = this.elem;
         if(this.listeners[id]) this.removeListener(id);
         target.addEventListener(type, fn);
         this.listeners[id] = listener;
@@ -74,6 +88,28 @@ class Component {
         const { target, type, fn } = this.listeners[id];
         target.removeEventListener(type, fn);
         delete this.listeners[id];
+    }
+
+    _templateId(template, data) {
+        if(!template.includes(`id="${data.id}"`) && !template.includes(`id='${data.id}'`) && !template.includes(`id=${data.id}`)) {
+            template = template.trim();
+            const parts = template.split('>');
+            parts[0] = parts[0].trim();
+            parts[0] += ` id="${data.id}"`;
+            template = parts.join('>');
+        }
+        return template;
+    }
+
+    _setElemData(elem, data) {
+        if(data.class) {
+            if(typeof data.class === 'string' || data.class instanceof String) {
+                elem.classList.add(data.class);
+            } else {
+                elem.classList.add(...data.class);
+            }
+        }
+        if(data.text) elem.innerHTML += data.text;
     }
 
     _createDefaultTemplate(id, data) {
