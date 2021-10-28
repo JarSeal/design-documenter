@@ -6,17 +6,17 @@ export const _CONST = {
     bbarSize: 64,
     routes: [
         {
+            route: '/',
+            id: 'route-landing',
+            source: Landing,
+            title: 'Home',
+        },
+        {
             route: '/404',
             id: 'route-four-o-four',
             source: FourOFour,
             is404: true,
             title: '404',
-        },
-        {
-            route: '/',
-            id: 'route-landing',
-            source: Landing,
-            title: 'Home',
         },
         {
             route: '/login',

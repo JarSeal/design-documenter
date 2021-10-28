@@ -15,8 +15,7 @@ class Component {
         if(this.elem) this.discard();
         const data = this.data;
         this.parent = document.getElementById(this.parentId);
-        if(!this.template && data.template) this.template = data.template;
-        if(!this.template) this.template = this._createDefaultTemplate(this.id, data);
+        if(!this.template) this.template = data.template || this._createDefaultTemplate(this.id, data);
         if(data.replace) {
             // Exclusive element draw to parent's innerHTML
             this.parent.innerHTML = this.template;
@@ -41,11 +40,11 @@ class Component {
         for(let i=0; i<keys.length; i++) {
             this.children[keys[i]].discard();
         }
+        // Remove element from DOM
         if(this.elem) {
             this.elem.remove();
             this.elem = null;
         }
-        console.log('discarding', this.id);
         this.discardExtension();
     }
 

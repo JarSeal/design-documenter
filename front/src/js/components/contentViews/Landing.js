@@ -3,16 +3,11 @@ import Component from "../../Component";
 class Landing extends Component {
     constructor(data) {
         super(data);
-        this.appState;
+        this.appState = data.appState;
     }
 
-    draw(appState, parent) {
-        this.appState = appState;
-        parent.innerHTML = `<div class="content">landing</div>`;
-    }
-
-    discard() {
-        // Remove listeners and other memory hogs when this content is not in view
+    init() {
+        this.elem.innerHTML = `<div class="content">landing</div>`;
     }
 }
 
