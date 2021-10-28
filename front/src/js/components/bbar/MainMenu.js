@@ -7,6 +7,15 @@ class MainMenu extends Component {
 
     init(data) {
         this.elem.innerHTML = 'B';
+        this.addListener({
+            id: 'new-listener',
+            type: 'click',
+            target: this.elem,
+            fn: () => {console.log('CLACK');}
+        });
+        setTimeout(() => {
+            this.removeListener('new-listener');
+        }, 3000);
     }
 }
 

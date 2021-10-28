@@ -1,17 +1,16 @@
 class Component {
     constructor(data) {
-        this.data = data;
+        this.data = data; // Required { id[string], parent[elem] (or parentId[string]) }
         this.id = data.id;
-        this.elem;
         this.parent;
         this.parentId;
         this.template;
+        this.elem;
+        this.listeners = {};
         this._validateData(data);
     }
 
-    init(data) {}
-
-    draw() {
+    draw() { // Main Component drawing logic
         const data = this.data;
         if(!data.parent) {
             data.parent = document.getElementById(data.parentId);
@@ -35,7 +34,34 @@ class Component {
         this.init(data);
     }
 
-    discard() {}
+    init(data) {} // To start the custom component logic (is called after draw)
+
+    discard() {
+        // TODO: Remove all possible listeners here
+        
+    }
+
+    discardExtension() {} // Additional discard logic from the custom Component
+
+    addListener(listener) {
+        const { id, target, type, fn } = listener;
+        if(!id || !target || !type || !fn) {
+            console.error('Could not add listener, id, target, type, and/or fn missing.');
+        }
+        if(this.listeners[id]) this.removeListener(id);
+        target.addEventListener(type, fn);
+        this.listeners[id] = listener;
+    }
+
+    removeListener(id) {
+        if(!id) {
+            console.error('Could not remove listener, id missing.');
+            return;
+        }
+        const { target, type, fn } = this.listeners[id];
+        target.removeEventListener(type, fn);
+        delete this.listeners[id];
+    }
 
     _validateData(data) {
         if(!data || !data.id || (!data.parent && !data.parentId)) {
@@ -48,7 +74,7 @@ class Component {
         if(tag) {
             return `<${tag} id="${id}"></${tag}>`;
         } else {
-            return `<div id="${id}"></div>`;
+            return `<div id="${id}"></div>`; // Default
         }
     }
 }
