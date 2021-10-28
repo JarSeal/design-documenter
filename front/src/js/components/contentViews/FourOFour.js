@@ -18,7 +18,7 @@ class FourOFour {
             link: '/',
             id: 'back-to-root',
             text: 'Try again from here..',
-        });
+        }, appState);
     }
 
     discard() {

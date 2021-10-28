@@ -1,7 +1,6 @@
 class RouteLink {
     constructor(data, appState) {
         this.data = data;
-        this.appState = appState;
         this.Router = appState.get('Router');
         this.elem = document.getElementById(data.id);
         this.createButton();
@@ -20,7 +19,7 @@ class RouteLink {
     click = (e) => {
         e.preventDefault();
         if(!this.data.link) return;
-        this.Router.changeRoute(this.data, this.appState);
+        this.Router.changeRoute(this.data.link);
     }
 
     discard() {

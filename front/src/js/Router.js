@@ -17,7 +17,6 @@ class Router {
     }
 
     initRouter(routes) {
-        // console.log(location.protocol + '//' + location.host + location.pathname);
         this.setRoute();
         if(!routes) {
             this.notFound();
@@ -33,14 +32,32 @@ class Router {
                 break;
             }
         }
-
         if(!routeFound) {
             this.notFound();
         }
+        this.appState.set('curRoute', this.curRoute);
+        window.onpopstate = this.routeChangeListener;
     }
 
-    changeRoute(data) {
-        window.history.pushState(data.id, '', data.link);
+    routeChangeListener = (e) => {
+        this.setRoute();
+        this.changeRoute(this.curRoute);
+    }
+
+    _createRouteState(route) {
+        for(let i=0; i<this.routes.length; i++) {
+            if(this.routes[i].route === route) {
+                return {
+                    route: this.routes[i].route,
+                    title: this.routes[i].title,
+                };
+            }
+        }
+    }
+
+    changeRoute(route) {
+        const routeState = this._createRouteState(route);
+        window.history.pushState(routeState, '', route);
         this.setRoute();
         let routeFound = false;
         for(let i=0; i<this.routes.length; i++) {
@@ -50,12 +67,10 @@ class Router {
                 break;
             }
         }
-        this.appState.set('curRoute', data.link);
         if(!routeFound) {
-            console.log('HERE');
             this.notFound();
-            return;
         }
+        this.appState.set('curRoute', route);
     }
 
     getRoute() {

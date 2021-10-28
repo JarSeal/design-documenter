@@ -54,7 +54,8 @@ class Base {
     }
 
     routeListener = (value, oldValue) => {
-        console.log('CHANGE', value, oldValue);
+        // Do view change animation here
+        this.drawApp();
     }
 
     drawApp = () => {
