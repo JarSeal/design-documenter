@@ -3,7 +3,7 @@ import Bbar from './bbar/Bbar';
 import State from '../State';
 import MainLoader from './loaders/MainLoader';
 import Router from '../Router';
-import { _CONST } from '../constants';
+import { _CONST } from '../_CONST';
 import './Base.scss';
 
 class Base {
@@ -14,7 +14,7 @@ class Base {
         this.init();
         this.appState = this.initAppState();
         this._initResizer();
-        this.bbar = new Bbar({ appState: this.appState, parent: this.elem, id: 'bbar' });
+        this.bbar = new Bbar('bbar', { appState: this.appState, parentId: 'base-id', id: 'bbar' });
         this.loadData();
     }
 

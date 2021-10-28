@@ -1,47 +1,60 @@
 class Component {
-    constructor(data) {
-        this.data = data; // Required { id[string], parent[elem] (or parentId[string]) }
-        this.id = data.id;
+    constructor(id, data) {
+        if(!id) console.error('Component id missing.');
+        this.id = id;
+        this.data = data;
         this.parent;
-        this.parentId;
+        this.parentId = (data && data.parentId) ? data.parentId : null;
         this.template;
         this.elem;
         this.listeners = {};
-        this._validateData(data);
+        this.children = {};
     }
 
     draw() { // Main Component drawing logic
+        if(this.elem) this.discard();
         const data = this.data;
-        if(!data.parent) {
-            data.parent = document.getElementById(data.parentId);
-            if(!data.parent) {
-                console.error('Could not find parent element.');
-                return;
-            }
-        }
-        this.parent = data.parent;
-        this.parentId = data.parentId;
-        if(!this.template && data.template) this.template = data.template;
-        if(!this.template) this.template = this._createDefaultTemplate(data);
-        if(data.replace) {
+        this.parent = document.getElementById(this.parentId);
+        if(!this.template && data && data.template) this.template = data.template;
+        if(!this.template) this.template = this._createDefaultTemplate(this.id, data);
+        if(data && data.replace) {
             // Exclusive element draw to parent's innerHTML
             this.parent.innerHTML = this.template;
         } else {
             // Append element to parent's innerHTML
             this.parent.innerHTML += this.template;
         }
-        this.elem = document.getElementById(data.id);
+        this.elem = document.getElementById(this.id);
         this.init(data);
     }
 
     init(data) {} // To start the custom component logic (is called after draw)
 
     discard() {
-        // TODO: Remove all possible listeners here
-        
+        // Remove listeners
+        let keys = Object.keys(this.listeners);
+        for(let i=0; i<keys.length; i++) {
+            this.removeListener(keys[i]);
+        }
+        // Discard children
+        keys = Object.keys(this.children);
+        for(let i=0; i<keys.length; i++) {
+            this.children[keys[i]].discard();
+        }
+        if(this.elem) {
+            this.elem.remove();
+            this.elem = null;
+        }
+        this.discardExtension();
     }
 
     discardExtension() {} // Additional discard logic from the custom Component
+
+    addChild(component) {
+        this.children[component.id] = component;
+        component.parentId = this.id;
+        return component;
+    }
 
     addListener(listener) {
         const { id, target, type, fn } = listener;
@@ -63,14 +76,8 @@ class Component {
         delete this.listeners[id];
     }
 
-    _validateData(data) {
-        if(!data || !data.id || (!data.parent && !data.parentId)) {
-            console.error('Component data missing. Provide an object for the Component with id and parent (or parentId).', data);
-        }
-    }
-
-    _createDefaultTemplate(data) {
-        const { id, tag } = data;
+    _createDefaultTemplate(id, data) {
+        const tag = (data && data.tag) ? data.tag : false;
         if(tag) {
             return `<${tag} id="${id}"></${tag}>`;
         } else {

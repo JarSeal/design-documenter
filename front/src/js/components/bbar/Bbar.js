@@ -1,19 +1,17 @@
 import bbar from './bbar.html';
-import { _CONST } from '../../constants';
+import { _CONST } from '../../_CONST';
 import MainMenu from './MainMenu';
 import './Bbar.scss';
 import Component from '../../Component';
 
 class Bbar extends Component {
-    constructor(data) {
-        super(data);
+    constructor(id, data) {
+        super(id, data);
         this.template = bbar;
 
         this.appState = data.appState;
-        this.mainMenu = new MainMenu({
-            id: 'main-menu',
-            parentId: this.id,
-        });
+
+        this.mainMenu = this.addChild(new MainMenu('main-menu'));
     }
 
     init = (data) => {
@@ -22,6 +20,7 @@ class Bbar extends Component {
         this.appState.set('resizers', resizers);
         this.onResize();
 
+        console.log('DRAW main menu from bbar');
         this.mainMenu.draw();
     }
 
