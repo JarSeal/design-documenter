@@ -1,12 +1,12 @@
-class MainMenu {
-    constructor(data, appState) {
-        this.data = data;
-        this.Router = appState.get('Router');
-        this.elem = document.getElementById(data.id);
+import Component from '../../Component';
+
+class MainMenu extends Component {
+    constructor(data) {
+        super(data);
     }
 
-    createMenu() {
-        
+    init(data) {
+        this.elem.innerHTML = 'B';
     }
 }
 

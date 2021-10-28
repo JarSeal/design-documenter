@@ -1,19 +1,28 @@
 import bbar from './bbar.html';
 import { _CONST } from '../../constants';
+import MainMenu from './MainMenu';
 import './Bbar.scss';
+import Component from '../../Component';
 
-class Bbar {
-    constructor(appState, parent) {
-        this.appState = appState;
-        
-        parent.innerHTML += bbar;
-        this.elem = document.getElementById('bbar');
-        
-        const resizers = appState.get('resizers');
+class Bbar extends Component {
+    constructor(data) {
+        super(data);
+        this.template = bbar;
+
+        this.appState = data.appState;
+        this.mainMenu = new MainMenu({
+            id: 'main-menu',
+            parentId: this.id,
+        });
+    }
+
+    init = (data) => {
+        const resizers = this.appState.get('resizers');
         resizers.bbar = this.onResize;
-        appState.set('resizers', resizers);
-        
+        this.appState.set('resizers', resizers);
         this.onResize();
+
+        this.mainMenu.draw();
     }
 
     onResize = () => {
@@ -38,10 +47,6 @@ class Bbar {
             this.baseElem.style.marginLeft = 0;
             this.appState.set('orientationLand', false);
         }
-    }
-
-    discard() {
-
     }
 }
 

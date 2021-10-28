@@ -14,6 +14,7 @@ class Base {
         this.init();
         this.appState = this.initAppState();
         this._initResizer();
+        this.bbar = new Bbar({ appState: this.appState, parent: this.elem, id: 'bbar' });
         this.loadData();
     }
 
@@ -59,8 +60,7 @@ class Base {
     }
 
     drawApp = () => {
-        if(this.bbar) this.bbar.discard();
-        this.bbar = new Bbar(this.appState, this.elem);
+        this.bbar.draw();
 
         const routeData = this.appState.get('Router').getRouteData();
         const contentElem = document.getElementById('content-area');
