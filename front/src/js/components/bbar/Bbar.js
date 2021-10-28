@@ -25,10 +25,6 @@ class Bbar {
         const h = window.innerHeight;
         this.elem = document.getElementById('bbar');
         this.baseElem = document.getElementById('base-id');
-        this.baseElem.style.transition = `
-            margin-top 200ms ease-in-out,
-            margin-left 200ms ease-in-out
-        `;
         if(w > h) {
             this.elem.style.width = _CONST.bbarSize + 'px';
             this.elem.style.height = h + 'px';
