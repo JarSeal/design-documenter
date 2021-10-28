@@ -1,6 +1,6 @@
 class Component {
     constructor(data) {
-        if(!data || data.id) console.error('Component id missing.');
+        if(!data || !data.id) console.error('Component id missing.', data);
         this.id = data.id;
         this.data = data;
         this.parent;
