@@ -59,7 +59,9 @@ class Base {
     }
 
     drawApp = () => {
-        new Bbar(this.appState, this.elem);
+        if(this.bbar) this.bbar.discard();
+        this.bbar = new Bbar(this.appState, this.elem);
+
         const routeData = this.appState.get('Router').getRouteData();
         const contentElem = document.getElementById('content-area');
 

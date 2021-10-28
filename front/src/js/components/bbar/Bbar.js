@@ -4,20 +4,16 @@ import './Bbar.scss';
 
 class Bbar {
     constructor(appState, parent) {
+        this.appState = appState;
+        
         parent.innerHTML += bbar;
         this.elem = document.getElementById('bbar');
-        this.appState = appState;
         
         const resizers = appState.get('resizers');
         resizers.bbar = this.onResize;
-        appState.set(
-            'resizers',
-            resizers
-        );
+        appState.set('resizers', resizers);
+        
         this.onResize();
-        setTimeout(() => {
-            appState.get('Router').getRoute();
-        }, 2000);
     }
 
     onResize = () => {
@@ -42,6 +38,10 @@ class Bbar {
             this.baseElem.style.marginLeft = 0;
             this.appState.set('orientationLand', false);
         }
+    }
+
+    discard() {
+
     }
 }
 
