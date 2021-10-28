@@ -14,7 +14,7 @@ class Base {
         this.init();
         this.appState = this.initAppState();
         this._initResizer();
-        this.bbar = new Bbar('bbar', { appState: this.appState, parentId: 'base-id', id: 'bbar' });
+        this.bbar = new Bbar({ appState: this.appState, parentId: 'base-id', id: 'bbar' });
         this.loadData();
     }
 
@@ -33,7 +33,7 @@ class Base {
             orientationLand: true,
             curRoute: '/',
         });
-        state.set('Router', new Router(_CONST.routes, state));
+        state.set('Router', new Router(_CONST.routes, this.id, state));
         state.set('loading.main', true, this.loadingListener);
         state.addListener('curRoute', this.routeListener);
         return state;

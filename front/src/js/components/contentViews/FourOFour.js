@@ -1,7 +1,9 @@
+import Component from '../../Component';
 import RouteLink from '../buttons/RouteLink';
 
-class FourOFour {
-    constructor() {
+class FourOFour extends Component {
+    constructor(data) {
+        super(data);
         this.appState;
         this.button;
     }

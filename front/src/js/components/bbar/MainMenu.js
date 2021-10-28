@@ -1,8 +1,8 @@
 import Component from '../../Component';
 
 class MainMenu extends Component {
-    constructor(id, data) {
-        super(id, data);
+    constructor(data) {
+        super(data);
     }
 
     init(data) {

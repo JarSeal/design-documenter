@@ -5,13 +5,13 @@ import './Bbar.scss';
 import Component from '../../Component';
 
 class Bbar extends Component {
-    constructor(id, data) {
-        super(id, data);
+    constructor(data) {
+        super(data);
         this.template = bbar;
 
         this.appState = data.appState;
 
-        this.mainMenu = this.addChild(new MainMenu('main-menu'));
+        this.mainMenu = this.addChild(new MainMenu({ id: 'main-menu' }));
     }
 
     init = (data) => {
@@ -20,7 +20,6 @@ class Bbar extends Component {
         this.appState.set('resizers', resizers);
         this.onResize();
 
-        console.log('DRAW main menu from bbar');
         this.mainMenu.draw();
     }
 

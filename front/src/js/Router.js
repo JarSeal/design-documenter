@@ -1,7 +1,7 @@
 import RouteLink from "./components/buttons/RouteLink";
 
 class Router {
-    constructor(routes, appState) {
+    constructor(routes, parentId, appState) {
         this.routes = [];
         this.appState = appState;
         this.curRoute = '/';
@@ -13,10 +13,10 @@ class Router {
         };
         this.prevRoute = null;
         this.prevRouteData = null;
-        this.initRouter(routes);
+        this.initRouter(routes, parentId);
     }
 
-    initRouter(routes) {
+    initRouter(routes, parentId) {
         this.setRoute();
         if(!routes) {
             this.notFound();
@@ -24,7 +24,10 @@ class Router {
         }
         let routeFound = false;
         for(let i=0; i<routes.length; i++) {
-            routes[i].component = new routes[i].source();
+            routes[i].component = new routes[i].source({
+                id: routes[i].id,
+                parentId: parentId,
+            });
             this.routes.push(routes[i]);
             if(routes[i].route === this.curRoute) {
                 routeFound = true;
@@ -58,6 +61,7 @@ class Router {
     changeRoute(route) {
         const routeState = this._createRouteState(route);
         window.history.pushState(routeState, '', route);
+        // this.curRouteData.component.discard();
         this.setRoute();
         let routeFound = false;
         for(let i=0; i<this.routes.length; i++) {

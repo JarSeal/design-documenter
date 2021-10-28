@@ -7,17 +7,20 @@ export const _CONST = {
     routes: [
         {
             route: '/404',
+            id: 'route-four-o-four',
             source: FourOFour,
             is404: true,
             title: '404',
         },
         {
             route: '/',
+            id: 'route-landing',
             source: Landing,
             title: 'Home',
         },
         {
             route: '/login',
+            id: 'route-login',
             source: Login,
             title: 'Login',
         },

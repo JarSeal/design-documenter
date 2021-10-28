@@ -1,5 +1,8 @@
-class Landing {
-    constructor() {
+import Component from "../../Component";
+
+class Landing extends Component {
+    constructor(data) {
+        super(data);
         this.appState;
     }
 

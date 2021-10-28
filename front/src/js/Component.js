@@ -1,7 +1,7 @@
 class Component {
-    constructor(id, data) {
-        if(!id) console.error('Component id missing.');
-        this.id = id;
+    constructor(data) {
+        if(!data || data.id) console.error('Component id missing.');
+        this.id = data.id;
         this.data = data;
         this.parent;
         this.parentId = (data && data.parentId) ? data.parentId : null;
@@ -45,6 +45,7 @@ class Component {
             this.elem.remove();
             this.elem = null;
         }
+        console.log('discarding');
         this.discardExtension();
     }
 
