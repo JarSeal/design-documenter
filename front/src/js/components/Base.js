@@ -11,13 +11,13 @@ class Base {
         this.id = 'base-id';
         this.parent = parent;
         this.appState;
-        this.draw();
+        this.init();
         this.appState = this.initAppState();
         this._initResizer();
         this.loadData();
     }
 
-    draw() {
+    init() {
         this.parent.innerHTML = baseHTML;
         this.elem = document.getElementById(this.id);
         this.mainLoader = new MainLoader(
@@ -30,9 +30,11 @@ class Base {
             loading: { main: null },
             resizers: {},
             orientationLand: true,
+            curRoute: '/',
         });
-        state.set('Router', new Router(_CONST.routes));
+        state.set('Router', new Router(_CONST.routes, state));
         state.set('loading.main', true, this.loadingListener);
+        state.addListener('curRoute', this.routeListener);
         return state;
     }
 
@@ -49,6 +51,10 @@ class Base {
             return;
         }
         this.mainLoader.toggle(value);
+    }
+
+    routeListener = (value, oldValue) => {
+        console.log('CHANGE', value, oldValue);
     }
 
     drawApp = () => {
