@@ -27,6 +27,7 @@ class Router {
             routes[i].component = new routes[i].source({
                 id: routes[i].id,
                 parentId: parentId,
+                appState: this.appState,
             });
             this.routes.push(routes[i]);
             if(routes[i].route === this.curRoute) {
@@ -61,7 +62,7 @@ class Router {
     changeRoute(route) {
         const routeState = this._createRouteState(route);
         window.history.pushState(routeState, '', route);
-        // this.curRouteData.component.discard();
+        this.curRouteData.component.discard();
         this.setRoute();
         let routeFound = false;
         for(let i=0; i<this.routes.length; i++) {

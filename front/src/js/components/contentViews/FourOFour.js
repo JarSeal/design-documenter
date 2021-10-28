@@ -4,13 +4,12 @@ import RouteLink from '../buttons/RouteLink';
 class FourOFour extends Component {
     constructor(data) {
         super(data);
-        this.appState;
+        this.appState = data.appState;
         this.button;
     }
 
-    draw(appState, parent) {
-        this.appState = appState;
-        parent.innerHTML = `
+    init() {
+        this.elem.innerHTML = `
             <div class="content">
                 <h2>404</h2>
                 <button id="back-to-root"></button>
@@ -20,11 +19,7 @@ class FourOFour extends Component {
             link: '/',
             id: 'back-to-root',
             text: 'Try again from here..',
-        }, appState);
-    }
-
-    discard() {
-        this.button.discard();
+        }, this.appState);
     }
 }
 

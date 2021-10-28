@@ -4,7 +4,7 @@ class Component {
         this.id = data.id;
         this.data = data;
         this.parent;
-        this.parentId = (data && data.parentId) ? data.parentId : null;
+        this.parentId = data.parentId ? data.parentId : null;
         this.template;
         this.elem;
         this.listeners = {};
@@ -15,9 +15,9 @@ class Component {
         if(this.elem) this.discard();
         const data = this.data;
         this.parent = document.getElementById(this.parentId);
-        if(!this.template && data && data.template) this.template = data.template;
+        if(!this.template && data.template) this.template = data.template;
         if(!this.template) this.template = this._createDefaultTemplate(this.id, data);
-        if(data && data.replace) {
+        if(data.replace) {
             // Exclusive element draw to parent's innerHTML
             this.parent.innerHTML = this.template;
         } else {
@@ -45,7 +45,7 @@ class Component {
             this.elem.remove();
             this.elem = null;
         }
-        console.log('discarding');
+        console.log('discarding', this.id);
         this.discardExtension();
     }
 
