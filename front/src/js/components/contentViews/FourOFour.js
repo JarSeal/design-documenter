@@ -1,4 +1,4 @@
-import Component from '../../Component';
+import Component from '../../lighter/Component';
 import RouteLink from '../buttons/RouteLink';
 
 class FourOFour extends Component {

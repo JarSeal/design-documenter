@@ -1,4 +1,4 @@
-import Component from "../../Component";
+import Component from "../../lighter/Component";
 
 class Landing extends Component {
     constructor(data) {

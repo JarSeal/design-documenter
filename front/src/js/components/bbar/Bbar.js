@@ -2,7 +2,7 @@ import bbar from './bbar.html';
 import { _CONFIG } from '../../_CONFIG';
 import MainMenu from './MainMenu';
 import './Bbar.scss';
-import Component from '../../Component';
+import Component from '../../lighter/Component';
 
 class Bbar extends Component {
     constructor(data) {

@@ -1,6 +1,5 @@
-import State from '../State';
-import Component from '../Component';
-import Router from '../Router';
+// import State from '../lighter/State';
+import { State, Component, Router } from '../lighter';
 import Bbar from './bbar/Bbar';
 import MainLoader from './loaders/MainLoader';
 import { _CONFIG } from '../_CONFIG';
