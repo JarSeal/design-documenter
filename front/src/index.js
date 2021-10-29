@@ -1,5 +1,5 @@
 import '@/styles/index.scss';
-import Base from '@/js/components/Base';
+import Base from '@/js/Base';
 
 // Test import of a JavaScript module
 // import { example } from '@/js/example';

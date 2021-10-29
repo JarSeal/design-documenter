@@ -1,7 +1,7 @@
-import { State, Component, Router } from '../lighter';
-import Bbar from './bbar/Bbar';
-import MainLoader from './loaders/MainLoader';
-import { _CONFIG } from '../_CONFIG';
+import { State, Component, Router } from './lighter';
+import Bbar from './components/bbar/Bbar';
+import MainLoader from './components/loaders/MainLoader';
+import { _CONFIG } from './_CONFIG';
 import baseHTML from './base.html';
 import './Base.scss';
 
