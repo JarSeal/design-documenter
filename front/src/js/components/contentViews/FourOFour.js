@@ -10,7 +10,6 @@ class FourOFour extends Component {
         this.button = this.addChild(new RouteLink({
             id: 'back-to-root',
             link: '/',
-            appState: data.appState,
             text: 'Try again from here..',
         }));
     }

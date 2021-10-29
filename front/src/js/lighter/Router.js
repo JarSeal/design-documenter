@@ -42,7 +42,6 @@ class Router {
             if(routes[i].route === this.curRoute) {
                 routeFound = true;
                 this.curRouteData = routes[i];
-                break;
             }
         }
         if(!routeFound) {
@@ -75,7 +74,7 @@ class Router {
         this.setRoute();
         let routeFound = false;
         for(let i=0; i<this.routes.length; i++) {
-            if(this.routes[i].route === this.curRoute) {
+            if(this.routes[i].route === route) {
                 routeFound = true;
                 this.curRouteData = this.routes[i];
                 break;

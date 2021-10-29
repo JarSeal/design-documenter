@@ -4,7 +4,6 @@ class RouteLink extends Component {
     constructor(data) {
         super(data);
         this.template = `<button></button>`;
-        this.appState = data.appState;
     }
 
     paint = () => {
@@ -16,6 +15,7 @@ class RouteLink extends Component {
     }
 
     click = (e) => {
+        console.log('HERE');
         e.preventDefault();
         this.Router.changeRoute(this.data.link);
     }

@@ -3,6 +3,7 @@ import { RouterRef } from "./Router";
 class Component {
     constructor(data) {
         if(!data || !data.id) console.error('Component id missing.', data);
+        if(document.getElementById(data.id)) console.error('ID is already in use.', document.getElementById(data.id));
         this.id = data.id;
         this.data = data;
         this.parent;
@@ -37,8 +38,10 @@ class Component {
             // Exclusive element draw to parent's innerHTML
             this.parent.innerHTML = this.template;
         } else {
-            // Append element to parent's innerHTML
-            this.parent.innerHTML += this.template;
+            // Append element as parent's child
+            const template = document.createElement('template');
+            template.innerHTML = this.template;
+            this.parent.appendChild(template.content.firstChild);
         }
         this.elem = document.getElementById(this.id);
         this._setElemData(this.elem, data);
