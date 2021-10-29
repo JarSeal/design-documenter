@@ -1,3 +1,4 @@
+
 const globalState = {};
 const globalListeners = [];
 const globalListenerCallbacks = [];

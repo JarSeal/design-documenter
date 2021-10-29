@@ -1,10 +1,14 @@
+import { Logger } from "./utils";
+
 let routerInitiated = false;
+
+const logger = new Logger('LIGHTER.js ROUTE *****');
 
 class Router {
     constructor(routes, parentId, rcCallback, componentData) {
         if(routerInitiated) {
-            console.error('Router has already been initiated. Only one router per app is allowed');
-            return;
+            logger.error('Router has already been initiated. Only one router per app is allowed');
+            throw new Error('Call stack');
         }
         RouterRef = this;
         this.routes = [];
@@ -123,8 +127,8 @@ class Router {
             }
         }
         if(!template) {
-            console.error('Could not find 404 template.')
-            return;
+            logger.error('Could not find 404 template.')
+            throw new Error('Call stack');
         }
         this.curRouteData = template;
     }

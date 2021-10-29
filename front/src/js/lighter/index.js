@@ -5,5 +5,6 @@
 import Component from "./Component";
 import State from "./State";
 import Router from "./Router";
+import { LocalStorage, Logger } from "./utils";
 
-export { Component, State, Router };
+export { Component, State, Router, LocalStorage, Logger };

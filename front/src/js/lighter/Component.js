@@ -1,12 +1,17 @@
 import { RouterRef } from "./Router";
+import { Logger } from "./utils";
 
 const ids = {};
+const logger = new Logger('LIGHTER.js COMPO *****');
 
 class Component {
     constructor(data) {
-        if(!data || !data.id) console.error('Component id missing.', data);
+        if(!data || !data.id) {
+            logger.error('Component id missing.', data);
+            throw new error('Call stack');
+        }
         if(ids[data.id]) {
-            console.error('ID is already in use.', data);
+            logger.error('ID is already in use.', data);
             throw new Error('Call stack');
         }
         ids[data.id] = true;
@@ -88,7 +93,8 @@ class Component {
     addListener(listener) {
         let { id, target, type, fn } = listener;
         if(!id || !type || !fn) {
-            console.error('Could not add listener, id, type, and/or fn missing.');
+            logger.error('Could not add listener, id, type, and/or fn missing.');
+            throw new error('Call stack');
         }
         if(!target) {
             target = this.elem;
@@ -101,8 +107,8 @@ class Component {
 
     removeListener(id) {
         if(!id) {
-            console.error('Could not remove listener, id missing.');
-            return;
+            logger.error('Could not remove listener, id missing.');
+            throw new error('Call stack');
         }
         const { target, type, fn } = this.listeners[id];
         target.removeEventListener(type, fn);
