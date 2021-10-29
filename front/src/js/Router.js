@@ -1,10 +1,15 @@
-import RouteLink from "./components/buttons/RouteLink";
+let routerInitiated = false;
 
 class Router {
-    constructor(routes, parentId, appState, componentData) {
+    constructor(routes, parentId, rcCallback, componentData) {
+        if(routerInitiated) {
+            console.error('Router has already been initiated. Only one router per app is allowed');
+            return;
+        }
+        RouterRef = this;
         this.routes = [];
-        this.appState = appState;
         this.curRoute = '/';
+        this.rcCallback = rcCallback;
         this.curRouteData = {
             route: '/',
             source: null,
@@ -40,8 +45,8 @@ class Router {
         if(!routeFound) {
             this.notFound();
         }
-        this.appState.set('curRoute', this.curRoute);
         window.onpopstate = this.routeChangeListener;
+        routerInitiated = true;
     }
 
     routeChangeListener = (e) => {
@@ -76,7 +81,7 @@ class Router {
         if(!routeFound) {
             this.notFound();
         }
-        this.appState.set('curRoute', route);
+        this.rcCallback(this.curRoute);
     }
 
     getRoute() {
@@ -123,3 +128,5 @@ class Router {
 }
 
 export default Router;
+
+export let RouterRef = null;

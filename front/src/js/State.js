@@ -1,3 +1,8 @@
+const globalState = {};
+const globalListeners = [];
+const globalListenerCallbacks = [];
+// TODO: ADD GLOBAL STATE LISTENER
+
 class State {
     constructor(initState) {
         this.initState = initState;
@@ -6,42 +11,66 @@ class State {
         this.listenerCallbacks = [];
     }
 
-    set(key, value, listenerCallback) {
-        if(listenerCallback) this.addListener(key, listenerCallback);
+    set(key, value, listenerCallback, global) {
+        // TODO: check if current key is "shorter" than the new key
+        // eg. current state { test: 123 } and new state { test: { another: 555 }}
+        // currently this causes an error
+        // the old key value pair should propably just be removed after the check and replaced with the new
+        if(!key) return;
+        if(listenerCallback && !global) this.addListener(key, listenerCallback);
 
         const keys = key.split('.');
         let oldValue;
 
         // Flat keys (one level)
         if(keys.length === 1) {
+            if(global) {
+                globalState[key] = value;
+                return;
+            }
             oldValue = this.state[keys[keys.length-1]];
             this._checkListeners(oldValue, value, key);
-            this.state[keys[0]] = value;
+            this.state[key] = value;
             return;
         }
 
         // Deep keys
-        let pos = this.state[keys[0]];
-        if(pos === undefined) this.state[keys[0]] = pos = {}; // Create a new object if not found
+        let pos = global
+            ? globalState[keys[0]]
+            : this.state[keys[0]];
+        if(pos === undefined) {
+            // Create a new object if not found
+            if(global) {
+                globalState[keys[0]] = pos = {};
+            } else {
+                this.state[keys[0]] = pos = {};
+            }
+        }
         for(let i=1; i<keys.length-1; i++) {
             if(pos[keys[i]] === undefined) pos[keys[i]] = {}; // Create a new object if not found
             pos = pos[keys[i]];
         }
-        oldValue = pos[keys[keys.length-1]];
-        this._checkListeners(oldValue, value, key);
+        if(!global) {
+            oldValue = pos[keys[keys.length-1]];
+            this._checkListeners(oldValue, value, key);
+        }
         pos[keys[keys.length-1]] = value;
     }
 
-    get(key) {
+    get(key, global) {
+        if(!key) return;
         const keys = key.split('.');
         
         // Flat keys (one level)
         if(keys.length === 1) {
+            if(global) return globalState[key];
             return this.state[key];
         }
 
         // Deep keys
-        let pos = this.state[keys[0]];
+        let pos = global
+            ? globalState[keys[0]]
+            : this.state[keys[0]];
         for(let i=1; i<keys.length; i++) {
             if(pos === undefined || pos[keys[i]] === undefined) return undefined;
             pos = pos[keys[i]];
@@ -50,20 +79,30 @@ class State {
         return pos;
     }
 
-    remove(key) {
-        this.removeListener(key);
+    remove(key, global) {
+        if(!key) return;
+        if(!global) {
+            this.removeListener(key);
+        }
 
         const keys = key.split('.');
         
         // Flat keys (one level)
         if(keys.length === 1) {
+            if(global) {
+                if(globalState[key] === undefined) return;
+                delete globalState[key];
+                return;
+            }
             if(this.state[key] === undefined) return;
             delete this.state[key];
             return;
         }
 
         // Deep keys
-        let pos = this.state[keys[0]];
+        let pos = global
+            ? globalState[keys[0]]
+            : this.state[keys[0]];
         for(let i=1; i<keys.length-1; i++) {
             if(pos === undefined || pos[keys[i]] === undefined) return;
             pos = pos[keys[i]];
@@ -74,7 +113,6 @@ class State {
     }
 
     getObject() {
-        // Return full state
         return this.state;
     }
 
@@ -97,6 +135,22 @@ class State {
         if(index > -1) {
             this.listenerCallbacks[index](value, oldValue);
         }
+    }
+
+    getG(key) {
+        return this.get(key, true);
+    }
+
+    getGObject() {
+        return globalState;
+    }
+
+    setG(key, value) {
+        this.set(key, value, null, true);
+    }
+
+    removeG(key) {
+        this.remove(key, true);
     }
 }
 

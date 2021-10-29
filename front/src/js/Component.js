@@ -1,3 +1,5 @@
+import { RouterRef } from "./Router";
+
 class Component {
     constructor(data) {
         if(!data || !data.id) console.error('Component id missing.', data);
@@ -9,13 +11,14 @@ class Component {
         this.elem;
         this.listeners = {};
         this.children = {};
-        // ****************
+        this.Router = RouterRef;
+        // *****************
         // [ RESERVED KEYS ]
         // data = {
         //     id, (required, string)
-        //     parentId, (optional, string, used when addChild method is not possible)
+        //     parentId, (optional, string, used when addChild from with the parent method is not possible)
         //     replace, (optional, boolean, default=false, whether the Component should replace the parent's innerHTML or not)
-        //     class, (optional, string or array, element classe(s))
+        //     class, (optional, string/array, element classe(s))
         //     text, (optional, string, element innerHTML text/html)
         //     tag, (optional, string, element tag name/type)
         //     template (optional, string, default=<div id="${data.id}"></div>, element HTML)
@@ -70,11 +73,14 @@ class Component {
     }
 
     addListener(listener) {
-        const { id, target, type, fn } = listener;
+        let { id, target, type, fn } = listener;
         if(!id || !type || !fn) {
             console.error('Could not add listener, id, type, and/or fn missing.');
         }
-        if(!target) target = this.elem;
+        if(!target) {
+            target = this.elem;
+            listener.target = target;
+        }
         if(this.listeners[id]) this.removeListener(id);
         target.addEventListener(type, fn);
         this.listeners[id] = listener;

@@ -8,10 +8,8 @@ class RouteLink extends Component {
     }
 
     init(data) {
-        this.Router = this.appState.get('Router');
         this.addListener({
             id: 'back-to-root-click',
-            target: this.elem,
             type: 'click',
             fn: this.click,
         });

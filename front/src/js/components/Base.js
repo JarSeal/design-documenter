@@ -33,10 +33,15 @@ class Base {
             orientationLand: true,
             curRoute: '/',
         });
-        state.set('Router', new Router(_CONST.routes, this.id, state, { appState: state }));
+        this.Router = new Router(
+            _CONST.routes, this.id, this.rcCallback, { appState: state }
+        );
         state.set('loading.main', true, this.loadingListener);
-        state.addListener('curRoute', this.routeListener);
         return state;
+    }
+
+    rcCallback = (newRoute) => {
+        this.drawApp();
     }
 
     loadData() {
@@ -54,15 +59,10 @@ class Base {
         this.mainLoader.toggle(value);
     }
 
-    routeListener = (value, oldValue) => {
-        // Do view change animation here
-        this.drawApp();
-    }
-
     drawApp = () => {
         this.bbar.draw();
 
-        const routeData = this.appState.get('Router').getRouteData();
+        const routeData = this.Router.getRouteData();
         const contentElem = document.getElementById('content-area');
 
         console.log('ROUTEDATA', routeData);
