@@ -1,9 +1,15 @@
 import { RouterRef } from "./Router";
 
+const ids = {};
+
 class Component {
     constructor(data) {
         if(!data || !data.id) console.error('Component id missing.', data);
-        if(document.getElementById(data.id)) console.error('ID is already in use.', document.getElementById(data.id));
+        if(ids[data.id]) {
+            console.error('ID is already in use.', data);
+            throw new Error('Call stack');
+        }
+        ids[data.id] = true;
         this.id = data.id;
         this.data = data;
         this.parent;

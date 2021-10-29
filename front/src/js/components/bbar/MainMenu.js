@@ -14,11 +14,17 @@ class MainMenu extends Component {
             link: '/login',
             text: 'L',
         }));
+        this.brokenButton = this.addChild(new RouteLink({
+            id: 'broken-button',
+            link: '/somewhere',
+            text: 'B',
+        }));
     }
 
     paint = () => {
         this.homeButton.draw();
         this.loginButton.draw();
+        this.brokenButton.draw();
     }
 }
 
