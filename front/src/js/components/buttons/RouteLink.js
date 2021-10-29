@@ -6,16 +6,18 @@ class RouteLink extends Component {
         this.template = `<button></button>`;
     }
 
-    paint = () => {
+    paint = (data) => {
         this.addListener({
             id: 'back-to-root-click',
             type: 'click',
             fn: this.click,
         });
+        if(data.link === this.Router.curRoute) {
+            this.elem.classList.add('current');
+        }
     }
 
     click = (e) => {
-        console.log('HERE');
         e.preventDefault();
         this.Router.changeRoute(this.data.link);
     }

@@ -68,6 +68,7 @@ class Router {
     }
 
     changeRoute(route) {
+        if(route === this.curRoute) return;
         const routeState = this._createRouteState(route);
         window.history.pushState(routeState, '', route);
         this.curRouteData.component.discard();
