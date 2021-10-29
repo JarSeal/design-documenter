@@ -43,9 +43,11 @@ class Component {
         this.elem = document.getElementById(this.id);
         this._setElemData(this.elem, data);
         this.init(data);
+        this.paint(data);
     }
 
-    init(data) {} // To start the custom component logic (is called after draw)
+    init(data) {}
+    paint(data) {}
 
     discard() {
         // Remove listeners

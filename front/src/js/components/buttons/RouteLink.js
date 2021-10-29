@@ -7,7 +7,7 @@ class RouteLink extends Component {
         this.appState = data.appState;
     }
 
-    init() {
+    paint = () => {
         this.addListener({
             id: 'back-to-root-click',
             type: 'click',

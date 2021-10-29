@@ -7,7 +7,7 @@ class Landing extends Component {
         this.appState;
     }
 
-    init() {
+    paint = () => {
         
     }
 }

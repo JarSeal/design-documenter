@@ -1,4 +1,3 @@
-// import State from '../lighter/State';
 import { State, Component, Router } from '../lighter';
 import Bbar from './bbar/Bbar';
 import MainLoader from './loaders/MainLoader';
@@ -12,13 +11,13 @@ class Base extends Component {
         this.template = baseHTML;
         this.appState = this._initAppState();
         this._initResizer();
-        this.Router = new Router(_CONFIG.routes, this.id, this.rcCallback, { appState: this.appState, attach: 'content-area' });
+        this.Router = new Router(_CONFIG.routes, this.id, this.paint, { appState: this.appState, attach: 'content-area' });
         this.bbar = this.addChild(new Bbar({ id: 'bbar', attach: 'overlays', appState: this.appState }));
-        this.draw();
     }
 
-    init() {
-        this.drawApp();
+    paint = () => {
+        this.bbar.draw();
+        this.Router.drawView();
     }
 
     _initAppState() {
@@ -32,25 +31,16 @@ class Base extends Component {
         return state;
     }
 
-    rcCallback = (newRoute) => {
-        this.drawApp();
-    }
+    // loadData() {
+    //     // Mock data loading with setTimeout
+    //     setTimeout(() => {
+    //         this.appState.set('loading.main', false);
+    //     }, 1000);
+    // }
 
-    loadData() {
-        // Mock data loading with setTimeout
-        setTimeout(() => {
-            this.appState.set('loading.main', false);
-        }, 1000);
-    }
-
-    loadingListener = (value, oldValue) => {
+    // loadingListener = (value, oldValue) => {
         
-    }
-
-    drawApp = () => {
-        this.bbar.draw();
-        this.Router.drawView();
-    }
+    // }
 
     _initResizer() {
         let resizeTimer;

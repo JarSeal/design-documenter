@@ -5,9 +5,8 @@ class MainMenu extends Component {
         super(data);
     }
 
-    init(data) {
+    paint = () => {
         this.elem.innerHTML = 'B';
-        
     }
 }
 

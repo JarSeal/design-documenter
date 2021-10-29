@@ -14,7 +14,7 @@ class Bbar extends Component {
         this.mainMenu = this.addChild(new MainMenu({ id: 'main-menu' }));
     }
 
-    init = (data) => {
+    paint = () => {
         const resizers = this.appState.get('resizers');
         resizers.bbar = this.onResize;
         this.appState.set('resizers', resizers);

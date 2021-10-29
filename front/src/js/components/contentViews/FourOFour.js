@@ -15,7 +15,7 @@ class FourOFour extends Component {
         }));
     }
 
-    init() {
+    paint = () => {
         this.button.draw();
     }
 }
