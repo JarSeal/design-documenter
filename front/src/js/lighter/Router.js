@@ -129,7 +129,7 @@ class Router {
         this.curRouteData = template;
     }
 
-    drawView() {
+    draw() {
         this.curRouteData.component.draw();
         if(this.prevRouteData) this.prevRouteData.component.discard();
     }

@@ -12,35 +12,39 @@ class Base extends Component {
         this.appState = this._initAppState();
         this._initResizer();
         this.Router = new Router(_CONFIG.routes, this.id, this.paint, { appState: this.appState, attach: 'content-area' });
-        this.bbar = this.addChild(new Bbar({ id: 'bbar', attach: 'overlays', appState: this.appState }));
+        this.bbar = this.addChild(new Bbar({ id: 'bbar', appState: this.appState }));
+        this.mainLoader = this.addChild(new MainLoader({ id: 'main-loader', attach: 'overlays' }));
+        this.loadData();
     }
 
     paint = () => {
-        this.bbar.draw();
-        this.Router.drawView();
+        if(this.appState.get('loading.main')) {
+            this.mainLoader.draw();
+        } else {
+            this.bbar.draw();
+            this.Router.draw();
+        }
     }
 
-    _initAppState() {
+    _initAppState = () => {
         const state = new State({
             loading: { main: null },
             resizers: {},
             orientationLand: true,
             curRoute: '/',
         });
-        // state.set('loading.main', true, this.loadingListener);
+        state.set('loading.main', true, this.paint);
         return state;
     }
 
-    // loadData() {
-    //     // Mock data loading with setTimeout
-    //     setTimeout(() => {
-    //         this.appState.set('loading.main', false);
-    //     }, 1000);
-    // }
-
-    // loadingListener = (value, oldValue) => {
-        
-    // }
+    loadData() {
+        // Mock data loading with setTimeout
+        setTimeout(() => {
+            this.mainLoader.hide(() => {
+                this.appState.set('loading.main', false);
+            });
+        }, 1000);
+    }
 
     _initResizer() {
         let resizeTimer;

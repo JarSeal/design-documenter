@@ -17,7 +17,6 @@ class State {
         // currently this causes an error
         // the old key value pair should propably just be removed after the check and replaced with the new
         if(!key) return;
-        if(listenerCallback && !global) this.addListener(key, listenerCallback);
 
         const keys = key.split('.');
         let oldValue;
@@ -29,8 +28,8 @@ class State {
                 return;
             }
             oldValue = this.state[keys[keys.length-1]];
-            this._checkListeners(oldValue, value, key);
             this.state[key] = value;
+            this._checkListeners(oldValue, value, key);
             return;
         }
 
@@ -52,9 +51,13 @@ class State {
         }
         if(!global) {
             oldValue = pos[keys[keys.length-1]];
+            pos[keys[keys.length-1]] = value;
             this._checkListeners(oldValue, value, key);
+        } else {
+            pos[keys[keys.length-1]] = value;
         }
-        pos[keys[keys.length-1]] = value;
+
+        if(listenerCallback && !global) this.addListener(key, listenerCallback);
     }
 
     get(key, global) {

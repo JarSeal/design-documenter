@@ -1,13 +1,16 @@
+import { Component } from '../../lighter';
 import './MainLoader.scss';
 
-class MainLoader {
-    constructor(parent) {
-        this.id = 'main-loader';
+class MainLoader extends Component {
+    constructor(data) {
+        super(data);
         this.fadeTime = 200; // in milliseconds
-        const html = `<div id="${this.id}">Loading..</div>`;
-        parent.innerHTML = html;
-        this.elem = document.getElementById(this.id);
-        this.elem.style.transitionDuration = this.fadeTime + 'ms';
+        this.template = `<div>Loading..</div>`;
+        data.style = { transitionDuration: this.fadeTime + 'ms' };
+    }
+
+    paint = () => {
+        this.toggle(true);
     }
 
     toggle(show) {
