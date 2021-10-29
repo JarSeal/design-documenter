@@ -34,6 +34,9 @@ class Router {
                 ...componentData,
                 id: routes[i].id,
                 parentId: parentId,
+                title: routes[i].title,
+                template: routes[i].template,
+                extraRouteData: routes[i].extraRouteData,
             });
             this.routes.push(routes[i]);
             if(routes[i].route === this.curRoute) {
@@ -124,6 +127,11 @@ class Router {
             return;
         }
         this.curRouteData = template;
+    }
+
+    drawView() {
+        this.curRouteData.component.draw();
+        if(this.prevRouteData) this.prevRouteData.component.discard();
     }
 }
 

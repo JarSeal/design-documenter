@@ -7,7 +7,7 @@ class RouteLink extends Component {
         this.appState = data.appState;
     }
 
-    init(data) {
+    init() {
         this.addListener({
             id: 'back-to-root-click',
             type: 'click',
@@ -17,7 +17,6 @@ class RouteLink extends Component {
 
     click = (e) => {
         e.preventDefault();
-        console.log(this.Router, this.data.link);
         this.Router.changeRoute(this.data.link);
     }
 }

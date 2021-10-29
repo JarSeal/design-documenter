@@ -1,5 +1,5 @@
 import bbar from './bbar.html';
-import { _CONST } from '../../_CONST';
+import { _CONFIG } from '../../_CONFIG';
 import MainMenu from './MainMenu';
 import './Bbar.scss';
 import Component from '../../Component';
@@ -29,19 +29,19 @@ class Bbar extends Component {
         this.elem = document.getElementById('bbar');
         this.baseElem = document.getElementById('base-id');
         if(w > h) {
-            this.elem.style.width = _CONST.bbarSize + 'px';
+            this.elem.style.width = _CONFIG.bbarSize + 'px';
             this.elem.style.height = h + 'px';
             this.baseElem.classList.add('landscape');
             this.baseElem.classList.remove('portrait');
             this.baseElem.style.marginTop = 0;
-            this.baseElem.style.marginLeft = _CONST.bbarSize + 'px';
+            this.baseElem.style.marginLeft = _CONFIG.bbarSize + 'px';
             this.appState.set('orientationLand', true);
         } else {
             this.elem.style.width = w + 'px';
-            this.elem.style.height = _CONST.bbarSize + 'px';
+            this.elem.style.height = _CONFIG.bbarSize + 'px';
             this.baseElem.classList.remove('landscape');
             this.baseElem.classList.add('portrait');
-            this.baseElem.style.marginTop = _CONST.bbarSize + 'px';
+            this.baseElem.style.marginTop = _CONFIG.bbarSize + 'px';
             this.baseElem.style.marginLeft = 0;
             this.appState.set('orientationLand', false);
         }

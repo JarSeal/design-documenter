@@ -16,11 +16,13 @@ class Component {
         // [ RESERVED KEYS ]
         // data = {
         //     id, (required, string)
-        //     parentId, (optional, string, used when addChild from with the parent method is not possible)
-        //     replace, (optional, boolean, default=false, whether the Component should replace the parent's innerHTML or not)
-        //     class, (optional, string/array, element classe(s))
-        //     text, (optional, string, element innerHTML text/html)
-        //     tag, (optional, string, element tag name/type)
+        //     parentId (optional, string, used when addChild from with the parent method is not possible)
+        //     replace (optional, boolean, default=false, whether the Component should replace the parent's innerHTML or not)
+        //     class (optional, string/array, element classe(s))
+        //     style (optional, flat object, element inline style(s))
+        //     text (optional, string, element innerHTML text/html)
+        //     tag (optional, string, element tag name/type)
+        //     attach (optional, string, an alternate element id to add the component)
         //     template (optional, string, default=<div id="${data.id}"></div>, element HTML)
         // }
     }
@@ -28,7 +30,7 @@ class Component {
     draw() { // Main Component drawing logic
         if(this.elem) this.discard();
         const data = this.data;
-        this.parent = document.getElementById(this.parentId);
+        this.parent = document.getElementById(data.attach || this.parentId);
         if(!this.template) this.template = data.template || this._createDefaultTemplate(this.id, data);
         this.template = this._templateId(this.template, data);
         if(data.replace) {
@@ -112,7 +114,13 @@ class Component {
             if(typeof data.class === 'string' || data.class instanceof String) {
                 elem.classList.add(data.class);
             } else {
-                elem.classList.add(...data.class);
+                elem.classList.add(...data.class); // data.class is propably an array
+            }
+        }
+        if(data.style) {
+            const keys = Object.keys(data.style);
+            for(let i=0; i<keys.length; i++) {
+                elem.style[keys[i]] = data.style[keys[i]];
             }
         }
         if(data.text) elem.innerHTML += data.text;

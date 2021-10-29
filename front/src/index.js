@@ -24,6 +24,5 @@ import Base from '@/js/components/Base';
 // imagePublic.src = '/assets/example.png';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const app = document.getElementById('root');
-    new Base(app);
+    new Base({ id: 'base-id', parentId: 'root' });
 });

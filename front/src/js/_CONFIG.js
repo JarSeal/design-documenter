@@ -2,7 +2,7 @@ import FourOFour from "./components/contentViews/FourOFour";
 import Landing from "./components/contentViews/Landing";
 import Login from "./components/contentViews/Login";
 
-export const _CONST = {
+export const _CONFIG = {
     bbarSize: 64,
     routes: [
         {

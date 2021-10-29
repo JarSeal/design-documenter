@@ -1,42 +1,35 @@
-import baseHTML from './base.html';
-import Bbar from './bbar/Bbar';
 import State from '../State';
-import MainLoader from './loaders/MainLoader';
+import Component from '../Component';
 import Router from '../Router';
-import { _CONST } from '../_CONST';
+import Bbar from './bbar/Bbar';
+import MainLoader from './loaders/MainLoader';
+import { _CONFIG } from '../_CONFIG';
+import baseHTML from './base.html';
 import './Base.scss';
 
-class Base {
-    constructor(parent) {
-        this.id = 'base-id';
-        this.parent = parent;
-        this.appState;
-        this.init();
-        this.appState = this.initAppState();
+class Base extends Component {
+    constructor(data) {
+        super(data);
+        this.template = baseHTML;
+        this.appState = this._initAppState();
         this._initResizer();
-        this.bbar = new Bbar({ appState: this.appState, parentId: 'base-id', id: 'bbar' });
-        this.loadData();
+        this.Router = new Router(_CONFIG.routes, this.id, this.rcCallback, { appState: this.appState, attach: 'content-area' });
+        this.bbar = this.addChild(new Bbar({ id: 'bbar', attach: 'overlays', appState: this.appState }));
+        this.draw();
     }
 
     init() {
-        this.parent.innerHTML = baseHTML;
-        this.elem = document.getElementById(this.id);
-        this.mainLoader = new MainLoader(
-            document.getElementById('overlays')
-        );
+        this.drawApp();
     }
 
-    initAppState() {
+    _initAppState() {
         const state = new State({
             loading: { main: null },
             resizers: {},
             orientationLand: true,
             curRoute: '/',
         });
-        this.Router = new Router(
-            _CONST.routes, this.id, this.rcCallback, { appState: state }
-        );
-        state.set('loading.main', true, this.loadingListener);
+        // state.set('loading.main', true, this.loadingListener);
         return state;
     }
 
@@ -52,22 +45,12 @@ class Base {
     }
 
     loadingListener = (value, oldValue) => {
-        if(value === false) {
-            this.mainLoader.hide(this.drawApp);
-            return;
-        }
-        this.mainLoader.toggle(value);
+        
     }
 
     drawApp = () => {
         this.bbar.draw();
-
-        const routeData = this.Router.getRouteData();
-        const contentElem = document.getElementById('content-area');
-
-        console.log('ROUTEDATA', routeData);
-        routeData.component.draw(this.appState, contentElem);
-        if(routeData.prevRouteData) routeData.prevRouteData.component.discard();
+        this.Router.drawView();
     }
 
     _initResizer() {
