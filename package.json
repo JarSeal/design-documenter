@@ -1,0 +1,21 @@
+{
+  "name": "design-documenter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "setup": "echo \"Setup\"",
+    "dev-front": "echo \"Front\"",
+    "dev-back": "echo \"Back\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JarSeal/design-documenter.git"
+  },
+  "author": "Kai Forsman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JarSeal/design-documenter/issues"
+  },
+  "homepage": "https://github.com/JarSeal/design-documenter#readme"
+}
