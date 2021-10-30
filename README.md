@@ -8,12 +8,19 @@
 
 ## Installation
 
+Setup everything:
 ```bash
 npm run setup
 ```
 
 ## Development
 
+Frontend:
 ```bash
-npm run dev
+npm run devFront
+```
+
+Backend:
+```bash
+npm run devBack
 ```
