@@ -1,12 +1,14 @@
 {
   "name": "design-documenter",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "setup": "echo \"Setup\"",
-    "dev-front": "echo \"Front\"",
-    "dev-back": "echo \"Back\""
+    "setup": "cd front && npm install && cd ../back && npm install && cd mongo && docker-compose up --no-start",
+    "setupFront": "cd front && npm install",
+    "setupBack": "cd back && npm install && cd mongo && docker-compose up --no-start",
+    "startMongo": "cd back/mongo && docker-compose up -d",
+    "stopMongo": "cd back/mongo && docker-compose down",
+    "devFront": "cd front && npm start",
+    "devBack": "cd back/mongo && docker-compose up -d && cd .. && npm run dev"
   },
   "repository": {
     "type": "git",
