@@ -1,0 +1,21 @@
+Windows: open CMD
+Linux: open terminal
+
+$ docker container run --name beacondb --publish 27017:27017 -d mongo
+
+$ docker exec -it beacondb bash
+
+$ mongo
+
+$ use beacondb
+
+$ db.createUser({ user: "username", pwd: "password", roles: [] })
+
+$ db.createCollection("users")
+
+$ db.users.save({ user: "admin", pass: null })
+
+$ exit
+
+($ mongo --port 27017 -u username -p password --authenticationDatabase beacondb)
+
