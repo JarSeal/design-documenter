@@ -38,7 +38,6 @@ if(process.env.SERVE_STATIC === 'production') {
 
 app.use('/api/login', loginRouter);
 app.use('/api/users', usersRouter);
-app.use('/api/login', loginRouter);
 app.use('/api/health', healthRouter);
 
 if(process.env.NODE_ENV === 'test') {
