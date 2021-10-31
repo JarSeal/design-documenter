@@ -9,10 +9,21 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    minlength: 3
+    minlength: 5
   },
   name: String,
+  email: {
+    type: String,
+    required: true,
+    minlength: 5
+  },
   passwordHash: String,
+  // userGroups: [
+  //   {
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     ref: 'UserGroup'
+  //   }
+  // ],
 });
 
 userSchema.plugin(uniqueValidator);
