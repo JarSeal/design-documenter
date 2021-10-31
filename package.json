@@ -1,0 +1,23 @@
+{
+  "name": "design-documenter",
+  "version": "1.0.0",
+  "scripts": {
+    "setup": "cd front && npm install && cd ../back && npm install && cd mongo && docker-compose up --no-start",
+    "setupFront": "cd front && npm install",
+    "setupBack": "cd back && npm install && cd mongo && docker-compose up --no-start",
+    "startMongo": "cd back/mongo && docker-compose up -d",
+    "stopMongo": "cd back/mongo && docker-compose down",
+    "devFront": "cd front && npm start",
+    "devBack": "cd back/mongo && docker-compose up -d && cd .. && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JarSeal/design-documenter.git"
+  },
+  "author": "Kai Forsman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JarSeal/design-documenter/issues"
+  },
+  "homepage": "https://github.com/JarSeal/design-documenter#readme"
+}
