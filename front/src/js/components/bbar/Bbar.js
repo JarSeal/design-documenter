@@ -14,12 +14,14 @@ class Bbar extends Component {
         this.mainMenu = this.addChild(new MainMenu({ id: 'main-menu' }));
     }
 
-    paint = () => {
+    addListeners() {
         const resizers = this.appState.get('resizers');
         resizers.bbar = this.onResize;
         this.appState.set('resizers', resizers);
         this.onResize();
+    }
 
+    paint = () => {
         this.mainMenu.draw();
     }
 

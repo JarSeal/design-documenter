@@ -4,11 +4,14 @@ import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";
 import { _CONFIG } from "../../_CONFIG";
 
+// Attributes:
+// - afterLoginFn = function for after succesfull login [function]
+// - noRemember = do not save user info in Local Storage (only Session Storage) [boolean]
 class LoginForm extends Component {
     constructor(data) {
         super(data);
         this.template = `<form></form>`;
-        this.appState = data.appState;
+        this.afterLoginFn = data.afterLoginFn;
 
         this.loginState = new State({
             user: '',
@@ -44,7 +47,6 @@ class LoginForm extends Component {
 
     handleLogin = (e) => {
         e.preventDefault();
-        console.log(this.loginState.get('user'), this.loginState.get('pass'));
         const username = this.loginState.get('user');
         const password = this.loginState.get('pass');
         this.login({ username, password });
@@ -56,9 +58,12 @@ class LoginForm extends Component {
             const response = await axios.post(url, credentials);
             this.loginState.set('user', '');
             this.loginState.set('pass', '');
-            this.paint();
+            let remember = true; // Todo: add a checkbox for remember functionality
+            if(this.afterLoginFn) {
+                this.afterLoginFn(response, remember);
+            }
         } catch(exception) {
-            console.log('Wrong username and/or password');
+            console.log('Wrong username and/or password', exception);
         }
     }
 }

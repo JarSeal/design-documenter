@@ -1,10 +1,10 @@
 import FourOFour from "./components/contentViews/FourOFour";
 import Landing from "./components/contentViews/Landing";
-import Login from "./components/contentViews/Login";
 
 export const _CONFIG = {
     bbarSize: 64,
     apiBaseUrl: 'http://localhost:3001/api',
+    lsKeyPrefix: 'bjs_',
     routes: [
         {
             route: '/',
@@ -18,12 +18,6 @@ export const _CONFIG = {
             source: FourOFour,
             is404: true,
             title: '404',
-        },
-        {
-            route: '/login',
-            id: 'route-login',
-            source: Login,
-            title: 'Login',
         },
     ],
 };

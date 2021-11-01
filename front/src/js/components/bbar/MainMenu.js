@@ -9,11 +9,6 @@ class MainMenu extends Component {
             link: '/',
             text: 'H',
         }));
-        this.loginButton = this.addChild(new RouteLink({
-            id: 'login-button',
-            link: '/login',
-            text: 'L',
-        }));
         this.brokenButton = this.addChild(new RouteLink({
             id: 'broken-button',
             link: '/somewhere',
@@ -23,7 +18,6 @@ class MainMenu extends Component {
 
     paint = () => {
         this.homeButton.draw();
-        this.loginButton.draw();
         this.brokenButton.draw();
     }
 }
