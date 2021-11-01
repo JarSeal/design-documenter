@@ -13,7 +13,8 @@ const saveToken = (response, remember) => {
 };
 
 const getToken = () => {
-    let user = this.LS.getItem('beaconUser');
+    const LS = new LocalStorage(_CONFIG.lsKeyPrefix);
+    let user = LS.getItem('beaconUser');
     if(!user) {
         // TODO: try to get from session storage
     }

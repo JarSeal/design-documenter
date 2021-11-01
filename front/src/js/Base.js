@@ -35,9 +35,8 @@ class Base extends Component {
             token = null;
         const user = getToken();
         if(user) {
-            const u = JSON.parse(user);
-            username = u.user;
-            token = u.token;
+            username = user.user;
+            token = user.token;
             loggedIn = true;
         }
 
