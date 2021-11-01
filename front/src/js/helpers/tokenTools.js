@@ -1,25 +1,32 @@
-import { LocalStorage } from "../lighter";
+import { LocalStorage, SessionStorage } from "../lighter";
 import { _CONFIG } from "../_CONFIG";
 
 const saveToken = (response, remember) => {
     const LS = new LocalStorage(_CONFIG.lsKeyPrefix);
+    const SS = new SessionStorage(_CONFIG.lsKeyPrefix);
     if(remember) {
         LS.setItem('beaconUser', JSON.stringify(response.data));
+        SS.removeItem('beaconUser');
     } else {
-        // TODO: implement session storage here..
-
         LS.removeItem('beaconUser');
+        SS.setItem('beaconUser', JSON.stringify(response.data));
     }
 };
 
 const getToken = () => {
     const LS = new LocalStorage(_CONFIG.lsKeyPrefix);
+    const SS = new SessionStorage(_CONFIG.lsKeyPrefix);
     let user = LS.getItem('beaconUser');
-    if(!user) {
-        // TODO: try to get from session storage
-    }
+    if(!user) user = SS.getItem('beaconUser');
     if(user) user = JSON.parse(user);
     return user;
 };
 
-export { saveToken, getToken };
+const removeToken = () => {
+    const LS = new LocalStorage(_CONFIG.lsKeyPrefix);
+    const SS = new SessionStorage(_CONFIG.lsKeyPrefix);
+    LS.removeItem('beaconUser');
+    SS.removeItem('beaconUser');
+};
+
+export { saveToken, getToken, removeToken };

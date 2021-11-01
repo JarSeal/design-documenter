@@ -11,7 +11,7 @@ class Bbar extends Component {
 
         this.appState = data.appState;
 
-        this.mainMenu = this.addChild(new MainMenu({ id: 'main-menu' }));
+        this.mainMenu = this.addChild(new MainMenu({ id: 'main-menu', appState: data.appState }));
     }
 
     addListeners() {

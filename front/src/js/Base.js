@@ -4,7 +4,7 @@ import MainLoader from './components/loaders/MainLoader';
 import { _CONFIG } from './_CONFIG';
 import baseHTML from './base.html';
 import './Base.scss';
-import { getToken } from './helpers/tokenTools';
+import { getToken, removeToken } from './helpers/tokenTools';
 
 class Base extends Component {
     constructor(data) {
@@ -85,7 +85,7 @@ class Base extends Component {
             this.appState.set('user.username', null);
             this.appState.set('user.token', null);
         } else {
-
+            removeToken();
         }
         this.paint();
     }

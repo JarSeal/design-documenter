@@ -61,6 +61,68 @@ class LocalStorage {
     }
 }
 
+// Session Storage
+class SessionStorage {
+    constructor(keyPrefix) {
+        this.keyPrefix = keyPrefix || '';
+        this.sessionStorageAvailable = false;
+        if(this._lsTest()) {
+            this.sessionStorageAvailable = true;
+        }
+    }
+
+    getItem(key, defaultValue) {
+        // defaultValue is returned (if provided) if session storage is not available or the key is not found
+        if(!this.sessionStorageAvailable) return defaultValue || null;
+        if(this.checkIfItemExists(key)) {
+            return sessionStorage.getItem(this.keyPrefix + key);
+        } else {
+            return defaultValue || null;
+        }
+    }
+
+    checkIfItemExists(key) {
+        if(!this.sessionStorageAvailable) return false;
+        return Object.prototype.hasOwnProperty.call(sessionStorage, this.keyPrefix + key);
+    }
+
+    setItem(key, value) {
+        if(!this.sessionStorageAvailable) return false;
+        sessionStorage.setItem(this.keyPrefix + key, value);
+        return true;
+    }
+
+    removeItem(key) {
+        if(!this.sessionStorageAvailable) return false;
+        if(this.checkIfItemExists(key)) {
+            sessionStorage.removeItem(this.keyPrefix + key);
+        }
+        return true;
+    }
+
+    convertValue(defaultValue, lsValue) {
+        if(typeof defaultValue === 'boolean') {
+            return (lsValue === 'true');
+        } else if(typeof defaultValue === 'number') {
+            return Number(lsValue);
+        } else {
+            // typeof string
+            return lsValue;
+        }
+    }
+
+    _lsTest(){
+        var test = this.keyPrefix + 'testSSAvailability';
+        try {
+            sessionStorage.setItem(test, test);
+            sessionStorage.removeItem(test);
+            return true;
+        } catch(e) {
+            return false;
+        }
+    }
+}
+
 class Logger {
     constructor(prefix, quiet) {
         this.prefix = prefix || '';
@@ -98,4 +160,4 @@ class Logger {
     }
 }
 
-export { LocalStorage, Logger }
+export { LocalStorage, SessionStorage, Logger };
