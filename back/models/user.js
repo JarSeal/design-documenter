@@ -25,6 +25,28 @@ const userSchema = mongoose.Schema({
       ref: 'UserGroup'
     }
   ],
+  rights: {
+    universe: {
+      canCreate: Boolean,
+      canEdit: Boolean,
+      canDelete: Boolean,
+    },
+    structure: {
+      canCreate: Boolean,
+      canEdit: Boolean,
+      canDelete: Boolean,
+    },
+    beacon: {
+      canCreate: Boolean,
+      canEdit: Boolean,
+      canDelete: Boolean,
+    },
+    dataset: {
+      canCreate: Boolean,
+      canEdit: Boolean,
+      canDelete: Boolean,
+    },
+  }
 });
 
 userSchema.plugin(uniqueValidator);
