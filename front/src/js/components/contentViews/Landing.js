@@ -1,5 +1,5 @@
-import { Component, LocalStorage } from "../../lighter";
-import { _CONFIG } from "../../_CONFIG";
+import { saveToken } from "../../helpers/tokenTools";
+import { Component } from "../../lighter";
 import LoginForm from "../forms/LoginForm";
 
 class Landing extends Component {
@@ -22,12 +22,7 @@ class Landing extends Component {
     }
 
     afterLogin = (response, remember) => {
-        const LS = new LocalStorage(_CONFIG.lsKeyPrefix);
-        if(remember) {
-            LS.setItem('beaconUser', JSON.stringify(response.data));
-        } else {
-            // TODO: implement session storage here..
-        }
+        saveToken(response, remember);
         this.appState.set('user.username', response.data.username);
         this.appState.set('user.token', response.data.token);
         this.appState.set('user.loggedIn', true);

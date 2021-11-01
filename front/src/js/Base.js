@@ -4,6 +4,7 @@ import MainLoader from './components/loaders/MainLoader';
 import { _CONFIG } from './_CONFIG';
 import baseHTML from './base.html';
 import './Base.scss';
+import { getToken } from './helpers/tokenTools';
 
 class Base extends Component {
     constructor(data) {
@@ -29,10 +30,10 @@ class Base extends Component {
 
     _initAppState = () => {
         // Check if browser has been used to log in
-        let user = this.LS.getItem('beaconUser');
         let loggedIn = false,
             username = null,
             token = null;
+        const user = getToken();
         if(user) {
             const u = JSON.parse(user);
             username = u.user;
