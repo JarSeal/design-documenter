@@ -4,6 +4,7 @@ import Login from "./components/contentViews/Login";
 
 export const _CONFIG = {
     bbarSize: 64,
+    apiBaseUrl: 'http://localhost:3001/api',
     routes: [
         {
             route: '/',

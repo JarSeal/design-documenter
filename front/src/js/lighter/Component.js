@@ -8,7 +8,7 @@ class Component {
     constructor(data) {
         if(!data || !data.id) {
             logger.error('Component id missing.', data);
-            throw new error('Call stack');
+            throw new Error('Call stack');
         }
         if(ids[data.id]) {
             logger.error('ID is already in use.', data);
@@ -24,6 +24,7 @@ class Component {
         this.listeners = {};
         this.children = {};
         this.Router = RouterRef;
+        this.firstDraw = true;
         // *****************
         // [ RESERVED KEYS ]
         // data = {
@@ -39,9 +40,14 @@ class Component {
         // }
     }
 
-    draw() { // Main Component drawing logic
+    draw(drawInput) { // Main Component drawing logic
+        if(!this.parentId) {
+            logger.error('Parent id missing. New Component creation should have a parentId or the the creation should be wrapped in this.addChild() method.', this.data);
+            throw new Error('Call stack');
+        }
         if(this.elem) this.discard();
-        const data = this.data;
+        let data = this.data;
+        if(drawInput) data = Object.assign(this.data, drawInput);
         this.parent = document.getElementById(data.attach || this.parentId);
         if(!this.template) this.template = data.template || this._createDefaultTemplate(this.id, data);
         this.template = this._templateId(this.template, data);
@@ -56,7 +62,11 @@ class Component {
         }
         this.elem = document.getElementById(this.id);
         this._setElemData(this.elem, data);
-        this.init(data);
+        this.addListeners(data);
+        if(this.firstDraw) {
+            this.init(data);
+            this.firstDraw = false;
+        }
         this.paint(data);
     }
 
@@ -79,10 +89,10 @@ class Component {
             this.elem.remove();
             this.elem = null;
         }
-        this.discardExtension();
+        this.erase();
     }
 
-    discardExtension() {} // Additional discard logic from the custom Component
+    erase() {} // Additional discard logic from the custom Component
 
     addChild(component) {
         this.children[component.id] = component;
@@ -92,9 +102,13 @@ class Component {
 
     addListener(listener) {
         let { id, target, type, fn } = listener;
-        if(!id || !type || !fn) {
-            logger.error('Could not add listener, id, type, and/or fn missing.');
-            throw new error('Call stack');
+        if(!type || !fn) {
+            logger.error('Could not add listener, type, and/or fn missing.');
+            throw new Error('Call stack');
+        }
+        if(!id) {
+            id = this.id;
+            listener.id = id;
         }
         if(!target) {
             target = this.elem;
@@ -105,10 +119,19 @@ class Component {
         this.listeners[id] = listener;
     }
 
+    addListeners() {}
+
+    registerListeners() {
+        const listeners = this.defineListeners();
+        for(let i=0; i<listeners.length; i++) {
+            this.addListener(listeners[i]);
+        }
+    }
+
     removeListener(id) {
         if(!id) {
             logger.error('Could not remove listener, id missing.');
-            throw new error('Call stack');
+            throw new Error('Call stack');
         }
         const { target, type, fn } = this.listeners[id];
         target.removeEventListener(type, fn);
