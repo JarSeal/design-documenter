@@ -1,42 +1,42 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
-const UserGroup = require('./userGroup'); UserGroup;
 
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
-const userSchema = mongoose.Schema({
+const userGroupSchema = mongoose.Schema({
   username: {
     type: String,
     required: true,
     unique: true,
-    minlength: 5
+    minlength: 5,
   },
-  name: String,
-  email: {
-    type: String,
+  level: {
+    type: Number,
     required: true,
-    minlength: 5
   },
-  passwordHash: String,
-  userGroups: [
+  creator: {
+    id: mongoose.Schema.Types.ObjectId,
+    date: Date,
+  },
+  users: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'UserGroup'
+      ref: 'User',
+      rights: [],
     }
   ],
 });
 
-userSchema.plugin(uniqueValidator);
-userSchema.set('toJSON', {
+userGroupSchema.plugin(uniqueValidator);
+userGroupSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
     delete returnedObject.__v;
-    delete returnedObject.passwordHash;
   }
 });
 
-const User = mongoose.model('User', userSchema, 'users');
+const UserGroup = mongoose.model('UserGroup', userGroupSchema, 'usergroups');
 
-module.exports = User;
+module.exports = UserGroup;
