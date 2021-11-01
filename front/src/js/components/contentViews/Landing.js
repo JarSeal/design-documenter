@@ -1,4 +1,4 @@
-import { saveToken } from "../../helpers/tokenTools";
+import { saveToken } from "../../helpers/storage";
 import { Component } from "../../lighter";
 import LoginForm from "../forms/LoginForm";
 

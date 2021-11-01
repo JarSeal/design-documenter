@@ -4,7 +4,7 @@ import MainLoader from './components/loaders/MainLoader';
 import { _CONFIG } from './_CONFIG';
 import baseHTML from './base.html';
 import './Base.scss';
-import { getToken, removeToken } from './helpers/tokenTools';
+import { getToken, removeToken } from './helpers/storage';
 
 class Base extends Component {
     constructor(data) {
@@ -84,8 +84,9 @@ class Base extends Component {
         if(!loggedIn) {
             this.appState.set('user.username', null);
             this.appState.set('user.token', null);
-        } else {
             removeToken();
+            this.Router.changeRoute('/');
+            return;
         }
         this.paint();
     }
