@@ -3,6 +3,7 @@ import Landing from "./components/contentViews/Landing";
 
 export const _CONFIG = {
     bbarSize: 64,
+    langs: ['en'],
     basePath: '/beacon',
     apiBaseUrl: 'http://localhost:3001/api',
     lsKeyPrefix: 'bjs_',

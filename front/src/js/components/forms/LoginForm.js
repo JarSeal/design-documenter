@@ -4,6 +4,7 @@ import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";
 import { _CONFIG } from "../../_CONFIG";
 import Spinner from "../widgets/Spinner";
+import { getText } from "../../helpers/lang";
 
 // Attributes for data (id is optional, default is 'bjs-login-form'):
 // - afterLoginFn = function for after succesfull login [function]
@@ -43,7 +44,7 @@ class LoginForm extends Component {
         this.submitButton = this.addChild(new SubmitButton({
             id: 'login-submit',
             class: 'submit-button',
-            text: 'Login',
+            text: getText('login_button'),
         }));
     }
 
@@ -74,7 +75,7 @@ class LoginForm extends Component {
         const password = this.loginState.get('pass');
         
         if(!username.trim().length || !password.trim().length) {
-            this.setMsg('Please provide username and password.');
+            this.setMsg(getText('login_error_empty'));
             return;
         }
         this.login({ username, password });
@@ -93,12 +94,10 @@ class LoginForm extends Component {
                 this.afterLoginFn(response, remember);
             }
         } catch(exception) {
-            setTimeout(() => {
-                this.loginState.set('checking', false);
-                const msg = 'Wrong username and/or password.';
-                this.setMsg(msg);
-                this.logger.log(msg, exception);
-            }, 2000);
+            this.loginState.set('checking', false);
+            const msg = getText('login_error_wrong');
+            this.setMsg(msg);
+            this.logger.log(msg, exception);
         }
     }
 

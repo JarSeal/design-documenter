@@ -5,12 +5,14 @@ import { _CONFIG } from './_CONFIG';
 import baseHTML from './base.html';
 import './Base.scss';
 import { getToken, removeToken } from './helpers/storage';
+import { loadAssets } from './helpers/lang';
 
 class Base extends Component {
     constructor(data) {
         super(data);
         this.template = baseHTML;
         this.appState = this._initAppState();
+        loadAssets();
         this._initResizer();
         this.Router = new Router(_CONFIG, this.id, this.paint, { appState: this.appState, attach: 'content-area' });
         this.bbar = this.addChild(new Bbar({ id: 'bbar', appState: this.appState }));
