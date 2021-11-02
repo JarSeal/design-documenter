@@ -4,7 +4,7 @@ import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";
 import { _CONFIG } from "../../_CONFIG";
 
-// Attributes:
+// Attributes for data:
 // - afterLoginFn = function for after succesfull login [function]
 // - noRemember = do not save user info in Local Storage (only Session Storage) [boolean]
 class LoginForm extends Component {
@@ -47,8 +47,14 @@ class LoginForm extends Component {
 
     handleLogin = (e) => {
         e.preventDefault();
+        
         const username = this.loginState.get('user');
         const password = this.loginState.get('pass');
+        
+        if(!username.trim().length || !password.trim().length) {
+            console.log('Please provide username and password.');
+            return;
+        }
         this.login({ username, password });
     }
 
@@ -63,7 +69,7 @@ class LoginForm extends Component {
                 this.afterLoginFn(response, remember);
             }
         } catch(exception) {
-            console.log('Wrong username and/or password', exception);
+            this.logger.log('Wrong username and/or password', exception);
         }
     }
 }

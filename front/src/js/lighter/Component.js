@@ -24,6 +24,7 @@ class Component {
         this.listeners = {};
         this.children = {};
         this.Router = RouterRef;
+        this.logger = logger;
         this.firstDraw = true;
         // *****************
         // [ RESERVED KEYS ]
