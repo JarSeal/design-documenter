@@ -5,6 +5,7 @@ import TextInput from "./formComponents/TextInput";
 import { _CONFIG } from "../../_CONFIG";
 import Spinner from "../widgets/Spinner";
 import { getText } from "../../helpers/lang";
+import Checkbox from "./formComponents/Checkbox";
 
 // Attributes for data (id is optional, default is 'bjs-login-form'):
 // - afterLoginFn = function for after succesfull login [function]
@@ -32,14 +33,19 @@ class LoginForm extends Component {
         }));
         this.userField = this.addChild(new TextInput({
             id: 'login-user-field',
-            label: 'Username:',
+            label: getText('username')+':',
             changeFn: (e) => { this.loginState.set('user', e.target.value); },
         }));
         this.passField = this.addChild(new TextInput({
             id: 'login-pass-field',
-            label: 'Password:',
+            label: getText('password')+':',
             password: true,
             changeFn: (e) => { this.loginState.set('pass', e.target.value); },
+        }));
+        this.rememberMe = this.addChild(new Checkbox({
+            id: 'login-remember-me',
+            label: getText('login_remember_me')+':',
+            changeFn: (e) => { console.log('CHANGE'); },
         }));
         this.submitButton = this.addChild(new SubmitButton({
             id: 'login-submit',
