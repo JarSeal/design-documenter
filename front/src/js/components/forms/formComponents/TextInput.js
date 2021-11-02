@@ -23,6 +23,7 @@ class TextInput extends Component {
                         type="${data.password ? 'password' : 'text'}"
                         name="${data.name}"
                         value="${data.value || ''}"
+                        ${data.disabled ? 'disabled' : ''}
                     />
                 </label>
             </div>
