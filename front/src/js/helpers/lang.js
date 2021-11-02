@@ -1,13 +1,14 @@
 import assetsObj from '../../lang/assets';
-import { LocalStorage, Logger, SessionStorage } from '../LIGHTER';
+import { LocalStorage, SessionStorage, Logger } from '../LIGHTER';
 import { _CONFIG } from '../_CONFIG';
 
-let assets, curLang;
+let assets, curLang, baseLang = 'en';
 const logger = new Logger('Beacon lang *****')
 
 const loadAssets = () => {
     // Parse possible csv file here
     assets = assetsObj;
+    getLang();
     return true;
 };
 
@@ -19,6 +20,8 @@ const getLang = () => {
         const SS = new SessionStorage(_CONFIG.ssKeyPrefix);
         lang = SS.getItem('lang');
     }
+    if(!lang) lang = baseLang;
+    curLang = lang;
     return lang;
 };
 
@@ -33,7 +36,12 @@ const getText = (id, replacers) => {
         logger.warn(`Text asset missing for lang: ${curLang}. id: ${id}, replacers: ${JSON.stringify(replacers)}`);
         return `[${id}]`;
     }
+    if(replacers) {
+        for(let i=0; i<replacers.length; i++) {
+            text = text.replace('${'+i+'}', replacers[i]);
+        }
+    }
     return text;
 };
 
-export { loadAssets, getText };
+export { loadAssets, getLang, getText };
