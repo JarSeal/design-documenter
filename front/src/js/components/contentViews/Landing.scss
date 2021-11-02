@@ -45,6 +45,11 @@ $marginBottom: 1rem;
             display: inline-block;
             color: #333;
         }
+        &--checkbox {
+            .form-elem__label {
+                vertical-align: bottom;
+            }
+        }
     }
     .spinner-icon {
         position: absolute;
