@@ -17,30 +17,29 @@ $marginBottom: 1rem;
         width: 100%;
         margin-bottom: $marginBottom;
         font-size: 0;
+        text-align: right;
         label {
-            display: block;
-            width: 100%;
+            display: inline-block;
             max-width: 40rem;
         }
         &__label {
             font-size: 1.5rem;
             display: inline-block;
-            width: 50%;
-            min-width: 10rem;
+            max-width: 16rem;
             padding-right: 1rem;
-            text-align: right;
+            text-align: left;
         }
         &__input {
             padding: 0.6rem;
             font-size: 1.7rem;
-            width: 50%;
-            max-width: 20rem;
+            min-width: 20rem;
         }
         &.submit-button {
             font-size: 1.8rem;
             font-weight: 700;
             padding: 0.4rem 0;
             width: 100%;
+            text-align: center;
             max-width: 12rem;
             display: inline-block;
             color: #333;
@@ -48,6 +47,7 @@ $marginBottom: 1rem;
         &--checkbox {
             .form-elem__label {
                 vertical-align: bottom;
+                padding-right: 0.5rem;
             }
         }
     }

@@ -16,10 +16,28 @@ class Checkbox extends Component {
                         type="checkbox"
                         name="${data.name}"
                         ${data.checked ? 'checked' : ''}
+                        ${data.disabled ? 'disabled' : ''}
                     />
                 </label>
             </div>
         `;
+    }
+
+    addListeners(data) {
+        if(data.changeFn) {
+            this.addListener({
+                id: this.inputId + '-click',
+                target: document.getElementById(this.inputId),
+                type: 'click',
+                fn: data.changeFn,
+            });
+        }
+    }
+
+    paint(data) {
+        const inputElem = document.getElementById(this.inputId);
+        inputElem.checked = data.checked;
+        if(data.disabled) inputElem.setAttribute('disabled', '');
     }
 }
 

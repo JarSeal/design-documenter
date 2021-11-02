@@ -21,6 +21,7 @@ class LoginForm extends Component {
         this.loginState = new State({
             user: '',
             pass: '',
+            rememberMe: false,
             checking: false,
         });
         
@@ -46,7 +47,7 @@ class LoginForm extends Component {
             id: 'login-remember-me',
             label: getText('login_remember_me')+':',
             checked: false,
-            changeFn: (e) => { console.log('CHANGE', e.target.value); },
+            changeFn: (e) => { this.loginState.set('rememberMe', e.target.checked) },
         }));
         this.submitButton = this.addChild(new SubmitButton({
             id: 'login-submit',
@@ -70,7 +71,7 @@ class LoginForm extends Component {
         this.formMsg.draw();
         this.userField.draw({ value: this.loginState.get('user'), disabled: this.loginState.get('checking') });
         this.passField.draw({ value: this.loginState.get('pass'), disabled: this.loginState.get('checking') });
-        this.rememberMe.draw();
+        this.rememberMe.draw({ checked: this.loginState.get('rememberMe'), disabled: this.loginState.get('checking') });
         this.spinner.draw();
         this.submitButton.draw({ disabled: this.loginState.get('checking') });
     }
@@ -94,10 +95,11 @@ class LoginForm extends Component {
         try {
             const url = _CONFIG.apiBaseUrl + '/login';
             const response = await axios.post(url, credentials);
+            const remember = this.loginState.get('rememberMe');
             this.loginState.set('user', '');
             this.loginState.set('pass', '');
+            this.loginState.set('rememberMe', false);
             this.loginState.set('checking', false);
-            let remember = true; // Todo: add a checkbox for remember functionality
             if(this.afterLoginFn) {
                 this.afterLoginFn(response, remember);
             }
