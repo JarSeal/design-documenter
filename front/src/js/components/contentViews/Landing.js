@@ -1,6 +1,7 @@
 import { saveToken } from "../../helpers/storage";
 import { Component } from "../../LIGHTER";
 import LoginForm from "../forms/LoginForm";
+import "./Landing.scss";
 
 class Landing extends Component {
     constructor(data) {
@@ -8,7 +9,6 @@ class Landing extends Component {
         this.appState = data.appState;
         this.template = `<div><h2>${data.title}</h2></div>`;
         this.loginForm = this.addChild(new LoginForm({
-            id: 'login-form',
             afterLoginFn: this.afterLogin,
         }));
     }

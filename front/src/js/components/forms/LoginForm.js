@@ -4,20 +4,27 @@ import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";
 import { _CONFIG } from "../../_CONFIG";
 
-// Attributes for data:
+// Attributes for data (id is optional, default is 'bjs-login-form'):
 // - afterLoginFn = function for after succesfull login [function]
 // - noRemember = do not save user info in Local Storage (only Session Storage) [boolean]
 class LoginForm extends Component {
     constructor(data) {
+        if(!data.id) data.id = 'bjs-login-form';
         super(data);
         this.template = `<form></form>`;
         this.afterLoginFn = data.afterLoginFn;
+        this.msgId = this.id + '-msg';
 
         this.loginState = new State({
             user: '',
             pass: '',
+            checking: false,
         });
 
+        this.formMsg = this.addChild(new Component({
+            id: this.id + '-form-msg',
+            class: 'form-msg',
+        }));
         this.userField = this.addChild(new TextInput({
             id: 'login-user-field',
             label: 'Username:',
@@ -29,7 +36,16 @@ class LoginForm extends Component {
             password: true,
             changeFn: (e) => { this.loginState.set('pass', e.target.value); },
         }));
-        this.submitButton = this.addChild(new SubmitButton({ id: 'login-submit', text: 'Login' }));
+        this.spinner = this.addChild(new Component({
+            id: this.id + '-spinner-icon',
+            class: 'spinner-icon',
+            text: 'Checking..',
+        }));
+        this.submitButton = this.addChild(new SubmitButton({
+            id: 'login-submit',
+            class: 'submit-button',
+            text: 'Login',
+        }));
     }
 
     addListeners = () => {
@@ -37,39 +53,72 @@ class LoginForm extends Component {
             type: 'submit',
             fn: this.handleLogin,
         });
+        this.loginState.addListener('checking', (newValue) => {
+            this.paint();
+            this.showSpinner(newValue);
+        })
     }
 
     paint = () => {
-        this.userField.draw({ value: this.loginState.get('user') });
-        this.passField.draw({ value: this.loginState.get('pass') });
-        this.submitButton.draw();
+        this.formMsg.draw();
+        this.userField.draw({ value: this.loginState.get('user'), disabled: this.loginState.get('checking') });
+        this.passField.draw({ value: this.loginState.get('pass'), disabled: this.loginState.get('checking') });
+        this.spinner.draw();
+        this.submitButton.draw({ disabled: this.loginState.get('checking') });
     }
 
     handleLogin = (e) => {
         e.preventDefault();
         
+        this.setMsg('');
         const username = this.loginState.get('user');
         const password = this.loginState.get('pass');
         
         if(!username.trim().length || !password.trim().length) {
-            console.log('Please provide username and password.');
+            this.setMsg('Please provide username and password.');
             return;
         }
         this.login({ username, password });
     }
 
     login = async credentials => {
+        this.loginState.set('checking', true);
         try {
             const url = _CONFIG.apiBaseUrl + '/login';
             const response = await axios.post(url, credentials);
             this.loginState.set('user', '');
             this.loginState.set('pass', '');
+            this.loginState.set('checking', false);
             let remember = true; // Todo: add a checkbox for remember functionality
             if(this.afterLoginFn) {
                 this.afterLoginFn(response, remember);
             }
         } catch(exception) {
-            this.logger.log('Wrong username and/or password', exception);
+            setTimeout(() => {
+                this.loginState.set('checking', false);
+                const msg = 'Wrong username and/or password.';
+                this.setMsg(msg);
+                this.logger.log(msg, exception);
+            }, 2000);
+        }
+    }
+
+    setMsg = (msg) => {
+        const elem = this.formMsg.elem;
+        if(msg.length) {
+            elem.classList.add('show-msg');
+        } else {
+            elem.classList.remove('show-msg');
+        }
+        elem.innerText = msg;
+    }
+
+    showSpinner = (show) => {
+        const elem = this.spinner.elem;
+        if(show) {
+            elem.classList.add('show-spinner');
+        } else {
+            elem.classList.remove('show-spinner');
         }
     }
 }
