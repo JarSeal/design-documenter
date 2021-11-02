@@ -5,17 +5,19 @@ let routerInitiated = false;
 const logger = new Logger('LIGHTER.js ROUTE *****');
 
 class Router {
-    constructor(routes, parentId, rcCallback, componentData) {
+    constructor(routesData, parentId, rcCallback, componentData) {
+        // DOCUMENTATION: routesData = { basePath: '', routes: [] }
         if(routerInitiated) {
             logger.error('Router has already been initiated. Only one router per app is allowed');
             throw new Error('Call stack');
         }
         RouterRef = this;
         this.routes = [];
-        this.curRoute = '/';
+        this.basePath = routesData.basePath;
+        this.curRoute = this.basePath + '/';
         this.rcCallback = rcCallback;
         this.curRouteData = {
-            route: '/',
+            route: this.basePath + '/',
             source: null,
             component: null,
             level: 0,
@@ -23,7 +25,7 @@ class Router {
         this.prevRoute = null;
         this.prevRouteData = null;
         if(!componentData) componentData = {};
-        this.initRouter(routes, parentId, componentData);
+        this.initRouter(routesData.routes, parentId, componentData);
     }
 
     initRouter(routes, parentId, componentData) {
@@ -34,6 +36,7 @@ class Router {
         }
         let routeFound = false;
         for(let i=0; i<routes.length; i++) {
+            routes[i].route = this.basePath + routes[i].route;
             routes[i].component = new routes[i].source({
                 ...componentData,
                 id: routes[i].id,
@@ -43,7 +46,7 @@ class Router {
                 extraRouteData: routes[i].extraRouteData,
             });
             this.routes.push(routes[i]);
-            if(routes[i].route === this.curRoute) {
+            if(routes[i].route === this.curRoute || routes[i].route === this.curRoute + '/') {
                 routeFound = true;
                 this.curRouteData = routes[i];
             }
@@ -71,8 +74,9 @@ class Router {
         }
     }
 
-    changeRoute(route) {
-        if(route === this.curRoute) return;
+    changeRoute(route, forceUpdate) {
+        route = this.basePath + route;
+        if(route === this.curRoute && !forceUpdate) return;
         const routeState = this._createRouteState(route);
         window.history.pushState(routeState, '', route);
         this.curRouteData.component.discard();
@@ -102,7 +106,7 @@ class Router {
     setRoute() {
         let path = location.pathname;
         if(!path) {
-            this.curRoute = '/';
+            this.curRoute = this.basePath + '/';
         } else {
             // Remove last slash if found
             if(path.length > 1 && path.substring(path.length - 1, path.length) === '/') {
@@ -113,6 +117,7 @@ class Router {
     }
 
     addRoute(routeData) {
+        routeData.route = this.basePath + routeData.route;
         this.routes.push(routeData);
         if(routeData.route === this.curRoute) {
             this.curRouteData = routeData;

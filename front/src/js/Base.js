@@ -13,7 +13,7 @@ class Base extends Component {
         this.LS = new LocalStorage(_CONFIG.lsKeyPrefix);
         this.appState = this._initAppState();
         this._initResizer();
-        this.Router = new Router(_CONFIG.routes, this.id, this.paint, { appState: this.appState, attach: 'content-area' });
+        this.Router = new Router(_CONFIG, this.id, this.paint, { appState: this.appState, attach: 'content-area' });
         this.bbar = this.addChild(new Bbar({ id: 'bbar', appState: this.appState }));
         this.mainLoader = this.addChild(new MainLoader({ id: 'main-loader', attach: 'overlays' }));
         this.loadData();
