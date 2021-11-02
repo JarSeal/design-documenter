@@ -1,5 +1,5 @@
 import { saveToken } from "../../helpers/storage";
-import { Component } from "../../lighter";
+import { Component } from "../../LIGHTER";
 import LoginForm from "../forms/LoginForm";
 
 class Landing extends Component {

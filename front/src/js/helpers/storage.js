@@ -1,4 +1,4 @@
-import { LocalStorage, SessionStorage } from "../lighter";
+import { LocalStorage, SessionStorage } from "../LIGHTER";
 import { _CONFIG } from "../_CONFIG";
 
 let LStorage, SStorage;

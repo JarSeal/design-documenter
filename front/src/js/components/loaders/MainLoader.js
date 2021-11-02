@@ -1,4 +1,4 @@
-import { Component } from '../../lighter';
+import { Component } from '../../LIGHTER';
 import './MainLoader.scss';
 
 class MainLoader extends Component {

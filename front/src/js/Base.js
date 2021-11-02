@@ -1,4 +1,4 @@
-import { State, Component, Router, LocalStorage } from './lighter';
+import { State, Component, Router, LocalStorage } from './LIGHTER';
 import Bbar from './components/bbar/Bbar';
 import MainLoader from './components/loaders/MainLoader';
 import { _CONFIG } from './_CONFIG';

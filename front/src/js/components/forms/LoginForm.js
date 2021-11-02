@@ -1,4 +1,4 @@
-import { State, Component } from "../../lighter";
+import { State, Component } from "../../LIGHTER";
 import axios from 'axios';
 import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";

@@ -1,4 +1,4 @@
-import Component from "../../lighter/Component";
+import Component from "../../LIGHTER/Component";
 
 class RouteLink extends Component {
     constructor(data) {

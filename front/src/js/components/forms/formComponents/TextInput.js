@@ -1,4 +1,4 @@
-import Component from "../../../lighter/Component";
+import Component from "../../../LIGHTER/Component";
 
 // Attributes:
 // - value = value to display on the field
