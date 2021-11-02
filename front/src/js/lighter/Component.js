@@ -40,6 +40,7 @@ class Component {
         //     tag (optional, string, element tag name/type)
         //     attach (optional, string, an alternate element id to add the component)
         //     template (optional, string, default=<div id="${data.id}"></div>, element HTML)
+        //     noRedraws (optional, boolean, whether the element shouldn't be redrawn after the first draw)
         // }
     }
 
@@ -48,9 +49,10 @@ class Component {
             logger.error('Parent id missing. New Component creation should have a parentId or the the creation should be wrapped in this.addChild() method.', this.data);
             throw new Error('Call stack');
         }
-        if(this.elem) this.discard();
         let data = this.data;
         if(drawInput) data = Object.assign(this.data, drawInput);
+        if(!this.firstDraw && data.noRedraws) return;
+        if(this.elem) this.discard();
         this.parent = document.getElementById(data.attach || this.parentId);
         if(!this.template) this.template = data.template || this._createDefaultTemplate(this.id, data);
         this.template = this._templateId(this.template, data);
@@ -157,7 +159,8 @@ class Component {
             if(typeof data.class === 'string' || data.class instanceof String) {
                 elem.classList.add(data.class);
             } else {
-                elem.classList.add(...data.class); // data.class is propably an array
+                // data.class is propably an array then
+                elem.classList.add(...data.class);
             }
         }
         if(data.style) {
