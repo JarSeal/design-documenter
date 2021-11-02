@@ -34,7 +34,9 @@ class Component {
         //     replace (optional, boolean, default=false, whether the Component should replace the parent's innerHTML or not)
         //     class (optional, string/array, element classe(s))
         //     style (optional, flat object, element inline style(s))
-        //     text (optional, string, element innerHTML text/html)
+        //     appendHtml (optional, string, element's appended innerHTML text/html)
+        //     html (optional, string, element's replacing innerHTML text/html)
+        //     text (optional, string, element innerText text)
         //     tag (optional, string, element tag name/type)
         //     attach (optional, string, an alternate element id to add the component)
         //     template (optional, string, default=<div id="${data.id}"></div>, element HTML)
@@ -164,7 +166,9 @@ class Component {
                 elem.style[keys[i]] = data.style[keys[i]];
             }
         }
-        if(data.text) elem.innerHTML += data.text;
+        if(data.text) elem.innerText = data.text;
+        if(data.html) elem.innerHTML = data.html;
+        if(data.appendHtml) elem.innerHTML += data.appendHtml;
     }
 
     _createDefaultTemplate(id, data) {
