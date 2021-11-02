@@ -39,7 +39,7 @@ const getStorage = (type) => {
         return LStorage;
     } else if(type === 'SS') {
         if(!SStorage) {
-            SStorage = new SessionStorage(_CONFIG.lsKeyPrefix);
+            SStorage = new SessionStorage(_CONFIG.ssKeyPrefix);
         }
         return SStorage;
     }

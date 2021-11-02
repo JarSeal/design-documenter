@@ -6,6 +6,7 @@ export const _CONFIG = {
     basePath: '/beacon',
     apiBaseUrl: 'http://localhost:3001/api',
     lsKeyPrefix: 'bjs_',
+    ssKeyPrefix: 'bjs_',
     routes: [
         {
             route: '/',
