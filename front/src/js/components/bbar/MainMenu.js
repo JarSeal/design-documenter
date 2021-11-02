@@ -26,7 +26,9 @@ class MainMenu extends Component {
     paint = () => {
         this.homeButton.draw();
         this.brokenButton.draw();
-        this.logoutButton.draw();
+        if(this.appState.get('user.loggedIn')) {
+            this.logoutButton.draw();
+        }
     }
 
     click = (e) => {
