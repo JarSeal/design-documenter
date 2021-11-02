@@ -5,7 +5,8 @@ import Component from "../../../LIGHTER/Component";
 // - password = whether the input type is password [boolean]
 // - label = field label [string]
 // - name = input name property [string]
-// - changeFn = function that is ran after each change
+// - changeFn = function that is ran after each change [function]
+// - disabled = whether the field is disabled or not [boolean]
 class TextInput extends Component {
     constructor(data) {
         super(data);
@@ -42,6 +43,7 @@ class TextInput extends Component {
     paint(data) {
         const inputElem = document.getElementById(this.inputId);
         inputElem.value = data.value;
+        if(data.disabled) inputElem.setAttribute('disabled', '');
     }
 }
 

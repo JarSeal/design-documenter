@@ -3,6 +3,7 @@ import axios from 'axios';
 import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";
 import { _CONFIG } from "../../_CONFIG";
+import Spinner from "../widgets/Spinner";
 
 // Attributes for data (id is optional, default is 'bjs-login-form'):
 // - afterLoginFn = function for after succesfull login [function]
@@ -13,14 +14,17 @@ class LoginForm extends Component {
         super(data);
         this.template = `<form></form>`;
         this.afterLoginFn = data.afterLoginFn;
-        this.msgId = this.id + '-msg';
+        this.spinnerAnimTimer;
 
         this.loginState = new State({
             user: '',
             pass: '',
             checking: false,
         });
-
+        
+        this.spinner = this.addChild(new Spinner({
+            id: this.id + '-spinner-icon',
+        }));
         this.formMsg = this.addChild(new Component({
             id: this.id + '-form-msg',
             class: 'form-msg',
@@ -36,11 +40,6 @@ class LoginForm extends Component {
             password: true,
             changeFn: (e) => { this.loginState.set('pass', e.target.value); },
         }));
-        this.spinner = this.addChild(new Component({
-            id: this.id + '-spinner-icon',
-            class: 'spinner-icon',
-            text: 'Checking..',
-        }));
         this.submitButton = this.addChild(new SubmitButton({
             id: 'login-submit',
             class: 'submit-button',
@@ -55,7 +54,7 @@ class LoginForm extends Component {
         });
         this.loginState.addListener('checking', (newValue) => {
             this.paint();
-            this.showSpinner(newValue);
+            this.spinner.showSpinner(newValue);
         })
     }
 
@@ -111,15 +110,6 @@ class LoginForm extends Component {
             elem.classList.remove('show-msg');
         }
         elem.innerText = msg;
-    }
-
-    showSpinner = (show) => {
-        const elem = this.spinner.elem;
-        if(show) {
-            elem.classList.add('show-spinner');
-        } else {
-            elem.classList.remove('show-spinner');
-        }
     }
 }
 

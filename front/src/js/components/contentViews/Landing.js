@@ -17,6 +17,7 @@ class Landing extends Component {
         if(this.appState.get('user.loggedIn')) {
             this.elem.innerHTML += 'LOGGED IN';
         } else {
+            this.elem.classList.add('login-view');
             this.loginForm.draw();
         }
     }

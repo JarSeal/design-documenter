@@ -1,3 +1,54 @@
+$marginBottom: 1rem;
+
 #bjs-login-form {
-    
+    width: 100%;
+    max-width: 48rem;
+    padding: 4rem;
+    position: relative;
+    text-align: right;
+    .form-msg {
+        margin-bottom: $marginBottom;
+        min-height: 2.4rem;
+        color: red;
+        text-align: right;
+        font-size: 1.6rem;
+    }
+    .form-elem {
+        width: 100%;
+        margin-bottom: $marginBottom;
+        font-size: 0;
+        label {
+            display: block;
+            width: 100%;
+            max-width: 40rem;
+        }
+        &__label {
+            font-size: 1.5rem;
+            display: inline-block;
+            width: 50%;
+            min-width: 10rem;
+            padding-right: 1rem;
+            text-align: right;
+        }
+        &__input {
+            padding: 0.6rem;
+            font-size: 1.7rem;
+            width: 50%;
+            max-width: 20rem;
+        }
+        &.submit-button {
+            font-size: 1.8rem;
+            font-weight: 700;
+            padding: 0.4rem 0;
+            width: 100%;
+            max-width: 12rem;
+            display: inline-block;
+            color: #333;
+        }
+    }
+    .spinner-icon {
+        position: absolute;
+        right: 18.3rem;
+        bottom: 5.1rem;
+    }
 }
