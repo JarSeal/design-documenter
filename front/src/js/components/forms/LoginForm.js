@@ -45,7 +45,8 @@ class LoginForm extends Component {
         this.rememberMe = this.addChild(new Checkbox({
             id: 'login-remember-me',
             label: getText('login_remember_me')+':',
-            changeFn: (e) => { console.log('CHANGE'); },
+            checked: false,
+            changeFn: (e) => { console.log('CHANGE', e.target.value); },
         }));
         this.submitButton = this.addChild(new SubmitButton({
             id: 'login-submit',
@@ -69,6 +70,7 @@ class LoginForm extends Component {
         this.formMsg.draw();
         this.userField.draw({ value: this.loginState.get('user'), disabled: this.loginState.get('checking') });
         this.passField.draw({ value: this.loginState.get('pass'), disabled: this.loginState.get('checking') });
+        this.rememberMe.draw();
         this.spinner.draw();
         this.submitButton.draw({ disabled: this.loginState.get('checking') });
     }
