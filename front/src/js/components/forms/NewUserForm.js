@@ -89,6 +89,7 @@ class NewUserForm extends Component {
             value: this.registerState.get('username'),
             error: this._usernameErrors(),
         });
+        this.drawHTML();
         this.passField.draw({
             value: this.registerState.get('password'),
             error: this._passwordsErrors(),

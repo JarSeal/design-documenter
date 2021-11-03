@@ -109,6 +109,10 @@ class Component {
 
     erase() {} // Additional discard logic from the custom Component
 
+    drawHTML = () => {
+        
+    }
+
     addChild(component) {
         this.children[component.id] = component;
         component.parentId = this.id;
