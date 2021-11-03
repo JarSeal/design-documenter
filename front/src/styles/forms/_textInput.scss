@@ -5,6 +5,7 @@
     border: none;
     border-radius: 0.3rem;
     border-bottom: 3px solid rgba(#fff, 0);
+    transition: border-bottom-color 0.2s ease-in-out;
 }
 
 .form-elem--error {

@@ -44,6 +44,7 @@ fieldset {
         max-width: 16rem;
         padding-right: 1rem;
         text-align: left;
+        transition: color 0.2s ease-in-out;
     }
     &--error {
         .form-elem__label {
