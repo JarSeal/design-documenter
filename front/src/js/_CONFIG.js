@@ -1,5 +1,6 @@
 import FourOFour from "./components/contentViews/FourOFour";
 import Landing from "./components/contentViews/Landing";
+import NewUser from "./components/contentViews/NewUser";
 
 export const _CONFIG = {
     bbarSize: 64,
@@ -21,6 +22,12 @@ export const _CONFIG = {
             source: FourOFour,
             is404: true,
             title: '404',
+        },
+        {
+            route: '/newuser',
+            id: 'new-user',
+            source: NewUser,
+            title: 'New User',
         },
     ],
 };

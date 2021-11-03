@@ -23,4 +23,8 @@ export const assetsObj = {
         en: 'Wrong username and/or password.',
         fi: 'Väärä käyttäjänimi ja/tai salasana.',
     },
+    create_new_user_button: {
+        en: 'Create User',
+        fi: 'Luo käyttäjä',
+    },
 };
