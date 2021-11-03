@@ -25,9 +25,6 @@ class LoginForm extends Component {
             checking: false,
         });
         
-        this.spinner = this.addChild(new Spinner({
-            id: this.id + '-spinner-icon',
-        }));
         this.formMsg = this.addChild(new Component({
             id: this.id + '-form-msg',
             class: 'form-msg',
@@ -48,6 +45,9 @@ class LoginForm extends Component {
             label: getText('login_remember_me')+':',
             checked: false,
             changeFn: (e) => { this.loginState.set('rememberMe', e.target.checked) },
+        }));
+        this.spinner = this.addChild(new Spinner({
+            id: this.id + '-spinner-icon',
         }));
         this.submitButton = this.addChild(new SubmitButton({
             id: 'login-submit',
