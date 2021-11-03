@@ -1,5 +1,11 @@
 import { Component } from "../../../LIGHTER";
 
+// Attributes:
+// - label = field label [String]
+// - name = input name property [String]
+// - changeFn = function that is ran after each change [Function]
+// - disabled = whether the field is disabled or not [Boolean]
+// - error = an error boolean or object to tell if the field has errors {hasError:Boolean, errorMsg:String} [Boolean/Object]
 class Checkbox extends Component {
     constructor(data) {
         super(data);
@@ -21,6 +27,11 @@ class Checkbox extends Component {
                 </label>
             </div>
         `;
+        this.errorComp = this.addChild(new Component({
+            id: this.id + '-error-msg',
+            class: 'form-elem__error-msg',
+        }));
+        if(data.error) data.class = 'form-elem--error';
     }
 
     addListeners(data) {
@@ -37,6 +48,13 @@ class Checkbox extends Component {
     paint(data) {
         const inputElem = document.getElementById(this.inputId);
         inputElem.checked = data.checked;
+        if(data.error) {
+            this.elem.classList.add('form-elem--error');
+            if(data.error.errorMsg) {
+                this.elem.classList.add('form-elem--error-msg');
+                this.errorComp.draw({ text: data.error.errorMsg });
+            }
+        }
         if(data.disabled) inputElem.setAttribute('disabled', '');
     }
 }

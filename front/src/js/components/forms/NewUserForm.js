@@ -41,6 +41,12 @@ class NewUserForm extends Component {
             changeFn: (e) => { this.registerState.set('password', e.target.value); },
             attach: fieldsetId,
         }));
+        this.passField2 = this.addChild(new TextInput({
+            id: 'register-password-field2',
+            label: getText('password')+':',
+            changeFn: (e) => { console.log('Password match', e.target.value === this.registerState.get('password')); },
+            attach: fieldsetId,
+        }));
         this.spinner = this.addChild(new Spinner({
             id: this.id + '-spinner-icon',
             attach: fieldsetId,
@@ -52,6 +58,13 @@ class NewUserForm extends Component {
         }));
     }
 
+    addListeners = () => {
+        this.addListener({
+            type: 'submit',
+            fn: this.handleNewUserSubmit,
+        });
+    }
+
     paint = () => {
         if(this.registerState.get('checking')) {
             document.getElementById(this.fieldsetId).disabled = true;
@@ -59,8 +72,13 @@ class NewUserForm extends Component {
         this.formMsg.draw();
         this.userField.draw({ value: this.registerState.get('username') });
         this.passField.draw({ value: this.registerState.get('password') });
+        this.passField2.draw({ value: '' });
         this.spinner.draw();
         this.submitButton.draw();
+    }
+
+    handleNewUserSubmit = (e) => {
+        e.preventDefault();
     }
 }
 

@@ -66,11 +66,16 @@ class LoginForm extends Component {
         });
     }
 
-    paint = () => {
+    paint = (data) => {
         this.formMsg.draw();
         this.userField.draw({ value: this.loginState.get('user'), disabled: this.loginState.get('checking') });
         this.passField.draw({ value: this.loginState.get('pass'), disabled: this.loginState.get('checking') });
-        this.rememberMe.draw({ checked: this.loginState.get('rememberMe'), disabled: this.loginState.get('checking') });
+        if(!data.noRemember) {
+            this.rememberMe.draw({
+                checked: this.loginState.get('rememberMe'),
+                disabled: this.loginState.get('checking'),
+            });
+        }
         this.spinner.draw();
         this.submitButton.draw({ disabled: this.loginState.get('checking') });
     }

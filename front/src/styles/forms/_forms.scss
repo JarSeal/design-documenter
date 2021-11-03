@@ -24,15 +24,16 @@ fieldset {
 .form-msg {
     margin-bottom: $marginBottom;
     min-height: 2.4rem;
-    color: red;
+    color: $form-msg-color;
     text-align: right;
     font-size: 1.6rem;
 }
 
 .form-elem {
     width: 100%;
-    margin-bottom: $marginBottom;
+    margin-bottom: 0.4rem;
     font-size: 0;
+    padding-bottom: 1.8rem;
     text-align: right;
     label {
         display: inline-block;
@@ -43,5 +44,18 @@ fieldset {
         max-width: 16rem;
         padding-right: 1rem;
         text-align: left;
+    }
+    &--error {
+        .form-elem__label {
+            color: $form-field-error-color;
+        }
+    }
+    &--error-msg {
+        padding-bottom: 0;
+    }
+    &__error-msg {
+        font-size: 1.2rem;
+        min-height: 1.8rem;
+        color: $form-field-error-msg-color;
     }
 }

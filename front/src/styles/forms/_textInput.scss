@@ -1,5 +1,14 @@
 .form-elem__input {
-    padding: 0.6rem;
+    padding: 1rem 1rem 0.7rem;
     font-size: 1.7rem;
     min-width: 20rem;
+    border: none;
+    border-radius: 0.3rem;
+    border-bottom: 3px solid rgba(#fff, 0);
+}
+
+.form-elem--error {
+    .form-elem__input {
+        border-bottom-color: rgba($form-field-error-color, 1);
+    }
 }
