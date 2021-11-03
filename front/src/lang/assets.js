@@ -27,4 +27,16 @@ export const assetsObj = {
         en: 'Create User',
         fi: 'Luo käyttäjä',
     },
+    route_title_landing: {
+        en: 'Home',
+        fi: 'Koti',
+    },
+    route_title_404: {
+        en: '404',
+        fi: '404',
+    },
+    route_title_new_user: {
+        en: 'New User',
+        fi: 'Uusi käyttäjä',
+    },
 };
