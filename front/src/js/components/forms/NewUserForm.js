@@ -71,6 +71,7 @@ class NewUserForm extends Component {
         this.passField = this.addChild(new TextInput({
             id: 'register-password-field',
             label: '* '+getText('password')+':',
+            password: true,
             changeFn: (e) => {
                 const val = e.target.value;
                 this.registerState.set('password', val);
@@ -83,6 +84,7 @@ class NewUserForm extends Component {
         this.passField2 = this.addChild(new TextInput({
             id: 'register-password-field2',
             label: '* '+getText('password_again')+':',
+            password: true,
             changeFn: (e) => {
                 const val = e.target.value;
                 this.registerState.set('password2', val);
@@ -124,6 +126,7 @@ class NewUserForm extends Component {
         });
         this.registerName.draw({
             value: this.registerState.get('name'),
+            error: this._nameErrors(),
         });
         this.drawHTML({ attach: this.id + '-fieldset', class: 'form-divider' });
         this.passField.draw({
