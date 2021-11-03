@@ -61,7 +61,7 @@ class LoginForm extends Component {
             fn: this.handleLogin,
         });
         this.loginState.addListener('checking', (newValue) => {
-            this.paint();
+            this.rePaint();
             this.spinner.showSpinner(newValue);
         });
     }
