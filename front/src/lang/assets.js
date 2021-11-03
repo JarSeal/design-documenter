@@ -11,6 +11,26 @@ export const assetsObj = {
         en: 'Password again',
         fi: 'Salasana uudestaan',
     },
+    passwords_dont_match: {
+        en: 'Password\'s don\'t match',
+        fi: 'Salasanat eivät täsmää',
+    },
+    email: {
+        en: 'E-mail',
+        fi: 'Sähköposti',
+    },
+    name: {
+        en: 'Name',
+        fi: 'Nimi',
+    },
+    required: {
+        en: 'Required',
+        fi: 'Vaadittu kenttä',
+    },
+    minimum_x_characters: {
+        en: 'Minimum $[0] characters',
+        fi: 'Vähintään $[0] merkkiä',
+    },
     login_remember_me: {
         en: 'Remember me',
         fi: 'Muista minut',
@@ -26,6 +46,10 @@ export const assetsObj = {
     login_error_wrong: {
         en: 'Wrong username and/or password.',
         fi: 'Väärä käyttäjänimi ja/tai salasana.',
+    },
+    fix_issues_on_form: {
+        en: 'Please fix issues on the form.',
+        fi: 'Korjaa lomakkeen virheet, kiitos.',
     },
     create_new_user_button: {
         en: 'Create User',
