@@ -7,6 +7,10 @@ export const assetsObj = {
         en: 'Password',
         fi: 'Salasana',
     },
+    password_again: {
+        en: 'Password again',
+        fi: 'Salasana uudestaan',
+    },
     login_remember_me: {
         en: 'Remember me',
         fi: 'Muista minut',

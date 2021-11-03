@@ -19,8 +19,10 @@ class NewUserForm extends Component {
         this.registerState = new State({
             username: '',
             password: '',
+            password2: '',
             checking: false,
         });
+        this.formSentOnce = false;
 
         const fieldsetId = data.id + '-fieldset';
         this.fieldsetId = fieldsetId;
@@ -32,19 +34,32 @@ class NewUserForm extends Component {
         this.userField = this.addChild(new TextInput({
             id: 'register-username-field',
             label: getText('username')+':',
-            changeFn: (e) => { this.registerState.set('username', e.target.value); },
+            changeFn: (e) => {
+                const val = e.target.value;
+                this.registerState.set('username', val);
+                this.userField.error(this._usernameErrors());
+            },
             attach: fieldsetId,
         }));
         this.passField = this.addChild(new TextInput({
             id: 'register-password-field',
             label: getText('password')+':',
-            changeFn: (e) => { this.registerState.set('password', e.target.value); },
+            changeFn: (e) => {
+                const val = e.target.value;
+                this.registerState.set('password', val);
+                this.passField.error(this._passwordsErrors());
+                this.passField2.error(this._passwordsErrors(true));
+            },
             attach: fieldsetId,
         }));
         this.passField2 = this.addChild(new TextInput({
             id: 'register-password-field2',
-            label: getText('password')+':',
-            changeFn: (e) => { console.log('Password match', e.target.value === this.registerState.get('password')); },
+            label: getText('password_again')+':',
+            changeFn: (e) => {
+                const val = e.target.value;
+                this.registerState.set('password2', val);
+                this.passField2.error(this._passwordsErrors(true));
+            },
             attach: fieldsetId,
         }));
         this.spinner = this.addChild(new Spinner({
@@ -70,15 +85,45 @@ class NewUserForm extends Component {
             document.getElementById(this.fieldsetId).disabled = true;
         }
         this.formMsg.draw();
-        this.userField.draw({ value: this.registerState.get('username') });
-        this.passField.draw({ value: this.registerState.get('password') });
-        this.passField2.draw({ value: '' });
+        this.userField.draw({
+            value: this.registerState.get('username'),
+            error: this._usernameErrors(),
+        });
+        this.passField.draw({
+            value: this.registerState.get('password'),
+            error: this._passwordsErrors(),
+        });
+        this.passField2.draw({
+            value: this.registerState.get('password2'),
+            error: this._passwordsErrors(true),
+        });
+
         this.spinner.draw();
         this.submitButton.draw();
     }
 
     handleNewUserSubmit = (e) => {
         e.preventDefault();
+        this.formSentOnce = true;
+        this.rePaint();
+    }
+
+    _usernameErrors() {
+        if(!this.formSentOnce) return false;
+        const user = this.registerState.get('username');
+        if(!user.length) return { errorMsg: 'Required' }; 
+    }
+
+    _passwordsErrors(secondPass) {
+        if(!this.formSentOnce) return false;
+        const pass1 = this.registerState.get('password');
+        const pass2 = this.registerState.get('password2');
+        if(secondPass && !pass2.length) return { errorMsg: 'Required' };
+        if(!secondPass && !pass1.length) return { errorMsg: 'Required' };
+        if(pass1 === pass2) return false;
+        if(secondPass) {
+            return { errorMsg: 'Passwords don\'t match' };
+        }
     }
 }
 
