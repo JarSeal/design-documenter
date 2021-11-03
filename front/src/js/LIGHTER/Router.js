@@ -60,7 +60,7 @@ class Router {
 
     routeChangeListener = (e) => {
         this.setRoute();
-        this.changeRoute(this.curRoute);
+        this.changeRoute(this.curRoute, true, true);
     }
 
     _createRouteState(route) {
@@ -74,8 +74,10 @@ class Router {
         }
     }
 
-    changeRoute(route, forceUpdate) {
-        route = this.basePath + route;
+    changeRoute(route, forceUpdate, ignoreBasePath) {
+        let basePath = this.basePath;
+        if(ignoreBasePath) basePath = '';
+        route = basePath + route;
         if(route === this.curRoute && !forceUpdate) return;
         const routeState = this._createRouteState(route);
         window.history.pushState(routeState, '', route);
