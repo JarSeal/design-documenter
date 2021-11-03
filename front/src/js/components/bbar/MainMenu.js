@@ -11,10 +11,10 @@ class MainMenu extends Component {
             link: '/',
             text: 'H',
         }));
-        this.brokenButton = this.addChild(new RouteLink({
-            id: 'broken-button',
-            link: '/somewhere',
-            text: 'B',
+        this.newuserButton = this.addChild(new RouteLink({
+            id: 'new-user-button',
+            link: '/newuser',
+            text: 'R',
         }));
         this.logoutButton = this.addChild(new Button({
             id: 'logout-button',
@@ -25,7 +25,7 @@ class MainMenu extends Component {
 
     paint = () => {
         this.homeButton.draw();
-        this.brokenButton.draw();
+        this.newuserButton.draw();
         if(this.appState.get('user.loggedIn')) {
             this.logoutButton.draw();
         }
