@@ -89,7 +89,7 @@ class NewUserForm extends Component {
             value: this.registerState.get('username'),
             error: this._usernameErrors(),
         });
-        this.drawHTML();
+        this.drawHTML({ attach: this.id + '-fieldset', class: 'form-divider' });
         this.passField.draw({
             value: this.registerState.get('password'),
             error: this._passwordsErrors(),
@@ -98,6 +98,7 @@ class NewUserForm extends Component {
             value: this.registerState.get('password2'),
             error: this._passwordsErrors(true),
         });
+        this.drawHTML({ attach: this.id + '-fieldset', class: 'form-divider' });
 
         this.spinner.draw();
         this.submitButton.draw();

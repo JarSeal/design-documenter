@@ -93,6 +93,7 @@ class LoginForm extends Component {
                 disabled: this.loginState.get('checking'),
             });
         }
+        this.drawHTML({ class: 'form-divider' });
         this.spinner.draw();
         this.submitButton.draw({ disabled: this.loginState.get('checking') });
     }

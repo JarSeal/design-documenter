@@ -23,6 +23,7 @@ class Component {
         this.elem;
         this.listeners = {};
         this.children = {};
+        this.simpletonIndex = 0;
         this.Router = RouterRef;
         this.logger = logger;
         this.firstDraw = true;
@@ -73,13 +74,16 @@ class Component {
             this.firstDraw = false;
         }
         this.paint(data);
+        this.simpletonIndex = 0;
     }
 
     reDrawSelf(drawInput) {
+        this.simpletonIndex = 0;
         this.draw(drawInput);
     }
 
     rePaint() {
+        this.simpletonIndex = 0;
         this.paint(this.data);
     }
 
@@ -109,8 +113,16 @@ class Component {
 
     erase() {} // Additional discard logic from the custom Component
 
-    drawHTML = () => {
-        
+    drawHTML = (data) => {
+        const id = this.id + '-simpleton-'+ this.simpletonIndex;
+        const compData = Object.assign({}, { id }, data);
+        const childKeys = Object.keys(this.children);
+        let compo = this.children[id];
+        if(!compo) {
+            compo = this.addChild(new Component(compData));
+        }
+        compo.draw();
+        this.simpletonIndex++;
     }
 
     addChild(component) {
