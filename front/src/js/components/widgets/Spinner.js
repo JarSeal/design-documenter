@@ -15,13 +15,13 @@ class Spinner extends Component {
     showSpinner = (show) => {
         const elem = this.elem;
         if(show) {
-            elem.style.display = 'block';
+            elem.style.display = 'inline-block';
             clearTimeout(this.spinnerAnimTimer);
             this.spinnerAnimTimer = setTimeout(() => {
                 elem.classList.add('show-spinner');
             }, 10);
         } else {
-            elem.style.display = 'block';
+            elem.style.display = 'inline-block';
             elem.classList.add('show-spinner');
             setTimeout(() => {
                 elem.classList.remove('show-spinner');
