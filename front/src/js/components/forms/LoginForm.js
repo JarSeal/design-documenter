@@ -24,6 +24,7 @@ class LoginForm extends Component {
             rememberMe: false,
             checking: false,
         });
+        this.formSentOnce = false;
         
         this.formMsg = this.addChild(new Component({
             id: this.id + '-form-msg',
@@ -32,13 +33,21 @@ class LoginForm extends Component {
         this.userField = this.addChild(new TextInput({
             id: 'login-user-field',
             label: getText('username')+':',
-            changeFn: (e) => { this.loginState.set('user', e.target.value); },
+            changeFn: (e) => {
+                const val = e.target.value;
+                this.loginState.set('user', val);
+                if(this.formSentOnce) this.userField.error(!val.length);
+            },
         }));
         this.passField = this.addChild(new TextInput({
             id: 'login-pass-field',
             label: getText('password')+':',
             password: true,
-            changeFn: (e) => { this.loginState.set('pass', e.target.value); },
+            changeFn: (e) => {
+                const val = e.target.value;
+                this.loginState.set('pass', val);
+                if(this.formSentOnce) this.passField.error(!val.length);
+            },
         }));
         this.rememberMe = this.addChild(new Checkbox({
             id: 'login-remember-me',
@@ -68,8 +77,16 @@ class LoginForm extends Component {
 
     paint = (data) => {
         this.formMsg.draw();
-        this.userField.draw({ value: this.loginState.get('user'), disabled: this.loginState.get('checking') });
-        this.passField.draw({ value: this.loginState.get('pass'), disabled: this.loginState.get('checking') });
+        this.userField.draw({
+            value: this.loginState.get('user'),
+            disabled: this.loginState.get('checking'),
+            error: !this.loginState.get('user').length && this.formSentOnce
+        });
+        this.passField.draw({
+            value: this.loginState.get('pass'),
+            disabled: this.loginState.get('checking'),
+            error: !this.loginState.get('pass').length && this.formSentOnce
+        });
         if(!data.noRemember) {
             this.rememberMe.draw({
                 checked: this.loginState.get('rememberMe'),
@@ -82,12 +99,14 @@ class LoginForm extends Component {
 
     handleLogin = (e) => {
         e.preventDefault();
+        this.formSentOnce = true;
         
         this.setMsg('');
         const username = this.loginState.get('user');
         const password = this.loginState.get('pass');
         
         if(!username.trim().length || !password.trim().length) {
+            this.rePaint();
             this.setMsg(getText('login_error_empty'));
             return;
         }
