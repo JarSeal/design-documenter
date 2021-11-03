@@ -57,6 +57,21 @@ class Checkbox extends Component {
         }
         if(data.disabled) inputElem.setAttribute('disabled', '');
     }
+
+    error(err) {
+        if(err) {
+            this.errorComp.discard();
+            this.elem.classList.add('form-elem--error');
+            if(err.errorMsg) {
+                this.elem.classList.add('form-elem--error-msg');
+                this.errorComp.draw({ text: err.errorMsg });
+            }
+        } else {
+            this.errorComp.discard();
+            this.elem.classList.remove('form-elem--error');
+            this.elem.classList.remove('form-elem--error-msg');
+        }
+    }
 }
 
 export default Checkbox;
