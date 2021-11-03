@@ -46,10 +46,11 @@ class Router {
         this.prevRoute = null;
         this.prevRouteData = null;
         if(!componentData) componentData = {};
-        this.initRouter(routesData.routes, parentId, componentData);
+        this.commonData = componentData;
+        this.initRouter(routesData.routes, parentId);
     }
 
-    initRouter(routes, parentId, componentData) {
+    initRouter(routes, parentId) {
         this.setRoute();
         let changeUrlPath = false;
         if(this.curRoute.length < this.basePath.length) {
@@ -82,16 +83,11 @@ class Router {
                 logger.warn(`Route '${routes[i].id}' is missing the title. Setting id as title.`);
                 routes[i].title = routes[i].id;
             }
-            routes[i].component = new routes[i].source({
-                ...componentData,
-                id: routes[i].id,
-                parentId: parentId,
-                title: routes[i].title,
-                template: routes[i].template,
-                extraRouteData: routes[i].extraRouteData,
-            });
+            routes[i].parentId = parentId;
             this.routes.push(routes[i]);
-            if(routes[i].route === this.curRoute || routes[i].route === this.curRoute + '/') {
+            if(this._compareRoutes(routes[i].route, this.curRoute)) {
+                routes[i].parentId = parentId;
+                this._createNewView(routes[i]);
                 routeFound = true;
                 this.curRouteData = routes[i];
                 document.title = this._createPageTitle(routes[i].title);
@@ -119,7 +115,7 @@ class Router {
 
     _createRouteState(route) {
         for(let i=0; i<this.routes.length; i++) {
-            if(this.routes[i].route === route || this.routes[i].route === route + '/') {
+            if(this._compareRoutes(this.routes[i].route, route)) {
                 return {
                     route: this.routes[i].route,
                     title: this._createPageTitle(this.routes[i].title),
@@ -132,17 +128,23 @@ class Router {
         let basePath = this.basePath;
         if(ignoreBasePath) basePath = '';
         route = basePath + route;
-        if(route === this.curRoute && !forceUpdate) return;
+        if(this._compareRoutes(route, this.curRoute) && !forceUpdate) return;
+        if(forceUpdate && this._compareRoutes(route, this.curRoute)) {
+            this.curRouteData.component.discard(true);
+            this.curRouteData.component = null;
+        }
         const routeState = this._createRouteState(route);
         window.history.pushState(routeState, '', route);
-        this.curRouteData.component.discard();
+        this.prevRoute = this.curRoute;
         this.setRoute();
         let routeFound = false;
         for(let i=0; i<this.routes.length; i++) {
-            if(this.routes[i].route === route || this.routes[i].route === route + '/') {
+            if(this._compareRoutes(this.routes[i].route, route)) {
                 routeFound = true;
+                this.prevRouteData = Object.assign({}, this.curRouteData);
                 this.curRouteData = this.routes[i];
                 document.title = this._createPageTitle(this.routes[i].title);
+                this._createNewView(this.routes[i]);
                 break;
             }
         }
@@ -150,6 +152,10 @@ class Router {
             this.notFound();
         }
         this.rcCallback(this.curRoute);
+    }
+
+    _compareRoutes(first, second) {
+        return first === second || first + '/' === second || first === second + '/';
     }
 
     getRoute() {
@@ -176,7 +182,7 @@ class Router {
     addRoute(routeData) {
         routeData.route = this.basePath + routeData.route;
         this.routes.push(routeData);
-        if(routeData.route === this.curRoute) {
+        if(this._compareRoutes(routeData.route, this.curRoute)) {
             this.curRouteData = routeData;
         }
     }
@@ -194,11 +200,27 @@ class Router {
         }
         this.curRouteData = template;
         document.title = this._createPageTitle(template.title);
+        this._createNewView(template);
     }
 
     draw() {
+        if(this.prevRouteData && this.prevRouteData.component) {
+            this.prevRouteData.component.discard(true);
+            this.prevRouteData.component = null;
+        }
         this.curRouteData.component.draw();
-        if(this.prevRouteData) this.prevRouteData.component.discard();
+    }
+
+    _createNewView(routeData) {
+        const commonData = this.commonData;
+        routeData.component = new routeData.source({
+            ...commonData,
+            id: routeData.id,
+            parentId: routeData.parentId,
+            title: routeData.title,
+            template: routeData.template,
+            extraRouteData: routeData.extraRouteData,
+        });
     }
 }
 

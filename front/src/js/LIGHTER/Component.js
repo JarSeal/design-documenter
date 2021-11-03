@@ -75,10 +75,18 @@ class Component {
         this.paint(data);
     }
 
+    reDrawSelf(drawInput) {
+        this.draw(drawInput);
+    }
+
+    rePaint() {
+        this.paint(this.data);
+    }
+
     init(data) {}
     paint(data) {}
 
-    discard() {
+    discard(fullDiscard) {
         // Remove listeners
         let keys = Object.keys(this.listeners);
         for(let i=0; i<keys.length; i++) {
@@ -87,13 +95,15 @@ class Component {
         // Discard children
         keys = Object.keys(this.children);
         for(let i=0; i<keys.length; i++) {
-            this.children[keys[i]].discard();
+            this.children[keys[i]].discard(fullDiscard);
+            if(fullDiscard) delete this.children[keys[i]];
         }
         // Remove element from DOM
         if(this.elem) {
             this.elem.remove();
             this.elem = null;
         }
+        if(fullDiscard) delete ids[this.id];
         this.erase();
     }
 
