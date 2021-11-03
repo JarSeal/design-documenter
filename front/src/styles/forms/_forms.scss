@@ -6,13 +6,6 @@ form {
     position: relative;
     text-align: right;
 
-    .form-msg {
-        margin-bottom: $marginBottom;
-        min-height: 2.4rem;
-        color: red;
-        text-align: right;
-        font-size: 1.6rem;
-    }
     .spinner-icon {
         vertical-align: middle;
         width: 2.4rem;
@@ -20,6 +13,20 @@ form {
         border-width: 0.2rem;
         margin-right: 1rem;
     }
+}
+
+fieldset {
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+.form-msg {
+    margin-bottom: $marginBottom;
+    min-height: 2.4rem;
+    color: red;
+    text-align: right;
+    font-size: 1.6rem;
 }
 
 .form-elem {
