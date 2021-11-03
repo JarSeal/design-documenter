@@ -51,7 +51,6 @@ class LoginForm extends Component {
         }));
         this.submitButton = this.addChild(new SubmitButton({
             id: 'login-submit',
-            class: 'submit-button',
             text: getText('login_button'),
         }));
     }
@@ -64,7 +63,7 @@ class LoginForm extends Component {
         this.loginState.addListener('checking', (newValue) => {
             this.paint();
             this.spinner.showSpinner(newValue);
-        })
+        });
     }
 
     paint = () => {
