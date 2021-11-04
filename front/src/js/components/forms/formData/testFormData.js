@@ -7,17 +7,19 @@ export const testFormData = {
     class: ['css-class-name'], // String / Array
     formTitle: { en: 'Form title', fi: 'Lomakkeen otsikko' }, // Lang object / String
     formTitleId: 'route_title_new_user', // String (Transalation id for getText)
+    formDesc: { en: 'Form description', fi: 'Lomakkeen kuvausteksti' }, // Lang object / String
+    formDescId: 'login_error_empty', // String (Transalation id for getText)
     onErrorsMsg: { en: 'Form has errors.', fi: 'Lomakkeessa on virheitä' }, // Lang object / String
     onErrorsMsgId: 'form_has_errors', // String (Transalation id for getText)
     fieldsets: [ // [required]
         {
             // FIELDSET
-            fieldsetId: 'test-fieldset', // String [required]
+            id: 'test-fieldset', // String [required]
             class: ['css-class-name2'], // String / Array
             fieldsetTitle: { en: 'Section title', fi: 'Osion otsikko' }, // Lang object / String
             fieldsetTitleId: 'route_title_new_user', // String (Transalation id for getText)
-            onErrorsMsg: { en: 'Group has errors.', fi: 'Ryhmässä on virheitä' }, // Lang object / String
-            onErrorsMsgId: 'fieldset_has_errors', // String (Transalation id for getText)
+            fieldsetDesc: { en: 'Section description', fi: 'Osion kuvaus' }, // Lang object / String
+            fieldsetDescId: 'fix_issues_on_form', // String (Transalation id for getText)
             disabled: false, // Boolean / function
             canCollapse: true, // Boolean / function (whether the fieldset can be collapsed or opened)
             collapsed: false, // Boolean / function

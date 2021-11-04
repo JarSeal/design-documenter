@@ -10,33 +10,65 @@ class FormCreator extends Component {
         this._validateImportedFormData(data);
         this.template = `<form></form>`;
         this.components = {};
+        this.componentsOrder = [];
         this.curLang = getLang();
-        console.log('CURLANG', this.curLang);
         this._createFormComponents(data);
     }
 
     paint = (data) => {
-        const keys = Object.keys(this.components);
-        for(let i=0; i<keys.length; i++) {
-            this.components[keys[i]].draw();
+        for(let i=0; i<this.componentsOrder.length; i++) {
+            const key = this.componentsOrder[i];
+            this.components[key].draw();
         }
     }
 
     _createFormComponents(data) {
         let id, text;
         
-        // Form title
+        // Form title and description
         text = this._getTextData(data.formTitle, data.formTitleId);
         if(text) {
             id = this.id+'-title';
+            this.componentsOrder.push(id);
             this.components[id] = this.addChild(new Component({
                 id, tag: 'h3', text, class: 'form-main-title'
+            }));
+        }
+        text = this._getTextData(data.formDesc, data.formDescId);
+        if(text) {
+            id = this.id+'-description';
+            this.componentsOrder.push(id);
+            this.components[id] = this.addChild(new Component({
+                id, tag: 'p', text, class: 'form-main-description'
             }));
         }
 
         // Fieldsets
         for(let i=0; i<data.fieldsets.length; i++) {
+            const fieldset = data.fieldsets[i];
+            const fieldsetId = fieldset.id;
 
+            fieldset.tag = 'fieldset';
+            this.componentsOrder.push(fieldsetId);
+            this.components[fieldsetId] = this.addChild(new Component(fieldset));
+
+            // Fieldset title and description
+            text = this._getTextData(fieldset.fieldsetTitle, fieldset.fieldsetTitleId);
+            if(text) {
+                id = this.id+'-fieldset-'+i+'-title';
+                this.componentsOrder.push(id);
+                this.components[id] = this.addChild(new Component({
+                    id, tag: 'h3', text, class: 'fieldset-title', attach: fieldsetId
+                }));
+            }
+            text = this._getTextData(fieldset.fieldsetDesc, fieldset.fieldsetDescId);
+            if(text) {
+                id = this.id+'-fieldset-'+i+'-description';
+                this.componentsOrder.push(id);
+                this.components[id] = this.addChild(new Component({
+                    id, tag: 'p', text, class: 'fieldset-description', attach: fieldsetId
+                }));
+            }
         }
     }
 
