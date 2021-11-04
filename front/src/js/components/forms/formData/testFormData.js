@@ -2,13 +2,13 @@
 
 export const testFormData = {
     // FORM
-    formId: 'test-form', // String [required]
+    id: 'test-form', // String [required]
     formToken: null, // TODO
     class: ['css-class-name'], // String / Array
     formTitle: { en: 'Form title', fi: 'Lomakkeen otsikko' }, // Lang object / String
     formTitleId: 'route_title_new_user', // String (Transalation id for getText)
-    onErrrorsMsg: { en: 'Form has errors.', fi: 'Lomakkeessa on virheitä' }, // Lang object / String
-    formTitleId: 'route_title_new_user', // String (Transalation id for getText)
+    onErrorsMsg: { en: 'Form has errors.', fi: 'Lomakkeessa on virheitä' }, // Lang object / String
+    onErrorsMsgId: 'form_has_errors', // String (Transalation id for getText)
     fieldsets: [ // [required]
         {
             // FIELDSET
@@ -16,10 +16,12 @@ export const testFormData = {
             class: ['css-class-name2'], // String / Array
             fieldsetTitle: { en: 'Section title', fi: 'Osion otsikko' }, // Lang object / String
             fieldsetTitleId: 'route_title_new_user', // String (Transalation id for getText)
+            onErrorsMsg: { en: 'Group has errors.', fi: 'Ryhmässä on virheitä' }, // Lang object / String
+            onErrorsMsgId: 'fieldset_has_errors', // String (Transalation id for getText)
             disabled: false, // Boolean / function
             canCollapse: true, // Boolean / function (whether the fieldset can be collapsed or opened)
             collapsed: false, // Boolean / function
-            fields: [ // [required]
+            fields: [
                 {
                     // TEXT INPUT
                     id: 'text-input-0', // String [required]
