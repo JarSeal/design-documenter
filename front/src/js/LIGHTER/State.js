@@ -141,6 +141,25 @@ class State {
         }
     }
 
+    getKeys(from) {
+        if(from) {
+            const keys = from.split('.');
+        } else {
+            // Flat keys (one level)
+            return Object.keys(this.state);
+        }
+
+        // Deep keys
+        let pos = this.state[keys[0]];
+        for(let i=1; i<keys.length-1; i++) {
+            if(pos === undefined || pos[keys[i]] === undefined) return;
+            pos = pos[keys[i]];
+        }
+        if(pos === undefined) return [];
+
+        return Object.keys(pos);
+    }
+
     getG(key) {
         return this.get(key, true);
     }

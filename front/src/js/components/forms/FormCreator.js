@@ -16,6 +16,7 @@ class FormCreator extends Component {
         this.curLang = getLang();
         this.formSentOnce = false;
         this.fieldErrors = new State();
+        this.formErrorClassSetterTimer;
 
         this._createFormComponents(data);
     }
@@ -110,8 +111,15 @@ class FormCreator extends Component {
                 else if(field.type === 'textinput') {
                     this._fieldTextInput(field, fieldsetId, fieldIdPrefix);
                 }
+
+                // Checkbox
+                else if(field.type === 'checkbox') {
+                    this._fieldCheckbox(field, fieldsetId, fieldIdPrefix);
+                }
             }
         }
+
+        // Spinner
 
         // Submit button
         const button = data.submitButton;
@@ -121,6 +129,10 @@ class FormCreator extends Component {
         this.components[id] = this.addChild(new SubmitButton({
             id, text, class: button.class
         }));
+    }
+
+    _fieldCheckbox(field, fieldsetId, fieldIdPrefix) {
+        
     }
 
     _fieldTextInput(field, fieldsetId, fieldIdPrefix) {
@@ -170,17 +182,12 @@ class FormCreator extends Component {
             if(field.required !== true) { // field.required is a function then
                 field.required({ val, id, fieldsetId });
             }
-            return;
-        } else {
-            this.fieldErrors.set(id, false);
-        }
-        if(val.length && val.length < field.minLength) {
+        } else if(val.length && val.length < field.minLength) {
             this.fieldErrors.set(id, {
                 errorMsg: getText('minimum_x_characters', [field.minLength]),
                 fieldsetId,
                 id
             });
-            return;
         } else {
             this.fieldErrors.set(id, false);
         }
@@ -189,6 +196,37 @@ class FormCreator extends Component {
                 val, id, fieldsetId, errorStates: this.fieldErrors, field, components: this.components
             });
         }
+
+        this._fieldsetErrorCheck(fieldsetId);
+    }
+
+    _fieldsetErrorCheck = (fieldsetId) => {
+        clearTimeout(this.formErrorClassSetterTimer);
+        this.formErrorClassSetterTimer = setTimeout(() => {
+            const formErrorCssClass = 'form--errors';
+            const fieldsetErrorCssClass = 'fieldset--errors';
+            const keys = this.fieldErrors.getKeys();
+            const fieldsets = this.data.fieldsets;
+            for(let i=0; i<fieldsets.length; i++) {
+                // Clean all errors
+                const elem = document.getElementById(fieldsets[i].id);
+                elem.classList.remove(fieldsetErrorCssClass);
+            }
+            this.elem.classList.remove(formErrorCssClass); // Clean form error class
+            
+            let formErrors = false;
+            for(let i=0; i<keys.length; i++) {
+                const err = this.fieldErrors.get(keys[i]);
+                if(err.fieldsetId === fieldsetId) {
+                    // Set new field errors
+                    const elem = document.getElementById(fieldsetId);
+                    elem.classList.add(fieldsetErrorCssClass);
+                    formErrors = true;
+                }
+            }
+            
+            if(formErrors) this.elem.classList.add(formErrorCssClass); // Set form error class
+        }, 500);
     }
 
     _getTextData(stringOrObject, langId) {
