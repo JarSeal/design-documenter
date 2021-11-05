@@ -38,8 +38,10 @@ export const testFormData = {
                 },
                 {
                     // TEXT INPUT
-                    id: 'text-input-0', // String [required]
                     type: 'textinput', // String [required]
+                    id: 'text-input-0', // String
+                    name: 'text-input-0', // String (if undefined, the id is used for name)
+                    password: false, // Boolean
                     class: ['css-class-name3'], // String / Array
                     label: { en: 'Text input', fi: 'Tekstin syöttö' }, // Lang object / String
                     labelId: 'some_translation_id', // String (Transalation id for getText)
@@ -50,21 +52,22 @@ export const testFormData = {
                     maxLength: 10, // Number
                     disabled: false, // Boolean / function
                     initValue: '', // String
-                    validation: () => { return true; }, // Function
-                    onChange: () => {}, // Function
+                    validationFn: () => { return true; }, // Function
+                    onChangeFn: () => {}, // Function
                 },
                 {
                     // CHECKBOX
-                    id: 'checkbox-0', // String [required]
                     type: 'checkbox', // String [required]
+                    id: 'checkbox-0', // String
+                    name: 'checkbox-0', // String (if undefined, the id is used for name)
                     class: ['css-class-name4'], // String / Array
                     label: { en: 'Checkbox', fi: 'Checkboxi' }, // Lang object / String
                     labelId: 'some_translation_id', // String (Transalation id for getText)
                     required: false, // Boolean / function
                     disabled: false, // Boolean / function
                     initValue: true, // Boolean (whether the box is prechecked or not)
-                    validation: () => { return true; }, // Function
-                    onChange: () => {}, // Function
+                    validationFn: () => { return true; }, // Function
+                    onChangeFn: () => {}, // Function
                 },
             ],
         },

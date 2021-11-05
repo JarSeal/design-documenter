@@ -1,8 +1,9 @@
 import { getLang, getText } from "../../helpers/lang";
-import { Component, Logger } from "../../LIGHTER";
+import { Component, Logger, State } from "../../LIGHTER";
+import TextInput from "./formComponents/TextInput";
 
 // Attributes for data (id will not be used, it comes from form data):
-// - afterRegisterFn = function for after succesfull new user registering [function]
+// - afterFormSentFn = function to call after succesfull form submission [Function]
 class FormCreator extends Component {
     constructor(data) {
         super(data);
@@ -12,6 +13,9 @@ class FormCreator extends Component {
         this.components = {};
         this.componentsOrder = [];
         this.curLang = getLang();
+        this.formSentOnce = false;
+        this.fieldErrors = new State();
+
         this._createFormComponents(data);
     }
 
@@ -96,14 +100,46 @@ class FormCreator extends Component {
 
                 // Text input
                 else if(field.type === 'textinput') {
-                    this._fieldTextInput(field);
+                    this._fieldTextInput(field, fieldsetId, fieldIdPrefix);
                 }
             }
         }
     }
 
-    _fieldTextInput(field) {
+    _fieldTextInput(field, fieldsetId, fieldIdPrefix) {
+        let id = field.id;
+        if(!id) id = fieldIdPrefix+'-textinput';
+        const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
+        const placeholder = this._getTextData(field.placeholder, field.placeholderId);
+        this.fieldErrors.set(id, false);
+        this.componentsOrder.push(id);
+        this.components[id] = this.addChild(new TextInput({
+            id,
+            label,
+            class: field.class,
+            placeholder,
+            attach: fieldsetId,
+            disabled: field.disabled,
+            value: field.initValue || '',
+            name: field.name || id,
+            password: field.password,
+            changeFn: (e) => {
+                const val = e.target.value;
+                if(field.required && !val.trim().length) {
+                    this.fieldErrors.set(id, { errorMsg: getText('required') });
+                    if(field.required !== true) { // field.required is a function then
+                        field.required({ val, id, fieldsetId });
+                    }
+                } else {
+                    this.fieldErrors.set(id, false);
+                }
+                if(field.onChangeFn) field.onChangeFn({ val, id, fieldsetId, errorStates: this.fieldErrors, field: this.components[id] });
+                if(this.formSentOnce) this.components[id].error(this.fieldErrors.get(id));
+            },
+        }));
         
+        // Missing: *****
+        // minLength, maxLength, validationFn
     }
 
     _getTextData(stringOrObject, langId) {
