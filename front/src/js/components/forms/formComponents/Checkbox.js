@@ -4,6 +4,7 @@ import { Component } from "../../../LIGHTER";
 // - label = field label [String]
 // - name = input name property [String]
 // - changeFn = function that is ran after each change [Function]
+// - checked = whether the box is checked or not [Boolean]
 // - disabled = whether the field is disabled or not [Boolean]
 // - error = an error boolean or object to tell if the field has errors {hasError:Boolean, errorMsg:String} [Boolean/Object]
 class Checkbox extends Component {
@@ -27,6 +28,7 @@ class Checkbox extends Component {
                 </label>
             </div>
         `;
+        this.value = data.checked || false;
         this.errorComp = this.addChild(new Component({
             id: this.id + '-error-msg',
             class: 'form-elem__error-msg',
@@ -40,7 +42,10 @@ class Checkbox extends Component {
                 id: this.inputId + '-click',
                 target: document.getElementById(this.inputId),
                 type: 'click',
-                fn: data.changeFn,
+                fn: (e) => {
+                    this.value = e.target.checked;
+                    data.changeFn(e);
+                },
             });
         }
     }

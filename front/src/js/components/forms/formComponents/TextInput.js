@@ -8,6 +8,7 @@ import Component from "../../../LIGHTER/Component";
 // - changeFn = function that is ran after each change [Function]
 // - disabled = whether the field is disabled or not [Boolean]
 // - error = an error boolean or object to tell if the field has errors {hasError:Boolean, errorMsg:String} [Boolean/Object]
+// - maxlength = html max length attribute value for input elem [Number/String]
 class TextInput extends Component {
     constructor(data) {
         super(data);
@@ -24,11 +25,13 @@ class TextInput extends Component {
                         type="${data.password ? 'password' : 'text'}"
                         name="${data.name}"
                         value="${data.value || ''}"
+                        ${data.maxlength ? 'maxlength="'+data.maxlength+'"' : ''}
                         ${data.disabled ? 'disabled' : ''}
                     />
                 </label>
             </div>
         `;
+        this.value = data.value;
         this.errorComp = this.addChild(new Component({
             id: this.id + '-error-msg',
             class: 'form-elem__error-msg',
@@ -42,7 +45,10 @@ class TextInput extends Component {
                 id: this.inputId + '-keyup',
                 target: document.getElementById(this.inputId),
                 type: 'keyup',
-                fn: data.changeFn,
+                fn: (e) => {
+                    this.value = e.target.value;
+                    data.changeFn(e);
+                },
             });
         }
     }
