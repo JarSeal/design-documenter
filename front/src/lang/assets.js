@@ -27,6 +27,10 @@ export const assetsObj = {
         en: 'Required',
         fi: 'Vaadittu kenttä',
     },
+    select: {
+        en: 'Select',
+        fi: 'Valitse',
+    },
     minimum_x_characters: {
         en: 'Minimum $[0] characters',
         fi: 'Vähintään $[0] merkkiä',

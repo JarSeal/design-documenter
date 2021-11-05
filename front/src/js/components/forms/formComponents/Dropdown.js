@@ -1,3 +1,4 @@
+import { getText } from "../../../helpers/lang";
 import { Component } from "../../../LIGHTER";
 
 // Attributes:
@@ -5,6 +6,8 @@ import { Component } from "../../../LIGHTER";
 // - name = input name property [String]
 // - changeFn = function that is ran after each change [Function]
 // - selected = value key tells which value is selected [String]
+// - options = array of objects with value, label, disabled [Array[Object]]
+// - emptyIsAnOption = [Boolean]
 // - disabled = whether the field is disabled or not [Boolean]
 // - error = an error boolean or object to tell if the field has errors {hasError:Boolean, errorMsg:String} [Boolean/Object]
 class Dropdown extends Component {
@@ -12,19 +15,19 @@ class Dropdown extends Component {
         super(data);
         if(!data.name) data.name = data.id;
         if(!data.label) data.label = data.id;
-        this.inputId = this.id + '-input';
+        this.selectId = this.id + '-select';
+        this.options = [];
         this.template = `
-            <div class="form-elem form-elem--checkbox">
-                <label for="${this.inputId}">
+            <div class="form-elem form-elem--dropdown">
+                <label for="${this.selectId}">
                     <span class="form-elem__label">${data.label}</span>
-                    <input
-                        id="${this.inputId}"
-                        class="form-elem__checkbox"
+                    <select
+                        id="${this.selectId}"
+                        class="form-elem__select"
                         type="checkbox"
                         name="${data.name}"
-                        ${data.checked ? 'checked' : ''}
                         ${data.disabled ? 'disabled' : ''}
-                    />
+                    >${this._createOptionsTemplate(data.options, data.selected, data.emptyIsAnOption)}</select>
                 </label>
             </div>
         `;
@@ -39,11 +42,11 @@ class Dropdown extends Component {
     addListeners(data) {
         if(data.changeFn) {
             this.addListener({
-                id: this.inputId + '-click',
-                target: document.getElementById(this.inputId),
+                id: this.selectId + '-click',
+                target: document.getElementById(this.selectId),
                 type: 'click',
                 fn: (e) => {
-                    this.value = e.target.checked;
+                    this.value = e.target.value;
                     data.changeFn(e);
                 },
             });
@@ -51,8 +54,8 @@ class Dropdown extends Component {
     }
 
     paint(data) {
-        const inputElem = document.getElementById(this.inputId);
-        inputElem.checked = data.checked;
+        const selectElem = document.getElementById(this.selectId);
+        selectElem.checked = data.checked;
         if(data.error) {
             this.elem.classList.add('form-elem--error');
             if(data.error.errorMsg) {
@@ -60,7 +63,7 @@ class Dropdown extends Component {
                 this.errorComp.draw({ text: data.error.errorMsg });
             }
         }
-        if(data.disabled) inputElem.setAttribute('disabled', '');
+        if(data.disabled) selectElem.setAttribute('disabled', '');
     }
 
     error(err) {
@@ -76,6 +79,26 @@ class Dropdown extends Component {
             this.elem.classList.remove('form-elem--error');
             this.elem.classList.remove('form-elem--error-msg');
         }
+    }
+
+    _createOptionsTemplate(options, selected, emptyIsAnOption) {
+        let template = '';
+        console.log(options);
+        const selectedIsNotAValue = selected === undefined || selected === null;
+        if(selectedIsNotAValue || emptyIsAnOption) {
+            const selectedAttr = (emptyIsAnOption && selectedIsNotAValue) || selectedIsNotAValue
+                ? ' selected'
+                : '';
+            console.log('selatrr', selectedAttr, (!selected || !selected.length), emptyIsAnOption);
+            template += `<option value=""${selectedAttr}>[${getText('select')}]</option>`;
+        }
+        for(let i=0; i<options.length; i++) {
+            template += '<option value="' + options[i].value + '"';
+            if(options[i].disabled) template += ' disabled';
+            if(selected && String(options[i].value) === String(selected)) template += ' selected';
+            template += '>' + options[i].label + '</option>';
+        }
+        return template;
     }
 }
 
