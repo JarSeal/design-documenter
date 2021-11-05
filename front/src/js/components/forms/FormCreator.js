@@ -69,7 +69,41 @@ class FormCreator extends Component {
                     id, tag: 'p', text, class: 'fieldset-description', attach: fieldsetId
                 }));
             }
+
+            // Fields
+            for(let j=0; j<fieldset.fields.length; j++) {
+                const field = fieldset.fields[j];
+                const fieldIdPrefix = this.id+'-'+i+'-'+j;
+
+                // Divider
+                if(field.type === 'divider') {
+                    id = fieldIdPrefix+'-divider';
+                    this.componentsOrder.push(id);
+                    this.components[id] = this.addChild(new Component({
+                        id, class: 'form-divider', attach: fieldsetId
+                    }));
+                }
+
+                // Subheading
+                else if(field.type === 'subheading') {
+                    id = fieldIdPrefix+'-subheading';
+                    text = this._getTextData(field.content, field.contentId);
+                    this.componentsOrder.push(id);
+                    this.components[id] = this.addChild(new Component({
+                        id, tag: 'h4', class: 'form-subheading', attach: fieldsetId, text
+                    }));
+                }
+
+                // Text input
+                else if(field.type === 'textinput') {
+                    this._fieldTextInput(field);
+                }
+            }
         }
+    }
+
+    _fieldTextInput(field) {
+        
     }
 
     _getTextData(stringOrObject, langId) {

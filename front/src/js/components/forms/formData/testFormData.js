@@ -25,6 +25,18 @@ export const testFormData = {
             collapsed: false, // Boolean / function
             fields: [
                 {
+                    // DIVIDER
+                    type: 'divider', // String [required]
+                    class: 'some-divider-class', // String / Array
+                },
+                {
+                    // SUB HEADING
+                    type: 'subheading', // String [required]
+                    class: 'some-subheading-class', // String / Array
+                    content: { en: 'Sub Heading', fi: 'Alaotsikko' }, // Lang object / String
+                    contentId: 'password', // String (Translation id for getText)
+                },
+                {
                     // TEXT INPUT
                     id: 'text-input-0', // String [required]
                     type: 'textinput', // String [required]
