@@ -31,7 +31,7 @@ class Dropdown extends Component {
                 </label>
             </div>
         `;
-        this.value = data.checked || false;
+        this.value = data.selected;
         this.errorComp = this.addChild(new Component({
             id: this.id + '-error-msg',
             class: 'form-elem__error-msg',
@@ -40,17 +40,16 @@ class Dropdown extends Component {
     }
 
     addListeners(data) {
-        if(data.changeFn) {
-            this.addListener({
-                id: this.selectId + '-click',
-                target: document.getElementById(this.selectId),
-                type: 'click',
-                fn: (e) => {
-                    this.value = e.target.value;
-                    data.changeFn(e);
-                },
-            });
-        }
+        this.addListener({
+            id: this.selectId + '-click',
+            target: document.getElementById(this.selectId),
+            type: 'click',
+            fn: (e) => {
+                this.value = e.target.value;
+                data.selected = this.value;
+                if(data.changeFn) data.changeFn(e);
+            },
+        });
     }
 
     paint(data) {
