@@ -1,5 +1,6 @@
 import { getLang, getText } from "../../helpers/lang";
 import { Component, Logger, State } from "../../LIGHTER";
+import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";
 
 // Attributes for data (id will not be used, it comes from form data):
@@ -17,6 +18,13 @@ class FormCreator extends Component {
         this.fieldErrors = new State();
 
         this._createFormComponents(data);
+    }
+
+    addListeners = () => {
+        this.addListener({
+            type: 'submit',
+            fn: this.handleSubmit,
+        });
     }
 
     paint = (data) => {
@@ -104,6 +112,15 @@ class FormCreator extends Component {
                 }
             }
         }
+
+        // Submit button
+        const button = data.submitButton;
+        id = button.id || this.id+'-submit-button';
+        text = this._getTextData(button.label, button.labelId);
+        this.componentsOrder.push(id);
+        this.components[id] = this.addChild(new SubmitButton({
+            id, text, class: button.class
+        }));
     }
 
     _fieldTextInput(field, fieldsetId, fieldIdPrefix) {
@@ -120,26 +137,58 @@ class FormCreator extends Component {
             placeholder,
             attach: fieldsetId,
             disabled: field.disabled,
-            value: field.initValue || '',
+            maxlength: field.maxLength,
+            value: field.maxLength
+                ? (field.initValue.substring(0, parseInt(field.maxLength)) || '')
+                : field.initValue || '',
             name: field.name || id,
             password: field.password,
+            field,
             changeFn: (e) => {
                 const val = e.target.value;
-                if(field.required && !val.trim().length) {
-                    this.fieldErrors.set(id, { errorMsg: getText('required') });
-                    if(field.required !== true) { // field.required is a function then
-                        field.required({ val, id, fieldsetId });
-                    }
-                } else {
-                    this.fieldErrors.set(id, false);
+                this._fieldTextInputErrorCheck(val, id, field, fieldsetId);
+                if(field.onChangeFn) {
+                    field.onChangeFn({
+                        val, id, fieldsetId, errorStates: this.fieldErrors, field: this.components[id], components: this.components
+                    });
                 }
-                if(field.onChangeFn) field.onChangeFn({ val, id, fieldsetId, errorStates: this.fieldErrors, field: this.components[id] });
                 if(this.formSentOnce) this.components[id].error(this.fieldErrors.get(id));
             },
         }));
-        
-        // Missing: *****
-        // minLength, maxLength, validationFn
+        this.components[id]['fieldsetId'] = fieldsetId;
+        this.components[id]['errorChecker'] = this._fieldTextInputErrorCheck;
+    }
+
+    _fieldTextInputErrorCheck = (val, id, field, fieldsetId) => {
+        val = val.trim();
+        if(field.required && !val.length) {
+            this.fieldErrors.set(id, {
+                errorMsg: getText('required'),
+                fieldsetId,
+                id
+            });
+            if(field.required !== true) { // field.required is a function then
+                field.required({ val, id, fieldsetId });
+            }
+            return;
+        } else {
+            this.fieldErrors.set(id, false);
+        }
+        if(val.length && val.length < field.minLength) {
+            this.fieldErrors.set(id, {
+                errorMsg: getText('minimum_x_characters', [field.minLength]),
+                fieldsetId,
+                id
+            });
+            return;
+        } else {
+            this.fieldErrors.set(id, false);
+        }
+        if(field.validationFn) {
+            field.validationFn({
+                val, id, fieldsetId, errorStates: this.fieldErrors, field, components: this.components
+            });
+        }
     }
 
     _getTextData(stringOrObject, langId) {
@@ -163,6 +212,23 @@ class FormCreator extends Component {
         if(!data.fieldsets || data.fieldsets.length === 0) {
             this.logger.error('Form data is missing a fieldset.');
             throw new Error('Call stack');
+        }
+    }
+
+    handleSubmit = (e) => {
+        e.preventDefault();
+        this.formSentOnce = true;
+        console.log('Form sent attempt');
+
+        // Check form errors
+        let formHasErrors = false;
+        for(let i=0; i<this.componentsOrder.length; i++) {
+            const comp = this.components[this.componentsOrder[i]];
+            if(comp.errorChecker) {
+                comp.errorChecker(comp.value, comp.id, comp.data.field, comp.fieldsetId);
+                comp.error(this.fieldErrors.get(comp.id));
+                formHasErrors = true;
+            }
         }
     }
 }

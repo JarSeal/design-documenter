@@ -11,6 +11,12 @@ export const testFormData = {
     formDescId: 'login_error_empty', // String (Transalation id for getText)
     onErrorsMsg: { en: 'Form has errors.', fi: 'Lomakkeessa on virheitä' }, // Lang object / String
     onErrorsMsgId: 'form_has_errors', // String (Transalation id for getText)
+    submitButton: {
+        id: 'submit-button-id', // String
+        label: { en: 'Submit', fi: 'Lähetä' }, // Lang object / String
+        labelId: 'submit', // String (Transalation id for getText),
+        class: 'submit-button-extra-class', // String / Array
+    },
     fieldsets: [ // [required]
         {
             // FIELDSET
@@ -49,11 +55,11 @@ export const testFormData = {
                     placeholderId: 'some_translation_id',
                     required: true, // Boolean / Function
                     minLength: 3, // Number
-                    maxLength: 10, // Number
+                    maxLength: 10, // Number/String
                     disabled: false, // Boolean / function
-                    initValue: '', // String
-                    validationFn: () => { return true; }, // Function
-                    onChangeFn: () => {}, // Function
+                    initValue: '', // String/Number
+                    validationFn: (args) => { return true; }, // Function
+                    onChangeFn: (args) => {}, // Function
                 },
                 {
                     // CHECKBOX
@@ -66,8 +72,8 @@ export const testFormData = {
                     required: false, // Boolean / function
                     disabled: false, // Boolean / function
                     initValue: true, // Boolean (whether the box is prechecked or not)
-                    validationFn: () => { return true; }, // Function
-                    onChangeFn: () => {}, // Function
+                    validationFn: (args) => { return true; }, // Function
+                    onChangeFn: (args) => {}, // Function
                 },
             ],
         },
