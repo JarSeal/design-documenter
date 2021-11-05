@@ -25,6 +25,9 @@ class NewUser extends Component {
                 { value: '3', label: 'Three' },
                 { value: '4', label: 'Four', disabled: true },  
             ],
+            changeFn: (e) => {
+                console.log('here');
+            },
         }));
     }
 
