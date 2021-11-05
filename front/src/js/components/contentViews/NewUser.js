@@ -32,6 +32,9 @@ class NewUser extends Component {
         // this.registerForm.draw();
         // this.customForm.draw();
         this.dropdown.draw();
+        setTimeout(() => {
+            this.dropdown.setValue(1);
+        }, 4000);
     }
 
     afterRegister = () => {

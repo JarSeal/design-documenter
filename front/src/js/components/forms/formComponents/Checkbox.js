@@ -77,6 +77,10 @@ class Checkbox extends Component {
             this.elem.classList.remove('form-elem--error-msg');
         }
     }
+
+    setValue(newValue) {
+        
+    }
 }
 
 export default Checkbox;

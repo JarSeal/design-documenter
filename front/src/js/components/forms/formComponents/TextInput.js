@@ -80,6 +80,11 @@ class TextInput extends Component {
             this.elem.classList.remove('form-elem--error-msg');
         }
     }
+
+    setValue(newValue) {
+        this.value = String(newValue);
+        data.changeFn({ target: { value: this.value }});
+    }
 }
 
 export default TextInput;

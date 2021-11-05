@@ -81,6 +81,29 @@ class Dropdown extends Component {
         }
     }
 
+    setValue(newValue) {
+        const opts = document.getElementById(this.selectId).children;
+        const newVal = String(newValue);
+        let valueFound = false;
+        for(let i=0; i<opts.length; i++) {
+            if(opts[i].value === newVal) {
+                valueFound = true;
+                this.value = newValue
+                break;
+            }
+        }
+        if(valueFound) {
+            for(let i=0; i<opts.length; i++) {
+                if(opts[i].value === newVal) {
+                    opts[i].selected = true;
+                } else {
+                    opts[i].selected = false;
+                }
+            }
+            if(this.data.changeFn) this.data.changeFn({ target: { value: this.value } });
+        }
+    }
+
     _createOptionsTemplate(options, selected, emptyIsAnOption) {
         let template = '';
         console.log(options);
