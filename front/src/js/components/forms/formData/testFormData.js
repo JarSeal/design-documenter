@@ -71,7 +71,7 @@ export const testFormData = {
                     labelId: 'some_translation_id', // String (Transalation id for getText)
                     required: false, // Boolean / function
                     disabled: false, // Boolean / function
-                    initValue: true, // Boolean (whether the box is prechecked or not)
+                    initValue: false, // Boolean (whether the box is prechecked or not)
                     validationFn: (args) => { return true; }, // Function
                     onChangeFn: (args) => {}, // Function
                 },

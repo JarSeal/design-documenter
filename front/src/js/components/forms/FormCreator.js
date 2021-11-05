@@ -1,5 +1,6 @@
 import { getLang, getText } from "../../helpers/lang";
 import { Component, Logger, State } from "../../LIGHTER";
+import Checkbox from "./formComponents/Checkbox";
 import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";
 
@@ -132,7 +133,33 @@ class FormCreator extends Component {
     }
 
     _fieldCheckbox(field, fieldsetId, fieldIdPrefix) {
-        
+        let id = field.id;
+        if(!id) id = fieldIdPrefix+'-textinput';
+        const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
+        this.fieldErrors.set(id, false);
+        this.componentsOrder.push(id);
+        this.components[id] = this.addChild(new Checkbox({
+            id,
+            name: field.name || id,
+            class: field.class,
+            label,
+            attach: fieldsetId,
+            disabled: field.disabled,
+            checked: field.initValue ? true : false,
+            field,
+            changeFn: (e) => {
+                const val = e.target.checked;
+                this._fieldCheckboxErrorCheck(val, id, field, fieldsetId);
+                if(field.onChangeFn) {
+                    field.onChangeFn({
+                        val, id, fieldsetId, errorStates: this.fieldErrors, field: this.components[id], components: this.components
+                    });
+                }
+                if(this.formSentOnce) this.components[id].error(this.fieldErrors.get(id));
+            },
+        }));
+        this.components[id]['fieldsetId'] = fieldsetId;
+        this.components[id]['errorChecker'] = this._fieldCheckboxErrorCheck;
     }
 
     _fieldTextInput(field, fieldsetId, fieldIdPrefix) {
@@ -144,8 +171,9 @@ class FormCreator extends Component {
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new TextInput({
             id,
-            label,
+            name: field.name || id,
             class: field.class,
+            label,
             placeholder,
             attach: fieldsetId,
             disabled: field.disabled,
@@ -153,7 +181,6 @@ class FormCreator extends Component {
             value: field.maxLength
                 ? (field.initValue.substring(0, parseInt(field.maxLength)) || '')
                 : field.initValue || '',
-            name: field.name || id,
             password: field.password,
             field,
             changeFn: (e) => {
@@ -169,6 +196,24 @@ class FormCreator extends Component {
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
         this.components[id]['errorChecker'] = this._fieldTextInputErrorCheck;
+    }
+
+    _fieldCheckboxErrorCheck = (val, id, field, fieldsetId) => {
+        if(field.required && val === false) {
+            this.fieldErrors.set(id, {
+                errorMsg: getText('required'),
+                fieldsetId,
+                id
+            });
+        } else {
+            this.fieldErrors.set(id, false);
+        }
+        if(field.validationFn) {
+            field.validationFn({
+                val, id, fieldsetId, errorStates: this.fieldErrors, field, components: this.components, fieldsetErrorCheck: this.fieldsetErrorCheck
+            });
+        }
+        this.fieldsetErrorCheck(fieldsetId);
     }
 
     _fieldTextInputErrorCheck = (val, id, field, fieldsetId) => {
@@ -193,14 +238,13 @@ class FormCreator extends Component {
         }
         if(field.validationFn) {
             field.validationFn({
-                val, id, fieldsetId, errorStates: this.fieldErrors, field, components: this.components
+                val, id, fieldsetId, errorStates: this.fieldErrors, field, components: this.components, fieldsetErrorCheck: this.fieldsetErrorCheck
             });
         }
-
-        this._fieldsetErrorCheck(fieldsetId);
+        this.fieldsetErrorCheck(fieldsetId);
     }
 
-    _fieldsetErrorCheck = (fieldsetId) => {
+    fieldsetErrorCheck = (fieldsetId) => {
         clearTimeout(this.formErrorClassSetterTimer);
         this.formErrorClassSetterTimer = setTimeout(() => {
             const formErrorCssClass = 'form--errors';
@@ -256,7 +300,6 @@ class FormCreator extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
         this.formSentOnce = true;
-        console.log('Form sent attempt');
 
         // Check form errors
         let formHasErrors = false;
