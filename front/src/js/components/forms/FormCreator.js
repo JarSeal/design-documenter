@@ -242,7 +242,6 @@ class FormCreator extends Component {
     }
 
     _fieldDropdownErrorCheck = (val, id, field, fieldsetId) => {
-        console.log('HERE', val === '' ? '[EMPTY]' : val);
         if(field.required && val === '') {
             this.fieldErrors.set(id, {
                 errorMsg: getText('required'),
