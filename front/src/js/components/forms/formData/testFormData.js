@@ -91,7 +91,7 @@ export const testFormData = {
                         { value: '5', label: 'Five' },
                     ],
                     emptyIsAnOption: true, // Boolean
-                    required: false, // Boolean / function
+                    required: true, // Boolean / function
                     disabled: false, // Boolean / function
                     initValue: '', // String
                     validationFn: (args) => { return true; }, // Function

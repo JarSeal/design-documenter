@@ -2,17 +2,21 @@ import { getText } from "../../../helpers/lang";
 import { Component } from "../../../LIGHTER";
 
 // Attributes:
+// - options = array of objects with value, label, disabled [Array[Object]] [required]
 // - label = field label [String]
 // - name = input name property [String]
 // - changeFn = function that is ran after each change [Function]
 // - value or selected = tells which value is selected (value is primary) [String]
-// - options = array of objects with value, label, disabled [Array[Object]]
 // - emptyIsAnOption = [Boolean]
 // - disabled = whether the field is disabled or not [Boolean]
 // - error = an error boolean or object to tell if the field has errors {hasError:Boolean, errorMsg:String} [Boolean/Object]
 class Dropdown extends Component {
     constructor(data) {
         super(data);
+        if(!data.options || !data.options.length) {
+            this.logger.error(`Dropdown Component (${data.id}) could not find options array or the array was empty.`);
+            throw new Error('Call stack');
+        }
         if(!data.name) data.name = data.id;
         if(!data.label) data.label = data.id;
         this.selectId = this.id + '-select';
@@ -86,13 +90,11 @@ class Dropdown extends Component {
 
     _createOptionsTemplate(options, selected, emptyIsAnOption) {
         let template = '';
-        console.log(options);
         const selectedIsNotAValue = selected === undefined || selected === null;
         if(selectedIsNotAValue || emptyIsAnOption) {
             const selectedAttr = (emptyIsAnOption && selectedIsNotAValue) || selectedIsNotAValue
                 ? ' selected'
                 : '';
-            console.log('selatrr', selectedAttr, (!selected || !selected.length), emptyIsAnOption);
             template += `<option value=""${selectedAttr}>[${getText('select')}]</option>`;
         }
         for(let i=0; i<options.length; i++) {

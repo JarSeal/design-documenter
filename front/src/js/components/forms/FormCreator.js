@@ -1,6 +1,7 @@
 import { getLang, getText } from "../../helpers/lang";
 import { Component, Logger, State } from "../../LIGHTER";
 import Checkbox from "./formComponents/Checkbox";
+import Dropdown from "./formComponents/Dropdown";
 import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";
 
@@ -120,7 +121,7 @@ class FormCreator extends Component {
 
                 // Dropdown
                 else if(field.type === 'dropdown') {
-                    
+                    this._fieldDropdown(field, fieldsetId, fieldIdPrefix);
                 }
             }
         }
@@ -142,8 +143,13 @@ class FormCreator extends Component {
         if(!id) id = fieldIdPrefix+'-dropdown';
         const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
         this.fieldErrors.set(id, false);
+        const options = [];
+        for(let i=0; i<field.options.length; i++) {
+            options.push(field.options[i]);
+            options[i].label = this._getTextData(field.options[i].label, field.options[i].labelId);
+        }
         this.componentsOrder.push(id);
-        this.components[id] = this.addChild(new Checkbox({
+        this.components[id] = this.addChild(new Dropdown({
             id,
             name: field.name,
             class: field.class,
@@ -151,10 +157,12 @@ class FormCreator extends Component {
             attach: fieldsetId,
             disabled: field.disabled,
             value: field.initValue,
+            options,
+            emptyIsAnOption: field.emptyIsAnOption,
             field,
             changeFn: (e) => {
                 const val = e.target.checked;
-                // this._fieldCheckboxErrorCheck(val, id, field, fieldsetId);
+                this._fieldDropdownErrorCheck(val, id, field, fieldsetId);
                 if(field.onChangeFn) {
                     field.onChangeFn({
                         val, id, fieldsetId, errorStates: this.fieldErrors, field: this.components[id], components: this.components
@@ -164,7 +172,7 @@ class FormCreator extends Component {
             },
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
-        // this.components[id]['errorChecker'] = this._fieldCheckboxErrorCheck;
+        this.components[id]['errorChecker'] = this._fieldDropdownErrorCheck;
     }
 
     _fieldCheckbox(field, fieldsetId, fieldIdPrefix) {
@@ -231,6 +239,24 @@ class FormCreator extends Component {
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
         this.components[id]['errorChecker'] = this._fieldTextInputErrorCheck;
+    }
+
+    _fieldDropdownErrorCheck = (val, id, field, fieldsetId) => {
+        if(field.required && val === '') {
+            this.fieldErrors.set(id, {
+                errorMsg: getText('required'),
+                fieldsetId,
+                id
+            });
+        } else {
+            this.fieldErrors.set(id, false);
+        }
+        if(field.validationFn) {
+            field.validationFn({
+                val, id, fieldsetId, errorStates: this.fieldErrors, field, components: this.components, fieldsetErrorCheck: this.fieldsetErrorCheck
+            });
+        }
+        this.fieldsetErrorCheck(fieldsetId);
     }
 
     _fieldCheckboxErrorCheck = (val, id, field, fieldsetId) => {
