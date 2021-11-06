@@ -3,27 +3,18 @@ import Checkbox from "../forms/formComponents/Checkbox";
 import Dropdown from "../forms/formComponents/Dropdown";
 import TextInput from "../forms/formComponents/TextInput";
 import FormCreator from "../forms/FormCreator";
-import { testFormData } from "../forms/formData/testFormData";
-import NewUserForm from "../forms/NewUserForm";
+import { newUserFormData } from "../forms/formData/newUserFormData";
 
 class NewUser extends Component {
     constructor(data) {
         super(data);
         this.appState = data.appState;
         this.template = `<div><h2>${data.title}</h2></div>`;
-        // this.registerForm = this.addChild(new NewUserForm({
-        //     afterRegisterFn: this.afterRegister,
-        // }));
-        this.customForm = this.addChild(new FormCreator(testFormData));
+        this.form = this.addChild(new FormCreator(newUserFormData));
     }
 
     paint = () => {
-        // this.registerForm.draw();
-        this.customForm.draw();
-    }
-
-    afterRegister = () => {
-        console.log('After register fired in NewUser.js view.');
+        this.form.draw();
     }
 }
 
