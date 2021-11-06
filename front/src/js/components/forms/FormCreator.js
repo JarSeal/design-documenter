@@ -161,7 +161,7 @@ class FormCreator extends Component {
             emptyIsAnOption: field.emptyIsAnOption,
             field,
             changeFn: (e) => {
-                const val = e.target.checked;
+                const val = e.target.value;
                 this._fieldDropdownErrorCheck(val, id, field, fieldsetId);
                 if(field.onChangeFn) {
                     field.onChangeFn({
@@ -242,6 +242,7 @@ class FormCreator extends Component {
     }
 
     _fieldDropdownErrorCheck = (val, id, field, fieldsetId) => {
+        console.log('HERE', val === '' ? '[EMPTY]' : val);
         if(field.required && val === '') {
             this.fieldErrors.set(id, {
                 errorMsg: getText('required'),
