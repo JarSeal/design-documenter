@@ -46,8 +46,7 @@ class Dropdown extends Component {
             type: 'click',
             fn: (e) => {
                 this.value = e.target.value;
-                data.selected = this.value;
-                data.value = this.value;
+                this.data.value = this.data.selected = this.value;
                 if(data.changeFn) data.changeFn(e);
             },
         });
@@ -58,6 +57,7 @@ class Dropdown extends Component {
         selectElem.checked = data.checked;
         if(data.value || data.selected) {
             this.value = data.value || data.selected;
+            this.data.value = this.data.selected = this.value;
         }
         if(data.error) {
             this.elem.classList.add('form-elem--error');
@@ -113,8 +113,7 @@ class Dropdown extends Component {
             if(opts[i].value === newVal) {
                 valueFound = true;
                 this.value = newVal;
-                this.data.selected = this.value;
-                this.data.value = this.value;
+                this.data.value = this.data.selected = this.value;
                 break;
             }
         }

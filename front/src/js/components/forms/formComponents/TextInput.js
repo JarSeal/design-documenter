@@ -48,6 +48,7 @@ class TextInput extends Component {
             type: 'keyup',
             fn: (e) => {
                 this.value = e.target.value;
+                this.data.value = this.value;
                 if(data.changeFn) data.changeFn(e);
             },
         });
@@ -55,7 +56,10 @@ class TextInput extends Component {
 
     paint(data) {
         const inputElem = document.getElementById(this.inputId);
-        if(data.value !== undefined) this.value = data.value;
+        if(data.value !== undefined) {
+            this.value = data.value;
+            this.data.value = data.value;
+        }
         inputElem.value = this.value;
         if(data.error) {
             this.elem.classList.add('form-elem--error');
@@ -86,6 +90,7 @@ class TextInput extends Component {
         this.value = String(newValue);
         const inputElem = document.getElementById(this.inputId);
         inputElem.value = this.value;
+        this.data.value = this.value;
         if(noChangeFn) return;
         if(this.data.changeFn) this.data.changeFn({ target: inputElem });
     }

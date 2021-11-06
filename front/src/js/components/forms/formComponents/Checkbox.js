@@ -4,7 +4,7 @@ import { Component } from "../../../LIGHTER";
 // - label = field label [String]
 // - name = input name property [String]
 // - changeFn = function that is ran after each change [Function]
-// - checked = whether the box is checked or not [Boolean]
+// - value or checked = whether the box is checked or not [Boolean]
 // - disabled = whether the field is disabled or not [Boolean]
 // - error = an error boolean or object to tell if the field has errors {hasError:Boolean, errorMsg:String} [Boolean/Object]
 class Checkbox extends Component {
@@ -22,13 +22,13 @@ class Checkbox extends Component {
                         class="form-elem__checkbox"
                         type="checkbox"
                         name="${data.name}"
-                        ${data.checked ? 'checked' : ''}
+                        ${data.value || data.checked ? 'checked' : ''}
                         ${data.disabled ? 'disabled' : ''}
                     />
                 </label>
             </div>
         `;
-        this.value = data.checked || false;
+        this.value = data.value || data.checked || false;
         this.errorComp = this.addChild(new Component({
             id: this.id + '-error-msg',
             class: 'form-elem__error-msg',
@@ -43,6 +43,7 @@ class Checkbox extends Component {
             type: 'click',
             fn: (e) => {
                 this.value = e.target.checked;
+                this.data.value = this.data.checked  = this.value;
                 if(this.value === false) {
                     this.elem.classList.remove('form-elem--checked');
                 } else {
@@ -55,7 +56,10 @@ class Checkbox extends Component {
 
     paint(data) {
         const inputElem = document.getElementById(this.inputId);
-        if(data.checked === true || data.checked === false) this.value = data.checked;
+        if(data.checked === true || data.checked === false || data.value === true || data.value === false) {
+            this.value = data.value || data.checked || false;
+            this.data.value = this.data.checked  = this.value;
+        }
         inputElem.checked = this.value;
         if(this.value === false) {
             this.elem.classList.remove('form-elem--checked');
@@ -98,6 +102,7 @@ class Checkbox extends Component {
             inputElem.checked = true;
             this.elem.classList.add('form-elem--checked');
         }
+        this.data.value = this.data.checked = this.value;
         if(noChangeFn) return;
         if(this.data.changeFn) this.data.changeFn({target:inputElem});
     }
