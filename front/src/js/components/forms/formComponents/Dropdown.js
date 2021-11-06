@@ -5,7 +5,7 @@ import { Component } from "../../../LIGHTER";
 // - label = field label [String]
 // - name = input name property [String]
 // - changeFn = function that is ran after each change [Function]
-// - selected = value key tells which value is selected [String]
+// - value or selected = tells which value is selected (value is primary) [String]
 // - options = array of objects with value, label, disabled [Array[Object]]
 // - emptyIsAnOption = [Boolean]
 // - disabled = whether the field is disabled or not [Boolean]
@@ -17,6 +17,7 @@ class Dropdown extends Component {
         if(!data.label) data.label = data.id;
         this.selectId = this.id + '-select';
         this.options = [];
+        this.value = data.value || data.selected || '';
         this.template = `
             <div class="form-elem form-elem--dropdown">
                 <label for="${this.selectId}">
@@ -27,11 +28,10 @@ class Dropdown extends Component {
                         type="checkbox"
                         name="${data.name}"
                         ${data.disabled ? 'disabled' : ''}
-                    >${this._createOptionsTemplate(data.options, data.selected, data.emptyIsAnOption)}</select>
+                    >${this._createOptionsTemplate(data.options, this.value, data.emptyIsAnOption)}</select>
                 </label>
             </div>
         `;
-        this.value = data.selected;
         this.errorComp = this.addChild(new Component({
             id: this.id + '-error-msg',
             class: 'form-elem__error-msg',
@@ -47,6 +47,7 @@ class Dropdown extends Component {
             fn: (e) => {
                 this.value = e.target.value;
                 data.selected = this.value;
+                data.value = this.value;
                 if(data.changeFn) data.changeFn(e);
             },
         });
@@ -55,6 +56,9 @@ class Dropdown extends Component {
     paint(data) {
         const selectElem = document.getElementById(this.selectId);
         selectElem.checked = data.checked;
+        if(data.value || data.selected) {
+            this.value = data.value || data.selected;
+        }
         if(data.error) {
             this.elem.classList.add('form-elem--error');
             if(data.error.errorMsg) {
@@ -80,29 +84,6 @@ class Dropdown extends Component {
         }
     }
 
-    setValue(newValue) {
-        const opts = document.getElementById(this.selectId).children;
-        const newVal = String(newValue);
-        let valueFound = false;
-        for(let i=0; i<opts.length; i++) {
-            if(opts[i].value === newVal) {
-                valueFound = true;
-                this.value = newValue
-                break;
-            }
-        }
-        if(valueFound) {
-            for(let i=0; i<opts.length; i++) {
-                if(opts[i].value === newVal) {
-                    opts[i].selected = true;
-                } else {
-                    opts[i].selected = false;
-                }
-            }
-            if(this.data.changeFn) this.data.changeFn({ target: { value: this.value } });
-        }
-    }
-
     _createOptionsTemplate(options, selected, emptyIsAnOption) {
         let template = '';
         console.log(options);
@@ -121,6 +102,35 @@ class Dropdown extends Component {
             template += '>' + options[i].label + '</option>';
         }
         return template;
+    }
+
+    setValue(newValue, noChangeFn) {
+        const selectElem = document.getElementById(this.selectId);
+        const opts = selectElem.children;
+        const newVal = String(newValue);
+        let valueFound = false;
+        for(let i=0; i<opts.length; i++) {
+            if(opts[i].value === newVal) {
+                valueFound = true;
+                this.value = newVal;
+                this.data.selected = this.value;
+                this.data.value = this.value;
+                break;
+            }
+        }
+        if(valueFound) {
+            for(let i=0; i<opts.length; i++) {
+                if(opts[i].value === newVal) {
+                    opts[i].selected = true;
+                } else {
+                    opts[i].selected = false;
+                }
+            }
+            if(noChangeFn) return;
+            if(this.data.changeFn) this.data.changeFn({ target: selectElem });
+        } else {
+            this.logger.warn('Could not locate dropdown value in Dropdown -> setValue', newValue);
+        }
     }
 }
 

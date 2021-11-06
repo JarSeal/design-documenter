@@ -1,5 +1,7 @@
 import { Component } from "../../LIGHTER";
+import Checkbox from "../forms/formComponents/Checkbox";
 import Dropdown from "../forms/formComponents/Dropdown";
+import TextInput from "../forms/formComponents/TextInput";
 import FormCreator from "../forms/FormCreator";
 import { testFormData } from "../forms/formData/testFormData";
 import NewUserForm from "../forms/NewUserForm";
@@ -18,7 +20,7 @@ class NewUser extends Component {
             label: 'My dropdown:',
             name: 'some-dropdown',
             emptyIsAnOption: true,
-            selected: 2,
+            value: 3,
             options: [
                 { value: '1', label: 'One' },
                 { value: '2', label: 'Two' },
@@ -26,7 +28,20 @@ class NewUser extends Component {
                 { value: '4', label: 'Four', disabled: true },  
             ],
             changeFn: (e) => {
-                console.log('here');
+                console.log('here', e.target.value);
+            },
+        }));
+        this.checkbox = this.addChild(new Checkbox({
+            id: 'jotain',
+            changeFn: (e) => {
+                console.log('chec', e.target.checked);
+            },
+        }));
+        this.textInput = this.addChild(new TextInput({
+            id: 'textinput',
+            placeholder: 'Some placeholder..',
+            changeFn: (e) => {
+                console.log('textInputter', e.target.value);
             },
         }));
     }
@@ -35,8 +50,12 @@ class NewUser extends Component {
         // this.registerForm.draw();
         // this.customForm.draw();
         this.dropdown.draw();
+        this.checkbox.draw();
+        this.textInput.draw();
         setTimeout(() => {
             this.dropdown.setValue(1);
+            this.checkbox.setValue(true, true);
+            // this.textInput.setValue('UUsi arvo', true);
         }, 4000);
     }
 

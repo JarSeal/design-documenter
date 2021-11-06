@@ -4,6 +4,7 @@ import Component from "../../../LIGHTER/Component";
 // - value = value to display on the field [String]
 // - password = whether the input type is password [Boolean]
 // - label = field label [String]
+// - placeholder = field placeholder [String]
 // - name = input name property [String]
 // - changeFn = function that is ran after each change [Function]
 // - disabled = whether the field is disabled or not [Boolean]
@@ -24,6 +25,7 @@ class TextInput extends Component {
                         class="form-elem__input"
                         type="${data.password ? 'password' : 'text'}"
                         name="${data.name}"
+                        placeholder="${data.placeholder || ''}"
                         value="${data.value || ''}"
                         ${data.maxlength ? 'maxlength="'+data.maxlength+'"' : ''}
                         ${data.disabled ? 'disabled' : ''}
@@ -31,7 +33,7 @@ class TextInput extends Component {
                 </label>
             </div>
         `;
-        this.value = data.value;
+        this.value = data.value || '';
         this.errorComp = this.addChild(new Component({
             id: this.id + '-error-msg',
             class: 'form-elem__error-msg',
@@ -40,22 +42,21 @@ class TextInput extends Component {
     }
 
     addListeners(data) {
-        if(data.changeFn) {
-            this.addListener({
-                id: this.inputId + '-keyup',
-                target: document.getElementById(this.inputId),
-                type: 'keyup',
-                fn: (e) => {
-                    this.value = e.target.value;
-                    data.changeFn(e);
-                },
-            });
-        }
+        this.addListener({
+            id: this.inputId + '-keyup',
+            target: document.getElementById(this.inputId),
+            type: 'keyup',
+            fn: (e) => {
+                this.value = e.target.value;
+                if(data.changeFn) data.changeFn(e);
+            },
+        });
     }
 
     paint(data) {
         const inputElem = document.getElementById(this.inputId);
-        inputElem.value = data.value;
+        if(data.value !== undefined) this.value = data.value;
+        inputElem.value = this.value;
         if(data.error) {
             this.elem.classList.add('form-elem--error');
             if(data.error.errorMsg) {
@@ -81,9 +82,12 @@ class TextInput extends Component {
         }
     }
 
-    setValue(newValue) {
+    setValue(newValue, noChangeFn) {
         this.value = String(newValue);
-        data.changeFn({ target: { value: this.value }});
+        const inputElem = document.getElementById(this.inputId);
+        inputElem.value = this.value;
+        if(noChangeFn) return;
+        if(this.data.changeFn) this.data.changeFn({ target: inputElem });
     }
 }
 

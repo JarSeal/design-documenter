@@ -37,22 +37,31 @@ class Checkbox extends Component {
     }
 
     addListeners(data) {
-        if(data.changeFn) {
-            this.addListener({
-                id: this.inputId + '-click',
-                target: document.getElementById(this.inputId),
-                type: 'click',
-                fn: (e) => {
-                    this.value = e.target.checked;
-                    data.changeFn(e);
-                },
-            });
-        }
+        this.addListener({
+            id: this.inputId + '-click',
+            target: document.getElementById(this.inputId),
+            type: 'click',
+            fn: (e) => {
+                this.value = e.target.checked;
+                if(this.value === false) {
+                    this.elem.classList.remove('form-elem--checked');
+                } else {
+                    this.elem.classList.add('form-elem--checked');
+                }
+                if(data.changeFn) data.changeFn(e);
+            },
+        });
     }
 
     paint(data) {
         const inputElem = document.getElementById(this.inputId);
-        inputElem.checked = data.checked;
+        if(data.checked === true || data.checked === false) this.value = data.checked;
+        inputElem.checked = this.value;
+        if(this.value === false) {
+            this.elem.classList.remove('form-elem--checked');
+        } else {
+            this.elem.classList.add('form-elem--checked');
+        }
         if(data.error) {
             this.elem.classList.add('form-elem--error');
             if(data.error.errorMsg) {
@@ -78,8 +87,21 @@ class Checkbox extends Component {
         }
     }
 
-    setValue(newValue) {
-        
+    setValue = (newValue, noChangeFn) => {
+        let inputElem;
+        if(newValue === false) {
+            this.value = false;
+            inputElem = document.getElementById(this.inputId);
+            inputElem.checked = false;
+            this.elem.classList.remove('form-elem--checked');
+        } else {
+            this.value = true;
+            inputElem = document.getElementById(this.inputId);
+            inputElem.checked = true;
+            this.elem.classList.add('form-elem--checked');
+        }
+        if(noChangeFn) return;
+        if(this.data.changeFn) this.data.changeFn({target:inputElem});
     }
 }
 
