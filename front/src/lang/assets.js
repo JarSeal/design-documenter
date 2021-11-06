@@ -31,6 +31,10 @@ export const assetsObj = {
         en: 'Select',
         fi: 'Valitse',
     },
+    submit: {
+        en: 'Submit',
+        fi: 'Lähetä',
+    },
     minimum_x_characters: {
         en: 'Minimum $[0] characters',
         fi: 'Vähintään $[0] merkkiä',
@@ -70,5 +74,9 @@ export const assetsObj = {
     route_title_new_user: {
         en: 'New User',
         fi: 'Uusi käyttäjä',
+    },
+    route_test_form_data: {
+        en: 'All form data examples',
+        fi: 'Kaikki lomake-datan esimerkit',
     },
 };

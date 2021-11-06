@@ -165,10 +165,15 @@ class FormCreator extends Component {
                 this._fieldDropdownErrorCheck(val, id, field, fieldsetId);
                 if(field.onChangeFn) {
                     field.onChangeFn({
-                        val, id, fieldsetId, errorStates: this.fieldErrors, field: this.components[id], components: this.components
+                        val,
+                        id,
+                        fieldsetId,
+                        errorState: this.fieldErrors,
+                        field: this.components[id],
+                        components: this.components,
                     });
                 }
-                if(this.formSentOnce) this.components[id].error(this.fieldErrors.get(id));
+                this._displayFieldError(id);
             },
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
@@ -195,10 +200,15 @@ class FormCreator extends Component {
                 this._fieldCheckboxErrorCheck(val, id, field, fieldsetId);
                 if(field.onChangeFn) {
                     field.onChangeFn({
-                        val, id, fieldsetId, errorStates: this.fieldErrors, field: this.components[id], components: this.components
+                        val,
+                        id,
+                        fieldsetId,
+                        errorState: this.fieldErrors,
+                        field: this.components[id],
+                        components: this.components,
                     });
                 }
-                if(this.formSentOnce) this.components[id].error(this.fieldErrors.get(id));
+                this._displayFieldError(id);
             },
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
@@ -221,7 +231,7 @@ class FormCreator extends Component {
             attach: fieldsetId,
             disabled: field.disabled,
             maxlength: field.maxLength,
-            value: field.maxLength
+            value: field.maxLength && field.initValue
                 ? (field.initValue.substring(0, parseInt(field.maxLength)) || '')
                 : field.initValue || '',
             password: field.password,
@@ -231,10 +241,15 @@ class FormCreator extends Component {
                 this._fieldTextInputErrorCheck(val, id, field, fieldsetId);
                 if(field.onChangeFn) {
                     field.onChangeFn({
-                        val, id, fieldsetId, errorStates: this.fieldErrors, field: this.components[id], components: this.components
+                        val,
+                        id,
+                        fieldsetId,
+                        errorState: this.fieldErrors,
+                        field: this.components[id],
+                        components: this.components,
                     });
                 }
-                if(this.formSentOnce) this.components[id].error(this.fieldErrors.get(id));
+                this._displayFieldError(id);
             },
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
@@ -253,7 +268,7 @@ class FormCreator extends Component {
         }
         if(field.validationFn) {
             field.validationFn({
-                val, id, fieldsetId, errorStates: this.fieldErrors, field, components: this.components, fieldsetErrorCheck: this.fieldsetErrorCheck
+                val, id, fieldsetId, errorState: this.fieldErrors, field, components: this.components
             });
         }
         this.fieldsetErrorCheck(fieldsetId);
@@ -271,7 +286,7 @@ class FormCreator extends Component {
         }
         if(field.validationFn) {
             field.validationFn({
-                val, id, fieldsetId, errorStates: this.fieldErrors, field, components: this.components, fieldsetErrorCheck: this.fieldsetErrorCheck
+                val, id, fieldsetId, errorState: this.fieldErrors, field, components: this.components
             });
         }
         this.fieldsetErrorCheck(fieldsetId);
@@ -299,7 +314,7 @@ class FormCreator extends Component {
         }
         if(field.validationFn) {
             field.validationFn({
-                val, id, fieldsetId, errorStates: this.fieldErrors, field, components: this.components, fieldsetErrorCheck: this.fieldsetErrorCheck
+                val, id, fieldsetId, errorState: this.fieldErrors, field, components: this.components
             });
         }
         this.fieldsetErrorCheck(fieldsetId);
@@ -371,6 +386,20 @@ class FormCreator extends Component {
                 comp.error(this.fieldErrors.get(comp.id));
                 formHasErrors = true;
             }
+        }
+    }
+
+    _displayFieldError = (id) => {
+        const msg = this.fieldErrors.get(id);
+        console.log(msg);
+        if(!this.formSentOnce || !msg) return;
+        if(typeof msg === 'string' || msg instanceof String) {
+            console.log('HERE1');
+            this.components[id].error({ errorMsg: msg });
+        } else {
+            const text = this._getTextData(msg.errorMsg, msg.errorMsgId);
+            console.log('HERE2',msg.errorMsg,text,id);
+            this.components[id].error({ errorMsg: text });
         }
     }
 }
