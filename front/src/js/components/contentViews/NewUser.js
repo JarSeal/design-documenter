@@ -15,48 +15,11 @@ class NewUser extends Component {
         //     afterRegisterFn: this.afterRegister,
         // }));
         this.customForm = this.addChild(new FormCreator(testFormData));
-        this.dropdown = this.addChild(new Dropdown({
-            id: 'some-dropdown',
-            label: 'My dropdown:',
-            name: 'some-dropdown',
-            emptyIsAnOption: true,
-            value: 3,
-            options: [
-                { value: '1', label: 'One' },
-                { value: '2', label: 'Two' },
-                { value: '3', label: 'Three' },
-                { value: '4', label: 'Four', disabled: true },  
-            ],
-            changeFn: (e) => {
-                console.log('here', e.target.value);
-            },
-        }));
-        this.checkbox = this.addChild(new Checkbox({
-            id: 'jotain',
-            changeFn: (e) => {
-                console.log('chec', e.target.checked);
-            },
-        }));
-        this.textInput = this.addChild(new TextInput({
-            id: 'textinput',
-            placeholder: 'Some placeholder..',
-            changeFn: (e) => {
-                console.log('textInputter', e.target.value);
-            },
-        }));
     }
 
     paint = () => {
         // this.registerForm.draw();
-        // this.customForm.draw();
-        this.dropdown.draw();
-        this.checkbox.draw();
-        this.textInput.draw();
-        setTimeout(() => {
-            this.dropdown.setValue(1);
-            this.checkbox.setValue(true, true);
-            // this.textInput.setValue('UUsi arvo', true);
-        }, 4000);
+        this.customForm.draw();
     }
 
     afterRegister = () => {
