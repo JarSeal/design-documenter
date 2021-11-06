@@ -117,6 +117,11 @@ class FormCreator extends Component {
                 else if(field.type === 'checkbox') {
                     this._fieldCheckbox(field, fieldsetId, fieldIdPrefix);
                 }
+
+                // Dropdown
+                else if(field.type === 'dropdown') {
+                    
+                }
             }
         }
 
@@ -132,15 +137,45 @@ class FormCreator extends Component {
         }));
     }
 
-    _fieldCheckbox(field, fieldsetId, fieldIdPrefix) {
+    _fieldDropdown(field, fieldsetId, fieldIdPrefix) {
         let id = field.id;
-        if(!id) id = fieldIdPrefix+'-textinput';
+        if(!id) id = fieldIdPrefix+'-dropdown';
         const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
         this.fieldErrors.set(id, false);
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new Checkbox({
             id,
-            name: field.name || id,
+            name: field.name,
+            class: field.class,
+            label,
+            attach: fieldsetId,
+            disabled: field.disabled,
+            value: field.initValue,
+            field,
+            changeFn: (e) => {
+                const val = e.target.checked;
+                // this._fieldCheckboxErrorCheck(val, id, field, fieldsetId);
+                if(field.onChangeFn) {
+                    field.onChangeFn({
+                        val, id, fieldsetId, errorStates: this.fieldErrors, field: this.components[id], components: this.components
+                    });
+                }
+                if(this.formSentOnce) this.components[id].error(this.fieldErrors.get(id));
+            },
+        }));
+        this.components[id]['fieldsetId'] = fieldsetId;
+        // this.components[id]['errorChecker'] = this._fieldCheckboxErrorCheck;
+    }
+
+    _fieldCheckbox(field, fieldsetId, fieldIdPrefix) {
+        let id = field.id;
+        if(!id) id = fieldIdPrefix+'-checkbox';
+        const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
+        this.fieldErrors.set(id, false);
+        this.componentsOrder.push(id);
+        this.components[id] = this.addChild(new Checkbox({
+            id,
+            name: field.name,
             class: field.class,
             label,
             attach: fieldsetId,
@@ -171,7 +206,7 @@ class FormCreator extends Component {
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new TextInput({
             id,
-            name: field.name || id,
+            name: field.name,
             class: field.class,
             label,
             placeholder,

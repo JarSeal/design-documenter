@@ -96,7 +96,7 @@ export const testFormData = {
                     initValue: '', // String
                     validationFn: (args) => { return true; }, // Function
                     onChangeFn: (args) => {}, // Function
-                }
+                },
             ],
         },
     ],
