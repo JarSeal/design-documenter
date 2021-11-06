@@ -88,15 +88,13 @@ class Checkbox extends Component {
     }
 
     setValue = (newValue, noChangeFn) => {
-        let inputElem;
+        const inputElem = document.getElementById(this.inputId);
         if(newValue === false) {
             this.value = false;
-            inputElem = document.getElementById(this.inputId);
             inputElem.checked = false;
             this.elem.classList.remove('form-elem--checked');
         } else {
             this.value = true;
-            inputElem = document.getElementById(this.inputId);
             inputElem.checked = true;
             this.elem.classList.add('form-elem--checked');
         }
