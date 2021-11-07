@@ -1,6 +1,9 @@
+import axios from 'axios';
 import { getLang, getText } from "../../helpers/lang";
 import { validateEmail } from "../../helpers/parsers";
 import { Component, Logger, State } from "../../LIGHTER";
+import { _CONFIG } from "../../_CONFIG";
+import Spinner from '../widgets/Spinner';
 import Checkbox from "./formComponents/Checkbox";
 import Dropdown from "./formComponents/Dropdown";
 import SubmitButton from "./formComponents/SubmitButton";
@@ -36,6 +39,10 @@ class FormCreator extends Component {
             const key = this.componentsOrder[i];
             this.components[key].draw();
         }
+        this.components[this.id+'-spinner-icon'].showSpinner(true);
+        setTimeout(() => {
+            this.components[this.id+'-spinner-icon'].showSpinner(false);
+        }, 3000);
     }
 
     _createFormComponents(data) {
@@ -128,6 +135,11 @@ class FormCreator extends Component {
         }
 
         // Spinner
+        id = this.id + '-spinner-icon';
+        this.componentsOrder.push(id);
+        this.components[id] = this.addChild(new Spinner({
+            id,
+        }));
 
         // Submit button
         const button = data.submitButton;
@@ -403,11 +415,42 @@ class FormCreator extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        this.formSentOnce = true;
-        this.elem.classList.add('form--sent');
+        if(!this.formSentOnce) {
+            this.formSentOnce = true;
+            this.elem.classList.add('form--sent');
+        }
 
         // Check form errors
         let formHasErrors = this._checkAllFieldErrors();
+
+        console.log('ERRORS', this.data);
+        const fields = this.data.submitFields;
+        const payload = {};
+        for(let i=0; i<fields.length; i++) {
+            payload[fields[i]] = this.components[fields[i]].value;
+        }
+        console.log('PAYLAOD', payload);
+        this.sendForm(payload);
+        if(!formHasErrors) {
+            // Create payload here
+            this.sendForm(payload);
+        }
+    }
+
+    sendForm = async payload => {
+        // this.loginState.set('checking', true);
+        try {
+            const url = _CONFIG.apiBaseUrl + '/login';
+            const response = await axios.post(url, payload);
+
+            // if(this.afterLoginFn) {
+            //     this.afterLoginFn(response, remember);
+            // }
+        } catch(exception) {
+            // this.loginState.set('checking', false);
+            this.logger.error('Form sending failed (Form Creator).', exception, this);
+            throw new Error('Call stack');
+        }
     }
 
     _checkAllFieldErrors = () => {
