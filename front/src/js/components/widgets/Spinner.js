@@ -14,6 +14,7 @@ class Spinner extends Component {
 
     showSpinner = (show) => {
         const elem = this.elem;
+        if(!elem) return;
         if(show) {
             elem.style.display = 'inline-block';
             clearTimeout(this.spinnerAnimTimer);
