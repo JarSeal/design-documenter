@@ -310,6 +310,7 @@ class FormCreator extends Component {
                 id
             });
         } else {
+            console.log('NOT HERE', id);
             this.fieldErrors.set(id, false);
         }
         if(field.validationFn) {
@@ -392,7 +393,10 @@ class FormCreator extends Component {
     _displayFieldError = (id) => {
         const msg = this.fieldErrors.get(id);
         console.log(msg);
-        if(!this.formSentOnce || !msg) return;
+        if(!this.formSentOnce || !msg) {
+            this.components[id].error(false);
+            return;
+        }
         if(typeof msg === 'string' || msg instanceof String) {
             console.log('HERE1');
             this.components[id].error({ errorMsg: msg });
