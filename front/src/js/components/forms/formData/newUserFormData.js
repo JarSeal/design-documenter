@@ -10,12 +10,15 @@ export const newUserFormData = {
         id: 'submit-button-id',
         labelId: 'create_new_user_button',
     },
+    submitFields: [ 'username', 'name', 'email', 'password' ],
     fieldsets: [
         {
             // FIELDSET
             id: 'test-fieldset',
-            fields: [{
-                    // TEXT INPUT
+            fields: [
+                { type: 'divider' },
+                {
+                    // USERNAME
                     type: 'textinput',
                     id: 'username',
                     labelId: 'username',
@@ -24,37 +27,73 @@ export const newUserFormData = {
                     maxLength: 24,
                 },
                 {
-                    // TEXT INPUT
+                    // NAME
+                    type: 'textinput',
+                    id: 'name',
+                    labelId: 'name',
+                    maxLength: 40,
+                },
+                { type: 'divider' },
+                {
+                    // EMAIL
+                    type: 'textinput',
+                    id: 'email',
+                    labelId: 'email',
+                    required: true,
+                    minLength: 6,
+                    maxLength: 50,
+                    validationFn: (args) => {
+
+                    },
+                },
+                { type: 'divider' },
+                {
+                    // PASSWORD
                     type: 'textinput',
                     id: 'password',
                     labelId: 'password',
                     required: true,
-                    minLength: 6,
+                    minLength: 3,
                     maxLength: 40,
-                    validationFn: (args) =>  {
-                        if(args.val.length >= 6 && args.val !== args.components['password-again'].value) {
-                            args.errorState.set('password-again', { errorMsg: 'Passwords don\'t match' });
-                        } else if(args.val.length >= 6 && args.val === args.components['password-again'].value) {
-                            args.errorState.set('password-again', false);
+                    password: true,
+                    validationFn: (args) => {
+                        const { val, components, fieldErrors } = args;
+                        const pass2Val = components['password-again'].value;
+                        const minLength = components['password'].data.field.minLength;
+                        if(val.length >= minLength && pass2Val.length >= 1 && val !== components['password-again'].value) {
+                            fieldErrors.set('password-again', { errorMsgId: 'passwords_dont_match' });
+                            fieldErrors.set('password', { errorMsg: ' ' });
+                        } else if(val.length >= minLength && val === components['password-again'].value) {
+                            fieldErrors.set('password-again', false);
+                            fieldErrors.set('password', false);
                         }
+                        components['password-again'].displayFieldError();
                     },
                 },
                 {
-                    // TEXT INPUT
+                    // PASSWORD AGAIN
                     type: 'textinput',
                     id: 'password-again',
                     labelId: 'password_again',
                     required: true,
-                    minLength: 6,
+                    minLength: 0,
                     maxLength: 40,
+                    password: true,
                     validationFn: (args) => {
-                        if(args.val.length >= 6 && args.val !== args.components['password'].value) {
-                            args.errorState.set('password-again', { errorMsg: 'Passwords don\'t match' });
-                        } else if(args.val.length >= 6 && args.val === args.components['password'].value) {
-                            args.errorState.set('password-again', false);
+                        const { val, components, fieldErrors } = args;
+                        const pass1Val = components['password'].value;
+                        const minLength = components['password'].data.field.minLength;
+                        if(val.length >= 1 && val !== components['password'].value) {
+                            fieldErrors.set('password-again', { errorMsgId: 'passwords_dont_match' });
+                            if(!fieldErrors.get('password')) fieldErrors.set('password', { errorMsg: ' ' });
+                        } else if(val.length >= 1 && pass1Val.length >= minLength && val === components['password'].value) {
+                            fieldErrors.set('password-again', false);
+                            fieldErrors.set('password', false);
                         }
+                        components['password'].displayFieldError();
                     },
                 },
+                { type: 'divider' },
             ],
         },
     ],

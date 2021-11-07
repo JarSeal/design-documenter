@@ -12,7 +12,7 @@ class FormCreator extends Component {
         super(data);
         this.logger = new Logger('Form Creator *****');
         this._validateImportedFormData(data);
-        this.template = `<form></form>`;
+        this.template = `<form class="form-creator"></form>`;
         this.components = {};
         this.componentsOrder = [];
         this.curLang = getLang();
@@ -162,13 +162,13 @@ class FormCreator extends Component {
             field,
             changeFn: (e) => {
                 const val = e.target.value;
-                this._fieldDropdownErrorCheck(val, id, field, fieldsetId);
+                this._fieldDropdownErrorCheck({ val, id, field, fieldsetId });
                 if(field.onChangeFn) {
                     field.onChangeFn({
                         val,
                         id,
                         fieldsetId,
-                        errorState: this.fieldErrors,
+                        fieldErrors: this.fieldErrors,
                         field: this.components[id],
                         components: this.components,
                     });
@@ -178,6 +178,7 @@ class FormCreator extends Component {
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
         this.components[id]['errorChecker'] = this._fieldDropdownErrorCheck;
+        this.components[id]['displayFieldError'] = () => { this._displayFieldError(id); };
     }
 
     _fieldCheckbox(field, fieldsetId, fieldIdPrefix) {
@@ -197,13 +198,13 @@ class FormCreator extends Component {
             field,
             changeFn: (e) => {
                 const val = e.target.checked;
-                this._fieldCheckboxErrorCheck(val, id, field, fieldsetId);
+                this._fieldCheckboxErrorCheck({ val, id, field, fieldsetId });
                 if(field.onChangeFn) {
                     field.onChangeFn({
                         val,
                         id,
                         fieldsetId,
-                        errorState: this.fieldErrors,
+                        fieldErrors: this.fieldErrors,
                         field: this.components[id],
                         components: this.components,
                     });
@@ -213,6 +214,7 @@ class FormCreator extends Component {
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
         this.components[id]['errorChecker'] = this._fieldCheckboxErrorCheck;
+        this.components[id]['displayFieldError'] = () => { this._displayFieldError(id); };
     }
 
     _fieldTextInput(field, fieldsetId, fieldIdPrefix) {
@@ -238,13 +240,13 @@ class FormCreator extends Component {
             field,
             changeFn: (e) => {
                 const val = e.target.value;
-                this._fieldTextInputErrorCheck(val, id, field, fieldsetId);
+                this._fieldTextInputErrorCheck({ val, id, field, fieldsetId });
                 if(field.onChangeFn) {
                     field.onChangeFn({
                         val,
                         id,
                         fieldsetId,
-                        errorState: this.fieldErrors,
+                        fieldErrors: this.fieldErrors,
                         field: this.components[id],
                         components: this.components,
                     });
@@ -254,9 +256,11 @@ class FormCreator extends Component {
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
         this.components[id]['errorChecker'] = this._fieldTextInputErrorCheck;
+        this.components[id]['displayFieldError'] = () => { this._displayFieldError(id); };
     }
 
-    _fieldDropdownErrorCheck = (val, id, field, fieldsetId) => {
+    _fieldDropdownErrorCheck = (args) => {
+        let { val, id, field, fieldsetId } = args;
         if(field.required && val === '') {
             this.fieldErrors.set(id, {
                 errorMsg: getText('required'),
@@ -268,13 +272,19 @@ class FormCreator extends Component {
         }
         if(field.validationFn) {
             field.validationFn({
-                val, id, fieldsetId, errorState: this.fieldErrors, field, components: this.components
+                val,
+                id,
+                fieldsetId,
+                fieldErrors: this.fieldErrors,
+                field,
+                components: this.components,
             });
         }
         this.fieldsetErrorCheck(fieldsetId);
     }
 
-    _fieldCheckboxErrorCheck = (val, id, field, fieldsetId) => {
+    _fieldCheckboxErrorCheck = (args) => {
+        let { val, id, field, fieldsetId } = args;
         if(field.required && val === false) {
             this.fieldErrors.set(id, {
                 errorMsg: getText('required'),
@@ -286,13 +296,19 @@ class FormCreator extends Component {
         }
         if(field.validationFn) {
             field.validationFn({
-                val, id, fieldsetId, errorState: this.fieldErrors, field, components: this.components
+                val,
+                id,
+                fieldsetId,
+                fieldErrors: this.fieldErrors,
+                field,
+                components: this.components,
             });
         }
         this.fieldsetErrorCheck(fieldsetId);
     }
 
-    _fieldTextInputErrorCheck = (val, id, field, fieldsetId) => {
+    _fieldTextInputErrorCheck = (args) => {
+        let { val, id, field, fieldsetId } = args;
         val = val.trim();
         if(field.required && !val.length) {
             this.fieldErrors.set(id, {
@@ -301,7 +317,7 @@ class FormCreator extends Component {
                 id
             });
             if(field.required !== true) { // field.required is a function then
-                field.required({ val, id, fieldsetId });
+                field.required({ val, id, field, fieldsetId });
             }
         } else if(val.length && val.length < field.minLength) {
             this.fieldErrors.set(id, {
@@ -310,12 +326,16 @@ class FormCreator extends Component {
                 id
             });
         } else {
-            console.log('NOT HERE', id);
             this.fieldErrors.set(id, false);
         }
         if(field.validationFn) {
             field.validationFn({
-                val, id, fieldsetId, errorState: this.fieldErrors, field, components: this.components
+                val,
+                id,
+                fieldsetId,
+                fieldErrors: this.fieldErrors,
+                field,
+                components: this.components,
             });
         }
         this.fieldsetErrorCheck(fieldsetId);
@@ -377,32 +397,35 @@ class FormCreator extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
         this.formSentOnce = true;
+        this.elem.classList.add('form--sent');
 
         // Check form errors
+        let formHasErrors = this._checkAllFieldErrors();
+    }
+
+    _checkAllFieldErrors = () => {
         let formHasErrors = false;
         for(let i=0; i<this.componentsOrder.length; i++) {
             const comp = this.components[this.componentsOrder[i]];
             if(comp.errorChecker) {
-                comp.errorChecker(comp.value, comp.id, comp.data.field, comp.fieldsetId);
+                comp.errorChecker({ val: comp.value, id: comp.id, field: comp.data.field, fieldsetId: comp.fieldsetId});
                 comp.error(this.fieldErrors.get(comp.id));
                 formHasErrors = true;
             }
         }
+        return formHasErrors;
     }
 
     _displayFieldError = (id) => {
         const msg = this.fieldErrors.get(id);
-        console.log(msg);
         if(!this.formSentOnce || !msg) {
             this.components[id].error(false);
             return;
         }
         if(typeof msg === 'string' || msg instanceof String) {
-            console.log('HERE1');
             this.components[id].error({ errorMsg: msg });
         } else {
             const text = this._getTextData(msg.errorMsg, msg.errorMsgId);
-            console.log('HERE2',msg.errorMsg,text,id);
             this.components[id].error({ errorMsg: text });
         }
     }
