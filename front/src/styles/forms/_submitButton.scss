@@ -15,7 +15,7 @@
 }
 
 .form-creator {
-    &.form--errors {
+    &.form--errors.form--sent {
         .form-elem--submit {
             border-bottom-color: rgba($form-field-error-color, 1);
         }
