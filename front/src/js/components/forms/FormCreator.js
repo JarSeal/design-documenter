@@ -75,6 +75,7 @@ class FormCreator extends Component {
 
     _loadFormData = async id => {
         this.formState.set('getting', true);
+        this.formState.set('sending', false);
         setTimeout(() => { // Temp mockup loading timer..
             this.formState.set('getting', false);
         }, 200);
@@ -503,7 +504,10 @@ class FormCreator extends Component {
             if(comp.errorChecker) {
                 comp.errorChecker({ val: comp.value, id: comp.id, field: comp.data.field, fieldsetId: comp.fieldsetId});
                 this._displayFieldError(comp.id);
-                formHasErrors = true;
+                console.log(comp.id);
+                if(this.fieldErrors.get(comp.id)) {
+                    formHasErrors = true;
+                }
             }
         }
         return formHasErrors;
