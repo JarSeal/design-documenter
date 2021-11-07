@@ -367,7 +367,7 @@ class FormCreator extends Component {
             }
             
             if(formErrors) this.elem.classList.add(formErrorCssClass); // Set form error class
-        }, 500);
+        }, 200);
     }
 
     _getTextData(stringOrObject, langId) {
@@ -409,7 +409,7 @@ class FormCreator extends Component {
             const comp = this.components[this.componentsOrder[i]];
             if(comp.errorChecker) {
                 comp.errorChecker({ val: comp.value, id: comp.id, field: comp.data.field, fieldsetId: comp.fieldsetId});
-                comp.error(this.fieldErrors.get(comp.id));
+                this._displayFieldError(comp.id);
                 formHasErrors = true;
             }
         }
