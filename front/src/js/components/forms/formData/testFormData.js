@@ -17,6 +17,7 @@ export const testFormData = {
         labelId: 'submit', // String (transalation id for getText),
         class: 'submit-button-extra-class', // String / Array
     },
+    submitFields: [ 'text-input-0', 'checkbox-0', 'dropdown-0' ], // Array[String] (field ids)
     fieldsets: [ // Array[Object] [required]
         {
             // FIELDSET
