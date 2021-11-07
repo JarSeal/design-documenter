@@ -9,22 +9,49 @@ import Dropdown from "./formComponents/Dropdown";
 import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";
 
-// Attributes for data (id will not be used, it comes from form data):
+// Attributes for data:
+// - local = must be set to true if local forms are used (all the form data must then be in in the data) [Boolean]
 // - afterFormSentFn = function to call after succesfull form submission [Function]
 class FormCreator extends Component {
     constructor(data) {
         super(data);
         this.logger = new Logger('Form Creator *****');
         this._validateImportedFormData(data);
+        this.afterFormSentFn = data.afterFormSentFn;
         this.template = `<form class="form-creator"></form>`;
         this.components = {};
         this.componentsOrder = [];
         this.curLang = getLang();
         this.formSentOnce = false;
         this.fieldErrors = new State();
+        this.formState = new State({
+            getting: false,
+            setting: false,
+        });
         this.formErrorClassSetterTimer;
 
-        this._createFormComponents(data);
+        if(data.local) {
+            this._createFormComponents(data);
+        } else {
+            // Load data from api here..
+            const spinnerFadeTime = 400;
+            this.mainSpinner = this.addChild(new Spinner({
+                id: this.id+'-main-spinner',
+                fadeTime: spinnerFadeTime,
+                class: 'form-loader-spinner',
+            }));
+            this.formState.addListener('getting', (newValue) => {
+                if(newValue === false) {
+                    this._createFormComponents(this.data);
+                    this.mainSpinner.showSpinner(false);
+                    setTimeout(() => {
+                        this.mainSpinner.discard(true);
+                        this.mainSpinner = null;
+                        this.rePaint();
+                    }, spinnerFadeTime+200);
+                }
+            });
+        }
     }
 
     addListeners = () => {
@@ -34,15 +61,30 @@ class FormCreator extends Component {
         });
     }
 
-    paint = (data) => {
+    init = (data) => {
+        this._loadFormData(data.id);
+    }
+
+    paint = () => {
+        if(this.mainSpinner) this.mainSpinner.draw({ show: this.formState.get('getting') });
         for(let i=0; i<this.componentsOrder.length; i++) {
             const key = this.componentsOrder[i];
             this.components[key].draw();
         }
-        this.components[this.id+'-spinner-icon'].showSpinner(true);
-        setTimeout(() => {
-            this.components[this.id+'-spinner-icon'].showSpinner(false);
-        }, 3000);
+    }
+
+    _loadFormData = async id => {
+        this.formState.set('getting', true);
+        setTimeout(() => { // Temp mockup loading timer..
+            this.formState.set('getting', false);
+        }, 200);
+        // try {
+        //     const url = _CONFIG.apiBaseUrl + '/form';
+        //     const response = await axios.get(url, { id });
+        // } catch(exception) {
+        //     this.logger.error('Form data retrieving failed (Form Creator).', exception, this);
+        //     throw new Error('Call stack');
+        // }
     }
 
     _createFormComponents(data) {
@@ -149,6 +191,11 @@ class FormCreator extends Component {
         this.components[id] = this.addChild(new SubmitButton({
             id, text, class: button.class
         }));
+
+        // Spinner State listener
+        this.formState.addListener('sending', (newValue) => {
+            this.components[this.id+'-spinner-icon'].showSpinner(newValue);
+        });
     }
 
     _fieldDropdown(field, fieldsetId, fieldIdPrefix) {
@@ -423,31 +470,27 @@ class FormCreator extends Component {
         // Check form errors
         let formHasErrors = this._checkAllFieldErrors();
 
-        console.log('ERRORS', this.data);
-        const fields = this.data.submitFields;
-        const payload = {};
-        for(let i=0; i<fields.length; i++) {
-            payload[fields[i]] = this.components[fields[i]].value;
-        }
-        console.log('PAYLAOD', payload);
-        this.sendForm(payload);
         if(!formHasErrors) {
-            // Create payload here
-            this.sendForm(payload);
+            const fields = this.data.submitFields;
+            const payload = {};
+            for(let i=0; i<fields.length; i++) {
+                payload[fields[i]] = this.components[fields[i]].value;
+            }
+            this._sendForm(payload);
         }
     }
 
-    sendForm = async payload => {
-        // this.loginState.set('checking', true);
+    _sendForm = async payload => {
+        this.formState.set('sending', true);
         try {
-            const url = _CONFIG.apiBaseUrl + '/login';
+            const url = _CONFIG.apiBaseUrl + '/forms';
             const response = await axios.post(url, payload);
-
-            // if(this.afterLoginFn) {
-            //     this.afterLoginFn(response, remember);
-            // }
+            if(this.afterFormSentFn) {
+                this.formState.set('sending', false);
+                this.afterFormSentFn(response);
+            }
         } catch(exception) {
-            // this.loginState.set('checking', false);
+            this.formState.set('sending', false);
             this.logger.error('Form sending failed (Form Creator).', exception, this);
             throw new Error('Call stack');
         }

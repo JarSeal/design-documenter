@@ -10,6 +10,7 @@ class NewUser extends Component {
         super(data);
         this.appState = data.appState;
         this.template = `<div><h2>${data.title}</h2></div>`;
+        // newUserFormData.local = true;
         this.form = this.addChild(new FormCreator(newUserFormData));
     }
 
