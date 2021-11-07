@@ -1,4 +1,5 @@
 import { getLang, getText } from "../../helpers/lang";
+import { validateEmail } from "../../helpers/parsers";
 import { Component, Logger, State } from "../../LIGHTER";
 import Checkbox from "./formComponents/Checkbox";
 import Dropdown from "./formComponents/Dropdown";
@@ -322,6 +323,12 @@ class FormCreator extends Component {
         } else if(val.length && val.length < field.minLength) {
             this.fieldErrors.set(id, {
                 errorMsg: getText('minimum_x_characters', [field.minLength]),
+                fieldsetId,
+                id
+            });
+        } else if(field.email && !validateEmail(val)) {
+            this.fieldErrors.set(id, {
+                errorMsg: getText('email_not_valid'),
                 fieldsetId,
                 id
             });

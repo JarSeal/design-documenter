@@ -19,6 +19,10 @@ export const assetsObj = {
         en: 'E-mail',
         fi: 'Sähköposti',
     },
+    email_not_valid: {
+        en: 'E-mail is not valid',
+        fi: 'Sähköposti ei ole oikea',
+    },
     name: {
         en: 'Name',
         fi: 'Nimi',
