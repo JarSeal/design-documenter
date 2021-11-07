@@ -62,7 +62,7 @@ class FormCreator extends Component {
     }
 
     init = (data) => {
-        this._loadFormData(data.id);
+        if(!data.local) this._loadFormData(data.id);
     }
 
     paint = () => {
