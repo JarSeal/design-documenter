@@ -40,7 +40,6 @@ export const newUserFormData = {
                     id: 'email',
                     labelId: 'email',
                     required: true,
-                    minLength: 6,
                     maxLength: 50,
                     email: true,
                 },
