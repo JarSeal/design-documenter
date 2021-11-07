@@ -55,6 +55,7 @@ export const testFormData = {
                     placeholder: { en: 'Text placeholder', fi: 'Tekstin paikka' }, // Lang object / String
                     placeholderId: 'some_translation_id', // String (transalation id for getText)
                     required: true, // Boolean / Function
+                    email: true, // Boolean (validates emails)
                     minLength: 3, // Number
                     maxLength: 10, // Number/String
                     disabled: false, // Boolean / Function
