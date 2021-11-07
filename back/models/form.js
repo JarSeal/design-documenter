@@ -7,7 +7,13 @@ mongoose.set('useCreateIndex', true);
 
 const formSchema = mongoose.Schema({
     formId: {
-        
+        type: String,
+        required: true,
+        unique: true,
+    },
+    form: {
+        type: Object,
+        required: true,
     }
 });
 
