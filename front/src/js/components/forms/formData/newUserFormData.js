@@ -42,9 +42,7 @@ export const newUserFormData = {
                     required: true,
                     minLength: 6,
                     maxLength: 50,
-                    validationFn: (args) => {
-
-                    },
+                    email: true,
                 },
                 { type: 'divider' },
                 {
