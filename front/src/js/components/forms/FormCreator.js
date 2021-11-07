@@ -82,7 +82,10 @@ class FormCreator extends Component {
         // try {
         //     const url = _CONFIG.apiBaseUrl + '/form';
         //     const response = await axios.get(url, { id });
+        //     console.log('RESPONSE FROM API', response);
+        //     this.formState.set('getting', false);
         // } catch(exception) {
+        //     this.formState.set('getting', false);
         //     this.logger.error('Form data retrieving failed (Form Creator).', exception, this);
         //     throw new Error('Call stack');
         // }
@@ -504,7 +507,6 @@ class FormCreator extends Component {
             if(comp.errorChecker) {
                 comp.errorChecker({ val: comp.value, id: comp.id, field: comp.data.field, fieldsetId: comp.fieldsetId});
                 this._displayFieldError(comp.id);
-                console.log(comp.id);
                 if(this.fieldErrors.get(comp.id)) {
                     formHasErrors = true;
                 }
