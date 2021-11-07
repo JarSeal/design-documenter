@@ -1,7 +1,7 @@
 .form-elem--submit {
     font-size: 1.8rem;
     font-weight: 700;
-    padding: 1rem 4rem 0.9rem;
+    padding: 1rem 4rem 0.6rem;
     width: 100%;
     text-align: center;
     width: auto;
@@ -10,4 +10,14 @@
     background-color: $form-button-color;
     border: none;
     border-radius: 0.3rem;
+    border-bottom: 0.3rem solid rgba(#fff, 0);
+    transition: border-bottom-color 0.2s ease-in-out;
+}
+
+.form-creator {
+    &.form--errors {
+        .form-elem--submit {
+            border-bottom-color: rgba($form-field-error-color, 1);
+        }
+    }
 }
