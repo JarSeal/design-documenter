@@ -189,6 +189,12 @@ class Component {
                 elem.classList.add(...data.class);
             }
         }
+        if(data.attributes) {
+            const keys = Object.keys(data.attributes);
+            for(let i=0; i<keys.length; i++) {
+                elem.setAttribute(keys[i], data.attributes[keys[i]]);
+            }
+        }
         if(data.style) {
             const keys = Object.keys(data.style);
             for(let i=0; i<keys.length; i++) {
