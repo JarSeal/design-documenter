@@ -43,6 +43,15 @@ $ docker exec -it beacondb bash
 To access mongo cli:
 $ mongo
 
+Mongo Shell useful commands:
+$ db (shows current db)
+$ show dbs (list all dbs)
+$ use [dbname] (switch to use another db)
+$ show collections (show current db's collections)
+$ db.[collectionname].find() (show all documents in collection)
+$ db.[collectionname].find().length() (get the document count of a collection)
+$ db.[collectionname].drop() (delete entire collection)
+
 (in mongo cli) To change db:
 $ use beacondb
 
