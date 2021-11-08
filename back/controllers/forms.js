@@ -1,5 +1,8 @@
 const formsRouter = require('express').Router();
+const bcrypt = require('bcrypt');
+const CONFIG = require('./../shared').CONFIG.USER;
 const Form = require('./../models/form');
+const User = require('./../models/user');
 const { validateField, validateKeys } = require('./forms/formValidator');
 const newUserFormData = require('./../shared').newUserFormData;
 
@@ -70,9 +73,32 @@ formsRouter.post('/filled', async (request, response) => {
     if(body.id === 'new-user-form') {
         // Special case for registering a new user
 
+        // Check username
+        const findUsername = await User.findOne({ username: body.username.trim() });
+        if(findUsername) {
+            response.status(400).json({
+                msg: 'Bad request. Validation errors.',
+                errors: { username: 'username taken' },
+                usernameTaken: true,
+            });
+            return;
+        }
+        if(CONFIG.email.required) {
+            const findEmail = await User.findOne({ email: body.email.trim() });
+            if(findEmail) {
+                response.status(400).json({
+                    msg: 'Bad request. Validation errors.',
+                    errors: { email: 'email taken' },
+                    emailTaken: true,
+                });
+                return;
+            }
+        }
+        const newUser = _createUser(body);
+        response.json(newUser);
     }
-    response.json({ msg: 'filledForm' });
-    // TODO
+    
+    response.json({ msg: 'filledForm' }); // TODO, save general forms here as datasets
 });
 
 const presetForms = ['new-user-form'];
@@ -86,6 +112,29 @@ const _createPresetForm = async (id) => {
     } else {
         return null;
     }
+};
+
+const _createUser = async (body) => {
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(body.password, saltRounds);
+
+    const userCount = await User.find();
+    let userLevel = 1; // Create regular user
+    if(userCount.length === 0) {
+        userLevel = 9; // Create admin user
+    }
+
+    const user = new User({
+        username: body.username,
+        email: body.email,
+        name: body.name,
+        userLevel,
+        passwordHash,
+    });
+
+    const savedUser = await user.save();
+
+    return savedUser;
 };
 
 module.exports = formsRouter;

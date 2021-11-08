@@ -8,6 +8,7 @@ const USER = {
     },
     email: {
         required: true,
+        // unique: true,
     },
     password: {
         minLength: 6,

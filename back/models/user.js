@@ -21,9 +21,16 @@ const userSchema = mongoose.Schema({
     email: {
         type: String,
         required: CONFIG.email.required,
+        unique: CONFIG.email.required, // If required, has to be also unique
         minlength: 5,
     },
     passwordHash: String,
+    userLevel: {
+        type: Number,
+        required: true,
+        minlength: 1,
+        maxlength: 1,
+    },
     userGroups: [
         {
             type: mongoose.Schema.Types.ObjectId,
