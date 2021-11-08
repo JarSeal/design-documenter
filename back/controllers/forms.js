@@ -61,7 +61,7 @@ formsRouter.post('/filled', async (request, response) => {
     const errors = {};
     for(let i=0; i<keys.length; i++) {
         // Payload contains extra/undefined keys or no keys at all
-        let error = validateField(formData.form, keys[i], body[keys[i]]);
+        let error = validateField(formData.form, keys[i], body[keys[i]]); // TODO: FIX THIS!!! PASSWORD IS NOT CHECKED
         if(error) errors[keys[i]] = error;
     }
     const errorKeys = Object.keys(errors);
@@ -76,9 +76,9 @@ formsRouter.post('/filled', async (request, response) => {
         // Check username
         const findUsername = await User.findOne({ username: body.username.trim() });
         if(findUsername) {
-            response.status(400).json({
+            response.json({
                 msg: 'Bad request. Validation errors.',
-                errors: { username: 'username taken' },
+                errors: { username: 'username_taken' },
                 usernameTaken: true,
             });
             return;
@@ -86,15 +86,15 @@ formsRouter.post('/filled', async (request, response) => {
         if(CONFIG.email.required) {
             const findEmail = await User.findOne({ email: body.email.trim() });
             if(findEmail) {
-                response.status(400).json({
+                response.json({
                     msg: 'Bad request. Validation errors.',
-                    errors: { email: 'email taken' },
+                    errors: { email: 'email_taken' },
                     emailTaken: true,
                 });
                 return;
             }
         }
-        const newUser = _createUser(body);
+        const newUser = await _createUser(body);
         response.json(newUser);
     }
     

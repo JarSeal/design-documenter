@@ -50,19 +50,19 @@ const checkAllowedFieldTypes = (type) => {
 };
 
 const validateKeys = (form, keys) => {
-    if(keys < 2) return false;
-    const fieldsets = form.fieldsets;
-    let keysFound = 1; // Id is counted as one
-    for(let i=0; i<fieldsets.length; i++) {
-        const fieldset = fieldsets[i];
-        for(let j=0; j<fieldset.fields.length; j++) {
-            const field = fieldset.fields[j];
-            for(let k=0; k<keys.length; k++) {
-                if(keys[k] === field.id) keysFound++;
+    if(keys.length < 2) return false;
+    const submitFields = form.submitFields;
+    let keysFound = 0;
+    for(let i=0; i<submitFields.length; i++) {
+        for(let j=0; j<keys.length; j++) {
+            if(submitFields[i] === keys[j]) {
+                keysFound++;
+                break;
             }
         }
     }
-    return keysFound === keys.length;
+    console.log(keysFound, submitFields.length);
+    return keysFound === submitFields.length;
 };
 
 module.exports = { validateField, validateKeys };

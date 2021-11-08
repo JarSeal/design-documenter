@@ -487,16 +487,23 @@ class FormCreator extends Component {
             payload.id = this.id;
             const url = _CONFIG.apiBaseUrl + '/forms/filled';
             const response = await axios.post(url, payload);
-            // this.logger.log('API RESPONSE', response);
-            if(this.afterFormSentFn) {
-                this.formState.set('sending', false);
-                this.afterFormSentFn(response);
+            this.logger.log('API RESPONSE', response);
+            this.formState.set('sending', false);
+            if(response.data && response.data.errors) {
+                const keys = Object.keys(response.data.errors);
+                for(let i=0; i<keys.length; i++) {
+                    this.fieldErrors.set(keys[i], response.data.errors[keys[i]]);
+                    this._displayFieldError(keys[i]);
+                }
             } else {
-                this.formState.set('sending', false);
+                // Success
+                if(this.afterFormSentFn) {
+                    this.afterFormSentFn(response);
+                }
             }
         } catch(exception) {
             this.formState.set('sending', false);
-            this.logger.error('Form sending failed (Form Creator).', exception, this);
+            this.logger.error('Form sending failed (Form Creator).', exception);
             throw new Error('Call stack');
         }
     }
