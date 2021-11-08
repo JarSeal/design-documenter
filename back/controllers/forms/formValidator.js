@@ -1,3 +1,5 @@
+const shared = require('./../../shared');
+
 const validateField = (form, key, value) => {
     if(key === 'id') return null;
     
@@ -23,18 +25,20 @@ const validateField = (form, key, value) => {
 };
 
 const textInput = (field, value) => {
-    if(field.required && (!value || value.trim() === '')) return 'Required.';
-    
+    if(field.required && (!value || value.trim() === '')) return 'Required';
+    if(field.minLength && value.trim().length < field.minLength && value.trim() !== '') return `Value is too short (minimum: ${field.minLength} chars)`;
+    if(field.maxLength && value.trim().length > field.maxLength) return `Value is too long (maximum: ${field.maxLength} chars)`;
+    if(field.email && value.trim().length && !shared.parsers.validateEmail(value)) return 'Email not valid';
     return null;
 };
 
 const checkbox = (field, value) => {
-    if(field.required && (!value || value === false)) return 'Required.';
+    if(field.required && (!value || value === false)) return 'Required';
     return null;
 };
 
 const dropdown = (field, value) => {
-    if(field.required && (!value || value.trim() === '')) return 'Required.';
+    if(field.required && (!value || value.trim() === '')) return 'Required';
     return null;
 };
 
@@ -46,7 +50,7 @@ const checkAllowedFieldTypes = (type) => {
 };
 
 const validateKeys = (form, keys) => {
-    console.log('VALIDATA');
+    if(keys < 2) return false;
     const fieldsets = form.fieldsets;
     let keysFound = 1; // Id is counted as one
     for(let i=0; i<fieldsets.length; i++) {
@@ -58,7 +62,6 @@ const validateKeys = (form, keys) => {
             }
         }
     }
-    console.log(keysFound, keys.length);
     return keysFound === keys.length;
 };
 

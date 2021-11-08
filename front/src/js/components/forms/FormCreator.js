@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getLang, getText } from "../../helpers/lang";
-import { validateEmail } from "../../helpers/parsers";
+const shared = require('../../shared/index.js');
 import { Component, Logger, State } from "../../LIGHTER";
 import { _CONFIG } from "../../_CONFIG";
 import validationFns from './formData/validationFns';
@@ -17,7 +17,6 @@ class FormCreator extends Component {
     constructor(data) {
         super(data);
         this.logger = new Logger('Form Creator *****');
-        // this._validateImportedFormData(data);
         this.afterFormSentFn = data.afterFormSentFn;
         this.template = `<form class="form-creator"></form>`;
         this.components = {};
@@ -363,16 +362,13 @@ class FormCreator extends Component {
                 fieldsetId,
                 id
             });
-            if(field.required !== true) { // field.required is a function then
-                field.required({ val, id, field, fieldsetId });
-            }
         } else if(val.length && val.length < field.minLength) {
             this.fieldErrors.set(id, {
                 errorMsg: getText('minimum_x_characters', [field.minLength]),
                 fieldsetId,
                 id
             });
-        } else if(field.email && !validateEmail(val)) {
+        } else if(field.email && val.length && !shared.parsers.validateEmail(val)) {
             this.fieldErrors.set(id, {
                 errorMsg: getText('email_not_valid'),
                 fieldsetId,
@@ -438,13 +434,6 @@ class FormCreator extends Component {
             return text;
         }
         return null;
-    }
-
-    _validateImportedFormData(data) {
-        if(!data.fieldsets || data.fieldsets.length === 0) {
-            this.logger.error('Form data is missing a fieldset.');
-            throw new Error('Call stack');
-        }
     }
 
     handleSubmit = (e) => {

@@ -57,6 +57,7 @@ formsRouter.post('/filled', async (request, response) => {
 
     const errors = {};
     for(let i=0; i<keys.length; i++) {
+        // Payload contains extra/undefined keys or no keys at all
         let error = validateField(formData.form, keys[i], body[keys[i]]);
         if(error) errors[keys[i]] = error;
     }
@@ -68,7 +69,7 @@ formsRouter.post('/filled', async (request, response) => {
 
     if(body.id === 'new-user-form') {
         // Special case for registering a new user
-
+        
     }
     response.json({ msg: 'filledForm' });
     // TODO
