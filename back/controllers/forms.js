@@ -29,6 +29,13 @@ formsRouter.post('/', async (request, response) => {
     request, response;
 });
 
+// Send a filled form
+formsRouter.post('/filled', async (request, response) => {
+    request, response;
+    console.log('HERE');
+    response.json({ msg: 'filledForm' });
+});
+
 const _createPresetForm = async (id) => {
     let newForm, form;
     if(id === 'new-user-form') {

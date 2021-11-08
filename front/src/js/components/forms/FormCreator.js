@@ -3,6 +3,7 @@ import { getLang, getText } from "../../helpers/lang";
 import { validateEmail } from "../../helpers/parsers";
 import { Component, Logger, State } from "../../LIGHTER";
 import { _CONFIG } from "../../_CONFIG";
+import validationFns from './formData/validationFns';
 import Spinner from '../widgets/Spinner';
 import Checkbox from "./formComponents/Checkbox";
 import Dropdown from "./formComponents/Dropdown";
@@ -16,7 +17,7 @@ class FormCreator extends Component {
     constructor(data) {
         super(data);
         this.logger = new Logger('Form Creator *****');
-        this._validateImportedFormData(data);
+        // this._validateImportedFormData(data);
         this.afterFormSentFn = data.afterFormSentFn;
         this.template = `<form class="form-creator"></form>`;
         this.components = {};
@@ -71,24 +72,6 @@ class FormCreator extends Component {
             const key = this.componentsOrder[i];
             this.components[key].draw();
         }
-    }
-
-    _loadFormData = async id => {
-        this.formState.set('getting', true);
-        this.formState.set('sending', false);
-        setTimeout(() => { // Temp mockup loading timer..
-            this.formState.set('getting', false);
-        }, 200);
-        // try {
-        //     const url = _CONFIG.apiBaseUrl + '/form';
-        //     const response = await axios.get(url, { id });
-        //     console.log('RESPONSE FROM API', response);
-        //     this.formState.set('getting', false);
-        // } catch(exception) {
-        //     this.formState.set('getting', false);
-        //     this.logger.error('Form data retrieving failed (Form Creator).', exception, this);
-        //     throw new Error('Call stack');
-        // }
     }
 
     _createFormComponents(data) {
@@ -335,7 +318,7 @@ class FormCreator extends Component {
             this.fieldErrors.set(id, false);
         }
         if(field.validationFn) {
-            field.validationFn({
+            validationFns[field.validationFn]({
                 val,
                 id,
                 fieldsetId,
@@ -359,7 +342,7 @@ class FormCreator extends Component {
             this.fieldErrors.set(id, false);
         }
         if(field.validationFn) {
-            field.validationFn({
+            validationFns[field.validationFn]({
                 val,
                 id,
                 fieldsetId,
@@ -399,7 +382,7 @@ class FormCreator extends Component {
             this.fieldErrors.set(id, false);
         }
         if(field.validationFn) {
-            field.validationFn({
+            validationFns[field.validationFn]({
                 val,
                 id,
                 fieldsetId,
@@ -487,15 +470,35 @@ class FormCreator extends Component {
     _sendForm = async payload => {
         this.formState.set('sending', true);
         try {
-            const url = _CONFIG.apiBaseUrl + '/forms';
+            payload.id = this.id;
+            const url = _CONFIG.apiBaseUrl + '/forms/filled';
             const response = await axios.post(url, payload);
+            // this.logger.log('API RESPONSE', response);
             if(this.afterFormSentFn) {
                 this.formState.set('sending', false);
                 this.afterFormSentFn(response);
+            } else {
+                this.formState.set('sending', false);
             }
         } catch(exception) {
             this.formState.set('sending', false);
             this.logger.error('Form sending failed (Form Creator).', exception, this);
+            throw new Error('Call stack');
+        }
+    }
+
+    _loadFormData = async id => {
+        this.formState.set('getting', true);
+        this.formState.set('sending', false);
+        try {
+            const url = _CONFIG.apiBaseUrl + '/forms/' + id;
+            const response = await axios.get(url);
+            // this.logger.log('API RESPONSE', response);
+            this.data = response.data;
+            this.formState.set('getting', false);
+        } catch(exception) {
+            this.formState.set('getting', false);
+            this.logger.error('Form data retrieving failed (Form Creator).', exception, this);
             throw new Error('Call stack');
         }
     }
