@@ -1,5 +1,6 @@
-// Register or create a new user:
+const CONFIG = require('./../../CONFIG').USER;
 
+// Register / create a new user:
 const newUserFormData = {
     // FORM
     id: 'new-user-form',
@@ -23,7 +24,7 @@ const newUserFormData = {
                     id: 'username',
                     labelId: 'username',
                     required: true,
-                    minLength: 3,
+                    minLength: CONFIG.username.minLength,
                     maxLength: 24,
                 },
                 {
@@ -31,6 +32,8 @@ const newUserFormData = {
                     type: 'textinput',
                     id: 'name',
                     labelId: 'name',
+                    required: CONFIG.name.required,
+                    minLength: CONFIG.name.minLength,
                     maxLength: 40,
                 },
                 { type: 'divider' },
@@ -39,7 +42,7 @@ const newUserFormData = {
                     type: 'textinput',
                     id: 'email',
                     labelId: 'email',
-                    required: true,
+                    required: CONFIG.email.required,
                     maxLength: 50,
                     email: true,
                 },
@@ -50,8 +53,8 @@ const newUserFormData = {
                     id: 'password',
                     labelId: 'password',
                     required: true,
-                    minLength: 3,
-                    maxLength: 40,
+                    minLength: CONFIG.password.minLength,
+                    maxLength: 50,
                     password: true,
                     validationFn: 'validatePass1',
                 },
@@ -62,7 +65,7 @@ const newUserFormData = {
                     labelId: 'password_again',
                     required: true,
                     minLength: 0,
-                    maxLength: 40,
+                    maxLength: 50,
                     password: true,
                     validationFn: 'validatePass2',
                 },

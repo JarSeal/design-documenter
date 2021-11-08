@@ -1,3 +1,4 @@
+const CONFIG = require('./../shared').CONFIG.USER;
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 const UserGroup = require('./userGroup'); UserGroup;
@@ -10,20 +11,24 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        minlength: 5
+        minlength: CONFIG.username.minLength,
     },
-    name: String,
+    name: {
+        type: String,
+        required: CONFIG.name.required,
+        minlength: CONFIG.name.minLength,
+    },
     email: {
         type: String,
-        required: true,
-        minlength: 5
+        required: CONFIG.email.required,
+        minlength: 5,
     },
     passwordHash: String,
     userGroups: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'UserGroup'
-        }
+            ref: 'UserGroup',
+        },
     ],
     rights: {
         universe: {
@@ -46,7 +51,7 @@ const userSchema = mongoose.Schema({
             canEdit: Boolean,
             canDelete: Boolean,
         },
-    }
+    },
 });
 
 userSchema.plugin(uniqueValidator);

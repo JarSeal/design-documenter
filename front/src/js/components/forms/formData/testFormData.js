@@ -9,8 +9,10 @@ export const testFormData = {
     formTitleId: 'route_title_new_user', // String (transalation id for getText)
     formDesc: { en: 'Form description', fi: 'Lomakkeen kuvausteksti' }, // Lang object / String
     formDescId: 'login_error_empty', // String (transalation id for getText)
-    onErrorsMsg: { en: 'Form has errors.', fi: 'Lomakkeessa on virheitä' }, // Lang object / String
-    onErrorsMsgId: 'form_has_errors', // String (transalation id for getText)
+    // onErrorsMsg: { en: 'Form has errors.', fi: 'Lomakkeessa on virheitä' }, // Lang object / String
+    // onErrorsMsgId: 'form_has_errors', // String (transalation id for getText)
+    // afterSubmitMsg: { en: 'Form sent', fi: 'Lomake lähetetty' }, // Lang object / String
+    // afterSubmitId: 'form_sent', // String (transalation id for getText)
     submitButton: {
         id: 'submit-button-id', // String
         label: { en: 'Submit', fi: 'Lähetä' }, // Lang object / String
@@ -27,9 +29,9 @@ export const testFormData = {
             fieldsetTitleId: 'route_title_new_user', // String (transalation id for getText)
             fieldsetDesc: { en: 'Section description', fi: 'Osion kuvaus' }, // Lang object / String
             fieldsetDescId: 'fix_issues_on_form', // String (transalation id for getText)
-            disabled: false, // Boolean / Function
-            canCollapse: true, // Boolean / Function (whether the fieldset can be collapsed or opened)
-            collapsed: false, // Boolean / Function
+            disabled: false, // Boolean
+            // canCollapse: true, // Boolean (whether the fieldset can be collapsed or opened)
+            // collapsed: false, // Boolean
             fields: [
                 {
                     // DIVIDER
@@ -54,14 +56,13 @@ export const testFormData = {
                     labelId: 'some_translation_id', // String (Transalation id for getText)
                     placeholder: { en: 'Text placeholder', fi: 'Tekstin paikka' }, // Lang object / String
                     placeholderId: 'some_translation_id', // String (transalation id for getText)
-                    required: true, // Boolean / Function
+                    required: true, // Boolean
                     email: true, // Boolean (validates emails)
                     minLength: 3, // Number
                     maxLength: 10, // Number/String
-                    disabled: false, // Boolean / Function
+                    disabled: false, // Boolean
                     initValue: '', // String/Number
-                    validationFn: (args) => { return true; }, // Function
-                    onChangeFn: (args) => {}, // Function
+                    validationFn: '', // validationFn id / String
                 },
                 {
                     // CHECKBOX
@@ -71,11 +72,10 @@ export const testFormData = {
                     class: ['css-class-name4'], // String / Array
                     label: { en: 'Checkbox', fi: 'Checkboxi' }, // Lang object / String
                     labelId: 'some_translation_id', // String (transalation id for getText)
-                    required: false, // Boolean / Function
-                    disabled: false, // Boolean / Function
+                    required: false, // Boolean
+                    disabled: false, // Boolean
                     initValue: false, // Boolean (whether the box is prechecked or not)
-                    validationFn: (args) => { return true; }, // Function
-                    onChangeFn: (args) => {}, // Function
+                    validationFn: '', // validationFn id / String
                 },
                 {
                     // DROPDOWN
@@ -93,11 +93,10 @@ export const testFormData = {
                         { value: '5', label: 'Five' },
                     ],
                     emptyIsAnOption: true, // Boolean
-                    required: true, // Boolean / function
-                    disabled: false, // Boolean / function
+                    required: true, // Boolean
+                    disabled: false, // Boolean
                     initValue: '', // String
-                    validationFn: (args) => { return true; }, // Function
-                    onChangeFn: (args) => {}, // Function
+                    validationFn: '', // validationFn id / String
                 },
             ],
         },

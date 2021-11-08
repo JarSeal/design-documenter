@@ -1,7 +1,7 @@
 const formsRouter = require('express').Router();
 const Form = require('./../models/form');
 const { validateField, validateKeys } = require('./forms/formValidator');
-const newUserFormData = require('./forms/newUserFormData');
+const newUserFormData = require('./../shared').newUserFormData;
 
 // Get all forms
 formsRouter.get('/', async (request, response) => {
@@ -69,7 +69,7 @@ formsRouter.post('/filled', async (request, response) => {
 
     if(body.id === 'new-user-form') {
         // Special case for registering a new user
-        
+
     }
     response.json({ msg: 'filledForm' });
     // TODO

@@ -26,9 +26,11 @@ class FormCreator extends Component {
         this.fieldErrors = new State();
         this.formState = new State({
             getting: false,
-            setting: false,
+            sending: false,
         });
         this.formErrorClassSetterTimer;
+        this.submitButtonId;
+        this.fieldsetIds = [];
 
         if(data.local) {
             this._createFormComponents(data);
@@ -98,8 +100,10 @@ class FormCreator extends Component {
         for(let i=0; i<data.fieldsets.length; i++) {
             const fieldset = data.fieldsets[i];
             const fieldsetId = fieldset.id;
+            this.fieldsetIds.push(fieldsetId);
 
             fieldset.tag = 'fieldset';
+            if(fieldset.disabled) fieldset.attributes = { disabled: '' };
             this.componentsOrder.push(fieldsetId);
             this.components[fieldsetId] = this.addChild(new Component(fieldset));
 
@@ -172,15 +176,36 @@ class FormCreator extends Component {
         // Submit button
         const button = data.submitButton;
         id = button.id || this.id+'-submit-button';
+        this.submitButtonId = id;
         text = this._getTextData(button.label, button.labelId);
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new SubmitButton({
             id, text, class: button.class
         }));
 
-        // Spinner State listener
+        // Sending form State listener
         this.formState.addListener('sending', (newValue) => {
             this.components[this.id+'-spinner-icon'].showSpinner(newValue);
+            if(newValue) {
+                // Disable submit button and fields
+                document.getElementById(this.submitButtonId).setAttribute('disabled', '');
+                for(let i=0; i<this.fieldsetIds.length; i++) {
+                    const elem = document.getElementById(this.fieldsetIds[i]);
+                    elem.setAttribute('disabled', '');
+                }
+            } else {
+                // Enable submit button and fields
+                document.getElementById(this.submitButtonId).removeAttribute('disabled');
+                for(let i=0; i<this.fieldsetIds.length; i++) {
+                    for(let j=0; j<this.data.fieldsets.length; j++) {
+                        if(this.data.fieldsets[j].id === this.fieldsetIds[i] && !this.data.fieldsets[j].disabled) {
+                            const elem = document.getElementById(this.fieldsetIds[i]);
+                            elem.removeAttribute('disabled');
+                            break;
+                        }
+                    }
+                }
+            }
         });
     }
 
