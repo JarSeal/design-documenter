@@ -57,8 +57,6 @@ class FormCreator extends Component {
                         this.mainSpinner = null;
                         this.rePaint();
                     }, spinnerFadeTime+200);
-                } else {
-                    
                 }
             });
         }
