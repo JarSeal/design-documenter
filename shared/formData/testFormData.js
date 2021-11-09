@@ -66,6 +66,10 @@ const testFormData = {
                     disabled: false, // Boolean
                     initValue: '', // String/Number
                     validationFn: '', // validationFn id / String
+                    // regex: '', // String (is called with 'new RegExp(String)')
+                    // regexErrorMsg: { en: 'Wrong format', fi: 'Väärä muoto' } // Lang object / String
+                    // regexErrorMsgId: 'some_translation_id', // String (Transalation id for getText)
+                    // locked: false, // Boolean (whether the field can be edited or not)
                 },
                 {
                     // CHECKBOX
@@ -79,6 +83,7 @@ const testFormData = {
                     disabled: false, // Boolean
                     initValue: false, // Boolean (whether the box is prechecked or not)
                     validationFn: '', // validationFn id / String
+                    // locked: false, // Boolean (whether the field can be edited or not)
                 },
                 {
                     // DROPDOWN
@@ -100,6 +105,7 @@ const testFormData = {
                     disabled: false, // Boolean
                     initValue: '', // String
                     validationFn: '', // validationFn id / String
+                    // locked: false, // Boolean (whether the field can be edited or not)
                 },
             ],
         },
