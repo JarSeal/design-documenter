@@ -1,6 +1,7 @@
 const formsRouter = require('express').Router();
 const bcrypt = require('bcrypt');
 const CONFIG = require('./../shared').CONFIG.USER;
+const logger = require('./../utils/logger');
 const Form = require('./../models/form');
 const User = require('./../models/user');
 const { validateField, validateKeys } = require('./forms/formValidator');
@@ -96,32 +97,23 @@ formsRouter.post('/filled', async (request, response) => {
         }
         const newUser = await _createUser(body);
         response.json(newUser);
+        return;
     }
     
     response.json({ msg: 'filledForm' }); // TODO, save general forms here as datasets
 });
 
-const presetForms = ['new-user-form'];
-const _createPresetForm = async (id) => {
-    let newForm, form;
-    if(id === 'new-user-form') {
-        form = { formId: id, form: newUserFormData };
-        newForm = new Form(form);
-        await newForm.save();
-        return form;
-    } else {
-        return null;
-    }
-};
-
 const _createUser = async (body) => {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(body.password, saltRounds);
 
-    const userCount = await User.find();
+    const userCount = await User.find().limit(1);
     let userLevel = 1; // Create regular user
     if(userCount.length === 0) {
         userLevel = 9; // Create admin user
+        logger.log('Created a super user', body.username);
+    } else {
+        logger.log('Created a user', body.username, userLevel);
     }
 
     const user = new User({
@@ -135,6 +127,19 @@ const _createUser = async (body) => {
     const savedUser = await user.save();
 
     return savedUser;
+};
+
+const presetForms = ['new-user-form'];
+const _createPresetForm = async (id) => {
+    let newForm, form;
+    if(id === 'new-user-form') {
+        form = { formId: id, form: newUserFormData };
+        newForm = new Form(form);
+        await newForm.save();
+        return form;
+    } else {
+        return null;
+    }
 };
 
 module.exports = formsRouter;

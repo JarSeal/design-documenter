@@ -434,6 +434,7 @@ class FormCreator extends Component {
                 const err = this.fieldErrors.get(keys[i]);
                 if(err.fieldsetId === fieldsetId) {
                     // Set new field errors
+                    console.log('ERROR MIGHT BE HERE', fieldsetId);
                     const elem = document.getElementById(fieldsetId);
                     elem.classList.add(fieldsetErrorCssClass);
                     formErrors = true;
@@ -497,9 +498,28 @@ class FormCreator extends Component {
                         errorMsgId: response.data.errors[keys[i]]
                     });
                     this._displayFieldError(keys[i]);
+                    //Find fieldset
+                    let fieldsetId;
+                    for(let f=0; f<this.data.fieldsets.length; f++) {
+                        const fieldset = this.data.fieldsets[f];
+                        let fieldsetId = null;
+                        for(let k=0; k<fieldset.fields.length; k++) {
+                            const field = fieldset.fields[k];
+                            if(field.id === keys[i]) {
+                                console.log('HERE', fieldset.id);
+                                fieldsetId = fieldset.id;
+                                break;
+                            }
+                        }
+                        if(fieldsetId) break;
+                    }
+                    if(fieldsetId) {
+                        this.fieldsetErrorCheck(fieldsetId);
+                    }
                 }
             } else {
                 // Success
+                this._resetForm();
                 if(this.afterFormSentFn) {
                     this.afterFormSentFn(response);
                 }
@@ -554,6 +574,10 @@ class FormCreator extends Component {
             const text = this._getTextData(msg.errorMsg, msg.errorMsgId);
             this.components[id].error({ errorMsg: text });
         }
+    }
+
+    _resetForm = () => {
+        
     }
 }
 
