@@ -5,8 +5,10 @@ const newUserFormData = {
     // FORM
     id: 'new-user-form',
     formToken: null,
-    formTitleId: 'route_title_new_user',
-    onErrorsMsgId: 'fix_issues_on_form',
+    formTitleId: 'register_new_user',
+    onErrorsMsgId: 'form_has_errors',
+    afterSubmitMsgId: 'form_sent',
+    afterSubmitShowOnlyMsg: true,
     submitButton: {
         id: 'submit-button-id',
         labelId: 'create_new_user_button',

@@ -31,6 +31,12 @@ class FormCreator extends Component {
         this.formErrorClassSetterTimer;
         this.submitButtonId;
         this.fieldsetIds = [];
+        this.cssClasses = {
+            formSent: 'form--sent',
+            formError: 'form--errors',
+            fieldsetError: 'fieldset--errors',
+            formSuccess: 'form--success',
+        };
 
         if(data.local) {
             this._createFormComponents(data);
@@ -78,6 +84,13 @@ class FormCreator extends Component {
     _createFormComponents(data) {
         let id, text;
         
+        // Form message top
+        id = this.id+'-msg-top';
+        this.componentsOrder.push(id);
+        this.components[id] = this.addChild(new Component({
+            id, class: ['form-msg', 'form-msg-top']
+        }));
+
         // Form title and description
         text = this._getTextData(data.formTitle, data.formTitleId);
         if(text) {
@@ -181,6 +194,13 @@ class FormCreator extends Component {
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new SubmitButton({
             id, text, class: button.class
+        }));
+
+        // Form message bottom
+        id = this.id+'-msg-bottom';
+        this.componentsOrder.push(id);
+        this.components[id] = this.addChild(new Component({
+            id, class: ['form-msg', 'form-msg-bottom']
         }));
 
         // Sending form State listener
@@ -418,8 +438,8 @@ class FormCreator extends Component {
     fieldsetErrorCheck = (fieldsetId) => {
         clearTimeout(this.formErrorClassSetterTimer);
         this.formErrorClassSetterTimer = setTimeout(() => {
-            const formErrorCssClass = 'form--errors';
-            const fieldsetErrorCssClass = 'fieldset--errors';
+            const formErrorCssClass = this.cssClasses.formError;
+            const fieldsetErrorCssClass = this.cssClasses.fieldsetError;
             const keys = this.fieldErrors.getKeys();
             const fieldsets = this.data.fieldsets;
             for(let i=0; i<fieldsets.length; i++) {
@@ -428,20 +448,24 @@ class FormCreator extends Component {
                 elem.classList.remove(fieldsetErrorCssClass);
             }
             this.elem.classList.remove(formErrorCssClass); // Clean form error class
+            this._setFormMsg('');
             
             let formErrors = false;
             for(let i=0; i<keys.length; i++) {
                 const err = this.fieldErrors.get(keys[i]);
                 if(err.fieldsetId === fieldsetId) {
                     // Set new field errors
-                    console.log('ERROR MIGHT BE HERE', fieldsetId);
                     const elem = document.getElementById(fieldsetId);
                     elem.classList.add(fieldsetErrorCssClass);
                     formErrors = true;
                 }
             }
             
-            if(formErrors) this.elem.classList.add(formErrorCssClass); // Set form error class
+            if(formErrors) {
+                this.elem.classList.add(formErrorCssClass); // Set form error class
+                const text = this._getTextData(this.data.onErrorsMsg, this.data.onErrorsMsgId);
+                if(text) this._setFormMsg(text);
+            }
         }, 200);
     }
 
@@ -466,7 +490,7 @@ class FormCreator extends Component {
         e.preventDefault();
         if(!this.formSentOnce) {
             this.formSentOnce = true;
-            this.elem.classList.add('form--sent');
+            this.elem.classList.add(this.cssClasses.formSent);
         }
 
         // Check form errors
@@ -494,34 +518,37 @@ class FormCreator extends Component {
                 // Server side validation error
                 const keys = Object.keys(response.data.errors);
                 for(let i=0; i<keys.length; i++) {
-                    this.fieldErrors.set(keys[i], {
-                        errorMsgId: response.data.errors[keys[i]]
-                    });
-                    this._displayFieldError(keys[i]);
-                    //Find fieldset
                     let fieldsetId;
+                    //Find fieldset
                     for(let f=0; f<this.data.fieldsets.length; f++) {
                         const fieldset = this.data.fieldsets[f];
-                        let fieldsetId = null;
                         for(let k=0; k<fieldset.fields.length; k++) {
                             const field = fieldset.fields[k];
                             if(field.id === keys[i]) {
-                                console.log('HERE', fieldset.id);
                                 fieldsetId = fieldset.id;
                                 break;
                             }
                         }
                         if(fieldsetId) break;
                     }
-                    if(fieldsetId) {
-                        this.fieldsetErrorCheck(fieldsetId);
-                    }
+                    this.fieldErrors.set(keys[i], {
+                        errorMsgId: response.data.errors[keys[i]],
+                        fieldsetId,
+                    });
+                    this._displayFieldError(keys[i]);
+                    this.fieldsetErrorCheck(fieldsetId);
                 }
             } else {
                 // Success
                 this._resetForm();
+                const text = this._getTextData(this.data.afterSubmitMsg, this.data.afterSubmitMsgId);
+                if(text) {
+                    const showOnlyMsg = this.data.afterSubmitShowOnlyMsg;
+                    this._setFormMsg(text, showOnlyMsg);
+                    if(showOnlyMsg) this.elem.classList.add(this.cssClasses.formSuccess);
+                }
                 if(this.afterFormSentFn) {
-                    this.afterFormSentFn(response);
+                    this.afterFormSentFn(response, this);
                 }
             }
         } catch(exception) {
@@ -552,7 +579,10 @@ class FormCreator extends Component {
         for(let i=0; i<this.componentsOrder.length; i++) {
             const comp = this.components[this.componentsOrder[i]];
             if(comp.errorChecker) {
-                comp.errorChecker({ val: comp.value, id: comp.id, field: comp.data.field, fieldsetId: comp.fieldsetId});
+                if(!this.fieldErrors.get(comp.id)) { // This check is for server side errors
+                    // Run this check only if there aren't any errors before (this would clear server side errors)
+                    comp.errorChecker({ val: comp.value, id: comp.id, field: comp.data.field, fieldsetId: comp.fieldsetId});
+                }
                 this._displayFieldError(comp.id);
                 if(this.fieldErrors.get(comp.id)) {
                     formHasErrors = true;
@@ -576,8 +606,55 @@ class FormCreator extends Component {
         }
     }
 
+    _setFormMsg = (msg, showOnlyTop) => {
+        const showTop = this.data.showTopMsg;
+        const showBottom = this.data.showBottomMsg;
+        let elem;
+        if(showOnlyTop || showTop !== false) {
+            elem = document.getElementById(this.id+'-msg-top');
+            elem.innerText = msg;
+        }
+        if(showBottom !== false) {
+            elem = document.getElementById(this.id+'-msg-bottom');
+            elem.innerText = showOnlyTop ? '' : msg;
+        }
+    }
+
     _resetForm = () => {
+        this.formSentOnce = false;
         
+        // Reset all values to initValues and errors to false
+        for(let i=0; i<this.data.fieldsets.length; i++) {
+            const fieldset = this.data.fieldsets[i];
+            for(let j=0; j<fieldset.fields.length; j++) {
+                const field = fieldset.fields[j];
+                let isField = false;
+
+                if(field.type === 'textinput') {
+                    this.components[field.id].setValue(field.maxLength && field.initValue
+                        ? (field.initValue.substring(0, parseInt(field.maxLength)) || '')
+                        : field.initValue || '');
+                    isField = true;
+                } else if(field.type === 'checkbox') {
+                    this.components[field.id].setValue(field.initValue ? true : false);
+                    isField = true;
+                } else if(field.type === 'dropdown') {
+                    this.components[field.id].setValue(field.initValue);
+                    isField = true;
+                }
+
+                if(isField) {
+                    this.fieldErrors.set(field.id, false);
+                    this.components[field.id].data.disabled = field.disabled;
+                    this.components[field.id].rePaint();
+                }
+            }
+            this.fieldsetErrorCheck(fieldset.id);
+        }
+
+        this.elem.classList.remove(this.cssClasses.formSent);
+        this.elem.classList.remove(this.cssClasses.formError);
+        this.elem.classList.remove(this.cssClasses.formSuccess)
     }
 }
 

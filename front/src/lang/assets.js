@@ -67,9 +67,9 @@ export const assetsObj = {
         en: 'Wrong username and/or password.',
         fi: 'Väärä käyttäjänimi ja/tai salasana.',
     },
-    fix_issues_on_form: {
-        en: 'Please fix issues on the form.',
-        fi: 'Korjaa lomakkeen virheet, kiitos.',
+    form_has_errors: {
+        en: 'Form has errors.',
+        fi: 'Kentissä on virheitä.',
     },
     create_new_user_button: {
         en: 'Create User',
@@ -90,5 +90,13 @@ export const assetsObj = {
     route_test_form_data: {
         en: 'All form data examples',
         fi: 'Kaikki lomake-datan esimerkit',
+    },
+    register_new_user: {
+        en: 'Register a new user',
+        fi: 'Rekisteröi uusi käyttäjä',
+    },
+    new_user_registered: {
+        en: 'New user registered.',
+        fi: 'Uusi käyttäjä rekisteröity.',
     },
 };

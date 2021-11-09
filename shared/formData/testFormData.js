@@ -1,6 +1,6 @@
 // This shows all the possible
 
-export const testFormData = {
+const testFormData = {
     // FORM
     id: 'test-form', // String [required]
     formToken: null, // TODO
@@ -9,10 +9,13 @@ export const testFormData = {
     formTitleId: 'route_title_new_user', // String (transalation id for getText)
     formDesc: { en: 'Form description', fi: 'Lomakkeen kuvausteksti' }, // Lang object / String
     formDescId: 'login_error_empty', // String (transalation id for getText)
-    // onErrorsMsg: { en: 'Form has errors.', fi: 'Lomakkeessa on virheitä' }, // Lang object / String
-    // onErrorsMsgId: 'form_has_errors', // String (transalation id for getText)
-    // afterSubmitMsg: { en: 'Form sent', fi: 'Lomake lähetetty' }, // Lang object / String
-    // afterSubmitId: 'form_sent', // String (transalation id for getText)
+    showTopMsg: true, // Boolean (default is true)
+    showBottomMsg: true, // Boolean (default is true)
+    onErrorsMsg: { en: 'Form has errors.', fi: 'Lomakkeessa on virheitä' }, // Lang object / String
+    onErrorsMsgId: 'form_has_errors', // String (transalation id for getText)
+    afterSubmitMsg: { en: 'Form sent', fi: 'Lomake lähetetty' }, // Lang object / String
+    afterSubmitMsgId: 'form_sent', // String (transalation id for getText)
+    afterSubmitShowOnlyMsg: true, // Boolean
     submitButton: {
         id: 'submit-button-id', // String
         label: { en: 'Submit', fi: 'Lähetä' }, // Lang object / String
@@ -102,3 +105,5 @@ export const testFormData = {
         },
     ],
 };
+
+module.exports = testFormData;

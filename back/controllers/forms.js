@@ -136,6 +136,7 @@ const _createPresetForm = async (id) => {
         form = { formId: id, form: newUserFormData };
         newForm = new Form(form);
         await newForm.save();
+        logger.log(`Preset form '${id}' auto created.`);
         return form;
     } else {
         return null;

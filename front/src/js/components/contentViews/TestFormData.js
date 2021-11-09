@@ -1,6 +1,6 @@
 import { Component } from "../../LIGHTER";
 import FormCreator from "../forms/FormCreator";
-import { testFormData } from "../forms/formData/testFormData";
+const testFormData = require('../../shared').testFormData;
 
 class NewUser extends Component {
     constructor(data) {
