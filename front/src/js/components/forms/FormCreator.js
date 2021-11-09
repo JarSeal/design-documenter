@@ -487,12 +487,15 @@ class FormCreator extends Component {
             payload.id = this.id;
             const url = _CONFIG.apiBaseUrl + '/forms/filled';
             const response = await axios.post(url, payload);
-            this.logger.log('API RESPONSE', response);
+            // this.logger.log('API RESPONSE', response);
             this.formState.set('sending', false);
             if(response.data && response.data.errors) {
+                // Server side validation error
                 const keys = Object.keys(response.data.errors);
                 for(let i=0; i<keys.length; i++) {
-                    this.fieldErrors.set(keys[i], response.data.errors[keys[i]]);
+                    this.fieldErrors.set(keys[i], {
+                        errorMsgId: response.data.errors[keys[i]]
+                    });
                     this._displayFieldError(keys[i]);
                 }
             } else {

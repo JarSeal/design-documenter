@@ -23,6 +23,14 @@ export const assetsObj = {
         en: 'E-mail is not valid',
         fi: 'Sähköposti ei ole oikea',
     },
+    username_taken: {
+        en: 'Username is already taken',
+        fi: 'Käyttäjänimi on jo käytössä',
+    },
+    email_taken: {
+        en: 'Email is already taken',
+        fi: 'Sähköposti on jo käytössä',
+    },
     name: {
         en: 'Name',
         fi: 'Nimi',
