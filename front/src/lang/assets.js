@@ -71,6 +71,10 @@ export const assetsObj = {
         en: 'Form has errors.',
         fi: 'Kentissä on virheitä.',
     },
+    form_sent: {
+        en: 'Form sent.',
+        fi: 'Lomake lähetetty.',
+    },
     create_new_user_button: {
         en: 'Create User',
         fi: 'Luo käyttäjä',

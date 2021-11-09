@@ -5,17 +5,6 @@ form {
     padding: 4rem;
     position: relative;
     text-align: right;
-    
-    * {
-        opacity: 1;
-        transition: opacity 0.2s ease-in-out;
-    }
-
-    &.form--success {
-        * {
-            opacity: 0;
-        }
-    }
 
     .spinner-icon {
         vertical-align: middle;
@@ -43,7 +32,7 @@ fieldset {
     .form--errors & {
         color: $form-error-msg-color;
     }
-    .form--sent & {
+    .form--sent &, .form--success & {
         opacity: 1;
     }
 }

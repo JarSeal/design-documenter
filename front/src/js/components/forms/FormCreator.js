@@ -23,6 +23,7 @@ class FormCreator extends Component {
         this.componentsOrder = [];
         this.curLang = getLang();
         this.formSentOnce = false;
+        this.formSuccess = false;
         this.fieldErrors = new State();
         this.formState = new State({
             getting: false,
@@ -74,10 +75,16 @@ class FormCreator extends Component {
     }
 
     paint = () => {
-        if(this.mainSpinner) this.mainSpinner.draw({ show: this.formState.get('getting') });
-        for(let i=0; i<this.componentsOrder.length; i++) {
-            const key = this.componentsOrder[i];
-            this.components[key].draw();
+        if(this.formSuccess) {
+            this.components[this.id+'-msg-top'].draw({
+                text: this._getTextData(this.data.afterSubmitMsg, this.data.afterSubmitMsgId)
+            });
+        } else {
+            if(this.mainSpinner) this.mainSpinner.draw({ show: this.formState.get('getting') });
+            for(let i=0; i<this.componentsOrder.length; i++) {
+                const key = this.componentsOrder[i];
+                this.components[key].draw();
+            }
         }
     }
 
@@ -436,8 +443,8 @@ class FormCreator extends Component {
     }
 
     fieldsetErrorCheck = (fieldsetId) => {
-        clearTimeout(this.formErrorClassSetterTimer);
-        this.formErrorClassSetterTimer = setTimeout(() => {
+        // clearTimeout(this.formErrorClassSetterTimer);
+        // this.formErrorClassSetterTimer = setTimeout(() => {
             const formErrorCssClass = this.cssClasses.formError;
             const fieldsetErrorCssClass = this.cssClasses.fieldsetError;
             const keys = this.fieldErrors.getKeys();
@@ -445,7 +452,7 @@ class FormCreator extends Component {
             for(let i=0; i<fieldsets.length; i++) {
                 // Clean all errors
                 const elem = document.getElementById(fieldsets[i].id);
-                elem.classList.remove(fieldsetErrorCssClass);
+                if(elem) elem.classList.remove(fieldsetErrorCssClass);
             }
             this.elem.classList.remove(formErrorCssClass); // Clean form error class
             this._setFormMsg('');
@@ -456,7 +463,7 @@ class FormCreator extends Component {
                 if(err.fieldsetId === fieldsetId) {
                     // Set new field errors
                     const elem = document.getElementById(fieldsetId);
-                    elem.classList.add(fieldsetErrorCssClass);
+                    if(elem) elem.classList.add(fieldsetErrorCssClass);
                     formErrors = true;
                 }
             }
@@ -466,7 +473,7 @@ class FormCreator extends Component {
                 const text = this._getTextData(this.data.onErrorsMsg, this.data.onErrorsMsgId);
                 if(text) this._setFormMsg(text);
             }
-        }, 200);
+        // }, 200);
     }
 
     _getTextData(stringOrObject, langId) {
@@ -541,11 +548,13 @@ class FormCreator extends Component {
             } else {
                 // Success
                 this._resetForm();
-                const text = this._getTextData(this.data.afterSubmitMsg, this.data.afterSubmitMsgId);
-                if(text) {
-                    const showOnlyMsg = this.data.afterSubmitShowOnlyMsg;
-                    this._setFormMsg(text, showOnlyMsg);
-                    if(showOnlyMsg) this.elem.classList.add(this.cssClasses.formSuccess);
+                const showOnlyMsg = this.data.afterSubmitShowOnlyMsg;    
+                if(showOnlyMsg) {
+                    this.formSuccess = true;
+                    this.reDrawSelf({ class: this.cssClasses.formSuccess });
+                } else {
+                    const text = this._getTextData(this.data.afterSubmitMsg, this.data.afterSubmitMsgId);
+                    this._setFormMsg(text);
                 }
                 if(this.afterFormSentFn) {
                     this.afterFormSentFn(response, this);
@@ -612,11 +621,11 @@ class FormCreator extends Component {
         let elem;
         if(showOnlyTop || showTop !== false) {
             elem = document.getElementById(this.id+'-msg-top');
-            elem.innerText = msg;
+            if(elem) elem.innerText = msg;
         }
         if(showBottom !== false) {
             elem = document.getElementById(this.id+'-msg-bottom');
-            elem.innerText = showOnlyTop ? '' : msg;
+            if(elem) elem.innerText = showOnlyTop ? '' : msg;
         }
     }
 
