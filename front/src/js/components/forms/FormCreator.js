@@ -587,7 +587,7 @@ class FormCreator extends Component {
             this.formState.removeListener('getting');
             this.formState.set('getting', false);
             this.formSubmitted = true;
-            this.template = `<div class="error-msg">[ ${getText('could_not_get_form_data')} ]</div>`;
+            this.template = `<div class="error-msg">${getText('could_not_get_form_data')}</div>`;
             this.reDrawSelf();
             this.logger.error('Form data retrieving failed (Form Creator).', exception, this);
         }
