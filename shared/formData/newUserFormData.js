@@ -17,7 +17,7 @@ const newUserFormData = {
     fieldsets: [
         {
             // FIELDSET
-            id: 'test-fieldset',
+            id: 'main-fieldset',
             fields: [
                 { type: 'divider' },
                 {
