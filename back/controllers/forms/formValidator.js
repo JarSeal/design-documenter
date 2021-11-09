@@ -61,7 +61,6 @@ const validateKeys = (form, keys) => {
             }
         }
     }
-    console.log(keysFound, submitFields.length);
     return keysFound === submitFields.length;
 };
 
