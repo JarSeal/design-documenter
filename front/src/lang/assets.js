@@ -103,4 +103,12 @@ export const assetsObj = {
         en: 'New user registered.',
         fi: 'Uusi käyttäjä rekisteröity.',
     },
+    form_submit_error: {
+        en: 'Form could not been sent due to a server error. Please try again or contact support.',
+        fi: 'Lomakkeen lähetys epäonnistui palvelinvirheen takia. Kokeile uudelleen tai ota yhteyttä tukeen.',
+    },
+    could_not_get_form_data: {
+        en: 'Form data could not be retrieved due to a server error. Please try again or contact support.',
+        fi: 'Lomaketta ei voitu noutaa palvelinvirheen takia. Kokeile uudelleen tai ota yhteyttä tukeen.',
+    },
 };

@@ -23,7 +23,7 @@ class FormCreator extends Component {
         this.componentsOrder = [];
         this.curLang = getLang();
         this.formSentOnce = false;
-        this.formSuccess = false;
+        this.formSubmitted = false;
         this.fieldErrors = new State();
         this.formState = new State({
             getting: false,
@@ -42,7 +42,6 @@ class FormCreator extends Component {
         if(data.local) {
             this._createFormComponents(data);
         } else {
-            // Load data from api here..
             const spinnerFadeTime = 400;
             this.mainSpinner = this.addChild(new Spinner({
                 id: this.id+'-main-spinner',
@@ -58,6 +57,8 @@ class FormCreator extends Component {
                         this.mainSpinner = null;
                         this.rePaint();
                     }, spinnerFadeTime+200);
+                } else {
+                    
                 }
             });
         }
@@ -71,17 +72,22 @@ class FormCreator extends Component {
     }
 
     init = (data) => {
-        if(!data.local) this._loadFormData(data.id);
+        if(!data.local) {
+            this._loadFormData(data.id);
+        }
     }
 
     paint = (data) => {
-        if(this.formSuccess) {
+        if(this.formSubmitted) {
             if(this.components[this.id+'-title']) this.components[this.id+'-title'].draw();
             this.components[this.id+'-msg-top'].draw({
                 text: this._getTextData(data.afterSubmitMsg, data.afterSubmitMsgId)
             });
         } else {
-            if(this.mainSpinner) this.mainSpinner.draw({ show: this.formState.get('getting') });
+            if(this.mainSpinner) {
+                this.mainSpinner.draw();
+                this.mainSpinner.showSpinner(true);
+            }
             for(let i=0; i<this.componentsOrder.length; i++) {
                 const key = this.componentsOrder[i];
                 this.components[key].draw();
@@ -444,37 +450,34 @@ class FormCreator extends Component {
     }
 
     fieldsetErrorCheck = (fieldsetId) => {
-        // clearTimeout(this.formErrorClassSetterTimer);
-        // this.formErrorClassSetterTimer = setTimeout(() => {
-            const formErrorCssClass = this.cssClasses.formError;
-            const fieldsetErrorCssClass = this.cssClasses.fieldsetError;
-            const keys = this.fieldErrors.getKeys();
-            const fieldsets = this.data.fieldsets;
-            for(let i=0; i<fieldsets.length; i++) {
-                // Clean all errors
-                const elem = document.getElementById(fieldsets[i].id);
-                if(elem) elem.classList.remove(fieldsetErrorCssClass);
+        const formErrorCssClass = this.cssClasses.formError;
+        const fieldsetErrorCssClass = this.cssClasses.fieldsetError;
+        const keys = this.fieldErrors.getKeys();
+        const fieldsets = this.data.fieldsets;
+        for(let i=0; i<fieldsets.length; i++) {
+            // Clean all errors
+            const elem = document.getElementById(fieldsets[i].id);
+            if(elem) elem.classList.remove(fieldsetErrorCssClass);
+        }
+        this.elem.classList.remove(formErrorCssClass); // Clean form error class
+        this._setFormMsg('');
+        
+        let formErrors = false;
+        for(let i=0; i<keys.length; i++) {
+            const err = this.fieldErrors.get(keys[i]);
+            if(err.fieldsetId === fieldsetId) {
+                // Set new field errors
+                const elem = document.getElementById(fieldsetId);
+                if(elem) elem.classList.add(fieldsetErrorCssClass);
+                formErrors = true;
             }
-            this.elem.classList.remove(formErrorCssClass); // Clean form error class
-            this._setFormMsg('');
-            
-            let formErrors = false;
-            for(let i=0; i<keys.length; i++) {
-                const err = this.fieldErrors.get(keys[i]);
-                if(err.fieldsetId === fieldsetId) {
-                    // Set new field errors
-                    const elem = document.getElementById(fieldsetId);
-                    if(elem) elem.classList.add(fieldsetErrorCssClass);
-                    formErrors = true;
-                }
-            }
-            
-            if(formErrors) {
-                this.elem.classList.add(formErrorCssClass); // Set form error class
-                const text = this._getTextData(this.data.onErrorsMsg, this.data.onErrorsMsgId);
-                if(text) this._setFormMsg(text);
-            }
-        // }, 200);
+        }
+        
+        if(formErrors) {
+            this.elem.classList.add(formErrorCssClass); // Set form error class
+            const text = this._getTextData(this.data.onErrorsMsg, this.data.onErrorsMsgId);
+            if(text) this._setFormMsg(text);
+        }
     }
 
     _getTextData(stringOrObject, langId) {
@@ -551,7 +554,7 @@ class FormCreator extends Component {
                 this._resetForm();
                 const showOnlyMsg = this.data.afterSubmitShowOnlyMsg;    
                 if(showOnlyMsg) {
-                    this.formSuccess = true;
+                    this.formSubmitted = true;
                     this.reDrawSelf({ class: this.cssClasses.formSuccess });
                 } else {
                     const text = this._getTextData(this.data.afterSubmitMsg, this.data.afterSubmitMsgId);
@@ -563,8 +566,11 @@ class FormCreator extends Component {
             }
         } catch(exception) {
             this.formState.set('sending', false);
+            this._resetForm();
+            this.formSubmitted = true;
+            this.reDrawSelf({ class: [this.cssClasses.formError, this.cssClasses.formSent] });
+            this._setFormMsg(getText('form_submit_error'));
             this.logger.error('Form sending failed (Form Creator).', exception);
-            throw new Error('Call stack');
         }
     }
 
@@ -574,13 +580,16 @@ class FormCreator extends Component {
         try {
             const url = _CONFIG.apiBaseUrl + '/forms/' + id;
             const response = await axios.get(url);
-            // this.logger.log('API RESPONSE', response);
+            this.logger.log('API RESPONSE', response);
             this.data = response.data;
             this.formState.set('getting', false);
         } catch(exception) {
+            this.formState.removeListener('getting');
             this.formState.set('getting', false);
+            this.formSubmitted = true;
+            this.template = `<div class="error-msg">[ ${getText('could_not_get_form_data')} ]</div>`;
+            this.reDrawSelf();
             this.logger.error('Form data retrieving failed (Form Creator).', exception, this);
-            throw new Error('Call stack');
         }
     }
 

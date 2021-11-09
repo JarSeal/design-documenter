@@ -29,10 +29,15 @@ fieldset {
     color: $form-msg-color;
     text-align: right;
     font-size: 1.6rem;
-    .form--errors & {
+    .form--sent.form--errors & {
         color: $form-error-msg-color;
+        opacity: 1;
     }
-    .form--sent &, .form--success & {
+    .form--success & {
+        color: $font-color;
+        opacity: 1;
+    }
+    .form--sent & {
         opacity: 1;
     }
 }

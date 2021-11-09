@@ -7,7 +7,7 @@ const newUserFormData = {
     formToken: null,
     formTitleId: 'register_new_user',
     onErrorsMsgId: 'form_has_errors',
-    afterSubmitMsgId: 'form_sent',
+    afterSubmitMsgId: 'new_user_registered',
     afterSubmitShowOnlyMsg: true,
     submitButton: {
         id: 'submit-button-id',

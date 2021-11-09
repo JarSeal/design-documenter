@@ -111,9 +111,9 @@ const _createUser = async (body) => {
     let userLevel = 1; // Create regular user
     if(userCount.length === 0) {
         userLevel = 9; // Create admin user
-        logger.log('Created a super user', body.username);
+        logger.log('Created a super user.');
     } else {
-        logger.log('Created a user', body.username, userLevel);
+        logger.log(`Created a level ${userLevel}  user.`);
     }
 
     const user = new User({
@@ -136,7 +136,7 @@ const _createPresetForm = async (id) => {
         form = { formId: id, form: newUserFormData };
         newForm = new Form(form);
         await newForm.save();
-        logger.log(`Preset form '${id}' auto created.`);
+        logger.log(`Preset form '${id}' auto-created.`);
         return form;
     } else {
         return null;
