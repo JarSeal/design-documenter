@@ -580,7 +580,7 @@ class FormCreator extends Component {
         try {
             const url = _CONFIG.apiBaseUrl + '/forms/' + id;
             const response = await axios.get(url);
-            this.logger.log('API RESPONSE', response);
+            // this.logger.log('API RESPONSE', response);
             this.data = response.data;
             this.formState.set('getting', false);
         } catch(exception) {
