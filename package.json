@@ -8,7 +8,8 @@
     "startMongo": "cd back/mongo && docker-compose up -d",
     "stopMongo": "cd back/mongo && docker-compose down",
     "devFront": "cd front && npm start",
-    "devBack": "cd back/mongo && docker-compose up -d && cd .. && npm run dev"
+    "devBack": "cd back/mongo && docker-compose up -d && cd .. && npm run dev",
+    "devMongo": "docker exec -it beacondb bash"
   },
   "repository": {
     "type": "git",
