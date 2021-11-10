@@ -31,7 +31,7 @@ const textInput = (field, value) => {
     if(field.email && value.trim().length && !shared.parsers.validateEmail(value)) return 'Email not valid';
     if(field.regex) {
         const regex = new RegExp(field.regex);
-        if(!field.regex.test(value)) return 'Wrong format';
+        if(!regex.test(value)) return 'Wrong format';
     }
     return null;
 };
