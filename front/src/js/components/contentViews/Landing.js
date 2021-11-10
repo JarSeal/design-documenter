@@ -1,5 +1,6 @@
 import { saveToken } from "../../helpers/storage";
 import { Component } from "../../LIGHTER";
+import Button from "../buttons/Button";
 import LoginForm from "../forms/LoginForm";
 import "./Landing.scss";
 
@@ -11,11 +12,31 @@ class Landing extends Component {
         this.loginForm = this.addChild(new LoginForm({
             afterLoginFn: this.afterLogin,
         }));
+        this.mainScreenInitiated = false;
+        this.mainScreenCompos = [];
+    }
+
+    initMainScreen = () => {
+        if(this.mainScreenInitiated) return;
+        console.log('cereeaf');
+        this.mainScreenCompos.push(this.addChild(new Component({ id: 'universe-wrapper' })));
+        this.mainScreenCompos.push(this.addChild(new Button({
+            id: 'add-uni-button',
+            attach: 'universe-wrapper',
+            text: 'Add Universe',
+            click: (e) => {
+                console.log('CLIK');
+            },
+        })));
     }
 
     paint = () => {
         if(this.appState.get('user.loggedIn')) {
-            this.elem.innerHTML += 'LOGGED IN';
+            this.initMainScreen();
+            this.elem.innerHTML += 'LOGGED INs'
+            for(let i=0; i<this.mainScreenCompos.length; i++) {
+                this.mainScreenCompos[i].draw();
+            }
         } else {
             this.elem.classList.add('login-view');
             this.loginForm.draw();
