@@ -37,10 +37,13 @@ const dataTypes = [
             regex: 'textinput', // Maybe later add a regex form type
             regexErrorMsg: 'textinput',
         },
+        valueThumbFn: (data) => { return data.value.substring(0, 11) + '...'; },
+        valueFn: (data) => { return data.value; },
     },
     {
         dataTypeId: 'form-data',
         title: 'Form Data',
+        requiresBeacon: true,
         description: '',
         config: {
             fields: [
@@ -48,8 +51,10 @@ const dataTypes = [
                     type: 'textinput',
                     // ...requirements, regex, options, etc. (same field options as forms have)
                 },
-                // ...rest of fields
+                // ...rest of fields that are setup when the beacon is created
             ],
         },
+        valueThumbFn: (data) => { return `${data.config.fields.length} Fields`; },
+        valueFn: (data) => { return data.value; },
     },
 ];
