@@ -64,7 +64,7 @@ class Component {
             // Append element as parent's child
             const template = document.createElement('template');
             template.innerHTML = this.template;
-            this.parent.appendChild(template.content.firstChild);
+            if(this.parent) this.parent.appendChild(template.content.firstChild);
         }
         this.elem = document.getElementById(this.id);
         this._setElemData(this.elem, data);
