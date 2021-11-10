@@ -21,6 +21,8 @@ class Component {
         this.parentId = data.parentId ? data.parentId : null;
         this.template;
         this.elem;
+        this.drawing = false;
+        this.discarding = false;
         this.listeners = {};
         this.children = {};
         this.simpletonIndex = 0;
@@ -46,13 +48,19 @@ class Component {
     }
 
     draw(drawInput) { // Main Component drawing logic
+        if(this.drawing || this.discarding) return;
+        this.drawing = true;
         if(!this.parentId) {
+            this.drawing = false;
             logger.error('Parent id missing. New Component creation should have a parentId or the the creation should be wrapped in this.addChild() method.', this.data);
             throw new Error('Call stack');
         }
         let data = this.data;
         if(drawInput) data = Object.assign(this.data, drawInput);
-        if(!this.firstDraw && data.noRedraws) return;
+        if(!this.firstDraw && data.noRedraws) {
+            this.drawing = false;
+            return;
+        }
         if(this.elem) this.discard();
         this.parent = document.getElementById(data.attach || this.parentId);
         if(!this.template) this.template = data.template || this._createDefaultTemplate(this.id, data);
@@ -75,6 +83,7 @@ class Component {
         }
         this.paint(data);
         this.simpletonIndex = 0;
+        this.drawing = false;
     }
 
     reDrawSelf(drawInput) {
@@ -91,6 +100,8 @@ class Component {
     paint(data) {}
 
     discard(fullDiscard) {
+        if(this.discarding) return;
+        this.discarding = true;
         // Remove listeners
         let keys = Object.keys(this.listeners);
         for(let i=0; i<keys.length; i++) {
@@ -109,6 +120,7 @@ class Component {
         }
         if(fullDiscard) delete ids[this.id];
         this.erase();
+        this.discarding = false;
     }
 
     erase() {} // Additional discard logic from the custom Component
@@ -146,6 +158,7 @@ class Component {
             listener.target = target;
         }
         if(this.listeners[id]) this.removeListener(id);
+        if(!target) return;
         target.addEventListener(type, fn);
         this.listeners[id] = listener;
     }
@@ -181,6 +194,7 @@ class Component {
     }
 
     _setElemData(elem, data) {
+        if(!elem) return;
         if(data.class) {
             if(typeof data.class === 'string' || data.class instanceof String) {
                 elem.classList.add(data.class);
