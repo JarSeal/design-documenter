@@ -30,6 +30,9 @@ class Base extends Component {
     }
 
     paint = () => {
+        if(this.appState.get('dialog.show')) {
+            this.dialog.disappear();
+        }
         if(this.appState.get('loading.main')) {
             if(this.mainLoader) this.mainLoader.draw();
         } else {
