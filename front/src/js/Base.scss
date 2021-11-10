@@ -4,6 +4,15 @@
         margin-left 200ms ease-in-out
 }
 
-.content {
-    padding: 1rem;
+#overlays {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+#content-area {
+    display: inline-block;
+    width: 100%;
+    padding: 5rem;
 }

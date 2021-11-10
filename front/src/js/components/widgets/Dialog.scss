@@ -1,0 +1,38 @@
+#dialog {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0);
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition-property: background-color;
+    transition-timing-function: ease-in-out;
+
+    .dialog-box {
+        width: 96%;
+        max-width: 80rem;
+        max-height: 96vh;
+        min-height: 20rem;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-top: -5rem;
+        transform: translate3d(-50%, -50%, 0);
+        background-color: rgba(#cbcbcb, 1);
+        opacity: 0;
+        transition-property: opacity, margin-top;
+        transition-timing-function: ease-in-out;
+    }
+
+    &.appear {
+        background-color: rgba(0, 0, 0, 0.5);
+        .dialog-box {
+            opacity: 1;
+            margin-top: 0;
+        }
+    }
+}
+
+#dialog-box {
+
+}

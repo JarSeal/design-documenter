@@ -7,6 +7,7 @@ import './Base.scss';
 import { getToken, removeToken } from './helpers/storage';
 import { loadAssets } from './helpers/lang';
 import Dialog from './components/widgets/Dialog';
+import './components/widgets/Dialog.scss';
 
 class Base extends Component {
     constructor(data) {
@@ -15,18 +16,24 @@ class Base extends Component {
         this.appState = this._initAppState();
         loadAssets();
         this._initResizer();
-        this.Router = new Router(_CONFIG, this.id, this.paint, { appState: this.appState, attach: 'content-area' });
+        this.Router = new Router(
+            _CONFIG,
+            this.id,
+            this.paint,
+            { appState: this.appState, attach: 'content-area' }
+        );
         this.bbar = this.addChild(new Bbar({ id: 'bbar', appState: this.appState }));
         this.mainLoader = this.addChild(new MainLoader({ id: 'main-loader', attach: 'overlays' }));
-        this.dialog = this.addChild(new Dialog({ id: 'dialog', attach: 'overlays' }));
+        this.dialog = this.addChild(new Dialog({ id: 'dialog', attach: 'overlays', appState: this.appState }));
+        this.appState.set('dialog.Dialog', this.dialog);
         this.loadData();
     }
 
     paint = () => {
         if(this.appState.get('loading.main')) {
-            this.mainLoader.draw();
+            if(this.mainLoader) this.mainLoader.draw();
         } else {
-            this.mainLoader.discard(true);
+            if(this.mainLoader) this.mainLoader.discard(true);
             this.mainLoader = null;
             this.bbar.draw();
             this.Router.draw();
@@ -103,9 +110,7 @@ class Base extends Component {
 
     listenDialogCommands = (show) => {
         if(show) {
-            this.dialog.draw();
-        } else {
-            this.dialog.draw(true);
+            this.dialog.draw({ appear: true });
         }
     }
 }

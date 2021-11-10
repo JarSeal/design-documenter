@@ -24,13 +24,15 @@ class Landing extends Component {
             attach: 'universe-wrapper',
             text: 'Add Universe',
             click: (e) => {
-                console.log('CLIK');
                 this.appState.set('dialog.show', true);
             },
         })));
     }
 
     paint = () => {
+        if(this.appState.get('dialog.show')) {
+            this.appState.get('dialog.Dialog').disappear();
+        }
         if(this.appState.get('user.loggedIn')) {
             this.initMainScreen();
             for(let i=0; i<this.mainScreenCompos.length; i++) {
