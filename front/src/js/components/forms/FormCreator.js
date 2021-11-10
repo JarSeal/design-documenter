@@ -433,7 +433,6 @@ class FormCreator extends Component {
             });
         } else if(field.regex) {
             const regex = new RegExp(field.regex);
-            console.log(regex.test(val.trim()));
             if(!regex.test(val.trim())) {
                 const text = this._getTextData(field.regexErrorMsg, field.regexErrorMsgId) || '';
                 this.fieldErrors.set(id, {
