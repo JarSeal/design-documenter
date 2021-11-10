@@ -28,6 +28,8 @@ const newUserFormData = {
                     required: true,
                     minLength: CONFIG.username.minLength,
                     maxLength: 24,
+                    regex: '^[a-zA-Z0-9åöäÅÖÄ]+$', // TODO: Expand the different foreign letters (German, Spanish, Baltic etc.)
+                    regexErrorMsgId: 'username_invalid_characters',
                 },
                 {
                     // NAME

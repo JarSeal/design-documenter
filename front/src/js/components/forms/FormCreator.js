@@ -431,10 +431,27 @@ class FormCreator extends Component {
                 fieldsetId,
                 id
             });
+        } else if(field.regex) {
+            const regex = new RegExp(field.regex);
+            console.log(regex.test(val.trim()));
+            if(!regex.test(val.trim())) {
+                const text = this._getTextData(field.regexErrorMsg, field.regexErrorMsgId) || '';
+                this.fieldErrors.set(id, {
+                    errorMsg: text,
+                    fieldsetId,
+                    id
+                });
+            } else {
+                this.fieldErrors.set(id, false);
+            }
         } else {
             this.fieldErrors.set(id, false);
         }
         if(field.validationFn) {
+            if(!validationFns[field.validationFn]) {
+                this.logger.error(`Could not find validationFn (id: ${field.validationFn}).`);
+                throw new Error('Call stack');
+            }
             validationFns[field.validationFn]({
                 val,
                 id,

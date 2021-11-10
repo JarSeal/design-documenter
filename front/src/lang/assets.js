@@ -51,6 +51,10 @@ export const assetsObj = {
         en: 'Minimum $[0] characters',
         fi: 'Vähintään $[0] merkkiä',
     },
+    username_invalid_characters: {
+        en: 'Only letters and numbers allowed (no spaces)',
+        fi: 'Vain kirjaimet ja numerot sallittu (ei välilyöntejä)',
+    },
     login_remember_me: {
         en: 'Remember me',
         fi: 'Muista minut',
