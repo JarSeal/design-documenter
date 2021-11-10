@@ -6,6 +6,7 @@ import baseHTML from './base.html';
 import './Base.scss';
 import { getToken, removeToken } from './helpers/storage';
 import { loadAssets } from './helpers/lang';
+import Dialog from './components/widgets/Dialog';
 
 class Base extends Component {
     constructor(data) {
@@ -17,6 +18,7 @@ class Base extends Component {
         this.Router = new Router(_CONFIG, this.id, this.paint, { appState: this.appState, attach: 'content-area' });
         this.bbar = this.addChild(new Bbar({ id: 'bbar', appState: this.appState }));
         this.mainLoader = this.addChild(new MainLoader({ id: 'main-loader', attach: 'overlays' }));
+        this.dialog = this.addChild(new Dialog({ id: 'dialog', attach: 'overlays' }));
         this.loadData();
     }
 
@@ -24,13 +26,15 @@ class Base extends Component {
         if(this.appState.get('loading.main')) {
             this.mainLoader.draw();
         } else {
+            this.mainLoader.discard(true);
+            this.mainLoader = null;
             this.bbar.draw();
             this.Router.draw();
         }
     }
 
     _initAppState = () => {
-        // Check if browser has been used to log in
+        // Check if current browser has been used to log in
         let loggedIn = false,
             username = null,
             token = null;
@@ -51,10 +55,15 @@ class Base extends Component {
                 loggedIn: loggedIn,
                 username: username,
                 token: token,
-            }
+            },
+            dialog: {
+                show: false,
+                content: null,
+            },
         });
         state.set('loading.main', true, this.paint);
         state.addListener('user.loggedIn', this.listenLoggedStatus);
+        state.addListener('dialog.show', this.listenDialogCommands);
         return state;
     }
 
@@ -64,7 +73,7 @@ class Base extends Component {
             this.mainLoader.hide(() => {
                 this.appState.set('loading.main', false);
             });
-        }, 1000);
+        }, 500);
     }
 
     _initResizer() {
@@ -90,6 +99,14 @@ class Base extends Component {
             return;
         }
         this.paint();
+    }
+
+    listenDialogCommands = (show) => {
+        if(show) {
+            this.dialog.draw();
+        } else {
+            this.dialog.draw(true);
+        }
     }
 }
 

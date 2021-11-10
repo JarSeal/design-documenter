@@ -25,6 +25,7 @@ class Landing extends Component {
             text: 'Add Universe',
             click: (e) => {
                 console.log('CLIK');
+                this.appState.set('dialog.show', true);
             },
         })));
     }
