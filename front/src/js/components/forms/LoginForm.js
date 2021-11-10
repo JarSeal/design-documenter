@@ -101,6 +101,8 @@ class LoginForm extends Component {
     handleLogin = (e) => {
         e.preventDefault();
         this.formSentOnce = true;
+        this.elem.classList.add('form--sent');
+        this.elem.classList.add('form--errors');
         
         this.setMsg('');
         const username = this.loginState.get('user');
