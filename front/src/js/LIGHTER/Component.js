@@ -37,6 +37,7 @@ class Component {
         //     replace (optional, boolean, default=false, whether the Component should replace the parent's innerHTML or not)
         //     class (optional, string/array, element classe(s))
         //     style (optional, flat object, element inline style(s))
+        //     attributes (optional, flat object, element attributes as key and value as value)
         //     appendHtml (optional, string, element's appended innerHTML text/html)
         //     html (optional, string, element's replacing innerHTML text/html)
         //     text (optional, string, element innerText text)
