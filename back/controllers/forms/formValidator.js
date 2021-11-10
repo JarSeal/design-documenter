@@ -11,7 +11,7 @@ const validateField = (form, key, value) => {
             if(field.id === key) {
                 switch(field.type) {
                 case 'textinput':
-                    return textInput(field, value);
+                    return textInput(field, value.trim());
                 case 'checkbox':
                     return checkbox(field, value);
                 case 'dropdown':
@@ -25,10 +25,10 @@ const validateField = (form, key, value) => {
 };
 
 const textInput = (field, value) => {
-    if(field.required && (!value || value.trim() === '')) return 'Required';
-    if(field.minLength && value.trim().length < field.minLength && value.trim() !== '') return `Value is too short (minimum: ${field.minLength} chars)`;
-    if(field.maxLength && value.trim().length > field.maxLength) return `Value is too long (maximum: ${field.maxLength} chars)`;
-    if(field.email && value.trim().length && !shared.parsers.validateEmail(value)) return 'Email not valid';
+    if(field.required && (!value || value === '')) return 'Required';
+    if(field.minLength && value.length < field.minLength && value !== '') return `Value is too short (minimum: ${field.minLength} chars)`;
+    if(field.maxLength && value.length > field.maxLength) return `Value is too long (maximum: ${field.maxLength} chars)`;
+    if(field.email && value.length && !shared.parsers.validateEmail(value)) return 'Email not valid';
     if(field.regex) {
         const regex = new RegExp(field.regex);
         if(!regex.test(value)) return 'Wrong format';
@@ -42,7 +42,16 @@ const checkbox = (field, value) => {
 };
 
 const dropdown = (field, value) => {
-    if(field.required && (!value || value.trim() === '')) return 'Required';
+    if(field.required && String(value).trim() === '') return 'Required';
+    // Validate that the value passed is one of the options
+    let valueFound = false;
+    for(let i=0; i<field.options.length; i++) {
+        if(String(field.options[i].value).trim() === String(value).trim()) {
+            valueFound = true;
+            break;
+        }
+    }
+    if(!valueFound) return 'Unknown value';
     return null;
 };
 
