@@ -51,11 +51,11 @@ class FormCreator extends Component {
             this.formState.addListener('getting', (newValue) => {
                 if(newValue === false) {
                     this._createFormComponents(this.data);
+                    this.rePaint();
                     this.mainSpinner.showSpinner(false);
                     setTimeout(() => {
                         this.mainSpinner.discard(true);
                         this.mainSpinner = null;
-                        this.rePaint();
                     }, spinnerFadeTime+200);
                 }
             });
