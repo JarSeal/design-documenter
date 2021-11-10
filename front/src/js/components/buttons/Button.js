@@ -1,6 +1,8 @@
 import Component from "../../LIGHTER/Component";
 
-class RouteLink extends Component {
+// Attributes:
+// - click = clickFn
+class Button extends Component {
     constructor(data) {
         super(data);
         this.template = `<button></button>`;
@@ -16,4 +18,4 @@ class RouteLink extends Component {
     }
 }
 
-export default RouteLink;
+export default Button;
