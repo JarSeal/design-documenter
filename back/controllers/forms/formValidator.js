@@ -29,7 +29,7 @@ const textInput = (field, value) => {
     if(field.minLength && value.length < field.minLength && value !== '') return `Value is too short (minimum: ${field.minLength} chars)`;
     if(field.maxLength && value.length > field.maxLength) return `Value is too long (maximum: ${field.maxLength} chars)`;
     if(field.email && value.length && !shared.parsers.validateEmail(value)) return 'Email not valid';
-    if(field.regex) {
+    if(value.length && field.regex) {
         const regex = new RegExp(field.regex);
         if(!regex.test(value)) return 'Wrong format';
     }

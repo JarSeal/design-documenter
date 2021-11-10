@@ -55,6 +55,10 @@ export const assetsObj = {
         en: 'Only letters and numbers allowed (no spaces)',
         fi: 'Vain kirjaimet ja numerot sallittu (ei välilyöntejä)',
     },
+    name_invalid_characters: {
+        en: 'Name has invalid characters',
+        fi: 'Nimessä on ei-sallittuja merkkejä',
+    },
     login_remember_me: {
         en: 'Remember me',
         fi: 'Muista minut',

@@ -28,7 +28,7 @@ const newUserFormData = {
                     required: true,
                     minLength: CONFIG.username.minLength,
                     maxLength: 24,
-                    regex: '^[a-zA-Z0-9åöäÅÖÄ]+$', // TODO: Expand the different foreign letters (German, Spanish, Baltic etc.)
+                    regex: '^[a-zA-Z0-9åöäñüéèêâîôûčßàìòùóçęįųķļņģëïõžšæøėēūāīÅÖÄÑÜÉÈÊÂÎÔÛČẞÀÌÒÙÓÇĘĮŲĶĻŅĢËÏÕŽŠÆØĖĒŪĀĪ]+$', // Current langs: finnish, english, swedish, norwegian, danish, german, french, spanish, italian, estonian, latvian, lithuanian
                     regexErrorMsgId: 'username_invalid_characters',
                 },
                 {
@@ -39,6 +39,8 @@ const newUserFormData = {
                     required: CONFIG.name.required,
                     minLength: CONFIG.name.minLength,
                     maxLength: 40,
+                    regex: '[a-zA-ZåöäñüéèêâîôûčßàìòùóçęįųķļņģëïõžšæøėēūāīÅÖÄÑÜÉÈÊÂÎÔÛČẞÀÌÒÙÓÇĘĮŲĶĻŅĢËÏÕŽŠÆØĖĒŪĀĪ]+$', // Current langs: finnish, english, swedish, norwegian, danish, german, french, spanish, italian, estonian, latvian, lithuanian
+                    regexErrorMsgId: 'name_invalid_characters',
                 },
                 { type: 'divider' },
                 {
