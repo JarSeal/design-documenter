@@ -73,37 +73,33 @@ formsRouter.post('/filled', async (request, response) => {
 
     if(body.id === 'new-user-form') {
         // Special case for registering a new user
-
-        // Check username
-        const findUsername = await User.findOne({ username: body.username.trim() });
-        if(findUsername) {
-            response.json({
-                msg: 'Bad request. Validation errors.',
-                errors: { username: 'username_taken' },
-                usernameTaken: true,
-            });
-            return;
-        }
-        if(CONFIG.email.required) {
-            const findEmail = await User.findOne({ email: body.email.trim() });
-            if(findEmail) {
-                response.json({
-                    msg: 'Bad request. Validation errors.',
-                    errors: { email: 'email_taken' },
-                    emailTaken: true,
-                });
-                return;
-            }
-        }
         const newUser = await _createUser(body);
         response.json(newUser);
         return;
     }
     
-    response.json({ msg: 'filledForm' }); // TODO, save general forms here as datasets
+    response.json({ msg: 'filledForm' }); // TODO, save general forms here as universes, structures, beacons, or datasets
 });
 
 const _createUser = async (body) => {
+
+    const findUsername = await User.findOne({ username: body.username.trim() });
+    if(findUsername) {
+        return {
+            msg: 'Bad request. Validation errors.',
+            errors: { username: 'username_taken' },
+        };
+    }
+    if(CONFIG.email.required) {
+        const findEmail = await User.findOne({ email: body.email.trim() });
+        if(findEmail) {
+            return {
+                msg: 'Bad request. Validation errors.',
+                errors: { email: 'email_taken' },
+            };
+        }
+    }
+
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(body.password, saltRounds);
 
@@ -111,15 +107,15 @@ const _createUser = async (body) => {
     let userLevel = 1; // Create regular user
     if(userCount.length === 0) {
         userLevel = 9; // Create admin user
-        logger.log('Created a super user.');
+        logger.log(`Created a super user (level: ${userLevel}).`);
     } else {
-        logger.log(`Created a level ${userLevel}  user.`);
+        logger.log(`Created a level ${userLevel} user.`);
     }
 
     const user = new User({
-        username: body.username,
-        email: body.email,
-        name: body.name,
+        username: body.username.trim(),
+        email: body.email.trim(),
+        name: body.name.trim(),
         userLevel,
         passwordHash,
     });
