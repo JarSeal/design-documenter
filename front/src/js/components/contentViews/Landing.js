@@ -18,7 +18,6 @@ class Landing extends Component {
 
     initMainScreen = () => {
         if(this.mainScreenInitiated) return;
-        console.log('cereeaf');
         this.mainScreenCompos.push(this.addChild(new Component({ id: 'universe-wrapper' })));
         this.mainScreenCompos.push(this.addChild(new Button({
             id: 'add-uni-button',
@@ -33,7 +32,6 @@ class Landing extends Component {
     paint = () => {
         if(this.appState.get('user.loggedIn')) {
             this.initMainScreen();
-            this.elem.innerHTML += 'LOGGED INs'
             for(let i=0; i<this.mainScreenCompos.length; i++) {
                 this.mainScreenCompos[i].draw();
             }
