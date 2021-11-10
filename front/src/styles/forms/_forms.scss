@@ -13,6 +13,13 @@ form {
         border-width: 0.2rem;
         margin-right: 1rem;
     }
+
+    .form-loader-spinner {
+        position: absolute;
+        margin-right: 0;
+        top: 4rem;
+        right: 4rem;
+    }
 }
 
 fieldset {
