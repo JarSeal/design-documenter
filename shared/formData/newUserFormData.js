@@ -4,8 +4,8 @@ const CONFIG = require('./../../CONFIG').USER;
 const newUserFormData = {
     // FORM
     id: 'new-user-form',
-    formToken: null,
     formTitleId: 'register_new_user',
+    api: '/users',
     onErrorsMsgId: 'form_has_errors',
     afterSubmitMsgId: 'new_user_registered',
     afterSubmitShowOnlyMsg: true,

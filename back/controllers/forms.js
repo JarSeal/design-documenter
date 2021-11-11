@@ -5,7 +5,7 @@ const logger = require('./../utils/logger');
 const Form = require('./../models/form');
 const User = require('./../models/user');
 const Universe = require('./../models/universe');
-const { validateField, validateKeys } = require('./forms/formValidator');
+const { validateFormData } = require('./forms/formValidator');
 const newUserFormData = require('./../shared').newUserFormData;
 const newUniverseFormData = require('./../shared').newUniverseFormData;
 
@@ -50,27 +50,9 @@ formsRouter.post('/', async (request, response) => {
 formsRouter.post('/filled', async (request, response) => {
     const body = request.body;
     const formData = await Form.findOne({ formId: body.id });
-    if(!formData || !formData.form) {
-        response.status(404).json({ msg: 'Could not find form (' + body.id + '),' });
-        return;
-    }
-
-    const keys = Object.keys(body);
-    const keysFound = validateKeys(formData.form, keys);
-    if(!keysFound) {
-        response.status(400).json({ msg: 'Bad request. Payload missing or incomplete.' });
-        return;
-    }
-
-    const errors = {};
-    for(let i=0; i<keys.length; i++) {
-        // Payload contains extra/undefined keys or no keys at all
-        let error = validateField(formData.form, keys[i], body[keys[i]]); // TODO: FIX THIS!!! PASSWORD IS NOT CHECKED
-        if(error) errors[keys[i]] = error;
-    }
-    const errorKeys = Object.keys(errors);
-    if(errorKeys.length) {
-        response.status(400).json({ msg: 'Bad request. Validation errors.', errors });
+    const error = validateFormData(formData, body);
+    if(error) {
+        response.status(error.code).json(error.obj);
         return;
     }
 

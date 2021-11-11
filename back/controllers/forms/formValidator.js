@@ -77,4 +77,38 @@ const validateKeys = (form, keys) => {
     return keysFound === submitFields.length;
 };
 
-module.exports = { validateField, validateKeys };
+const validateFormData = (formData, body) => {
+    if(!formData || !formData.form) {
+        return {
+            code: 404,
+            obj: { msg: 'Could not find form (' + body.id + '),' },
+        };
+    }
+
+    const keys = Object.keys(body);
+    const keysFound = validateKeys(formData.form, keys);
+    if(!keysFound) {
+        return {
+            code: 400,
+            obj: { msg: 'Bad request. Payload missing or incomplete.' },
+        };
+    }
+
+    const errors = {};
+    for(let i=0; i<keys.length; i++) {
+        // Payload contains extra/undefined keys or no keys at all
+        let error = validateField(formData.form, keys[i], body[keys[i]]);
+        if(error) errors[keys[i]] = error;
+    }
+    const errorKeys = Object.keys(errors);
+    if(errorKeys.length) {
+        return {
+            code: 400,
+            obj: { msg: 'Bad request. Validation errors.', errors },
+        };
+    }
+
+    return null;
+};
+
+module.exports = { validateField, validateKeys, validateFormData };

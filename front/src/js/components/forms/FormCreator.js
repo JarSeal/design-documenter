@@ -535,7 +535,7 @@ class FormCreator extends Component {
         this.formState.set('sending', true);
         try {
             payload.id = this.id;
-            const url = _CONFIG.apiBaseUrl + '/forms/filled';
+            const url = _CONFIG.apiBaseUrl + (this.data.api || '/forms/filled');
             const response = await axios.post(url, payload);
             // this.logger.log('API RESPONSE', response);
             this.formState.set('sending', false);

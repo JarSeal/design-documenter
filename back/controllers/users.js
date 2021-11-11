@@ -1,6 +1,10 @@
 const bcrypt = require('bcrypt');
 const usersRouter = require('express').Router();
+const CONFIG = require('./../shared').CONFIG.USER;
+const logger = require('./../utils/logger');
 const User = require('./../models/user');
+const Form = require('./../models/form');
+const { validateFormData } = require('./forms/formValidator');
 
 // Get all users
 usersRouter.get('/', async (request, response) => {
@@ -13,32 +17,57 @@ usersRouter.get('/', async (request, response) => {
 // Register user
 usersRouter.post('/', async (request, response) => {
     const body = request.body;
-
-    if(!body.username || body.username.length < 5) {
-        response.status(400).json({ error: 'username too short or missing' });
+    const formData = await Form.findOne({ formId: body.id });
+    const error = validateFormData(formData, body);
+    if(error) {
+        response.status(error.code).json(error.obj);
         return;
     }
 
-    if(!body.email || body.email.length < 5) {
-        response.status(400).json({ error: 'email too short or missing' });
+    const findUsername = await User.findOne({ username: body.username.trim() });
+    if(findUsername) {
+        response.json({
+            msg: 'Bad request. Validation errors.',
+            errors: { username: 'username_taken' },
+        });
         return;
     }
-  
-    if(!body.password || body.password.length < 6) {
-        response.status(400).json({ error: 'password too short or missing' });
-        return;
+    if(CONFIG.email.required) {
+        const findEmail = await User.findOne({ email: body.email.trim() });
+        if(findEmail) {
+            response.json({
+                msg: 'Bad request. Validation errors.',
+                errors: { email: 'email_taken' },
+            });
+            return;
+        }
     }
 
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(body.password, saltRounds);
 
+    const userCount = await User.find().limit(1);
+    let userLevel = 1; // Create regular user
+    if(userCount.length === 0) {
+        userLevel = 9; // Create admin user
+        logger.log(`Created a super user (level: ${userLevel}).`);
+    } else {
+        logger.log(`Created a level ${userLevel} user.`);
+    }
+
     const user = new User({
-        username: body.username,
-        email: body.email,
-        name: body.name,
+        username: body.username.trim(),
+        email: body.email.trim(),
+        name: body.name.trim(),
+        userLevel,
         passwordHash,
+        created: {
+            by: null,
+            publicForm: true,
+            date: new Date(),
+        },
     });
-  
+
     const savedUser = await user.save();
 
     response.json(savedUser);
