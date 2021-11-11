@@ -4,13 +4,12 @@ const CONFIG = require('./../../CONFIG').USER;
 const newUniverseFormData = {
     id: 'new-universe-form',
     onErrorsMsgId: 'form_has_errors',
-    afterSubmitMsgId: 'new_universe_created',
     afterSubmitShowOnlyMsg: true,
     submitButton: {
         id: 'submit-new-universe-button',
         labelId: 'create_new_universe',
     },
-    submitFields: [],
+    submitFields: ['new-uni-title', 'new-uni-id', 'new-uni-description'],
     fieldsets: [
         {
             id: 'main-fieldset-new-uni',
@@ -46,7 +45,6 @@ const newUniverseFormData = {
                     id: 'new-uni-description',
                     labelId: 'description',
                     maxLength: 500,
-                    email: true,
                 },
                 { type: 'divider' },
             ],

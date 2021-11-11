@@ -42,6 +42,7 @@ formsRouter.get('/:id', async (request, response) => {
 formsRouter.post('/', async (request, response) => {
     request, response;
     // TODO
+    response.json({ msg: 'not implemented' });
 });
 
 // Send a filled form
@@ -76,6 +77,10 @@ formsRouter.post('/filled', async (request, response) => {
         // Special case for registering a new user
         const newUser = await _createUser(body);
         response.json(newUser);
+        return;
+    } else if(body.id === 'new-universe-form') {
+        // Special case for creating a new universe
+        response.json({ msg: 'not implemented' });
         return;
     }
     
