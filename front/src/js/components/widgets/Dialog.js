@@ -34,6 +34,8 @@ class Dialog extends Component {
     }
 
     addListeners = () => {
+        this.appState.set('resizers.dialog', this.onResize);
+
         this.addListener({
             id: this.id + '-background-click',
             type: 'click',
@@ -78,6 +80,9 @@ class Dialog extends Component {
         if(!this.elem) return;
         this.elem.classList.remove('appear');
         this.isShowing = false;
+
+        this.appState.remove('resizers.dialog');
+
         setTimeout(() => {
             this.discard(true);
         }, this.transitionTime);
@@ -91,9 +96,15 @@ class Dialog extends Component {
     }
 
     _setTopPadding = () => {
+        if(!this.elem) return;
         const titleElem = this.elem.querySelector('#'+this.id + '-main-title');
+        if(!titleElem) return;
         const boxElem = this.elem.querySelector('#'+this.id + '-box-wrapper');
         boxElem.style.paddingTop = (titleElem.offsetHeight / 10) + 'rem';
+    }
+
+    onResize = () => {
+        this._setTopPadding();
     }
 }
 
