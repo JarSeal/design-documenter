@@ -8,6 +8,16 @@ const structure = {
     universeId: 'my-universe-id', // String, auto-added when structure is created
     structureGroupId: '', // String / null, [regex='^[a-zA-Z0-9\-_]+$']
     allowedTypes: null, // null / Array[String], if null then any data type is allowed
+    created: {
+        by: '[mongo user _id]', // String [required], mongo user id
+        date: Date, // Date [required]
+    },
+    edited: [
+        {
+            by: '[mongo user _id]',
+            date: Date,
+        }
+    ],
     size2d: {
         w: 32, // Number [required]
         h: 32, // Number [required]
@@ -23,6 +33,16 @@ const structureGroup = {
     structureGroupId: 'my-structure-group-id', // String [required, unique, regex='^[a-zA-Z0-9\-_]+$']
     description: 'Some structure group description...', // String
     universeId: 'my-universe-id', // String, auto-added when structure group is created
+    created: {
+        by: '[mongo user _id]', // String [required], mongo user id
+        date: Date, // Date [required]
+    },
+    edited: [
+        {
+            by: '[mongo user _id]',
+            date: Date,
+        }
+    ],
     size2d: {
         w: 100, // Number [required]
         h: 72, // Number [required]

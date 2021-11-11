@@ -5,4 +5,14 @@ const universe = {
     title: 'My Project Title', // String [required]
     universeId: 'my-project-id', // String [required, unique, regex='^[a-zA-Z0-9\-_]+$']
     description: 'Some project description...', // String
+    created: {
+        by: '[mongo user _id]', // String [required], mongo user id
+        date: Date, // Date [required]
+    },
+    edited: [
+        {
+            by: '[mongo user _id]',
+            date: Date,
+        }
+    ],
 };

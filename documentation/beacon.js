@@ -22,8 +22,20 @@ const beacon = {
         x: 0, // Number [required]
         y: 0, // Number [required]
     },
+    created: {
+        by: '[mongo user _id]', // String [required], mongo user id
+        date: Date, // Date [required]
+    },
+    edited: [
+        {
+            by: '[mongo user _id]',
+            date: Date,
+        }
+    ],
 };
 
+// Data types are hard-coded, non-changing definitions on the server (not in mongo)
+// Only the config part is customised by the user when the data type is used in a beacon
 const dataTypes = [
     {
         dataTypeId: 'raw-text',
@@ -43,7 +55,6 @@ const dataTypes = [
     {
         dataTypeId: 'form-data',
         title: 'Form Data',
-        requiresBeacon: true,
         description: '',
         config: {
             fields: [

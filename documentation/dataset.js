@@ -3,6 +3,7 @@
 
 const dataset = {
     type: 'raw-text', // String [required], a data type id
+    universeId: 'my-universe-id',
     created: {
         by: '[mongo user _id]', // String [required], mongo user id
         date: Date, // Date [required]
