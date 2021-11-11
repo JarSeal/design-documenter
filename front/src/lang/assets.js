@@ -119,4 +119,12 @@ export const assetsObj = {
         en: 'Form data could not be retrieved due to a server error. Please try again or contact support.',
         fi: 'Lomaketta ei voitu noutaa palvelinvirheen takia. Kokeile uudelleen tai ota yhteyttä tukeen.',
     },
+    close_dialog: {
+        en: 'Close dialog',
+        fi: 'Sulje ikkuna',
+    },
+    create_new_universe: {
+        en: 'Create New Universe',
+        fi: 'Luo uusi Universumi',
+    },
 };

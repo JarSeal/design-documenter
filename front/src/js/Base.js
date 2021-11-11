@@ -25,14 +25,12 @@ class Base extends Component {
         this.bbar = this.addChild(new Bbar({ id: 'bbar', appState: this.appState }));
         this.mainLoader = this.addChild(new MainLoader({ id: 'main-loader', attach: 'overlays' }));
         this.dialog = this.addChild(new Dialog({ id: 'dialog', attach: 'overlays', appState: this.appState }));
-        this.appState.set('dialog.Dialog', this.dialog);
+        this.appState.set('Dialog', this.dialog);
         this.loadData();
     }
 
     paint = () => {
-        if(this.appState.get('dialog.show')) {
-            this.dialog.disappear();
-        }
+        this.dialog.disappear();
         if(this.appState.get('loading.main')) {
             if(this.mainLoader) this.mainLoader.draw();
         } else {
@@ -66,14 +64,10 @@ class Base extends Component {
                 username: username,
                 token: token,
             },
-            dialog: {
-                show: false,
-                content: null,
-            },
+            Dialog: null,
         });
         state.set('loading.main', true, this.paint);
         state.addListener('user.loggedIn', this.listenLoggedStatus);
-        state.addListener('dialog.show', this.listenDialogCommands);
         return state;
     }
 
@@ -109,12 +103,6 @@ class Base extends Component {
             return;
         }
         this.paint();
-    }
-
-    listenDialogCommands = (show) => {
-        if(show) {
-            this.dialog.draw({ appear: true });
-        }
     }
 }
 

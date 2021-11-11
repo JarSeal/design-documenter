@@ -1,6 +1,8 @@
+import { getText } from "../../helpers/lang";
 import { saveToken } from "../../helpers/storage";
 import { Component } from "../../LIGHTER";
 import Button from "../buttons/Button";
+import FormCreator from "../forms/FormCreator";
 import LoginForm from "../forms/LoginForm";
 import "./Landing.scss";
 
@@ -24,7 +26,12 @@ class Landing extends Component {
             attach: 'universe-wrapper',
             text: 'Add Universe',
             click: (e) => {
-                this.appState.set('dialog.show', true);
+                this.appState.get('Dialog').appear({
+                    component: new FormCreator({
+                        id: 'new-universe-form',
+                    }),
+                    title: getText('create_new_universe'),
+                });
             },
         })));
     }

@@ -1,3 +1,4 @@
+import { getText } from "../../helpers/lang";
 import { Component } from "../../LIGHTER";
 import Button from "../buttons/Button";
 
@@ -5,9 +6,12 @@ class Dialog extends Component {
     constructor(data) {
         super(data);
         this.appState = data.appState;
-        this.template = ``;
         this.transitionTime = 140; // in milliseconds
         data.style = { transitionDuration: this.transitionTime + 'ms' };
+        data.class = 'alpha-black';
+        this.isShowing = false;
+        this.compoToShow;
+        this.dialogTitle;
 
         this.dialogCompos = [];
         this.dialogCompos.push(this.addChild(new Component({
@@ -19,7 +23,8 @@ class Dialog extends Component {
             id: this.id + '-close-button',
             text: 'close',
             attach: this.id + '-box-wrapper',
-            click: this.closeDialog,
+            attributes: { title: getText('close_dialog') },
+            click: this.closeDialogClick,
         })));
         this.dialogCompos.push(this.addChild(new Component({
             id: this.id + '-inner-box',
@@ -31,7 +36,7 @@ class Dialog extends Component {
         this.addListener({
             id: this.id + '-background-click',
             type: 'click',
-            fn: this.closeDialog,
+            fn: this.closeDialogClick,
         });
     }
 
@@ -39,23 +44,44 @@ class Dialog extends Component {
         for(let i=0; i<this.dialogCompos.length; i++) {
             this.dialogCompos[i].draw();
         }
+        if(this.dialogTitle) this.dialogTitle.draw();
+        if(this.compoToShow) this.compoToShow.draw();
         if(data.appear) {
             setTimeout(() => {
-                this.elem.classList.add('appear');
-            }, 50);
+                if(this.elem) this.elem.classList.add('appear');
+            }, 0);
         }
     }
 
+    appear = (dialogData) => {
+        this.compoToShow = this.addChild(dialogData.component);
+        this.compoToShow.data.attach = this.id + '-inner-box';
+        if(dialogData.title) {
+            this.dialogTitle = this.addChild(new Component({
+                id: this.id + '-main-title',
+                tag: 'h3',
+                text: dialogData.title,
+                attach: this.id + '-inner-box',
+            }));
+        }
+        this.draw({ appear: true });
+        this.isShowing = true;
+    }
+
     disappear = () => {
+        if(!this.elem) return;
         this.elem.classList.remove('appear');
+        this.isShowing = false;
         setTimeout(() => {
             this.discard(true);
-            this.appState.set('dialog.show', false);
         }, this.transitionTime);
     }
 
-    closeDialog = (e) => {
-        this.disappear();
+    closeDialogClick = (e) => {
+        const targetId = e.target.id;
+        if(targetId === this.id || targetId === this.id+'-close-button') {
+            this.disappear();
+        }
     }
 }
 
