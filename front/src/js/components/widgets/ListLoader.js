@@ -8,6 +8,7 @@ import { _CONFIG } from "../../_CONFIG";
 class ListLoader extends Component {
     constructor(data) {
         super(data);
+        data.class = 'item-list';
         this.api = data.api;
         this.component = data.component;
         this.loading = false;

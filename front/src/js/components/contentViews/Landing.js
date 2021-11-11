@@ -26,8 +26,9 @@ class Landing extends Component {
         this.mainScreenCompos.push(this.addChild(new Button({
             id: 'add-uni-button',
             attach: 'universe-wrapper',
-            text: 'Add Universe',
-            class: 'list-start-button',
+            attributes: { title: 'Add a Universe' },
+            text: '+',
+            class: ['list-add-button', 'list-item'],
             click: (e) => {
                 this.appState.get('Dialog').appear({
                     component: new FormCreator({
