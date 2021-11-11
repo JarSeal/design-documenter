@@ -15,10 +15,17 @@ const userGroupSchema = mongoose.Schema({
         type: Number,
         required: true,
     },
-    creator: {
-        id: mongoose.Schema.Types.ObjectId,
+    created: {
+        by: String,
+        autoCreated: Boolean,
         date: Date,
     },
+    edited: [
+        {
+            by: String,
+            date: Date,
+        }
+    ],
     users: [
         {
             type: mongoose.Schema.Types.ObjectId,

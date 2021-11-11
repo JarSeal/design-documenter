@@ -14,7 +14,19 @@ const formSchema = mongoose.Schema({
     form: {
         type: Object,
         required: true,
-    }
+    },
+    created: {
+        by: String,
+        autoCreated: Boolean,
+        date: Date,
+    },
+    edited: [
+        {
+            by: String,
+            autoEdited: Boolean,
+            date: Date,
+        }
+    ],
 });
 
 formSchema.plugin(uniqueValidator);

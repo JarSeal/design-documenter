@@ -124,6 +124,11 @@ const _createUser = async (body) => {
         name: body.name.trim(),
         userLevel,
         passwordHash,
+        created: {
+            by: null,
+            publicForm: true,
+            date: new Date(),
+        },
     });
 
     const savedUser = await user.save();
@@ -135,13 +140,29 @@ const presetForms = ['new-user-form', 'new-universe-form'];
 const _createPresetForm = async (id) => {
     let newForm, form;
     if(id === 'new-user-form') {
-        form = { formId: id, form: newUserFormData };
+        form = {
+            formId: id,
+            form: newUserFormData,
+            created: {
+                by: null,
+                autoCreated: true,
+                date: new Date(),
+            },
+        };
         newForm = new Form(form);
         await newForm.save();
         logger.log(`Preset form '${id}' auto-created.`);
         return form;
     } else if(id === 'new-universe-form') {
-        form = { formId: id, form: newUniverseFormData };
+        form = {
+            formId: id,
+            form: newUniverseFormData,
+            created: {
+                by: null,
+                autoCreated: true,
+                date: new Date(),
+            },
+        };
         newForm = new Form(form);
         await newForm.save();
         logger.log(`Preset form '${id}' auto-created.`);

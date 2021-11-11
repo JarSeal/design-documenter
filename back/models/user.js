@@ -37,6 +37,18 @@ const userSchema = mongoose.Schema({
             ref: 'UserGroup',
         },
     ],
+    created: {
+        by: String,
+        publicForm: Boolean,
+        date: Date,
+    },
+    edited: [
+        {
+            by: String,
+            selfEdited: Boolean,
+            date: Date,
+        }
+    ],
     rights: {
         universe: {
             canCreate: Boolean,
