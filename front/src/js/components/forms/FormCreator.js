@@ -79,7 +79,7 @@ class FormCreator extends Component {
         if(this.formSubmitted) {
             if(this.components[this.id+'-title']) this.components[this.id+'-title'].draw();
             this.components[this.id+'-msg-top'].draw({
-                text: this._getTextData(data.afterSubmitMsg, data.afterSubmitMsgId)
+                text: this._getTextData(data.afterSubmitMsg, data.afterSubmitMsgId),
             });
         } else {
             if(this.mainSpinner) {
@@ -566,10 +566,12 @@ class FormCreator extends Component {
             } else {
                 // Success
                 this._resetForm();
-                const showOnlyMsg = this.data.afterSubmitShowOnlyMsg;    
+                const showOnlyMsg = this.data.afterSubmitShowOnlyMsg;  
                 if(showOnlyMsg) {
                     this.formSubmitted = true;
-                    this.reDrawSelf({ class: this.cssClasses.formSuccess });
+                    this.reDrawSelf({
+                        class: this.cssClasses.formSuccess,
+                    });
                 } else {
                     const text = this._getTextData(this.data.afterSubmitMsg, this.data.afterSubmitMsgId);
                     this._setFormMsg(text);
@@ -582,7 +584,9 @@ class FormCreator extends Component {
             this.formState.set('sending', false);
             this._resetForm();
             this.formSubmitted = true;
-            this.reDrawSelf({ class: [this.cssClasses.formError, this.cssClasses.formSent] });
+            this.reDrawSelf({
+                class: [this.cssClasses.formError, this.cssClasses.formSent],
+            });
             this._setFormMsg(getText('form_submit_error'));
             this.logger.error('Form sending failed (Form Creator).', exception);
         }
@@ -595,7 +599,7 @@ class FormCreator extends Component {
             const url = _CONFIG.apiBaseUrl + '/forms/' + id;
             const response = await axios.get(url);
             // this.logger.log('API RESPONSE', response);
-            this.data = response.data;
+            this.data = Object.assign({}, this.data, response.data);
             this.formState.set('getting', false);
         } catch(exception) {
             this.formState.removeListener('getting');
