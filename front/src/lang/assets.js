@@ -35,6 +35,10 @@ export const assetsObj = {
         en: 'Name',
         fi: 'Nimi',
     },
+    description: {
+        en: 'Description',
+        fi: 'Kuvaus',
+    },
     required: {
         en: 'Required',
         fi: 'Vaadittu kenttä',
@@ -127,4 +131,8 @@ export const assetsObj = {
         en: 'Create New Universe',
         fi: 'Luo uusi Universumi',
     },
+    new_universe_id: {
+        en: 'Universe ID',
+        fi: 'Universumi ID',
+    }
 };

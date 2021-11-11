@@ -30,6 +30,16 @@ $sidePadding: 4rem;
 
     .inner-box {
         padding: $sidePadding;
+        form {
+            width: auto;
+            display: inline-block;
+            position: relative;
+            left: 50%;
+            transform: translate3d(-50%, 0, 0);
+        }
+        .form-divider {
+            background-color: #999;
+        }
     }
     &.has-title .inner-box {
         padding-top: 1rem;

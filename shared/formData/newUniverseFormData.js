@@ -3,13 +3,12 @@ const CONFIG = require('./../../CONFIG').USER;
 // Create a new universe:
 const newUniverseFormData = {
     id: 'new-universe-form',
-    formTitleId: 'create_new_universe',
     onErrorsMsgId: 'form_has_errors',
     afterSubmitMsgId: 'new_universe_created',
     afterSubmitShowOnlyMsg: true,
     submitButton: {
         id: 'submit-new-universe-button',
-        labelId: 'create_new_universe_button',
+        labelId: 'create_new_universe',
     },
     submitFields: [],
     fieldsets: [
@@ -33,7 +32,7 @@ const newUniverseFormData = {
                     // UNIVERSE ID
                     type: 'textinput',
                     id: 'new-uni-id',
-                    labelId: 'new-universe-id',
+                    labelId: 'new_universe_id',
                     required: true,
                     minLength: 1,
                     maxLength: 40,
@@ -45,7 +44,7 @@ const newUniverseFormData = {
                     // DESCRIPTION
                     type: 'textinput',
                     id: 'new-uni-description',
-                    labelId: 'email',
+                    labelId: 'description',
                     maxLength: 500,
                     email: true,
                 },

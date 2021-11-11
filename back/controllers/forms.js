@@ -6,6 +6,7 @@ const Form = require('./../models/form');
 const User = require('./../models/user');
 const { validateField, validateKeys } = require('./forms/formValidator');
 const newUserFormData = require('./../shared').newUserFormData;
+const newUniverseFormData = require('./../shared').newUniverseFormData;
 
 // Get all forms
 formsRouter.get('/', async (request, response) => {
@@ -125,11 +126,17 @@ const _createUser = async (body) => {
     return savedUser;
 };
 
-const presetForms = ['new-user-form'];
+const presetForms = ['new-user-form', 'new-universe-form'];
 const _createPresetForm = async (id) => {
     let newForm, form;
     if(id === 'new-user-form') {
         form = { formId: id, form: newUserFormData };
+        newForm = new Form(form);
+        await newForm.save();
+        logger.log(`Preset form '${id}' auto-created.`);
+        return form;
+    } else if(id === 'new-universe-form') {
+        form = { formId: id, form: newUniverseFormData };
         newForm = new Form(form);
         await newForm.save();
         logger.log(`Preset form '${id}' auto-created.`);
