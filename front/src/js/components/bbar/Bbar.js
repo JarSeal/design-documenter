@@ -15,9 +15,7 @@ class Bbar extends Component {
     }
 
     addListeners() {
-        const resizers = this.appState.get('resizers');
-        resizers.bbar = this.onResize;
-        this.appState.set('resizers', resizers);
+        this.appState.set('resizers.bbar', this.onResize);
         this.onResize();
     }
 
