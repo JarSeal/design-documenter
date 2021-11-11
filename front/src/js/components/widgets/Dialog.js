@@ -2,6 +2,8 @@ import { getText } from "../../helpers/lang";
 import { Component } from "../../LIGHTER";
 import Button from "../buttons/Button";
 
+// Attributes for data:
+// 
 class Dialog extends Component {
     constructor(data) {
         super(data);
