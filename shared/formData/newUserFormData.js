@@ -40,7 +40,7 @@ const newUserFormData = {
                     minLength: CONFIG.name.minLength,
                     maxLength: 40,
                     regex: '[a-zA-ZåöäñüéèêâîôûčßàìòùóçęįųķļņģëïõžšæøėēūāīÅÖÄÑÜÉÈÊÂÎÔÛČẞÀÌÒÙÓÇĘĮŲĶĻŅĢËÏÕŽŠÆØĖĒŪĀĪ]+$', // Current langs: finnish, english, swedish, norwegian, danish, german, french, spanish, italian, estonian, latvian, lithuanian
-                    regexErrorMsgId: 'name_invalid_characters',
+                    regexErrorMsgId: 'field_has_invalid_characters',
                 },
                 { type: 'divider' },
                 {
