@@ -9,6 +9,7 @@ import Checkbox from "./formComponents/Checkbox";
 import Dropdown from "./formComponents/Dropdown";
 import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";
+import TextArea from "./formComponents/TextArea";
 
 // Attributes for data:
 // - local = must be set to true if local forms are used (all the form data must then be in in the data) [Boolean]
@@ -188,6 +189,11 @@ class FormCreator extends Component {
                 else if(field.type === 'dropdown') {
                     this._fieldDropdown(field, fieldsetId, fieldIdPrefix);
                 }
+
+                // Textarea
+                else if(field.type === 'textarea') {
+                    this._fieldTextArea(field, fieldsetId, fieldIdPrefix);
+                }
             }
         }
 
@@ -239,6 +245,47 @@ class FormCreator extends Component {
                 }
             }
         });
+    }
+
+    _fieldTextArea(field, fieldsetId, fieldIdPrefix) {
+        let id = field.id;
+        if(!id) id = fieldIdPrefix+'-textarea';
+        const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
+        const placeholder = this._getTextData(field.placeholder, field.placeholderId);
+        this.fieldErrors.set(id, false);
+        this.componentsOrder.push(id);
+        this.components[id] = this.addChild(new TextArea({
+            id,
+            name: field.name,
+            class: field.class,
+            label,
+            placeholder,
+            attach: fieldsetId,
+            disabled: field.disabled,
+            maxlength: field.maxLength,
+            value: field.maxLength && field.initValue
+                ? (field.initValue.substring(0, parseInt(field.maxLength)) || '')
+                : field.initValue || '',
+            field,
+            changeFn: (e) => {
+                const val = e.target.value;
+                this._fieldTextAreaErrorCheck({ val, id, field, fieldsetId });
+                if(field.onChangeFn) {
+                    field.onChangeFn({
+                        val,
+                        id,
+                        fieldsetId,
+                        fieldErrors: this.fieldErrors,
+                        field: this.components[id],
+                        components: this.components,
+                    });
+                }
+                this._displayFieldError(id);
+            },
+        }));
+        this.components[id]['fieldsetId'] = fieldsetId;
+        this.components[id]['errorChecker'] = this._fieldTextAreaErrorCheck;
+        this.components[id]['displayFieldError'] = () => { this._displayFieldError(id); };
     }
 
     _fieldDropdown(field, fieldsetId, fieldIdPrefix) {
@@ -360,6 +407,53 @@ class FormCreator extends Component {
         this.components[id]['fieldsetId'] = fieldsetId;
         this.components[id]['errorChecker'] = this._fieldTextInputErrorCheck;
         this.components[id]['displayFieldError'] = () => { this._displayFieldError(id); };
+    }
+
+    _fieldTextAreaErrorCheck = (args) => {
+        let { val, id, field, fieldsetId } = args;
+        val = val.trim();
+        if(field.required && !val.length) {
+            this.fieldErrors.set(id, {
+                errorMsg: getText('required'),
+                fieldsetId,
+                id
+            });
+        } else if(val.length && val.length < field.minLength) {
+            this.fieldErrors.set(id, {
+                errorMsg: getText('minimum_x_characters', [field.minLength]),
+                fieldsetId,
+                id
+            });
+        } else if(val.length && field.regex) {
+            const regex = new RegExp(field.regex);
+            if(!regex.test(val.trim())) {
+                const text = this._getTextData(field.regexErrorMsg, field.regexErrorMsgId) || '';
+                this.fieldErrors.set(id, {
+                    errorMsg: text,
+                    fieldsetId,
+                    id
+                });
+            } else {
+                this.fieldErrors.set(id, false);
+            }
+        } else {
+            this.fieldErrors.set(id, false);
+        }
+        if(field.validationFn) {
+            if(!validationFns[field.validationFn]) {
+                this.logger.error(`Could not find validationFn (id: ${field.validationFn}).`);
+                throw new Error('Call stack');
+            }
+            validationFns[field.validationFn]({
+                val,
+                id,
+                fieldsetId,
+                fieldErrors: this.fieldErrors,
+                field,
+                components: this.components,
+            });
+        }
+        this.fieldsetErrorCheck(fieldsetId);
     }
 
     _fieldDropdownErrorCheck = (args) => {

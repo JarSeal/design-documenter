@@ -16,6 +16,8 @@ const validateField = (form, key, value) => {
                     return checkbox(field, value);
                 case 'dropdown':
                     return dropdown(field, value);
+                case 'textarea':
+                    return textArea(field, value.trim());
                 default:
                     return checkAllowedFieldTypes(field.type);
                 }
@@ -52,6 +54,17 @@ const dropdown = (field, value) => {
         }
     }
     if(!valueFound) return 'Unknown value';
+    return null;
+};
+
+const textArea = (field, value) => {
+    if(field.required && (!value || value === '')) return 'Required';
+    if(field.minLength && value.length < field.minLength && value !== '') return `Value is too short (minimum: ${field.minLength} chars)`;
+    if(field.maxLength && value.length > field.maxLength) return `Value is too long (maximum: ${field.maxLength} chars)`;
+    if(value.length && field.regex) {
+        const regex = new RegExp(field.regex);
+        if(!regex.test(value)) return 'Wrong format';
+    }
     return null;
 };
 

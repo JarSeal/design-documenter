@@ -42,7 +42,7 @@ const newUniverseFormData = {
                 { type: 'divider' },
                 {
                     // DESCRIPTION
-                    type: 'textinput',
+                    type: 'textarea',
                     id: 'universeDescription',
                     labelId: 'description',
                     maxLength: 500,
