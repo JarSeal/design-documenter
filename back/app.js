@@ -6,6 +6,7 @@ const cors = require('cors');
 const usersRouter = require('./controllers/users');
 const loginRouter = require('./controllers/login');
 const formsRouter = require('./controllers/forms');
+const universesRouter = require('./controllers/universes');
 const healthRouter = require('./controllers/health');
 const middleware = require('./utils/middleware');
 const logger = require('./utils/logger');
@@ -40,6 +41,7 @@ if(process.env.SERVE_STATIC === 'production') {
 app.use('/api/login', loginRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/forms', formsRouter);
+app.use('/api/universes', universesRouter);
 app.use('/api/health', healthRouter);
 
 if(process.env.NODE_ENV === 'test') {

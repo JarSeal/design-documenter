@@ -9,7 +9,7 @@ const newUniverseFormData = {
         id: 'submit-new-universe-button',
         labelId: 'create_new_universe',
     },
-    submitFields: ['title', 'universeId', 'description'],
+    submitFields: ['universeTitle', 'universeId', 'universeDescription'],
     fieldsets: [
         {
             id: 'main-fieldset-new-uni',
@@ -18,7 +18,7 @@ const newUniverseFormData = {
                 {
                     // TITLE / NAME
                     type: 'textinput',
-                    id: 'title',
+                    id: 'universeTitle',
                     labelId: 'name',
                     required: true,
                     minLength: 1,
@@ -42,7 +42,7 @@ const newUniverseFormData = {
                 {
                     // DESCRIPTION
                     type: 'textinput',
-                    id: 'description',
+                    id: 'universeDescription',
                     labelId: 'description',
                     maxLength: 500,
                 },

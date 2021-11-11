@@ -133,6 +133,10 @@ export const assetsObj = {
     },
     new_universe_id: {
         en: 'Universe ID',
-        fi: 'Universumi ID',
-    }
+        fi: 'Universumi-ID',
+    },
+    universe_id_taken: {
+        en: 'Universe ID is taken',
+        fi: 'Universumi-ID on käytössä',
+    },
 };

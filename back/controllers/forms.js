@@ -4,6 +4,7 @@ const CONFIG = require('./../shared').CONFIG.USER;
 const logger = require('./../utils/logger');
 const Form = require('./../models/form');
 const User = require('./../models/user');
+const Universe = require('./../models/universe');
 const { validateField, validateKeys } = require('./forms/formValidator');
 const newUserFormData = require('./../shared').newUserFormData;
 const newUniverseFormData = require('./../shared').newUniverseFormData;
@@ -139,7 +140,7 @@ const _createUser = async (body) => {
 
 const _createUniverse = async (body) => {
 
-    const findUniverse = await User.findOne({ universeId: body.universeId.trim() });
+    const findUniverse = await Universe.findOne({ universeId: body.universeId.trim() });
     if(findUniverse) {
         return {
             msg: 'Bad request. Validation errors.',
@@ -147,10 +148,10 @@ const _createUniverse = async (body) => {
         };
     }
 
-    const universe = new User({ // FIX THIS!
-        title: body.title.trim(),
+    const universe = new Universe({
+        title: body.universeTitle.trim(),
         universeId: body.universeId.trim(),
-        description: body.description.trim(),
+        description: body.universeDescription.trim(),
         created: {
             by: null,
             date: new Date(),
