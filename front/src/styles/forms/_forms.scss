@@ -62,7 +62,8 @@ fieldset {
         display: inline-block;
         max-width: 16rem;
         padding-right: 1rem;
-        text-align: left;
+        padding-top: 0.9rem;
+        text-align: right;
         transition: color 0.2s ease-in-out;
     }
     &--error {

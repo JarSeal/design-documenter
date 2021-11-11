@@ -12,6 +12,7 @@ class Dialog extends Component {
         this.isShowing = false;
         this.compoToShow;
         this.dialogTitle;
+        this.resizeTimer;
 
         this.dialogCompos = [];
         this.dialogCompos.push(this.addChild(new Component({
@@ -27,9 +28,14 @@ class Dialog extends Component {
             click: this._closeDialogClick,
         })));
         this.dialogCompos.push(this.addChild(new Component({
+            id: this.id + '-inner-scroller',
+            class: 'inner-scroller',
+            attach: this.id + '-box-wrapper',
+        })));
+        this.dialogCompos.push(this.addChild(new Component({
             id: this.id + '-inner-box',
             class: 'inner-box',
-            attach: this.id + '-box-wrapper',
+            attach: this.id + '-inner-scroller',
         })));
     }
 
@@ -50,7 +56,6 @@ class Dialog extends Component {
         if(this.dialogTitle) {
             this.dialogTitle.draw();
             this.elem.classList.add('has-title');
-            this._setTopPadding();
         }
         if(this.compoToShow) this.compoToShow.draw();
         if(data.appear) {
@@ -58,6 +63,7 @@ class Dialog extends Component {
                 if(this.elem) this.elem.classList.add('appear');
             }, 0);
         }
+        this._setSizes();
     }
 
     appear = (dialogData) => {
@@ -69,7 +75,7 @@ class Dialog extends Component {
                 class: 'main-title',
                 tag: 'h3',
                 text: dialogData.title,
-                attach: this.id + '-inner-box',
+                attach: this.id + '-box-wrapper',
             }));
         }
         this.draw({ appear: true });
@@ -95,16 +101,23 @@ class Dialog extends Component {
         }
     }
 
-    _setTopPadding = () => {
+    _setSizes = () => {
         if(!this.elem) return;
         const titleElem = this.elem.querySelector('#'+this.id + '-main-title');
-        if(!titleElem) return;
+        const scrollElem = this.elem.querySelector('#'+this.id + '-inner-scroller');
+        scrollElem.style.height = 'auto';
+        let titleHeight = 0;
+        if(titleElem) titleHeight = titleElem.offsetHeight
         const boxElem = this.elem.querySelector('#'+this.id + '-box-wrapper');
-        boxElem.style.paddingTop = (titleElem.offsetHeight / 10) + 'rem';
+        boxElem.style.paddingTop = (titleHeight / 10) + 'rem';
+        clearTimeout(this.resizeTimer);
+        this.resizeTimer = setTimeout(() => {
+            scrollElem.style.height = ((boxElem.offsetHeight - titleHeight) / 10) + 'rem';
+        }, 100);
     }
 
     onResize = () => {
-        this._setTopPadding();
+        this._setSizes();
     }
 }
 
