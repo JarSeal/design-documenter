@@ -6,25 +6,18 @@
     height: 16rem;
     cursor: pointer;
     vertical-align: top;
+    position: relative;
+
     h3 {
-        margin: 1rem 0.4rem 0;
+        margin: 0 1.2rem;
+        width: 13.6rem;
         padding: 0;
         font-size: 1.4rem;
         line-height: 1.2;
         color: #444;
-    }
-    span {
-        font-size: 1.1rem;
-        color: #666;
-        display: inline-block;
-        padding: 0 0.4rem;
-    }
-    p {
-        font-size: 1.2rem;
-        color: #444;
-        margin: 0.4rem;
-        padding: 0.4rem 0 0;
         display: block;
-        border-top: 0.1rem solid #ababab;
+        position: relative;
+        top: 50%;
+        transform: translate3d(0, -50%, 0);
     }
 }
