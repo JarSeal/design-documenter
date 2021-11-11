@@ -9,6 +9,7 @@ class UniverseItem extends Component {
         data.class = 'list-item';
         this.template = `<button></button>`;
         this.item = data.item;
+        this.index = data.index;
         this.title = this.addChild(new Component({
             id: this.id+'-title',
             tag: 'h3',
@@ -16,8 +17,20 @@ class UniverseItem extends Component {
         }));
     }
 
+    addListeners = () => {
+        this.addListener({
+            id: this.id + '-item-click',
+            type: 'click',
+            fn: this._gotoRoute,
+        });
+    }
+
     paint = () => {
         this.title.draw();
+    }
+
+    _gotoRoute = () => {
+        console.log('Something', this.index);
     }
 }
 
