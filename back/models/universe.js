@@ -4,16 +4,17 @@ const uniqueValidator = require('mongoose-unique-validator');
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
-const formSchema = mongoose.Schema({
-    formId: {
+const universeSchema = mongoose.Schema({
+    title: {
+        type: String,
+        required: true,
+    },
+    universeId: {
         type: String,
         required: true,
         unique: true,
     },
-    form: {
-        type: Object,
-        required: true,
-    },
+    description: String,
     created: {
         by: String,
         autoCreated: Boolean,
@@ -22,14 +23,13 @@ const formSchema = mongoose.Schema({
     edited: [
         {
             by: String,
-            autoEdited: Boolean,
             date: Date,
         }
     ],
 });
 
-formSchema.plugin(uniqueValidator);
-formSchema.set('toJSON', {
+universeSchema.plugin(uniqueValidator);
+universeSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString();
         delete returnedObject._id;
@@ -37,6 +37,6 @@ formSchema.set('toJSON', {
     }
 });
 
-const Form = mongoose.model('Form', formSchema, 'forms');
+const Universe = mongoose.model('Universe', universeSchema, 'universes');
 
-module.exports = Form;
+module.exports = Universe;

@@ -80,7 +80,8 @@ formsRouter.post('/filled', async (request, response) => {
         return;
     } else if(body.id === 'new-universe-form') {
         // Special case for creating a new universe
-        response.json({ msg: 'not implemented' });
+        const newUni = await _createUniverse(body);
+        response.json(newUni);
         return;
     }
     
@@ -134,6 +135,31 @@ const _createUser = async (body) => {
     const savedUser = await user.save();
 
     return savedUser;
+};
+
+const _createUniverse = async (body) => {
+
+    const findUniverse = await User.findOne({ universeId: body.universeId.trim() });
+    if(findUniverse) {
+        return {
+            msg: 'Bad request. Validation errors.',
+            errors: { universeId: 'universe_id_taken' },
+        };
+    }
+
+    const universe = new User({ // FIX THIS!
+        title: body.title.trim(),
+        universeId: body.universeId.trim(),
+        description: body.description.trim(),
+        created: {
+            by: null,
+            date: new Date(),
+        },
+    });
+
+    const savedUniverse = await universe.save();
+
+    return savedUniverse;
 };
 
 const presetForms = ['new-user-form', 'new-universe-form'];
