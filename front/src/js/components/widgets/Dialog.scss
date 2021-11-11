@@ -1,3 +1,5 @@
+$sidePadding: 4rem;
+
 #dialog {
     width: 100vw;
     height: 100vh;
@@ -22,6 +24,40 @@
         opacity: 0;
         transition-property: opacity, margin-top;
         transition-timing-function: ease-in-out;
+        color: #333;
+        padding: $sidePadding 0;
+    }
+
+    .inner-box {
+        padding: $sidePadding;
+    }
+    &.has-title .inner-box {
+        padding-top: 1rem;
+    }
+
+    .main-title {
+        width: 100%;
+        margin: 0;
+        position: absolute;
+        left: 0;
+        top: 0;
+        padding: 2rem ($sidePadding+2rem) 2rem $sidePadding;
+    }
+
+    .close-button {
+        width: 4rem;
+        height: 4rem;
+        border: none;
+        background-color: rgba(0, 0, 0, 0.3);
+        transition: background-color 0.2s ease-in-out;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 20;
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
     }
 
     &.appear {
