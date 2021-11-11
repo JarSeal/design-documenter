@@ -24,10 +24,9 @@ class TextArea extends Component {
                         class="form-elem__textarea"
                         name="${data.name}"
                         placeholder="${data.placeholder || ''}"
-                        value="${data.value || ''}"
                         ${data.maxlength ? 'maxlength="'+data.maxlength+'"' : ''}
                         ${data.disabled ? 'disabled' : ''}
-                    ></textarea>
+                    >${data.value || ''}</textarea>
                 </label>
             </div>
         `;
