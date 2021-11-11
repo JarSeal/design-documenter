@@ -1,0 +1,34 @@
+import { Component } from "../../../LIGHTER";
+
+// Attributes for data:
+// - item = data to show
+// - index = list item array index number
+class UniverseItem extends Component {
+    constructor(data) {
+        super(data);
+        this.item = data.item;
+        this.title = this.addChild(new Component({
+            id: this.id+'-title',
+            tag: 'h3',
+            text: data.item.title,
+        }));
+        this.uniId = this.addChild(new Component({
+            id: this.id+'-uniId',
+            tag: 'span',
+            text: data.item.universeId,
+        }));
+        this.description = this.addChild(new Component({
+            id: this.id+'-desc',
+            tag: 'p',
+            text: data.item.description,
+        }));
+    }
+
+    paint = () => {
+        this.title.draw();
+        this.uniId.draw();
+        this.description.draw();
+    }
+}
+
+export default UniverseItem;

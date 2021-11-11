@@ -4,6 +4,8 @@ import { Component } from "../../LIGHTER";
 import Button from "../buttons/Button";
 import FormCreator from "../forms/FormCreator";
 import LoginForm from "../forms/LoginForm";
+import UniverseItem from "../widgets/listItems/UniverseItem";
+import ListLoader from "../widgets/ListLoader";
 import "./Landing.scss";
 
 class Landing extends Component {
@@ -31,12 +33,19 @@ class Landing extends Component {
                         id: 'new-universe-form',
                         afterFormSentFn: () => {
                             this.appState.get('Dialog').disappear();
+                            this.universesList.updateList();
                         },
                     }),
                     title: getText('create_new_universe'),
                 });
             },
         })));
+        this.universesList = this.addChild(new ListLoader({
+            id: 'universes-list',
+            api: 'universes',
+            component: UniverseItem,
+        }));
+        this.mainScreenCompos.push(this.universesList);
     }
 
     paint = () => {
