@@ -4,7 +4,7 @@ const testFormData = {
     // FORM
     id: 'test-form', // String [required]
     api: null, // String (api path for the form to be sent to)
-    update: false, // Boolean (whether the api uses 'post' or 'put' as api method)
+    update: false, // Boolean (whether the api uses 'post' or 'put' as api method, update: true = 'put')
     class: ['css-class-name'], // String / Array
     formTitle: { en: 'Form title', fi: 'Lomakkeen otsikko' }, // Lang object / String
     formTitleId: 'route_title_new_user', // String (transalation id for getText)
