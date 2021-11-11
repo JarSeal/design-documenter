@@ -27,6 +27,7 @@ class Landing extends Component {
             id: 'add-uni-button',
             attach: 'universe-wrapper',
             text: 'Add Universe',
+            class: 'list-start-button',
             click: (e) => {
                 this.appState.get('Dialog').appear({
                     component: new FormCreator({
@@ -43,6 +44,7 @@ class Landing extends Component {
         this.universesList = this.addChild(new ListLoader({
             id: 'universes-list',
             api: 'universes',
+            attach: 'universe-wrapper',
             component: UniverseItem,
         }));
         this.mainScreenCompos.push(this.universesList);

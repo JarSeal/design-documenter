@@ -1,4 +1,5 @@
 import { Component } from "../../../LIGHTER";
+import './UniverseItem.scss';
 
 // Attributes for data:
 // - item = data to show
@@ -6,6 +7,7 @@ import { Component } from "../../../LIGHTER";
 class UniverseItem extends Component {
     constructor(data) {
         super(data);
+        data.class = 'universe-item';
         this.item = data.item;
         this.title = this.addChild(new Component({
             id: this.id+'-title',
@@ -15,7 +17,7 @@ class UniverseItem extends Component {
         this.uniId = this.addChild(new Component({
             id: this.id+'-uniId',
             tag: 'span',
-            text: data.item.universeId,
+            text: '[ '+data.item.universeId+' ]',
         }));
         this.description = this.addChild(new Component({
             id: this.id+'-desc',
