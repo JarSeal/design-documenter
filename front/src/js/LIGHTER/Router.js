@@ -58,8 +58,8 @@ class Router {
         this.curRouteData = {
             route: this.basePath + '/',
             source: null,
+            params: {},
             component: null,
-            level: 0,
         };
         this.prevRoute = null;
         this.prevRouteData = null;
@@ -127,6 +127,17 @@ class Router {
                 this.curRouteData = routes[i];
                 document.title = this._createPageTitle(routes[i].title);
             }
+            if(!routeFound) {
+                const params = this._getRouteParams(this.routes[i].route, this.curRoute);
+                if(params) {
+                    routes[i].parentId = parentId;
+                    this._createNewView(routes[i]);
+                    routeFound = true;
+                    this.curRouteData = routes[i];
+                    this.curRouteData.params = params;
+                    document.title = this._createPageTitle(routes[i].title);
+                }
+            }
         }
         if(!routeFound) {
             this.notFound();
@@ -184,6 +195,16 @@ class Router {
                 routeFound = true;
                 this.prevRouteData = Object.assign({}, this.curRouteData);
                 this.curRouteData = this.routes[i];
+                document.title = this._createPageTitle(this.routes[i].title);
+                this._createNewView(this.routes[i]);
+                break;
+            }
+            const params = this._getRouteParams(this.routes[i].route, route);
+            if(params) {
+                routeFound = true;
+                this.prevRouteData = Object.assign({}, this.curRouteData);
+                this.curRouteData = this.routes[i];
+                this.curRouteData.params = params;
                 document.title = this._createPageTitle(this.routes[i].title);
                 this._createNewView(this.routes[i]);
                 break;
@@ -269,6 +290,27 @@ class Router {
             template: routeData.template,
             extraRouteData: routeData.extraRouteData,
         });
+    }
+
+    _getRouteParams(model, route) {
+        if(!model.includes(':')) return false;
+        const modelParts = model.split('/');
+        const routeParts = route.split('/');
+        let length = modelParts.length;
+        if(routeParts.length > modelParts.length) length = routeParts.length;
+        let params = {};
+        for(let i=0; i<length; i++) {
+            if(modelParts[i] && modelParts[i].includes(':')) {
+                if(!routeParts[i]) return false;
+                const paramName = modelParts[i].replace(':', '');
+                params[paramName] = routeParts[i];
+            } else {
+                if(!modelParts[i] === undefined || !routeParts[i] === undefined || modelParts[i] !== routeParts[i]) {
+                    return false;
+                }
+            }
+        }
+        return params;
     }
 }
 
