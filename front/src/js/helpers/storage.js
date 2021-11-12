@@ -1,11 +1,16 @@
 import { LocalStorage, SessionStorage } from "../LIGHTER";
 import { _CONFIG } from "../_CONFIG";
 
-let LStorage, SStorage;
+let LStorage, SStorage, user;
 
-const saveToken = (response, remember) => {
+const saveUser = (response, remember) => {
     const LS = getStorage('LS');
     const SS = getStorage('SS');
+    if(response && response.data && response.data.token) {
+        user = {};
+        user.token = response.data.token;
+        user.username = response.data.username;
+    }
     if(remember) {
         LS.setItem('beaconUser', JSON.stringify(response.data));
         SS.removeItem('beaconUser');
@@ -15,7 +20,8 @@ const saveToken = (response, remember) => {
     }
 };
 
-const getToken = () => {
+const getUser = () => {
+    if(user && user.token) return user;
     const LS = getStorage('LS');
     const SS = getStorage('SS');
     let user = LS.getItem('beaconUser');
@@ -24,7 +30,17 @@ const getToken = () => {
     return user;
 };
 
-const removeToken = () => {
+const getApiHeaders = () => {
+    const user = getUser();
+    const token = user ? user.token : null;
+    if(!token) return {};
+    return {
+        headers: { Authorization: `bearer ${token}` },
+    };
+};
+
+const removeUser = () => {
+    user = null;
     const LS = getStorage('LS');
     const SS = getStorage('SS');
     LS.removeItem('beaconUser');
@@ -46,4 +62,4 @@ const getStorage = (type) => {
     return null;
 };
 
-export { saveToken, getToken, removeToken, getStorage };
+export { saveUser, getUser, removeUser, getApiHeaders, getStorage };

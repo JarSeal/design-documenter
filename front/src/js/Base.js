@@ -4,7 +4,7 @@ import MainLoader from './components/loaders/MainLoader';
 import { _CONFIG } from './_CONFIG';
 import baseHTML from './base.html';
 import './Base.scss';
-import { getToken, removeToken } from './helpers/storage';
+import { getUser, removeUser } from './helpers/storage';
 import { loadAssets } from './helpers/lang';
 import Dialog from './components/widgets/Dialog';
 import './components/widgets/Dialog.scss';
@@ -46,7 +46,7 @@ class Base extends Component {
         let loggedIn = false,
             username = null,
             token = null;
-        const user = getToken();
+        const user = getUser();
         if(user) {
             username = user.user;
             token = user.token;
@@ -98,7 +98,7 @@ class Base extends Component {
         if(!loggedIn) {
             this.appState.set('user.username', null);
             this.appState.set('user.token', null);
-            removeToken();
+            removeUser();
             this.Router.changeRoute('/', true);
             return;
         }

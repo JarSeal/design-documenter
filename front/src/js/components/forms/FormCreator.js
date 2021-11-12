@@ -10,6 +10,7 @@ import Dropdown from "./formComponents/Dropdown";
 import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";
 import TextArea from "./formComponents/TextArea";
+import { getApiHeaders } from '../../helpers/storage';
 
 // Attributes for data:
 // - local = must be set to true if local forms are used (all the form data must then be in in the data) [Boolean]
@@ -628,14 +629,12 @@ class FormCreator extends Component {
     _sendForm = async payload => {
         this.formState.set('sending', true);
         try {
-            // // Create tokean headers here
-            // const config = {
-            //     headers: { Authorization: token },
-            // };
-
             payload.id = this.id;
             const url = _CONFIG.apiBaseUrl + (this.data.api || '/forms/filled');
-            const response = await axios.post(url, payload);
+            const config = getApiHeaders();
+
+            const response = await axios.post(url, payload, config);
+
             // this.logger.log('API RESPONSE', response);
             this.formState.set('sending', false);
             if(response.data && response.data.errors) {
@@ -696,7 +695,9 @@ class FormCreator extends Component {
         this.formState.set('sending', false);
         try {
             const url = _CONFIG.apiBaseUrl + '/forms/' + id;
+
             const response = await axios.get(url);
+            
             // this.logger.log('API RESPONSE', response);
             this.data = Object.assign({}, this.data, response.data);
             this.formState.set('getting', false);

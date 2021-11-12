@@ -6,6 +6,9 @@ const newUniverseFormData = {
     api: '/universes',
     onErrorsMsgId: 'form_has_errors',
     afterSubmitShowOnlyMsg: true,
+    server: {
+        userLevel: 2,
+    },
     submitButton: {
         id: 'submit-new-universe-button',
         labelId: 'create_new_universe',

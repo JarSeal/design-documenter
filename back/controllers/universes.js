@@ -3,6 +3,7 @@ const logger = require('./../utils/logger');
 const Universe = require('./../models/universe');
 const Form = require('./../models/form');
 const { validateFormData } = require('./forms/formValidator');
+const User = require('../models/user');
 
 // Get all universes
 universeRouter.get('/', async (request, response) => {
@@ -17,12 +18,16 @@ universeRouter.get('/:id', async (request, response) => {
 
 // Create a new universe
 universeRouter.post('/', async (request, response) => {
-    // if(!request.token || !request.decodedToken.id) {
-    //     return response.status(401).json({ error: 'token missing or invalid' });
-    // }
     const body = request.body;
     const formData = await Form.findOne({ formId: body.id });
-    const error = validateFormData(formData, body);
+
+    if(!request.token || !request.decodedToken.id) {
+        return response.status(401).json({ error: 'token missing or invalid' });
+    }
+    const user = await User.findById(request.decodedToken.id);
+    console.log('Tsfkdsfjk', user);
+    
+    const error = validateFormData(formData, request);
     if(error) {
         return response.status(error.code).json(error.obj);
     }
@@ -47,7 +52,7 @@ universeRouter.post('/', async (request, response) => {
 
     const savedUniverse = await universe.save();
     
-    logger.log(`Created universe ${body.universeTitle.trim()} (id: ${body.universeId.trim()}).`);
+    logger.log(`Created universe '${body.universeTitle.trim()}'' (id: '${body.universeId.trim()}').`);
 
     response.json(savedUniverse);
 });
