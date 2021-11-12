@@ -104,19 +104,19 @@ const validateFormData = async (formData, request) => {
     }
     const form = formData.form;
 
-    // const error = await validatePrivledges(form, request);
-    // if(error) {
-    //     return error;
-    // }
+    const error = await validatePrivledges(form, request);
+    if(error) {
+        return error;
+    }
 
-    // if(form.server && form.server.userLevel) {
-    //     if(!request.token || (request.decodedToken && !request.decodedToken.id)) {
-    //         return {
-    //             code: 401,
-    //             obj:{ msg: 'Token missing or invalid' }
-    //         };
-    //     }
-    // }
+    if(form.server && form.server.userLevel) {
+        if(!request.token || (request.decodedToken && !request.decodedToken.id)) {
+            return {
+                code: 401,
+                obj:{ msg: 'Token missing or invalid' }
+            };
+        }
+    }
 
     const keys = Object.keys(body);
     const keysFound = validateKeys(formData.form, keys);
