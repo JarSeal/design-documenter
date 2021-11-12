@@ -120,7 +120,7 @@ class Router {
             }
             routes[i].parentId = parentId;
             this.routes.push(routes[i]);
-            if(this._compareRoutes(routes[i].route, this.curRoute)) {
+            if(this._compareRoutes(routes[i].route, this.curRoute && !this.curRoute.includes(':'))) {
                 routes[i].parentId = parentId;
                 this._createNewView(routes[i]);
                 routeFound = true;
@@ -191,7 +191,7 @@ class Router {
         this.setRoute();
         let routeFound = false;
         for(let i=0; i<this.routes.length; i++) {
-            if(this._compareRoutes(this.routes[i].route, route)) {
+            if(this._compareRoutes(this.routes[i].route, route) && !this.curRoute.includes(':')) {
                 routeFound = true;
                 this.prevRouteData = Object.assign({}, this.curRouteData);
                 this.curRouteData = this.routes[i];
