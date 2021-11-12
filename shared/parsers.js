@@ -3,4 +3,9 @@ const validateEmail = (email) => {
     return regex.test(email);
 };
 
-module.exports = { validateEmail };
+const validateSimpleId = (id) => {
+    const regex = /^[a-zA-Z0-9-_]+$/;
+    return regex.test(id);
+}
+
+module.exports = { validateEmail, validateSimpleId };
