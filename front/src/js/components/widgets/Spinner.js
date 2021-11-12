@@ -8,11 +8,18 @@ class Spinner extends Component {
         super(data);
         this.template = `<div class="spinner-icon"></div>`;
         this.spinnerAnimTimer;
+        this.prevShow = data.show;
         this.fadeTime = (data.fadeTime || 400) + 10;
         data.style = { transitionDuration: this.fadeTime + 'ms' };
     }
 
+    paint = (data) => {
+        this.showSpinner(data.show);
+    }
+
     showSpinner = (show) => {
+        if((show && this.prevShow) || (!show && !this.prevShow)) return;
+        this.prevShow = show;
         const elem = this.elem;
         if(!elem) return;
         if(show) {
