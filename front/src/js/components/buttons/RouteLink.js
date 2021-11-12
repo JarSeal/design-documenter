@@ -15,8 +15,10 @@ class RouteLink extends Component {
     }
 
     paint = (data) => {
-        if(data.link === this.Router.curRoute) {
+        if(this.Router.isCurrent(data.link)) {
             this.elem.classList.add('current');
+        } else {
+            this.elem.classList.remove('current');
         }
     }
 

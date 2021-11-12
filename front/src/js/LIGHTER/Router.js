@@ -166,6 +166,12 @@ class Router {
         return { ...this.curRouteData, prevRouteData: this.prevRouteData };
     }
 
+    isCurrent(route) {
+        return this.basePath + route === this.curRoute
+            || this.basePath + route === this.curRoute + '/'
+            || this.basePath + route + '/' === this.curRoute;
+    }
+
     setRoute() {
         let path = location.pathname;
         if(!path) {
