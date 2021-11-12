@@ -1,6 +1,7 @@
 import FourOFour from "./components/contentViews/FourOFour";
 import Landing from "./components/contentViews/Landing";
 import NewUser from "./components/contentViews/NewUser";
+import Universe from "./components/contentViews/Universe";
 import TestFormData from "./components/contentViews/TestFormData";
 import { getText } from "./helpers/lang";
 
@@ -24,6 +25,12 @@ export const _CONFIG = {
         {
             route: '/uni',
             redirect: '/',
+        },
+        {
+            route: '/uni/:universeId',
+            id: 'route-universe',
+            source: Universe,
+            titleId: 'route_universe',
         },
         {
             route: '/404',

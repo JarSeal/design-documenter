@@ -29,8 +29,9 @@ class UniverseItem extends Component {
         this.title.draw();
     }
 
-    _gotoRoute = () => {
-        console.log('Something', this.index);
+    _gotoRoute = (e) => {
+        e.preventDefault();
+        this.Router.changeRoute('/uni/'+this.item.universeId);
     }
 }
 

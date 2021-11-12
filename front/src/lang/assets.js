@@ -107,6 +107,10 @@ export const assetsObj = {
         en: 'All form data examples',
         fi: 'Kaikki lomake-datan esimerkit',
     },
+    route_universe: {
+        en: 'Universe',
+        fi: 'Universumi',
+    },
     register_new_user: {
         en: 'Register a new user',
         fi: 'Rekisteröi uusi käyttäjä',
