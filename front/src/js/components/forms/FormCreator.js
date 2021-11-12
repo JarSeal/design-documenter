@@ -628,6 +628,11 @@ class FormCreator extends Component {
     _sendForm = async payload => {
         this.formState.set('sending', true);
         try {
+            // // Create tokean headers here
+            // const config = {
+            //     headers: { Authorization: token },
+            // };
+
             payload.id = this.id;
             const url = _CONFIG.apiBaseUrl + (this.data.api || '/forms/filled');
             const response = await axios.post(url, payload);

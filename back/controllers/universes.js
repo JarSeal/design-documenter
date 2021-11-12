@@ -17,21 +17,22 @@ universeRouter.get('/:id', async (request, response) => {
 
 // Create a new universe
 universeRouter.post('/', async (request, response) => {
+    // if(!request.token || !request.decodedToken.id) {
+    //     return response.status(401).json({ error: 'token missing or invalid' });
+    // }
     const body = request.body;
     const formData = await Form.findOne({ formId: body.id });
     const error = validateFormData(formData, body);
     if(error) {
-        response.status(error.code).json(error.obj);
-        return;
+        return response.status(error.code).json(error.obj);
     }
 
     const findUniverse = await Universe.findOne({ universeId: body.universeId.trim() });
     if(findUniverse) {
-        response.json({
+        return response.json({
             msg: 'Bad request. Validation errors.',
             errors: { universeId: 'universe_id_taken' },
         });
-        return;
     }
 
     const universe = new Universe({
