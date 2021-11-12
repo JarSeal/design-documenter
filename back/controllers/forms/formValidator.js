@@ -104,10 +104,10 @@ const validateFormData = async (formData, request) => {
     }
     const form = formData.form;
 
-    const error = await validatePrivledges(form, request);
-    if(error) {
-        return error;
-    }
+    // const error = await validatePrivledges(form, request);
+    // if(error) {
+    //     return error;
+    // }
 
     // if(form.server && form.server.userLevel) {
     //     if(!request.token || (request.decodedToken && !request.decodedToken.id)) {
