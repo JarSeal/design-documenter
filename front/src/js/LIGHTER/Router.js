@@ -245,6 +245,7 @@ class Router {
             logger.error('Could not find 404 template.')
             throw new Error('Call stack');
         }
+        this.prevRouteData = Object.assign({}, this.curRouteData);
         this.curRouteData = template;
         document.title = this._createPageTitle(template.title);
         this._createNewView(template);
