@@ -24,7 +24,12 @@ class Router {
         //   title: '', (= page and document title without translation [String] [optional])
         //   titleId: '', (= page and document title translation id [requires langFn], overwrites title attribute if set [String] [optional])
         //   is404: false, (= set true if current route is 404 template [Boolean] [required for one route])
+        // },
+        // {
+        //   route: '', (= route path [String] [required])
+        //   redirect: '', (= redirect path [String] [required])
         // }]
+        // *****************
         if(routerInitiated) {
             logger.error('Router has already been initiated. Only one router per app is allowed.');
             throw new Error('Call stack');
@@ -49,6 +54,7 @@ class Router {
         this.langFn = routesData.langFn;
         this.curRoute = this.basePath + '/';
         this.rcCallback = rcCallback;
+        this.redirectRoute = null;
         this.curRouteData = {
             route: this.basePath + '/',
             source: null,
@@ -73,17 +79,34 @@ class Router {
             this.notFound();
             return;
         }
-        let routeFound = false;
-        for(let i=0; i<routes.length; i++) {
-            if(!routes[i].id) {
-                logger.error(`Route is missing the id attribute.`);
-                throw new Error('Call stack');
-            }
+        for(let i=0; i<routes.length; i++) { // First loop check a redirect against curRoute
             if(!routes[i].route) {
                 logger.error(`Route '${routes[i].id}' is missing the route attribute.`);
                 throw new Error('Call stack');
             }
             routes[i].route = this.basePath + routes[i].route;
+            if(routes[i].redirect) {
+                routes[i].redirect = this.basePath + routes[i].redirect;
+                if(routes[i].redirect === routes[i].route) {
+                    logger.error(`Route's redirect cannot be the same as the route '${routes[i].route}'.`);
+                    throw new Error('Call stack');
+                }
+                if(this._compareRoutes(routes[i].route, this.curRoute)) {
+                    this.curRoute = routes[i].redirect;
+                    changeUrlPath = true;
+                }
+            }
+        }
+        let routeFound = false;
+        for(let i=0; i<routes.length; i++) { // Check all routes and push them to this.routes
+            if(routes[i].redirect) {
+                this.routes.push(routes[i]);
+                continue;
+            }
+            if(!routes[i].id) {
+                logger.error('Route is missing the id attribute.');
+                throw new Error('Call stack');
+            }
             if(this.langFn) {
                 if(routes[i].titleId) {
                     routes[i].title = this.langFn(routes[i].titleId)
@@ -140,6 +163,12 @@ class Router {
         let basePath = this.basePath;
         if(ignoreBasePath) basePath = '';
         route = basePath + route;
+        for(let i=0; i<this.routes.length; i++) { // Check if new route is a redirect
+            if(this.routes[i].redirect && this._compareRoutes(this.routes[i].route, route)) {
+                route = this.routes[i].redirect;
+                break;
+            }
+        }
         if(this._compareRoutes(route, this.curRoute) && !forceUpdate) return;
         if(forceUpdate && this._compareRoutes(route, this.curRoute)) {
             this.curRouteData.component.discard(true);

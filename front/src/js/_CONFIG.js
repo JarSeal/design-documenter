@@ -22,6 +22,10 @@ export const _CONFIG = {
             titleId: 'route_title_landing',
         },
         {
+            route: '/uni',
+            redirect: '/',
+        },
+        {
             route: '/404',
             id: 'route-four-o-four',
             source: FourOFour,
