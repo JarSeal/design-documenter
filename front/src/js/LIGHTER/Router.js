@@ -2,7 +2,7 @@ import { Logger } from "./utils";
 
 let routerInitiated = false;
 
-const logger = new Logger('LIGHTER.js ROUTE *****');
+const logger = new Logger('LIGHTER.js ROUTER *****');
 
 class Router {
     constructor(routesData, parentId, rcCallback, componentData) {
@@ -26,7 +26,19 @@ class Router {
         //   is404: false, (= set true if current route is 404 template [Boolean] [required for one route])
         // }]
         if(routerInitiated) {
-            logger.error('Router has already been initiated. Only one router per app is allowed');
+            logger.error('Router has already been initiated. Only one router per app is allowed.');
+            throw new Error('Call stack');
+        }
+        if(!routesData || !routesData.routes || !routesData.routes.length) {
+            logger.error('Missing routesData parameter, routesData.routes, or routesData.routes is empty.\nRequired params: new Route(routesData, parentId, rcCallback);');
+            throw new Error('Call stack');
+        }
+        if(!parentId) {
+            logger.error('Missing parentId parameter.\nRequired params: new Route(routesData, parentId, rcCallback);');
+            throw new Error('Call stack');
+        }
+        if(!rcCallback) {
+            logger.error('Missing rcCallback (route change callback) parameter / function.\nRequired params: new Route(routesData, parentId, rcCallback);');
             throw new Error('Call stack');
         }
         RouterRef = this;
