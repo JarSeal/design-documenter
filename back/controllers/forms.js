@@ -5,7 +5,7 @@ const logger = require('./../utils/logger');
 const Form = require('./../models/form');
 const User = require('./../models/user');
 const Universe = require('./../models/universe');
-const { validateFormData } = require('./forms/formEngine');
+const { validateFormData, removeServerData } = require('./forms/formEngine');
 const newUserFormData = require('./../shared').newUserFormData;
 const newUniverseFormData = require('./../shared').newUniverseFormData;
 
@@ -19,6 +19,9 @@ formsRouter.get('/', async (request, response) => {
             if(!result) await _createPresetForm(presetForms[i]);
         }
         result = await Form.find({});
+    }
+    for(let i=0; i<result.length; i++) {
+        result[i].form = removeServerData(result[i].form);
     }
     response.json(result);
 });
@@ -35,7 +38,8 @@ formsRouter.get('/:id', async (request, response) => {
     if(!result) {
         response.status(404).json({ msg: 'Could not find form.', id: formId });
     } else {
-        response.json(result.form);
+        const form = removeServerData(result.form);
+        response.json(form);
     }
 });
 
