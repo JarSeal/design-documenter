@@ -2,16 +2,20 @@ const universeRouter = require('express').Router();
 const logger = require('./../utils/logger');
 const Universe = require('./../models/universe');
 const Form = require('./../models/form');
+const User = require('./../models/user');
 const { validateFormData } = require('./forms/formEngine');
 
 // Get all universes
 universeRouter.get('/', async (request, response) => {
-    const result = await Universe.find({}).sort({ 'created.date': 'desc' });
+    const result = await Universe.find({})
+        .sort({ 'created.date': 'desc' })
+        .populate('created.by', { username: 1, name: 1 });
     response.json(result);
 });
 
 universeRouter.get('/:id', async (request, response) => {
-    const result = await Universe.findOne({ universeId: request.params.id });
+    const result = await Universe.findOne({ universeId: request.params.id })
+        .populate('created.by', { username: 1, name: 1 });
     response.json(result);
 });
 
@@ -23,6 +27,8 @@ universeRouter.post('/', async (request, response) => {
     if(!request.token || !request.decodedToken.id) {
         return response.status(401).json({ error: 'token missing or invalid' });
     }
+
+    const user = await User.findById(request.decodedToken.id);
     
     const error = await validateFormData(formData, request);
     if(error) {
@@ -42,7 +48,7 @@ universeRouter.post('/', async (request, response) => {
         universeId: body.universeId.trim(),
         description: body.universeDescription.trim(),
         created: {
-            by: null,
+            by: user.id,
             date: new Date(),
         },
     });
