@@ -30,7 +30,7 @@ universeRouter.post('/', async (request, response) => {
 
     const user = await User.findById(request.decodedToken.id);
     
-    const error = await validateFormData(formData, request);
+    const error = await validateFormData(formData, request, user);
     if(error) {
         return response.status(error.code).json(error.obj);
     }

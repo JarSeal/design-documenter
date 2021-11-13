@@ -91,7 +91,7 @@ const validateKeys = (form, keys) => {
     return keysFound === submitFields.length;
 };
 
-const validateFormData = async (formData, request) => {
+const validateFormData = async (formData, request, user) => {
     const body = request.body;
     console.log(request.token, request.decodedToken);
     if(!formData || !formData.form) {
@@ -102,7 +102,7 @@ const validateFormData = async (formData, request) => {
     }
     const form = formData.form;
 
-    const error = await validatePrivileges(form, request);
+    const error = await validatePrivileges(form, request, user);
     if(error) {
         return error;
     }
@@ -133,7 +133,7 @@ const validateFormData = async (formData, request) => {
     return null;
 };
 
-const validatePrivileges = async (form, request) => {
+const validatePrivileges = async (form, request, user) => {
     if(form.server && form.server.useRightLevel && form.server.useRightLevel !== 0) {
         if(!request.token || (request.decodedToken && !request.decodedToken.id)) {
             return {
@@ -141,7 +141,9 @@ const validatePrivileges = async (form, request) => {
                 obj: { msg: 'Token missing, expired, or invalid.' },
             };
         } else {
-            const user = await User.findById(request.decodedToken.id);
+            if(!user) {
+                user = await User.findById(request.decodedToken.id);
+            }
             const requiredLevel = form.server.userLevel;
             if(requiredLevel > user.userLevel) {
                 return {
