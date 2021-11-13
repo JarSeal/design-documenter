@@ -9,6 +9,11 @@ const newUserFormData = {
     onErrorsMsgId: 'form_has_errors',
     afterSubmitMsgId: 'new_user_registered',
     afterSubmitShowOnlyMsg: true,
+    server: {
+        useRightLevel: 0, // 0 = Public form
+        editFormLevel: 9,
+        newUserLevel: 1,
+    },
     submitButton: {
         id: 'submit-button-id',
         labelId: 'create_new_user_button',

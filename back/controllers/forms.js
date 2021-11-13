@@ -5,7 +5,7 @@ const logger = require('./../utils/logger');
 const Form = require('./../models/form');
 const User = require('./../models/user');
 const Universe = require('./../models/universe');
-const { validateFormData, removeServerData } = require('./forms/formEngine');
+const { validateFormData, removeServerData, validatePrivileges } = require('./forms/formEngine');
 const newUserFormData = require('./../shared').newUserFormData;
 const newUniverseFormData = require('./../shared').newUniverseFormData;
 
@@ -36,11 +36,15 @@ formsRouter.get('/:id', async (request, response) => {
     }
 
     if(!result) {
-        response.status(404).json({ msg: 'Could not find form.', id: formId });
-    } else {
-        const form = removeServerData(result.form);
-        response.json(form);
+        return response.status(404).json({ msg: 'Could not find form.', id: formId });
     }
+    const error = await validatePrivileges(result.form, request);
+    if(error) {
+        return response.status(error.code).json(error.obj);
+    }
+
+    const form = removeServerData(result.form);
+    response.json(form);
 });
 
 // Create a new form

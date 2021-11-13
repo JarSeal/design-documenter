@@ -7,7 +7,8 @@ const newUniverseFormData = {
     onErrorsMsgId: 'form_has_errors',
     afterSubmitShowOnlyMsg: true,
     server: {
-        userLevel: 2,
+        useRightLevel: 2,
+        editFormLevel: 9,
     },
     submitButton: {
         id: 'submit-new-universe-button',
