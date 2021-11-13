@@ -10,7 +10,7 @@ const newUserFormData = {
     afterSubmitMsgId: 'new_user_registered',
     afterSubmitShowOnlyMsg: true,
     server: {
-        useRightLevel: 0, // Public form
+        useRightLevel: 0, // 0 = Public form
         editFormLevel: 9,
         newUserLevel: 1,
     },
