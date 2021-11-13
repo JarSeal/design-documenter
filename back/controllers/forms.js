@@ -5,7 +5,7 @@ const logger = require('./../utils/logger');
 const Form = require('./../models/form');
 const User = require('./../models/user');
 const Universe = require('./../models/universe');
-const { validateFormData } = require('./forms/formValidator');
+const { validateFormData } = require('./forms/formEngine');
 const newUserFormData = require('./../shared').newUserFormData;
 const newUniverseFormData = require('./../shared').newUniverseFormData;
 

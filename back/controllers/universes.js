@@ -2,8 +2,7 @@ const universeRouter = require('express').Router();
 const logger = require('./../utils/logger');
 const Universe = require('./../models/universe');
 const Form = require('./../models/form');
-const { validateFormData } = require('./forms/formValidator');
-const User = require('../models/user');
+const { validateFormData } = require('./forms/formEngine');
 
 // Get all universes
 universeRouter.get('/', async (request, response) => {
@@ -24,10 +23,8 @@ universeRouter.post('/', async (request, response) => {
     if(!request.token || !request.decodedToken.id) {
         return response.status(401).json({ error: 'token missing or invalid' });
     }
-    const user = await User.findById(request.decodedToken.id);
-    console.log('Tsfkdsfjk', user);
     
-    const error = validateFormData(formData, request);
+    const error = await validateFormData(formData, request);
     if(error) {
         return response.status(error.code).json(error.obj);
     }

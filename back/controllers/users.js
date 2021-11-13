@@ -4,7 +4,7 @@ const CONFIG = require('./../shared').CONFIG.USER;
 const logger = require('./../utils/logger');
 const User = require('./../models/user');
 const Form = require('./../models/form');
-const { validateFormData } = require('./forms/formValidator');
+const { validateFormData } = require('./forms/formEngine');
 
 // Get all users
 usersRouter.get('/', async (request, response) => {
@@ -18,7 +18,7 @@ usersRouter.get('/', async (request, response) => {
 usersRouter.post('/', async (request, response) => {
     const body = request.body;
     const formData = await Form.findOne({ formId: body.id });
-    const error = validateFormData(formData, body);
+    const error = await validateFormData(formData, request);
     if(error) {
         response.status(error.code).json(error.obj);
         return;

@@ -1,5 +1,5 @@
 const User = require('../../models/user');
-const shared = require('./../../shared');
+const shared = require('../../shared');
 
 const validateField = (form, key, value) => {
     if(key === 'id') return null;
@@ -93,9 +93,7 @@ const validateKeys = (form, keys) => {
 
 const validateFormData = async (formData, request) => {
     const body = request.body;
-    console.log('FJKDJKFJKDFJKSDFJKSJDF');
-    console.log(request.token, request.decodaedToken);
-    console.log('FJKDJKFJKDFJKSDFJKSJDF');
+    console.log(request.token, request.decodedToken);
     if(!formData || !formData.form) {
         return {
             code: 404,
@@ -104,18 +102,9 @@ const validateFormData = async (formData, request) => {
     }
     const form = formData.form;
 
-    const error = await validatePrivledges(form, request);
+    const error = await validatePrivileges(form, request);
     if(error) {
         return error;
-    }
-
-    if(form.server && form.server.userLevel) {
-        if(!request.token || (request.decodedToken && !request.decodedToken.id)) {
-            return {
-                code: 401,
-                obj:{ msg: 'Token missing or invalid' }
-            };
-        }
     }
 
     const keys = Object.keys(body);
@@ -144,32 +133,31 @@ const validateFormData = async (formData, request) => {
     return null;
 };
 
-const validatePrivledges = async (form, request) => {
+const validatePrivileges = async (form, request) => {
     if(form.server && form.server.userLevel) {
-        console.log('HERE1 req', request);
         if(!request.token || (request.decodedToken && !request.decodedToken.id)) {
-            console.log('HERE2');
             return {
                 code: 401,
                 obj: { msg: 'Token missing or invalid.' },
             };
         } else {
-            console.log('HERE3');
             const user = await User.findById(request.decodedToken.id);
-            console.log('HERE4');
             const requiredLevel = form.server.userLevel;
-            console.log('HERE5');
             if(requiredLevel > user.userLevel) {
-                console.log('HERE');
                 return {
                     code: 401,
                     obj: { msg: 'User not authorised.' },
                 };
             }
-            console.log('HERE');
         }
-        console.log('HERE');
     }
 };
 
-module.exports = { validateField, validateKeys, validateFormData };
+const removeServerData = (form) => {
+    if(form.server) {
+        delete form.server;
+    }
+    return form;
+};
+
+module.exports = { validateField, validateKeys, validateFormData, removeServerData };
