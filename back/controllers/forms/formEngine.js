@@ -134,11 +134,11 @@ const validateFormData = async (formData, request) => {
 };
 
 const validatePrivileges = async (form, request) => {
-    if(form.server && form.server.userLevel) {
+    if(form.server && form.server.useRightLevel && form.server.useRightLevel !== 0) {
         if(!request.token || (request.decodedToken && !request.decodedToken.id)) {
             return {
                 code: 401,
-                obj: { msg: 'Token missing or invalid.' },
+                obj: { msg: 'Token missing, expired, or invalid.' },
             };
         } else {
             const user = await User.findById(request.decodedToken.id);
@@ -149,6 +149,8 @@ const validatePrivileges = async (form, request) => {
                     obj: { msg: 'User not authorised.' },
                 };
             }
+
+            // Check here for possible groups
         }
     }
 };
@@ -160,4 +162,10 @@ const removeServerData = (form) => {
     return form;
 };
 
-module.exports = { validateField, validateKeys, validateFormData, removeServerData };
+module.exports = {
+    validateField,
+    validateKeys,
+    validateFormData,
+    validatePrivileges,
+    removeServerData
+};

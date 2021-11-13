@@ -46,9 +46,11 @@ usersRouter.post('/', async (request, response) => {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(body.password, saltRounds);
 
-    const userCount = await User.find().limit(1);
-    let userLevel = 1; // Create regular user
-    if(userCount.length === 0) {
+    const userCount = await User.find({}).limit(1);
+    let userLevel = formData.form.server && formData.form.server.newUserLevel
+        ? formData.form.server.newUserLevel
+        : 1;
+    if(userCount.length === 0) { // First registration is always for a super admin (level 9)
         userLevel = 9; // Create admin user
         logger.log(`Created a super user (level: ${userLevel}).`);
     } else {
