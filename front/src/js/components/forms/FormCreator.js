@@ -693,19 +693,26 @@ class FormCreator extends Component {
     _loadFormData = async id => {
         this.formState.set('getting', true);
         this.formState.set('sending', false);
+        let response;
         try {
             const url = _CONFIG.apiBaseUrl + '/forms/' + id;
 
-            const response = await axios.get(url);
+            response = await axios.get(url);
             
             // this.logger.log('API RESPONSE', response);
             this.data = Object.assign({}, this.data, response.data);
             this.formState.set('getting', false);
         } catch(exception) {
+            let text;
+            if(exception.response && exception.response.status === 401) {
+                text = getText('unauthorised');
+            } else {
+                text = getText('could_not_get_form_data');
+            }
             this.formState.removeListener('getting');
             this.formState.set('getting', false);
             this.formSubmitted = true;
-            this.template = `<div class="error-msg">${getText('could_not_get_form_data')}</div>`;
+            this.template = `<div class="error-msg">${text}</div>`;
             this.reDrawSelf();
             this.logger.error('Form data retrieving failed (Form Creator).', exception, this);
         }

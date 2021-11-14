@@ -143,4 +143,8 @@ export const assetsObj = {
         en: 'Universe ID is taken',
         fi: 'Universumi-ID on käytössä',
     },
+    unauthorised: {
+        en: 'Unauthorised.',
+        fi: 'Ei oikeuksia.',
+    }
 };

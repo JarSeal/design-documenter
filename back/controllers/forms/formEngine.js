@@ -138,7 +138,10 @@ const validatePrivileges = async (form, request, user) => {
         if(!request.token || (request.decodedToken && !request.decodedToken.id)) {
             return {
                 code: 401,
-                obj: { msg: 'Token missing, expired, or invalid.' },
+                obj: {
+                    unauthorised: true,
+                    msg: 'Token missing, expired, or invalid.'
+                },
             };
         } else {
             if(!user) {
@@ -148,7 +151,10 @@ const validatePrivileges = async (form, request, user) => {
             if(requiredLevel > user.userLevel) {
                 return {
                     code: 401,
-                    obj: { msg: 'User not authorised.' },
+                    obj: {
+                        unauthorised: true,
+                        msg: 'User not authorised.'
+                    },
                 };
             }
 
