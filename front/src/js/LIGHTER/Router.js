@@ -24,6 +24,7 @@ class Router {
         //   title: '', (= page and document title without translation [String] [optional])
         //   titleId: '', (= page and document title translation id [requires langFn], overwrites title attribute if set [String] [optional])
         //   is404: false, (= set true if current route is 404 template [Boolean] [required for one route])
+        //   beforeDraw: (routeData) => { return '/401'; }, (= function to call before the view is shown, return a new route if needed)
         // },
         // {
         //   route: '', (= route path [String] [required])
