@@ -96,6 +96,19 @@ class Router {
                     changeUrlPath = true;
                 }
             }
+            if(this._compareRoutes(routes[i].route, this.curRoute, true) && routes[i].beforeDraw) {
+                const newRoute = routes[i].beforeDraw({
+                    route: routes[i],
+                    curRouteData: this.curRouteData,
+                    curRoute: this.curRoute,
+                    prevRouteData: null,
+                    prevRoute: null,
+                });
+                if(newRoute) {
+                    this.curRoute = this.basePath + newRoute;
+                    changeUrlPath = true;
+                };
+            }
         }
         let routeFound = false;
         for(let i=0; i<routes.length; i++) { // Check all routes and push them to this.routes
@@ -174,6 +187,20 @@ class Router {
         let basePath = this.basePath;
         if(ignoreBasePath) basePath = '';
         route = basePath + route;
+        let newRoute;
+        for(let i=0; i<this.routes.length; i++) { // Before draw check
+            if(this._compareRoutes(this.routes[i].route, route, true) && this.routes[i].beforeDraw) {
+                newRoute = this.routes[i].beforeDraw({
+                    route: this.routes[i],
+                    curRouteData: this.curRouteData,
+                    curRoute: this.curRoute,
+                    prevRouteData: this.prevRouteData,
+                    prevRoute: this.prevRouteData,
+                });
+                if(newRoute) route = basePath + newRoute;
+                break;
+            }
+        }
         for(let i=0; i<this.routes.length; i++) { // Check if new route is a redirect
             if(this.routes[i].redirect && this._compareRoutes(this.routes[i].route, route)) {
                 route = this.routes[i].redirect;
@@ -216,7 +243,22 @@ class Router {
         this.rcCallback(this.curRoute);
     }
 
-    _compareRoutes(first, second) {
+    _compareRoutes(first, second, checkWithParams) {
+        if(checkWithParams && (first.includes(':') || second.includes(':'))) {
+            const firstParts = first.split('/');
+            const secondParts = second.split('/');
+            let length = firstParts.length;
+            if(secondParts.length > firstParts.length) length = secondParts.length;
+            for(let i=0; i<length; i++) {
+                if(firstParts[i] && firstParts[i].includes(':')) {
+                    firstParts[i] = secondParts[i];
+                } else if(secondParts[i] && secondParts[i].includes(':')) {
+                    secondParts[i] = firstParts[i];
+                }
+            }
+            first = firstParts.join('/');
+            second = secondParts.join('/');
+        }
         return first === second || first + '/' === second || first === second + '/';
     }
 
