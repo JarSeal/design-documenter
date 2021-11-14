@@ -99,6 +99,10 @@ export const assetsObj = {
         en: '404',
         fi: '404',
     },
+    route_title_401: {
+        en: '401',
+        fi: '401',
+    },
     route_title_new_user: {
         en: 'New User',
         fi: 'Uusi käyttäjä',

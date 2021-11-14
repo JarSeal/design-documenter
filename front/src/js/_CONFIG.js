@@ -1,4 +1,5 @@
 import FourOFour from "./components/contentViews/FourOFour";
+import FourOOne from "./components/contentViews/FourOOne";
 import Landing from "./components/contentViews/Landing";
 import NewUser from "./components/contentViews/NewUser";
 import Universe from "./components/contentViews/Universe";
@@ -33,13 +34,6 @@ export const _CONFIG = {
             titleId: 'route_universe',
         },
         {
-            route: '/404',
-            id: 'route-four-o-four',
-            source: FourOFour,
-            is404: true,
-            titleId: 'route_title_404',
-        },
-        {
             route: '/newuser',
             id: 'new-user',
             source: NewUser,
@@ -50,6 +44,20 @@ export const _CONFIG = {
             id: 'test-form-data',
             source: TestFormData,
             titleId: 'route_test_form_data',
+        },
+        {
+            route: '/404',
+            id: 'route-four-o-four',
+            source: FourOFour,
+            is404: true,
+            titleId: 'route_title_404',
+        },
+        {
+            route: '/401',
+            id: 'route-four-o-one',
+            source: FourOOne,
+            is404: true,
+            titleId: 'route_title_401',
         },
     ],
 };
