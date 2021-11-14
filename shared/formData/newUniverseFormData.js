@@ -8,7 +8,11 @@ const newUniverseFormData = {
     afterSubmitShowOnlyMsg: true,
     server: {
         useRightLevel: 2,
+        useRightUsers: [],
+        useRightGroups: [],
         editFormLevel: 9,
+        editFormUsers: [],
+        editFormGroups: [],
     },
     submitButton: {
         id: 'submit-new-universe-button',

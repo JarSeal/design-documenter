@@ -11,8 +11,13 @@ const newUserFormData = {
     afterSubmitShowOnlyMsg: true,
     server: {
         useRightLevel: 0, // 0 = Public form
+        useRightUsers: [],
+        useRightGroups: [],
         editFormLevel: 9,
-        newUserLevel: 1,
+        editFormUsers: [],
+        editFormGroups: [],
+        newUserLevel: 1, // Level of the new user
+        newUserGroups: [], // Groups that the registered user belongs
     },
     submitButton: {
         id: 'submit-button-id',
