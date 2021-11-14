@@ -32,6 +32,10 @@ export const _CONFIG = {
             id: 'route-universe',
             source: Universe,
             titleId: 'route_universe',
+            beforeDraw: () => {
+                console.log('FIRE!');
+                return '/401';
+            },
         },
         {
             route: '/newuser',
