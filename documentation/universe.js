@@ -6,12 +6,13 @@ const universe = {
     universeId: 'my-project-id', // String [required, unique, regex='^[a-zA-Z0-9\-_]+$']
     description: 'Some project description...', // String
     rights: {
-        readRightUsers: [],
-        readRightGroups: [],
-        editRightUsers: [],
-        editRightGroups: [],
-        deleteRightUsers: [],
-        deleteRightGroups: [],
+        public: false, // Boolean
+        readRightUsers: [], // Array[mongo user _id]
+        readRightGroups: [], // Array[mongo group _id]
+        editRightUsers: [], // Array[mongo user _id]
+        editRightGroups: [], // Array[mongo group _id]
+        deleteRightUsers: [], // Array[mongo user _id]
+        deleteRightGroups: [], // Array[mongo group _id]
     },
     created: {
         by: '[mongo user _id]', // String [required], mongo user id
@@ -23,4 +24,7 @@ const universe = {
             date: Date,
         }
     ],
+    owner: {
+        user: '[mongo user _id]', // String [required], mongo user id
+    },
 };

@@ -11,8 +11,8 @@ const beacon = {
     typeConfigurations: null, // Object(with data type keys and configs as values), this is filled with allowed type configurations (eg. if type is form data, then the fields will be here)
     fillFromTop: false, // Boolean, if true the data will be prepended to the beginning of the array (default false = append)
     data: [
-        '[mongo _id 1]', // Referring to a dataset with this mongo _id
-        '[mongo _id 2]', // Order of data comes from the array
+        '[mongo dataset _id 1]', // Referring to a dataset with this mongo _id
+        '[mongo dataset _id 2]', // Order of data comes from the array
     ],
     size2d: {
         w: 32, // Number [required]
@@ -21,6 +21,15 @@ const beacon = {
     pos2d: {
         x: 0, // Number [required]
         y: 0, // Number [required]
+    },
+    rights: {
+        public: false, // Boolean
+        readRightUsers: [], // Array[mongo user _id] or String (can be the string 'inherit')
+        readRightGroups: [], // Array[mongo group _id] or String
+        editRightUsers: [], // Array[mongo user _id] or String
+        editRightGroups: [], // Array[mongo group _id] or String
+        deleteRightUsers: [], // Array[mongo user _id] or String
+        deleteRightGroups: [], // Array[mongo group _id] or String
     },
     created: {
         by: '[mongo user _id]', // String [required], mongo user id
@@ -32,6 +41,9 @@ const beacon = {
             date: Date,
         }
     ],
+    owner: {
+        user: '[mongo user _id]', // String [required], mongo user id
+    },
 };
 
 // Data types are hard-coded, non-changing definitions on the server (not in mongo)
