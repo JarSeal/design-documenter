@@ -63,7 +63,7 @@ const getStorage = (type) => {
     return null;
 };
 
-const checkCredentials = async (required) => {
+const checkCredentials = async (required, curRoute) => {
     const config = getApiHeaders();
     const url = _CONFIG.apiBaseUrl + '/login';
     const response = await axios.get(url, config);

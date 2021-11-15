@@ -25,6 +25,12 @@ export const _CONFIG = {
             titleId: 'route_title_landing',
         },
         {
+            route: '/to/:path',
+            id: 'route-landing',
+            source: Landing,
+            titleId: 'route_title_landing',
+        },
+        {
             route: '/uni',
             redirect: '/',
         },
@@ -33,9 +39,8 @@ export const _CONFIG = {
             id: 'route-universe',
             source: Universe,
             titleId: 'route_universe',
-            beforeDraw: async () => {
-                const check = await checkCredentials({ userLevel: 2 });
-                console.log('CHECK', check);
+            beforeDraw: async (routerData) => {
+                const check = await checkCredentials({ userLevel: 2 }, routerData.curRoute);
                 return check;
             },
         },
