@@ -3,6 +3,14 @@ const bcrypt = require('bcrypt');
 const loginRouter = require('express').Router();
 const User = require('./../models/user');
 
+loginRouter.get('/', async (request, response) => {
+    if(!request.token || !request.decodedToken.userLevel) {
+        console.log('TOKEN', request.decodedToken);
+        return response.json({ userLevel: 0 });
+    }
+    return response.json({ userLevel: request.decodedToken.userLevel });
+});
+
 loginRouter.post('/', async (request, response) => {
     const body = request.body;
 
@@ -19,6 +27,7 @@ loginRouter.post('/', async (request, response) => {
 
     const userForToken = {
         username: user.username,
+        userLevel: user.userLevel,
         id: user._id,
     };
 
@@ -26,7 +35,10 @@ loginRouter.post('/', async (request, response) => {
 
     response
         .status(200)
-        .send({ token, username: user.username });
+        .send({
+            token,
+            username: user.username,
+        });
 });
 
 module.exports = loginRouter;

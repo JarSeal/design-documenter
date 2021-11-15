@@ -5,6 +5,7 @@ import NewUser from "./components/contentViews/NewUser";
 import Universe from "./components/contentViews/Universe";
 import TestFormData from "./components/contentViews/TestFormData";
 import { getText } from "./helpers/lang";
+import { checkCredentials } from "./helpers/storage";
 
 export const _CONFIG = {
     bbarSize: 64,
@@ -32,9 +33,10 @@ export const _CONFIG = {
             id: 'route-universe',
             source: Universe,
             titleId: 'route_universe',
-            beforeDraw: () => {
-                console.log('FIRE!');
-                return '/401';
+            beforeDraw: async () => {
+                const check = await checkCredentials({ userLevel: 2 });
+                console.log('CHECK', check);
+                return check;
             },
         },
         {

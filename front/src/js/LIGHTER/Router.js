@@ -69,7 +69,7 @@ class Router {
         this.initRouter(routesData.routes, parentId);
     }
 
-    initRouter(routes, parentId) {
+    initRouter = async (routes, parentId) => {
         this.setRoute();
         let changeUrlPath = false;
         if(this.curRoute.length < this.basePath.length) {
@@ -98,7 +98,7 @@ class Router {
                 }
             }
             if(this._compareRoutes(routes[i].route, this.curRoute, true) && routes[i].beforeDraw) {
-                const newRoute = routes[i].beforeDraw({
+                const newRoute = await routes[i].beforeDraw({
                     route: routes[i],
                     curRouteData: this.curRouteData,
                     curRoute: this.curRoute,

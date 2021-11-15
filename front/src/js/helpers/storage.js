@@ -1,3 +1,4 @@
+import axios from "axios";
 import { LocalStorage, SessionStorage } from "../LIGHTER";
 import { _CONFIG } from "../_CONFIG";
 
@@ -62,4 +63,22 @@ const getStorage = (type) => {
     return null;
 };
 
-export { saveUser, getUser, removeUser, getApiHeaders, getStorage };
+const checkCredentials = async (required) => {
+    const config = getApiHeaders();
+    const url = _CONFIG.apiBaseUrl + '/login';
+    const response = await axios.get(url, config);
+    if(response.data.userLevel < required.userLevel) {
+        if(response.data.userLevel === 0) return '/';
+        return '/401';
+    }
+    return null;
+};
+
+export {
+    saveUser,
+    getUser,
+    removeUser,
+    getApiHeaders,
+    getStorage,
+    checkCredentials,
+};

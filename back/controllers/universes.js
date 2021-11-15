@@ -13,6 +13,7 @@ universeRouter.get('/', async (request, response) => {
     response.json(result);
 });
 
+// Get one universe
 universeRouter.get('/:id', async (request, response) => {
     const result = await Universe.findOne({ universeId: request.params.id })
         .populate('created.by', { username: 1, name: 1 });
