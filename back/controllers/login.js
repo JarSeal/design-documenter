@@ -5,7 +5,6 @@ const User = require('./../models/user');
 
 loginRouter.get('/', async (request, response) => {
     if(!request.token || !request.decodedToken.userLevel) {
-        console.log('TOKEN', request.decodedToken);
         return response.json({ userLevel: 0 });
     }
     return response.json({ userLevel: request.decodedToken.userLevel });
