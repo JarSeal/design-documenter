@@ -2,9 +2,9 @@ const CONFIG = require('./../../CONFIG').USER;
 
 const loginBeaconFormData = {
     formId: 'beacon-main-login',
-    path: '',
-    type: 'form',
+    path: '/api/login',
     method: 'POST',
+    type: 'form',
     useRightsLevel: 0,
     useRightsUsers: [],
     useRightsGroups: [],

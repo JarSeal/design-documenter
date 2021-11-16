@@ -3,9 +3,9 @@ const CONFIG = require('./../../CONFIG').USER;
 // Create a new universe:
 const newUniverseFormData = {
     formId: 'new-universe-form',
-    path: '',
-    type: 'form',
+    path: '/api/universes',
     method: 'POST',
+    type: 'form',
     useRightsLevel: 2,
     useRightsUsers: [],
     useRightsGroups: [],
@@ -13,8 +13,6 @@ const newUniverseFormData = {
     editorRightsUsers: [],
     editorRightsGroups: [],
     form: {
-        id: 'new-universe-form',
-        api: '/universes',
         onErrorsMsgId: 'form_has_errors',
         afterSubmitShowOnlyMsg: true,
         server: {
