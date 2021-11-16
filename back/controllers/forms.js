@@ -30,7 +30,7 @@ formsRouter.get('/', async (request, response) => {
 formsRouter.get('/:id', async (request, response) => {
     const formId = request.params.id;
     let result = await Form.findOne({ formId });
-
+    console.log('RESULT', result);
     if(!result) {
         result = await _createPresetForm(formId);
     }
@@ -43,7 +43,7 @@ formsRouter.get('/:id', async (request, response) => {
         return response.status(error.code).json(error.obj);
     }
     
-    response.json(form);
+    response.json(result.form);
 });
 
 // Create a new form
