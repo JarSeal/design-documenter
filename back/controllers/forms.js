@@ -42,8 +42,7 @@ formsRouter.get('/:id', async (request, response) => {
     if(error) {
         return response.status(error.code).json(error.obj);
     }
-
-    const form = removeServerData(result.form);
+    
     response.json(form);
 });
 
