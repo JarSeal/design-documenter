@@ -630,10 +630,23 @@ class FormCreator extends Component {
         this.formState.set('sending', true);
         try {
             payload.id = this.id;
-            const url = _CONFIG.apiBaseUrl + (this.data.api || '/api/forms/filled');
+            let url = _CONFIG.apiBaseUrl + (this.data.api || '/api/forms/filled');
             const config = getApiHeaders();
+            let response;
 
-            const response = await axios.post(url, payload, config);
+            if(this.data.method && this.data.method === 'PUT') {
+                url += '/' + this.id;
+                response = await axios.put(url, payload, config);
+            } else if(this.data.method && this.data.method === 'POST') {
+                response = await axios.post(url, payload, config);
+            } else if(this.data.method && this.data.method === 'DELETE') {
+                url += '/' + this.id;
+                response = await axios.delete(url, payload, config);
+            } else {
+                this.formState.set('sending', false);
+                this._setFormMsg(getText('form_submit_error'));
+                this.logger.error('Form sending failed (Form Creator). Method was unknown: ' + this.data.method);
+            }
 
             // this.logger.log('API RESPONSE', response);
             this.formState.set('sending', false);
