@@ -8,6 +8,11 @@ const createPresetForms = async () => {
         if(formData[i].imported) continue;
         checkForm = await Form.findOne({ formId: formData[i].formId });
         if(!checkForm) {
+            formData[i].created = {
+                by: null,
+                autoCreated: true,
+                date: new Date(),
+            };
             newForm = new Form(formData[i]);
             await newForm.save();
             logger.log(`Preset form '${formData[i].formId}' created.`);

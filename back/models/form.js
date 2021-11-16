@@ -35,13 +35,19 @@ const formSchema = mongoose.Schema({
         type: Object,
     },
     created: {
-        by: String,
+        by: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        },
         autoCreated: Boolean,
         date: Date,
     },
     edited: [
         {
-            by: String,
+            by: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+            },
             autoEdited: Boolean,
             date: Date,
         }
