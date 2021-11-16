@@ -39,10 +39,10 @@ export const _CONFIG = {
             id: 'route-universe',
             source: Universe,
             titleId: 'route_universe',
-            beforeDraw: async (routerData) => {
-                const check = await checkCredentials({ userLevel: 2 }, routerData.curRoute);
-                return check;
-            },
+            // beforeDraw: async (routerData) => {
+            //     const check = await checkCredentials({ userLevel: 2 }, routerData.curRoute);
+            //     return check;
+            // },
         },
         {
             route: '/newuser',

@@ -29,7 +29,7 @@ class ListLoader extends Component {
 
     _loadData = async () => {
         this.loading = true;
-        const url = _CONFIG.apiBaseUrl + '/' + this.api;
+        const url = _CONFIG.apiBaseUrl + this.api;
         const response = await axios.get(url);
         this.list = response.data;
         this.buildList();

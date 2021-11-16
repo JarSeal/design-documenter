@@ -24,6 +24,7 @@ class NewUser extends Component {
             && this.Router.curRouteData.params.universeId
             && parsers.validateSimpleId(this.Router.curRouteData.params.universeId)
         ) {
+            if(this.mainSpinner) this.mainSpinner.draw({ show: true });
             this.universeId = this.Router.curRouteData.params.universeId;
             this.getData();
         } else {
@@ -33,12 +34,12 @@ class NewUser extends Component {
     }
 
     paint = () => {
-        if(this.mainSpinner) this.mainSpinner.draw();
+        if(this.mainSpinner) this.mainSpinner.draw({ show: true });
     }
 
     getData = async () => {
         this.loadingData = true;
-        const url = _CONFIG.apiBaseUrl + '/universes/' + this.universeId;
+        const url = _CONFIG.apiBaseUrl + '/api/universes/' + this.universeId;
         const response = await axios.get(url);
         const uniData = response.data;
         

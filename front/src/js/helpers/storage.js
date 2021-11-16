@@ -67,7 +67,7 @@ const checkCredentials = async (required, curRoute) => {
     const timestamp = Date.now() / 1000 | 0;
     if(!access || timestamp > latestAccessCheck + 20) { // 20 second cache
         const config = getApiHeaders();
-        const url = _CONFIG.apiBaseUrl + '/login';
+        const url = _CONFIG.apiBaseUrl + '/api/login';
         try {
             const response = await axios.get(url, config);
             latestAccessCheck = Date.now() / 1000 | 0;

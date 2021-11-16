@@ -1,6 +1,4 @@
 const formsRouter = require('express').Router();
-const bcrypt = require('bcrypt');
-const CONFIG = require('./../shared').CONFIG.USER;
 const logger = require('./../utils/logger');
 const Form = require('./../models/form');
 const { validatePrivileges } = require('./forms/formEngine');

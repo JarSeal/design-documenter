@@ -22,7 +22,9 @@ class Landing extends Component {
 
     initMainScreen = () => {
         if(this.mainScreenInitiated) return;
-        this.mainScreenCompos.push(this.addChild(new Component({ id: 'universe-wrapper', class: 'list-wrapper' })));
+        this.mainScreenCompos.push(
+            this.addChild(new Component({ id: 'universe-wrapper', class: 'list-wrapper' }))
+        );
         this.mainScreenCompos.push(this.addChild(new Button({
             id: 'add-uni-button',
             attach: 'universe-wrapper',
@@ -44,7 +46,7 @@ class Landing extends Component {
         })));
         this.universesList = this.addChild(new ListLoader({
             id: 'universes-list',
-            api: 'universes',
+            api: '/api/universes',
             attach: 'universe-wrapper',
             component: UniverseItem,
         }));
