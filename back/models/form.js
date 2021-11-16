@@ -10,9 +10,29 @@ const formSchema = mongoose.Schema({
         required: true,
         unique: true,
     },
+    path: String,
+    method: String,
+    type: {
+        type: String,
+        required: true,
+    },
+    useRightsLevel: {
+        type: Number,
+        required: true,
+    },
+    useRightsUsers: [{ type: String }],
+    useRightsGroups: [{ type: String }],
+    editorRightsLevel: {
+        type: Number,
+        required: true,
+    },
+    editorRightsUsers: [{ type: String }],
+    editorRightsGroups: [{ type: String }],
+    editorOptions: {
+        type: Object,
+    },
     form: {
         type: Object,
-        required: true,
     },
     created: {
         by: String,
