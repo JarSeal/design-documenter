@@ -696,8 +696,8 @@ class FormCreator extends Component {
         let response;
         try {
             const url = _CONFIG.apiBaseUrl + '/forms/' + id;
-
-            response = await axios.get(url);
+            const config = getApiHeaders();
+            response = await axios.get(url, config);
             
             // this.logger.log('API RESPONSE', response);
             this.data = Object.assign({}, this.data, response.data);

@@ -69,7 +69,7 @@ class Router {
         this.initRouter(routesData.routes, parentId);
     }
 
-    initRouter(routes, parentId) {
+    initRouter = async (routes, parentId) => {
         this.setRoute();
         let changeUrlPath = false;
         if(this.curRoute.length < this.basePath.length) {
@@ -98,7 +98,7 @@ class Router {
                 }
             }
             if(this._compareRoutes(routes[i].route, this.curRoute, true) && routes[i].beforeDraw) {
-                const newRoute = routes[i].beforeDraw({
+                const newRoute = await routes[i].beforeDraw({
                     route: routes[i],
                     curRouteData: this.curRouteData,
                     curRoute: this.curRoute,
@@ -184,14 +184,14 @@ class Router {
         }
     }
 
-    changeRoute(route, forceUpdate, ignoreBasePath) {
+    changeRoute = async (route, forceUpdate, ignoreBasePath) => {
         let basePath = this.basePath;
         if(ignoreBasePath) basePath = '';
         route = basePath + route;
         let newRoute;
         for(let i=0; i<this.routes.length; i++) { // Before draw check
             if(this._compareRoutes(this.routes[i].route, route, true) && this.routes[i].beforeDraw) {
-                newRoute = this.routes[i].beforeDraw({
+                newRoute = await this.routes[i].beforeDraw({
                     route: this.routes[i],
                     curRouteData: this.curRouteData,
                     curRoute: this.curRoute,

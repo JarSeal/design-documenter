@@ -5,6 +5,7 @@ import NewUser from "./components/contentViews/NewUser";
 import Universe from "./components/contentViews/Universe";
 import TestFormData from "./components/contentViews/TestFormData";
 import { getText } from "./helpers/lang";
+import { checkCredentials } from "./helpers/storage";
 
 export const _CONFIG = {
     bbarSize: 64,
@@ -24,6 +25,12 @@ export const _CONFIG = {
             titleId: 'route_title_landing',
         },
         {
+            route: '/to/:path',
+            id: 'route-landing',
+            source: Landing,
+            titleId: 'route_title_landing',
+        },
+        {
             route: '/uni',
             redirect: '/',
         },
@@ -32,9 +39,9 @@ export const _CONFIG = {
             id: 'route-universe',
             source: Universe,
             titleId: 'route_universe',
-            beforeDraw: () => {
-                console.log('FIRE!');
-                return '/401';
+            beforeDraw: async (routerData) => {
+                const check = await checkCredentials({ userLevel: 2 }, routerData.curRoute);
+                return check;
             },
         },
         {

@@ -13,6 +13,7 @@ universeRouter.get('/', async (request, response) => {
     response.json(result);
 });
 
+// Get one universe
 universeRouter.get('/:id', async (request, response) => {
     const result = await Universe.findOne({ universeId: request.params.id })
         .populate('created.by', { username: 1, name: 1 });
@@ -25,7 +26,10 @@ universeRouter.post('/', async (request, response) => {
     const formData = await Form.findOne({ formId: body.id });
 
     if(!request.token || !request.decodedToken.id) {
-        return response.status(401).json({ error: 'token missing or invalid' });
+        return response.status(401).json({
+            unauthorised: true,
+            error: 'token missing or invalid',
+        });
     }
 
     const user = await User.findById(request.decodedToken.id);
