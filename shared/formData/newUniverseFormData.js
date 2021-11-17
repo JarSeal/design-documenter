@@ -15,14 +15,6 @@ const newUniverseFormData = {
     form: {
         onErrorsMsgId: 'form_has_errors',
         afterSubmitShowOnlyMsg: true,
-        server: {
-            useRightLevel: 2,
-            useRightUsers: [],
-            useRightGroups: [],
-            editFormLevel: 9,
-            editFormUsers: [],
-            editFormGroups: [],
-        },
         submitButton: {
             id: 'submit-new-universe-button',
             labelId: 'create_new_universe',
