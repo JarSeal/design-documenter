@@ -1,9 +1,9 @@
 import FourOFour from "./components/contentViews/FourOFour";
 import FourOOne from "./components/contentViews/FourOOne";
 import Landing from "./components/contentViews/Landing";
+import Login from "./components/contentViews/Login";
 import NewUser from "./components/contentViews/NewUser";
 import Universe from "./components/contentViews/Universe";
-import TestFormData from "./components/contentViews/TestFormData";
 import { getText } from "./helpers/lang";
 import { checkCredentials } from "./helpers/storage";
 
@@ -23,6 +23,12 @@ export const _CONFIG = {
             id: 'route-landing',
             source: Landing,
             titleId: 'route_title_landing',
+        },
+        {
+            route: '/login',
+            id: 'route-login',
+            source: Login,
+            titleId: 'route_title_login',
         },
         {
             route: '/to/:path',
@@ -49,12 +55,6 @@ export const _CONFIG = {
             id: 'new-user',
             source: NewUser,
             titleId: 'route_title_new_user',
-        },
-        {
-            route: '/testformdata',
-            id: 'test-form-data',
-            source: TestFormData,
-            titleId: 'route_test_form_data',
         },
         {
             route: '/404',

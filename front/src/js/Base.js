@@ -99,7 +99,7 @@ class Base extends Component {
             this.appState.set('user.username', null);
             this.appState.set('user.token', null);
             removeUser();
-            this.Router.changeRoute('/', true);
+            this.Router.changeRoute('/login', true);
             return;
         }
         this.paint();

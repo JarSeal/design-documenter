@@ -95,6 +95,10 @@ export const assetsObj = {
         en: 'Home',
         fi: 'Koti',
     },
+    route_title_login: {
+        en: 'Login',
+        fi: 'Kirjaudu',
+    },
     route_title_404: {
         en: '404',
         fi: '404',

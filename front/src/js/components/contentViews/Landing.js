@@ -12,10 +12,6 @@ class Landing extends Component {
         super(data);
         this.appState = data.appState;
         this.template = `<div><h2>${data.title}</h2></div>`;
-        this.loginForm = this.addChild(new FormCreator({
-            id: 'beacon-main-login',
-            afterFormSentFn: this.afterLogin,
-        }));
         this.mainScreenInitiated = false;
         this.mainScreenCompos = [];
     }
@@ -60,16 +56,8 @@ class Landing extends Component {
                 this.mainScreenCompos[i].draw();
             }
         } else {
-            this.elem.classList.add('login-view');
-            this.loginForm.draw();
+            this.Router.changeRoute('/login');
         }
-    }
-
-    afterLogin = (response, remember) => {
-        saveUser(response, remember);
-        this.appState.set('user.username', response.data.username);
-        this.appState.set('user.token', response.data.token);
-        this.appState.set('user.loggedIn', true);
     }
 }
 
