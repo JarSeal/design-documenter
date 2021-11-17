@@ -59,7 +59,6 @@ loginRouter.post('/', async (request, response) => {
         // Login counter here and create a cool down period for x wrong logins
         return response.status(401).json({
             error: 'invalid username and/or password',
-            errors: { username: true, password: true, },
         });
     }
 
