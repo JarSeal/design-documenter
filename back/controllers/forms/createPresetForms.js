@@ -6,7 +6,6 @@ const routeAccess = require('./../../shared').CONFIG.ROUTE_ACCESS;
 const createPresetForms = async () => {
     let newForm, checkForm;
     for(let i=0; i<formData.length; i++) {
-        if(formData[i].imported) continue;
         checkForm = await Form.findOne({ formId: formData[i].formId });
         if(!checkForm) {
             formData[i].created = {
@@ -18,10 +17,8 @@ const createPresetForms = async () => {
             await newForm.save();
             logger.log(`Preset form '${formData[i].formId}' created.`);
         }
-        formData[i].imported = true;
     }
     for(let i=0; i<routeAccess.length; i++) {
-        if(routeAccess[i].imported) continue;
         checkForm = await Form.findOne({ formId: routeAccess[i].formId });
         if(!checkForm) {
             routeAccess[i].created = {
@@ -34,7 +31,6 @@ const createPresetForms = async () => {
             await newForm.save();
             logger.log(`Preset form (route access) '${routeAccess[i].formId}' created.`);
         }
-        routeAccess[i].imported = true;
     }
 };
 

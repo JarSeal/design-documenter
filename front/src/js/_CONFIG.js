@@ -5,7 +5,7 @@ import Login from "./components/contentViews/Login";
 import NewUser from "./components/contentViews/NewUser";
 import Universe from "./components/contentViews/Universe";
 import { getText } from "./helpers/lang";
-import { checkCredentials } from "./helpers/storage";
+import { checkRouteAccess } from "./helpers/storage";
 const conf = require('./shared').CONFIG.UI;
 
 const _conf = {
@@ -18,18 +18,15 @@ const _conf = {
             id: 'route-landing',
             source: Landing,
             titleId: 'route_title_landing',
+            beforeDraw: async (routerData) => {
+                return await checkRouteAccess(routerData);
+            },
         },
         {
             route: '/login',
             id: 'route-login',
             source: Login,
             titleId: 'route_title_login',
-        },
-        {
-            route: '/to/:path',
-            id: 'route-landing',
-            source: Landing,
-            titleId: 'route_title_landing',
         },
         {
             route: '/uni',
@@ -40,16 +37,18 @@ const _conf = {
             id: 'route-universe',
             source: Universe,
             titleId: 'route_universe',
-            // beforeDraw: async (routerData) => {
-            //     const check = await checkCredentials({ userLevel: 2 }, routerData.curRoute);
-            //     return check;
-            // },
+            beforeDraw: async (routerData) => {
+                return await checkRouteAccess(routerData);
+            },
         },
         {
             route: '/newuser',
             id: 'new-user',
             source: NewUser,
             titleId: 'route_title_new_user',
+            beforeDraw: async (routerData) => {
+                return await checkRouteAccess(routerData);
+            },
         },
         {
             route: '/404',

@@ -2,11 +2,9 @@ const formsRouter = require('express').Router();
 const logger = require('./../utils/logger');
 const Form = require('./../models/form');
 const { validatePrivileges } = require('./forms/formEngine');
-const createPresetForms = require('./forms/createPresetForms');
 
 // Get all forms
 formsRouter.get('/', async (request, response) => {
-    await createPresetForms();
 
     const result = await Form.find({});
     response.json(result);
@@ -14,8 +12,7 @@ formsRouter.get('/', async (request, response) => {
 
 // Get form by id
 formsRouter.get('/:id', async (request, response) => {
-    await createPresetForms();
-
+    
     const formId = request.params.id;
     let result = await Form.findOne({ formId });
     if(!result) {

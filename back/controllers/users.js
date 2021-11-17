@@ -5,11 +5,9 @@ const logger = require('./../utils/logger');
 const User = require('./../models/user');
 const Form = require('./../models/form');
 const { validateFormData } = require('./forms/formEngine');
-const createPresetForms = require('./forms/createPresetForms');
 
 // Get all users
 usersRouter.get('/', async (request, response) => {
-    await createPresetForms();
 
     const result = await User.find({}).populate('userGroups', {
         name: 1, id: 1
@@ -19,7 +17,6 @@ usersRouter.get('/', async (request, response) => {
 
 // Register user
 usersRouter.post('/', async (request, response) => {
-    await createPresetForms();
 
     const body = request.body;
     const formData = await Form.findOne({ formId: body.id });

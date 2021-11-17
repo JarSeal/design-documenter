@@ -38,12 +38,6 @@ const ROUTE_ACCESS = [
         editorRightsLevel: 8,
     },
     {
-        path: '/to/:path',
-        formId: 'route-landing',
-        useRightsLevel: 2,
-        editorRightsLevel: 8,
-    },
-    {
         path: '/uni/:universeId',
         formId: 'route-universe',
         useRightsLevel: 2,

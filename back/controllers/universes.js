@@ -4,11 +4,9 @@ const Universe = require('./../models/universe');
 const Form = require('./../models/form');
 const User = require('./../models/user');
 const { validateFormData } = require('./forms/formEngine');
-const createPresetForms = require('./forms/createPresetForms');
 
 // Get all universes
 universeRouter.get('/', async (request, response) => {
-    await createPresetForms();
     
     const result = await Universe.find({})
         .sort({ 'created.date': 'desc' })
@@ -18,7 +16,6 @@ universeRouter.get('/', async (request, response) => {
 
 // Get one universe
 universeRouter.get('/:id', async (request, response) => {
-    await createPresetForms();
 
     const result = await Universe.findOne({ universeId: request.params.id })
         .populate('created.by', { username: 1, name: 1 });
@@ -27,7 +24,6 @@ universeRouter.get('/:id', async (request, response) => {
 
 // Create a new universe
 universeRouter.post('/', async (request, response) => {
-    await createPresetForms();
 
     const body = request.body;
     const formData = await Form.findOne({ formId: body.id });

@@ -63,7 +63,7 @@ const getStorage = (type) => {
     return null;
 };
 
-const checkCredentials = async (required, curRoute) => {
+const old_checkCredentials = async (required, curRoute) => {
     const timestamp = Date.now() / 1000 | 0;
     if(!access || timestamp > latestAccessCheck + 20) { // 20 second cache
         const config = getApiHeaders();
@@ -91,11 +91,40 @@ const checkCredentials = async (required, curRoute) => {
     return null;
 };
 
+const checkRouteAccess = async (routeData) => {
+    if(!routeData || !routeData.route) {
+        const logger = new Logger('checkRouteAccess: *****');
+        logger.error('Could not check route access, routeData or routeData.route missing.');
+        throw new Error('Call stack');
+    }
+    const id = routeData.route.id;
+    const config = getApiHeaders();
+    const url = _CONFIG.apiBaseUrl + '/api/login/access';
+    const payload = { ids: [{
+        from: 'form',
+        id
+    }] };
+    try {
+        const response = await axios.post(url, payload, config);
+        const access = response.data[id];
+        if(!access) {
+            if(getUser()) return '/401';
+            return '/login';
+        }
+    }
+    catch(exception) {
+        const logger = new Logger('checkRouteAccess: *****');
+        logger.error('Could not check route access', exception);
+        throw new Error('Call stack');
+    }
+    return null;
+};
+
 export {
     saveUser,
     getUser,
     removeUser,
     getApiHeaders,
     getStorage,
-    checkCredentials,
+    checkRouteAccess,
 };
