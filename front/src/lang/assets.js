@@ -154,5 +154,21 @@ export const assetsObj = {
     unauthorised: {
         en: 'Unauthorised.',
         fi: 'Ei oikeuksia.',
-    }
+    },
+    user_level_9_super_admin: {
+        en: 'Super Admin',
+        fi: 'Super admin',
+    },
+    user_level_8_administrator: {
+        en: 'Administrator',
+        fi: 'Administraattori',
+    },
+    user_level_2_beacon_user: {
+        en: 'Basic User',
+        fi: 'Peruskäyttäjä',
+    },
+    user_level_0_anonymous_user: {
+        en: 'Not-Logged-In User',
+        fi: 'Kirjautumaton käyttäjä',
+    },
 };

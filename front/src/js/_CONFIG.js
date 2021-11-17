@@ -6,15 +6,10 @@ import NewUser from "./components/contentViews/NewUser";
 import Universe from "./components/contentViews/Universe";
 import { getText } from "./helpers/lang";
 import { checkCredentials } from "./helpers/storage";
+const conf = require('./shared').CONFIG.UI;
 
-export const _CONFIG = {
-    bbarSize: 64,
-    langs: ['en'],
+const _conf = {
     langFn: getText,
-    basePath: '/beacon',
-    titlePrefix: '',
-    titleSuffix: ' | Beacon',
-    apiBaseUrl: 'http://localhost:3001',
     lsKeyPrefix: 'bjs_',
     ssKeyPrefix: 'bjs_',
     routes: [
@@ -72,3 +67,5 @@ export const _CONFIG = {
         },
     ],
 };
+
+export const _CONFIG = Object.assign({}, _conf, conf);
