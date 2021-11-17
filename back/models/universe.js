@@ -23,6 +23,39 @@ const universeSchema = mongoose.Schema({
         autoCreated: Boolean,
         date: Date,
     },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    access: {
+        readLevel: Number,
+        writeLevel: Number,
+        deleteLevel: Number,
+        readUsers: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        }],
+        writeUsers: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        }],
+        deleteUsers: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        }],
+        readGroups: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        }],
+        writeGroups: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        }],
+        deleteGroups: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        }],
+    },
     edited: [
         {
             by: {

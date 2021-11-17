@@ -5,32 +5,51 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
 const userGroupSchema = mongoose.Schema({
-    username: {
+    name: {
+        type: String,
+        required: true,
+    },
+    description: String,
+    groupId: {
         type: String,
         required: true,
         unique: true,
-        minlength: 5,
     },
     level: {
         type: Number,
         required: true,
     },
     created: {
-        by: String,
+        by: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        },
         autoCreated: Boolean,
         date: Date,
     },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
     edited: [
         {
-            by: String,
+            by: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+            },
             date: Date,
         }
+    ],
+    managers: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        },
     ],
     users: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
-            rights: [],
         }
     ],
 });
