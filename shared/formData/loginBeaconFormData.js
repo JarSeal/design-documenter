@@ -19,34 +19,45 @@ const loginBeaconFormData = {
         },
     },
     form: {
-        onErrorMsgId: 'login_error_empty',
+        onErrorsMsgId: 'login_error_empty',
+        formErrors: {
+            error401Id: 'login_error_wrong',
+        },
+        showBottomMsg: false,
         submitButton: {
             id: 'submit-button',
-            labelId: 'login',
+            labelId: 'login_button',
         },
         submitFields: ['username', 'password'],
         fieldsets: [
             {
-                type: 'textinput',
-                id: 'username',
-                labelId: 'username',
-                required: true,
-                maxLength: 32,
+                id: 'main-fieldset-beacon-login',
+                fields: [
+                    {
+                        type: 'textinput',
+                        id: 'username',
+                        labelId: 'username',
+                        required: true,
+                        maxLength: 32,
+                        hideMsg: true,
+                    },
+                    {
+                        type: 'textinput',
+                        id: 'password',
+                        labelId: 'password',
+                        required: true,
+                        maxLength: 64,
+                        password: true,
+                        hideMsg: true,
+                    },
+                    {
+                        type: 'checkbox',
+                        id: 'remember-me',
+                        labelId: 'login_remember_me',
+                    },
+                    { type: 'divider' },
+                ],
             },
-            {
-                type: 'textinput',
-                id: 'password',
-                labelId: 'password',
-                required: true,
-                maxLength: 64,
-                password: true,
-            },
-            {
-                type: 'checkbox',
-                id: 'remember-me',
-                labelId: 'remember_me',
-            },
-            { type: 'divider' },
         ],
     },
 };

@@ -3,7 +3,6 @@ import { saveUser } from "../../helpers/storage";
 import { Component } from "../../LIGHTER";
 import Button from "../buttons/Button";
 import FormCreator from "../forms/FormCreator";
-import LoginForm from "../forms/LoginForm";
 import UniverseItem from "../widgets/listItems/UniverseItem";
 import ListLoader from "../widgets/ListLoader";
 import "./Landing.scss";
@@ -13,8 +12,9 @@ class Landing extends Component {
         super(data);
         this.appState = data.appState;
         this.template = `<div><h2>${data.title}</h2></div>`;
-        this.loginForm = this.addChild(new LoginForm({
-            afterLoginFn: this.afterLogin,
+        this.loginForm = this.addChild(new FormCreator({
+            id: 'beacon-main-login',
+            afterFormSentFn: this.afterLogin,
         }));
         this.mainScreenInitiated = false;
         this.mainScreenCompos = [];

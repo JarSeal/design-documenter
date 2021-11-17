@@ -25,7 +25,7 @@ usersRouter.post('/', async (request, response) => {
     const formData = await Form.findOne({ formId: body.id });
     const error = await validateFormData(formData, request);
     if(error) {
-        logger.log(`Error with form validation. (+ error, formId, token)`, error, body.id, request.token);
+        logger.log('Error with form validation. (+ error, formId, token)', error, body.id, request.token);
         response.status(error.code).json(error.obj);
         return;
     }

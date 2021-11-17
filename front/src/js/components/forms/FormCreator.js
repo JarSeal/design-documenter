@@ -262,6 +262,7 @@ class FormCreator extends Component {
             label,
             placeholder,
             attach: fieldsetId,
+            hideMsg: field.hideMsg,
             disabled: field.disabled,
             maxlength: field.maxLength,
             value: field.maxLength && field.initValue
@@ -306,6 +307,7 @@ class FormCreator extends Component {
             class: field.class,
             label,
             attach: fieldsetId,
+            hideMsg: field.hideMsg,
             disabled: field.disabled,
             value: field.initValue,
             options,
@@ -344,6 +346,7 @@ class FormCreator extends Component {
             class: field.class,
             label,
             attach: fieldsetId,
+            hideMsg: field.hideMsg,
             disabled: field.disabled,
             checked: field.initValue ? true : false,
             field,
@@ -382,6 +385,7 @@ class FormCreator extends Component {
             label,
             placeholder,
             attach: fieldsetId,
+            hideMsg: field.hideMsg,
             disabled: field.disabled,
             maxlength: field.maxLength,
             value: field.maxLength && field.initValue
@@ -651,29 +655,7 @@ class FormCreator extends Component {
             // this.logger.log('API RESPONSE', response);
             this.formState.set('sending', false);
             if(response.data && response.data.errors) {
-                // Server side validation error
-                const keys = Object.keys(response.data.errors);
-                for(let i=0; i<keys.length; i++) {
-                    let fieldsetId;
-                    //Find fieldset
-                    for(let f=0; f<this.data.fieldsets.length; f++) {
-                        const fieldset = this.data.fieldsets[f];
-                        for(let k=0; k<fieldset.fields.length; k++) {
-                            const field = fieldset.fields[k];
-                            if(field.id === keys[i]) {
-                                fieldsetId = fieldset.id;
-                                break;
-                            }
-                        }
-                        if(fieldsetId) break;
-                    }
-                    this.fieldErrors.set(keys[i], {
-                        errorMsgId: response.data.errors[keys[i]],
-                        fieldsetId,
-                    });
-                    this._displayFieldError(keys[i]);
-                    this.fieldsetErrorCheck(fieldsetId);
-                }
+                this._serverSideFieldErrors(response);
             } else {
                 // Success
                 this._resetForm();
@@ -693,13 +675,31 @@ class FormCreator extends Component {
             }
         } catch(exception) {
             this.formState.set('sending', false);
-            this._resetForm();
             this.formSubmitted = true;
-            this.reDrawSelf({
-                class: [this.cssClasses.formError, this.cssClasses.formSent],
-            });
-            this._setFormMsg(getText('form_submit_error'));
-            this.logger.error('Form sending failed (Form Creator).', exception);
+            if(exception.response && exception.response.status === 401) {
+                if(this.data.formErrors && this.data.formErrors.error401Id) {
+                    if(exception.response.data && exception.response.data.errors) {
+                        this._serverSideFieldErrors(exception.response);
+                    }
+                    this.elem.classList.add(this.cssClasses.formSent);
+                    this.elem.classList.add(this.cssClasses.formError);
+                    this._setFormMsg(getText(this.data.formErrors.error401Id));
+                } else {
+                    this._resetForm();
+                    this.reDrawSelf({
+                        class: [this.cssClasses.formError, this.cssClasses.formSent],
+                    });
+                    this._setFormMsg(getText('unauthorised'));
+                    this.logger.error('Form sending failed (Form Creator).', exception);
+                }
+            } else {
+                this._resetForm();
+                this.reDrawSelf({
+                    class: [this.cssClasses.formError, this.cssClasses.formSent],
+                });
+                this._setFormMsg(getText('form_submit_error'));
+                this.logger.error('Form sending failed (Form Creator).', exception);
+            }
         }
     }
 
@@ -731,6 +731,36 @@ class FormCreator extends Component {
         }
     }
 
+    _serverSideFieldErrors = (response) => {
+        // Server side validation error
+        const keys = Object.keys(response.data.errors);
+        for(let i=0; i<keys.length; i++) {
+            let fieldsetId;
+            //Find fieldset
+            for(let f=0; f<this.data.fieldsets.length; f++) {
+                const fieldset = this.data.fieldsets[f];
+                for(let k=0; k<fieldset.fields.length; k++) {
+                    const field = fieldset.fields[k];
+                    if(field.id === keys[i]) {
+                        fieldsetId = fieldset.id;
+                        break;
+                    }
+                }
+                if(fieldsetId) break;
+            }
+            if(response.data.errors[keys[i]] === true) {
+                this.fieldErrors.set(keys[i], { errorMsg: '', fieldsetId, });
+            } else {
+                this.fieldErrors.set(keys[i], {
+                    errorMsgId: response.data.errors[keys[i]],
+                    fieldsetId,
+                });
+            }
+            this._displayFieldError(keys[i]);
+            this.fieldsetErrorCheck(fieldsetId);
+        }
+    }
+
     _checkAllFieldErrors = () => {
         let formHasErrors = false;
         for(let i=0; i<this.componentsOrder.length; i++) {
@@ -738,7 +768,12 @@ class FormCreator extends Component {
             if(comp.errorChecker) {
                 if(!this.fieldErrors.get(comp.id)) { // This check is for server side errors
                     // Run this check only if there aren't any errors before (this would clear server side errors)
-                    comp.errorChecker({ val: comp.value, id: comp.id, field: comp.data.field, fieldsetId: comp.fieldsetId});
+                    comp.errorChecker({
+                        val: comp.value,
+                        id: comp.id,
+                        field: comp.data.field,
+                        fieldsetId: comp.fieldsetId,
+                    });
                 }
                 this._displayFieldError(comp.id);
                 if(this.fieldErrors.get(comp.id)) {

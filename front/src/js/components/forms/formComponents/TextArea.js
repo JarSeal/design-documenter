@@ -5,6 +5,7 @@ import Component from "../../../LIGHTER/Component";
 // - label = field label [String]
 // - placeholder = field placeholder [String]
 // - name = textarea name property [String]
+// - hideMsg = if field's error message should not be shown [Booolean]
 // - changeFn = function that is ran after each change [Function]
 // - disabled = whether the field is disabled or not [Boolean]
 // - error = an error boolean or object to tell if the field has errors {hasError:Boolean, errorMsg:String} [Boolean/Object]
@@ -72,7 +73,7 @@ class TextArea extends Component {
         if(err) {
             this.errorComp.discard();
             this.elem.classList.add('form-elem--error');
-            if(err.errorMsg) {
+            if(err.errorMsg && !this.data.hideMsg) {
                 this.elem.classList.add('form-elem--error-msg');
                 this.errorComp.draw({ text: err.errorMsg });
             }
