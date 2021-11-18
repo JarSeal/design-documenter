@@ -5,7 +5,6 @@ import Button from "../buttons/Button";
 import FormCreator from "../forms/FormCreator";
 import UniverseItem from "../widgets/listItems/UniverseItem";
 import ListLoader from "../widgets/ListLoader";
-import "./Landing.scss";
 
 class Landing extends Component {
     constructor(data) {
@@ -50,13 +49,9 @@ class Landing extends Component {
     }
 
     paint = () => {
-        if(this.appState.get('user.loggedIn')) {
-            this.initMainScreen();
-            for(let i=0; i<this.mainScreenCompos.length; i++) {
-                this.mainScreenCompos[i].draw();
-            }
-        } else {
-            this.Router.changeRoute('/login');
+        this.initMainScreen();
+        for(let i=0; i<this.mainScreenCompos.length; i++) {
+            this.mainScreenCompos[i].draw();
         }
     }
 }
