@@ -44,8 +44,8 @@ const tokenExtractor = (request, response, next) => {
 };
 
 module.exports = {
-  requestLogger,
-  unknownEndpoint,
-  errorHandler,
-  tokenExtractor
+    requestLogger,
+    unknownEndpoint,
+    errorHandler,
+    tokenExtractor
 };
