@@ -171,4 +171,12 @@ export const assetsObj = {
         en: 'Not-Logged-In User',
         fi: 'Kirjautumaton käyttäjä',
     },
+    '404_default_message': {
+        en: 'Sorry, could not locate the address that was asked.',
+        fi: 'Pahoittelut, hakemaasi osoitetta ei löytynyt',
+    },
+    '404_universe': {
+        en: `Uups, the Universe with the id '$[0]' could not be found.`,
+        fi: `Uups, Universumia id:llä '$[0]' ei löytynyt.`,
+    },
 };

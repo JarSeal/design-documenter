@@ -51,7 +51,7 @@ const _conf = {
             },
         },
         {
-            route: '/404',
+            route: '/404/:type/:data',
             id: 'route-four-o-four',
             source: FourOFour,
             is404: true,
@@ -61,7 +61,6 @@ const _conf = {
             route: '/401',
             id: 'route-four-o-one',
             source: FourOOne,
-            is404: true,
             titleId: 'route_title_401',
         },
     ],

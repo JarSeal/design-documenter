@@ -8,4 +8,13 @@ const validateSimpleId = (id) => {
     return regex.test(id);
 }
 
-module.exports = { validateEmail, validateSimpleId };
+const urlParamRoute = (route, recover) => {
+    if(!recover) return route.replace(/\//g, '**');
+    return route.replace(/**/g, '/');
+};
+
+module.exports = {
+    validateEmail,
+    validateSimpleId,
+    urlParamRoute,
+};
