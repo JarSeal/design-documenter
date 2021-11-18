@@ -111,6 +111,10 @@ export const assetsObj = {
         en: 'New User',
         fi: 'Uusi käyttäjä',
     },
+    route_title_settings: {
+        en: 'Settings',
+        fi: 'Asetukset',
+    },
     route_test_form_data: {
         en: 'All form data examples',
         fi: 'Kaikki lomake-datan esimerkit',

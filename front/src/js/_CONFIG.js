@@ -3,6 +3,7 @@ import FourOOne from "./components/contentViews/FourOOne";
 import Landing from "./components/contentViews/Landing";
 import Login from "./components/contentViews/Login";
 import NewUser from "./components/contentViews/NewUser";
+import Settings from "./components/contentViews/Settings";
 import Universe from "./components/contentViews/Universe";
 import { getText } from "./helpers/lang";
 import { checkRouteAccess } from "./helpers/storage";
@@ -43,9 +44,18 @@ const _conf = {
         },
         {
             route: '/newuser',
-            id: 'new-user',
+            id: 'route-new-user',
             source: NewUser,
             titleId: 'route_title_new_user',
+            beforeDraw: async (routerData) => {
+                return await checkRouteAccess(routerData);
+            },
+        },
+        {
+            route: '/settings',
+            id: 'route-settings',
+            source: Settings,
+            titleId: 'route_title_settings',
             beforeDraw: async (routerData) => {
                 return await checkRouteAccess(routerData);
             },

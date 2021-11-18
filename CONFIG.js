@@ -45,8 +45,14 @@ const ROUTE_ACCESS = [
     },
     {
         path: '/newuser',
-        formId: 'new-user',
+        formId: 'route-new-user',
         useRightsLevel: 0,
+        editorRightsLevel: 8,
+    },
+    {
+        path: '/settings',
+        formId: 'route-settings',
+        useRightsLevel: 2,
         editorRightsLevel: 8,
     },
     {
