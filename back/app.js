@@ -11,6 +11,7 @@ const healthRouter = require('./controllers/health');
 const middleware = require('./utils/middleware');
 const logger = require('./utils/logger');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 const createPresetForms = require('./controllers/forms/createPresetForms');
 
 logger.info('connecting to', config.MONGODB_URI);
@@ -30,6 +31,7 @@ mongoose.connect(config.MONGODB_URI, {
     });
 
 app.use(cors());
+app.use(cookieParser());
 app.use('/', express.static('build'));
 app.use('/teest', express.static('build/teest'));
 app.use(express.json());

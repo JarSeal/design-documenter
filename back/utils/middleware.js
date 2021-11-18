@@ -43,9 +43,15 @@ const tokenExtractor = (request, response, next) => {
     next();
 };
 
+const cookieCheck = (req, res, next) => {
+
+    next();
+};
+
 module.exports = {
     requestLogger,
     unknownEndpoint,
     errorHandler,
-    tokenExtractor
+    tokenExtractor,
+    cookieCheck,
 };
