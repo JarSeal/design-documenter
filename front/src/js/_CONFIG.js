@@ -53,6 +53,10 @@ const _conf = {
         },
         {
             route: '/settings',
+            redirect: '/settings/default',
+        },
+        {
+            route: '/settings/:tab',
             id: 'route-settings',
             source: Settings,
             titleId: 'route_title_settings',
