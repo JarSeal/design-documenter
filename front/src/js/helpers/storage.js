@@ -36,7 +36,10 @@ const getApiHeaders = () => {
     const token = user ? user.token : null;
     if(!token) return {};
     return {
-        headers: { Authorization: `bearer ${token}` },
+        headers: {
+            Authorization: `bearer ${token}`
+        },
+        withCredentials: true,
     };
 };
 

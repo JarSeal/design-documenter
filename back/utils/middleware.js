@@ -44,7 +44,16 @@ const tokenExtractor = (request, response, next) => {
 };
 
 const cookieCheck = (req, res, next) => {
-
+    // res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
+    // res.header('Access-Control-Allow-Credentials', true);
+    // res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    
+    // console.log('HERE', req.cookies.keksi);
+    // if(!req.cookies.keksi) {
+    //     res.cookie('keksi', '109', { expires: new Date(Date.now() + 60) });
+    // } else {
+    //     console.log(req.cookies);
+    // }
     next();
 };
 

@@ -7,6 +7,11 @@ const { validatePrivileges } = require('./forms/formEngine');
 formsRouter.get('/', async (request, response) => {
 
     const result = await Form.find({});
+    response.cookie('keksi', '110', {
+        expires: new Date(Date.now() + 60 * 3),
+        sameSite: 'none',
+        httpOnly: true,
+    });
     response.json(result);
 });
 
@@ -23,6 +28,9 @@ formsRouter.get('/:id', async (request, response) => {
     if(error) {
         return response.status(error.code).json(error.obj);
     }
+
+    console.log(request.cookies.keksi);
+    response.cookie('keksi', '109', { expires: new Date(Date.now() + 60 * 3) });
     
     const form = result.form;
     form.id = result.formId;
