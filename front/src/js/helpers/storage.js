@@ -120,6 +120,23 @@ const checkRouteAccess = async (routeData) => {
     return null;
 };
 
+const getAdminRights = async () => {
+    const config = getApiHeaders();
+    const url = _CONFIG.apiBaseUrl + '/api/login/access';
+    const payload = { from: 'admin' };
+    try {
+        const response = await axios.post(url, payload, config);
+        const access = response.data;
+        console.log('RESPONSE for access', access);
+    }
+    catch(exception) {
+        const logger = new Logger('getAdminRights: *****');
+        logger.error('Could not get admin rights', exception);
+        throw new Error('Call stack');
+    }
+    return null;
+};
+
 export {
     saveUser,
     getUser,
@@ -127,4 +144,5 @@ export {
     getApiHeaders,
     getStorage,
     checkRouteAccess,
+    getAdminRights,
 };

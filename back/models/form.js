@@ -20,6 +20,7 @@ const formSchema = mongoose.Schema({
         type: Number,
         required: true,
     },
+    admin: Boolean,
     useRightsUsers: [{ type: String }],
     useRightsGroups: [{ type: String }],
     editorRightsLevel: {
