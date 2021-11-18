@@ -1,13 +1,9 @@
 const CONFIG = require('./../CONFIG');
 const parsers = require('./parsers');
-const newUserFormData = require('./formData/newUserFormData');
-const newUniverseFormData = require('./formData/newUniverseFormData');
-const testFormData = require('./formData/testFormData');
+const formData = require('./formData/formData');
 
 module.exports = {
     CONFIG,
     parsers,
-    newUserFormData,
-    newUniverseFormData,
-    testFormData,
+    formData,
 };

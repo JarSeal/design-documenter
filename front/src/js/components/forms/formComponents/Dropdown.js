@@ -5,6 +5,7 @@ import { Component } from "../../../LIGHTER";
 // - options = array of objects with value, label, disabled [Array[Object]] [required]
 // - label = field label [String]
 // - name = input name property [String]
+// - hideMsg = if field's error message should not be shown [Booolean]
 // - changeFn = function that is ran after each change [Function]
 // - value or selected = tells which value is selected (value is primary) [String]
 // - emptyIsAnOption = [Boolean]
@@ -79,7 +80,7 @@ class Dropdown extends Component {
         if(err) {
             this.errorComp.discard();
             this.elem.classList.add('form-elem--error');
-            if(err.errorMsg) {
+            if(err.errorMsg && !this.data.hideMsg) {
                 this.elem.classList.add('form-elem--error-msg');
                 this.errorComp.draw({ text: err.errorMsg });
             }

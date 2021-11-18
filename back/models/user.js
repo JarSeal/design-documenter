@@ -31,12 +31,6 @@ const userSchema = mongoose.Schema({
         minlength: 1,
         maxlength: 1,
     },
-    userGroups: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'UserGroup',
-        },
-    ],
     created: {
         by: String,
         publicForm: Boolean,
@@ -49,28 +43,6 @@ const userSchema = mongoose.Schema({
             date: Date,
         }
     ],
-    rights: {
-        universe: {
-            canCreate: Boolean,
-            canEdit: Boolean,
-            canDelete: Boolean,
-        },
-        structure: {
-            canCreate: Boolean,
-            canEdit: Boolean,
-            canDelete: Boolean,
-        },
-        beacon: {
-            canCreate: Boolean,
-            canEdit: Boolean,
-            canDelete: Boolean,
-        },
-        dataset: {
-            canCreate: Boolean,
-            canEdit: Boolean,
-            canDelete: Boolean,
-        },
-    },
 });
 
 userSchema.plugin(uniqueValidator);

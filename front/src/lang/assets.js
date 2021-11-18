@@ -95,6 +95,10 @@ export const assetsObj = {
         en: 'Home',
         fi: 'Koti',
     },
+    route_title_login: {
+        en: 'Login',
+        fi: 'Kirjaudu',
+    },
     route_title_404: {
         en: '404',
         fi: '404',
@@ -150,5 +154,29 @@ export const assetsObj = {
     unauthorised: {
         en: 'Unauthorised.',
         fi: 'Ei oikeuksia.',
-    }
+    },
+    user_level_9_super_admin: {
+        en: 'Super Admin',
+        fi: 'Super admin',
+    },
+    user_level_8_administrator: {
+        en: 'Administrator',
+        fi: 'Administraattori',
+    },
+    user_level_2_beacon_user: {
+        en: 'Basic User',
+        fi: 'Peruskäyttäjä',
+    },
+    user_level_0_anonymous_user: {
+        en: 'Not-Logged-In User',
+        fi: 'Kirjautumaton käyttäjä',
+    },
+    '404_default_message': {
+        en: 'Sorry, could not locate the address that was asked.',
+        fi: 'Pahoittelut, hakemaasi osoitetta ei löytynyt',
+    },
+    '404_universe': {
+        en: `Uups, the Universe with the id '$[0]' could not be found.`,
+        fi: `Uups, Universumia id:llä '$[0]' ei löytynyt.`,
+    },
 };

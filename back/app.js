@@ -11,6 +11,7 @@ const healthRouter = require('./controllers/health');
 const middleware = require('./utils/middleware');
 const logger = require('./utils/logger');
 const mongoose = require('mongoose');
+const createPresetForms = require('./controllers/forms/createPresetForms');
 
 logger.info('connecting to', config.MONGODB_URI);
 
@@ -22,6 +23,7 @@ mongoose.connect(config.MONGODB_URI, {
 })
     .then(() => {
         logger.info('connected to MongoDB');
+        createPresetForms();
     })
     .catch((error) => {
         logger.error('error connection to MongoDB:', error.message);

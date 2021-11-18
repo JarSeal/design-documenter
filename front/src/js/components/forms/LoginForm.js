@@ -119,7 +119,7 @@ class LoginForm extends Component {
     login = async credentials => {
         this.loginState.set('checking', true);
         try {
-            const url = _CONFIG.apiBaseUrl + '/login';
+            const url = _CONFIG.apiBaseUrl + '/api/login';
             const response = await axios.post(url, credentials);
             const remember = this.loginState.get('rememberMe');
             this.loginState.set('user', '');

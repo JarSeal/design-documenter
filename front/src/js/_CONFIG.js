@@ -1,20 +1,15 @@
 import FourOFour from "./components/contentViews/FourOFour";
 import FourOOne from "./components/contentViews/FourOOne";
 import Landing from "./components/contentViews/Landing";
+import Login from "./components/contentViews/Login";
 import NewUser from "./components/contentViews/NewUser";
 import Universe from "./components/contentViews/Universe";
-import TestFormData from "./components/contentViews/TestFormData";
 import { getText } from "./helpers/lang";
-import { checkCredentials } from "./helpers/storage";
+import { checkRouteAccess } from "./helpers/storage";
+const conf = require('./shared').CONFIG.UI;
 
-export const _CONFIG = {
-    bbarSize: 64,
-    langs: ['en'],
+const _conf = {
     langFn: getText,
-    basePath: '/beacon',
-    titlePrefix: '',
-    titleSuffix: ' | Beacon',
-    apiBaseUrl: 'http://localhost:3001/api',
     lsKeyPrefix: 'bjs_',
     ssKeyPrefix: 'bjs_',
     routes: [
@@ -23,12 +18,15 @@ export const _CONFIG = {
             id: 'route-landing',
             source: Landing,
             titleId: 'route_title_landing',
+            beforeDraw: async (routerData) => {
+                return await checkRouteAccess(routerData);
+            },
         },
         {
-            route: '/to/:path',
-            id: 'route-landing',
-            source: Landing,
-            titleId: 'route_title_landing',
+            route: '/login',
+            id: 'route-login',
+            source: Login,
+            titleId: 'route_title_login',
         },
         {
             route: '/uni',
@@ -40,8 +38,7 @@ export const _CONFIG = {
             source: Universe,
             titleId: 'route_universe',
             beforeDraw: async (routerData) => {
-                const check = await checkCredentials({ userLevel: 2 }, routerData.curRoute);
-                return check;
+                return await checkRouteAccess(routerData);
             },
         },
         {
@@ -49,15 +46,12 @@ export const _CONFIG = {
             id: 'new-user',
             source: NewUser,
             titleId: 'route_title_new_user',
+            beforeDraw: async (routerData) => {
+                return await checkRouteAccess(routerData);
+            },
         },
         {
-            route: '/testformdata',
-            id: 'test-form-data',
-            source: TestFormData,
-            titleId: 'route_test_form_data',
-        },
-        {
-            route: '/404',
+            route: '/404/:type/:data',
             id: 'route-four-o-four',
             source: FourOFour,
             is404: true,
@@ -67,8 +61,9 @@ export const _CONFIG = {
             route: '/401',
             id: 'route-four-o-one',
             source: FourOOne,
-            is404: true,
             titleId: 'route_title_401',
         },
     ],
 };
+
+export const _CONFIG = Object.assign({}, _conf, conf);

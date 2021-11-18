@@ -24,23 +24,32 @@ class NewUser extends Component {
             && this.Router.curRouteData.params.universeId
             && parsers.validateSimpleId(this.Router.curRouteData.params.universeId)
         ) {
+            if(this.mainSpinner) this.mainSpinner.draw({ show: true });
             this.universeId = this.Router.curRouteData.params.universeId;
             this.getData();
         } else {
-            this.Router.changeRoute('/404');
+            const path404 = '/404/universe/' + (this.Router.curRouteData.params
+                ? this.Router.curRouteData.params.universeId
+                : '');
+            this.Router.changeRoute(path404);
             return;
         }
     }
 
     paint = () => {
-        if(this.mainSpinner) this.mainSpinner.draw();
+        if(this.mainSpinner) this.mainSpinner.draw({ show: true });
     }
 
     getData = async () => {
         this.loadingData = true;
-        const url = _CONFIG.apiBaseUrl + '/universes/' + this.universeId;
-        const response = await axios.get(url);
+        const path = '/api/universes/' + this.universeId;
+        const response = await axios.get(_CONFIG.apiBaseUrl + path);
         const uniData = response.data;
+
+        if(!uniData) {
+            this.Router.changeRoute('/404/universe/' + this.universeId);
+            return;
+        }
         
         const uniTitleElem = this.elem.querySelector('#'+this.id+'-main-title');
         uniTitleElem.innerText = uniData.title;

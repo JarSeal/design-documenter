@@ -10,18 +10,44 @@ const formSchema = mongoose.Schema({
         required: true,
         unique: true,
     },
-    form: {
-        type: Object,
+    path: String,
+    method: String,
+    type: {
+        type: String,
         required: true,
     },
+    useRightsLevel: {
+        type: Number,
+        required: true,
+    },
+    useRightsUsers: [{ type: String }],
+    useRightsGroups: [{ type: String }],
+    editorRightsLevel: {
+        type: Number,
+        required: true,
+    },
+    editorRightsUsers: [{ type: String }],
+    editorRightsGroups: [{ type: String }],
+    editorOptions: {
+        type: Object,
+    },
+    form: {
+        type: Object,
+    },
     created: {
-        by: String,
+        by: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        },
         autoCreated: Boolean,
         date: Date,
     },
     edited: [
         {
-            by: String,
+            by: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+            },
             autoEdited: Boolean,
             date: Date,
         }

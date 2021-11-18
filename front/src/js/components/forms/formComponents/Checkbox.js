@@ -3,6 +3,7 @@ import { Component } from "../../../LIGHTER";
 // Attributes:
 // - label = field label [String]
 // - name = input name property [String]
+// - hideMsg = if field's error message should not be shown [Booolean]
 // - changeFn = function that is ran after each change [Function]
 // - value or checked = whether the box is checked or not [Boolean]
 // - disabled = whether the field is disabled or not [Boolean]
@@ -80,7 +81,7 @@ class Checkbox extends Component {
         if(err) {
             this.errorComp.discard();
             this.elem.classList.add('form-elem--error');
-            if(err.errorMsg) {
+            if(err.errorMsg && !this.data.hideMsg) {
                 this.elem.classList.add('form-elem--error-msg');
                 this.errorComp.draw({ text: err.errorMsg });
             }

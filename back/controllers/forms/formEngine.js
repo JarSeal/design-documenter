@@ -1,5 +1,6 @@
 const User = require('../../models/user');
 const shared = require('../../shared');
+const logger = require('./../../utils/logger');
 
 const validateField = (form, key, value) => {
     if(key === 'id') return null;
@@ -70,7 +71,7 @@ const textArea = (field, value) => {
 };
 
 const checkAllowedFieldTypes = (type) => {
-    if(type === 'divider' || type === 'subheading') {
+    if(type === 'divider' || type === 'subheading' || type === 'subdescription') {
         return null;
     }
     return 'Field type not found.';
@@ -93,19 +94,15 @@ const validateKeys = (form, keys) => {
 
 const validateFormData = async (formData, request, user) => {
     const body = request.body;
-    console.log(request.token, request.decodedToken);
     if(!formData || !formData.form) {
         return {
             code: 404,
             obj: { msg: 'Could not find form (' + body.id + '),' },
         };
     }
-    const form = formData.form;
 
-    const error = await validatePrivileges(form, request, user);
-    if(error) {
-        return error;
-    }
+    const error = await validatePrivileges(formData, request, user);
+    if(error) return error;
 
     const keys = Object.keys(body);
     const keysFound = validateKeys(formData.form, keys);
@@ -134,8 +131,9 @@ const validateFormData = async (formData, request, user) => {
 };
 
 const validatePrivileges = async (form, request, user) => {
-    if(form.server && form.server.useRightLevel && form.server.useRightLevel !== 0) {
+    if(form.useRightsLevel && form.useRightsLevel !== 0) {
         if(!request.token || (request.decodedToken && !request.decodedToken.id)) {
+            logger.log(`Token missing, expired, or invalid. Trying to access form with id ${form.formId}. (+ token)`, request.token);
             return {
                 code: 401,
                 obj: {
@@ -147,8 +145,9 @@ const validatePrivileges = async (form, request, user) => {
             if(!user) {
                 user = await User.findById(request.decodedToken.id);
             }
-            const requiredLevel = form.server.userLevel;
+            const requiredLevel = form.useRightsLevel;
             if(requiredLevel > user.userLevel) {
+                logger.log(`User not authorised. Trying to access form with id ${form.formId}. (+ token)`, request.token);
                 return {
                     code: 401,
                     obj: {
@@ -163,17 +162,9 @@ const validatePrivileges = async (form, request, user) => {
     }
 };
 
-const removeServerData = (form) => {
-    if(form.server) {
-        delete form.server;
-    }
-    return form;
-};
-
 module.exports = {
     validateField,
     validateKeys,
     validateFormData,
     validatePrivileges,
-    removeServerData
 };

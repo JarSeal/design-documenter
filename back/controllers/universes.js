@@ -7,6 +7,7 @@ const { validateFormData } = require('./forms/formEngine');
 
 // Get all universes
 universeRouter.get('/', async (request, response) => {
+    
     const result = await Universe.find({})
         .sort({ 'created.date': 'desc' })
         .populate('created.by', { username: 1, name: 1 });
@@ -15,6 +16,7 @@ universeRouter.get('/', async (request, response) => {
 
 // Get one universe
 universeRouter.get('/:id', async (request, response) => {
+
     const result = await Universe.findOne({ universeId: request.params.id })
         .populate('created.by', { username: 1, name: 1 });
     response.json(result);
@@ -22,25 +24,20 @@ universeRouter.get('/:id', async (request, response) => {
 
 // Create a new universe
 universeRouter.post('/', async (request, response) => {
+
     const body = request.body;
     const formData = await Form.findOne({ formId: body.id });
-
-    if(!request.token || !request.decodedToken.id) {
-        return response.status(401).json({
-            unauthorised: true,
-            error: 'token missing or invalid',
-        });
-    }
-
-    const user = await User.findById(request.decodedToken.id);
     
+    const user = await User.findById(request.decodedToken.id);
     const error = await validateFormData(formData, request, user);
     if(error) {
+        logger.log('Error with form validation. (+ error, formId, token)', error, body.id, request.token);
         return response.status(error.code).json(error.obj);
     }
 
     const findUniverse = await Universe.findOne({ universeId: body.universeId.trim() });
     if(findUniverse) {
+        logger.log('Universe id taken. (+ universeId)', body.universeId.trim(), request.token);
         return response.json({
             msg: 'Bad request. Validation errors.',
             errors: { universeId: 'universe_id_taken' },
@@ -59,7 +56,7 @@ universeRouter.post('/', async (request, response) => {
 
     const savedUniverse = await universe.save();
     
-    logger.log(`Created universe '${body.universeTitle.trim()}'' (id: '${body.universeId.trim()}').`);
+    logger.log(`Created universe '${body.universeTitle.trim()}'' (id: '${body.universeId.trim()}'). (+ token)`, request.token);
 
     response.json(savedUniverse);
 });
