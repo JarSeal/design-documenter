@@ -209,7 +209,7 @@ class Router {
             }
         }
         if(this._compareRoutes(route, this.curRoute) && !forceUpdate) return;
-        if(forceUpdate && this._compareRoutes(route, this.curRoute)) {
+        if(forceUpdate) {
             this.curRouteData.component.discard(true);
             this.curRouteData.component = null;
         }
