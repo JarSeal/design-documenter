@@ -13,8 +13,9 @@ loginRouter.post('/access', async (request, response) => {
         check = await Form.find({ admin: true });
         console.log('CHECKING ADMIN', check);
     } else if(request.body.from === 'checklogin') {
-        // Check if logged in and return username and status
-        if(request.session.username) {
+        // Check if logged in and if the saved browserId is the same to the saved to session
+        const browserId = request.body.browserId;
+        if(request.session.username && browserId === request.session.browserId) {
             result.username = request.session.username;
             result.loggedIn = true;
         } else {
@@ -54,8 +55,9 @@ loginRouter.post('/', async (request, response) => {
     const passwordCorrect = user === null
         ? false
         : await bcrypt.compare(body.password, user.passwordHash);
+    const browserId = body.browserId;
 
-    if(!(user && passwordCorrect)) {
+    if(!(user && passwordCorrect && browserId && browserId.length == 32)) {
         // Login counter here and create a cool down period for x wrong logins
         return response.status(401).json({
             error: 'invalid username and/or password',
@@ -67,6 +69,7 @@ loginRouter.post('/', async (request, response) => {
     request.session.username = user.username;
     request.session.userLevel = user.userLevel;
     request.session._id = user._id;
+    request.session.browserId = body.browserId;
 
     response
         .status(200)

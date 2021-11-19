@@ -14,6 +14,7 @@ import TextArea from "./formComponents/TextArea";
 // Attributes for data:
 // - local = must be set to true if local forms are used (all the form data must then be in in the data) [Boolean]
 // - afterFormSentFn = function to call after succesfull form submission [Function]
+// - addToMessage = Object to add to the post or put body [Object]
 class FormCreator extends Component {
     constructor(data) {
         super(data);
@@ -635,6 +636,10 @@ class FormCreator extends Component {
             payload.id = this.id;
             let url = _CONFIG.apiBaseUrl + (this.data.api || '/api/forms/filled');
             let response;
+
+            if(this.data.addToMessage && this.data.addToMessage.length == 32) {
+                payload.browserId = this.data.addToMessage;
+            }
 
             if(this.data.method && this.data.method === 'PUT') {
                 url += '/' + this.id;

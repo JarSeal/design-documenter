@@ -9,6 +9,7 @@ class Landing extends Component {
         this.loginForm = this.addChild(new FormCreator({
             id: 'beacon-main-login',
             afterFormSentFn: this.afterLogin,
+            addToMessage: this.appState.get('browserId'),
         }));
     }
 

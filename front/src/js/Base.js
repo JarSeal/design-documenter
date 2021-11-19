@@ -48,6 +48,7 @@ class Base extends Component {
             resizers: {},
             orientationLand: true,
             curRoute: '/',
+            browserId: this.data.browserId,
             user: {
                 loggedIn: false,
                 username: null,
@@ -55,14 +56,14 @@ class Base extends Component {
             Dialog: null,
         });
         state.set('loading.main', true, this.paint);
-        // state.addListener('user.loggedIn', this.listenLoggedStatus);
         return state;
     }
 
     loadData = async () => {
         // Mock data loading with setTimeout
+        const browserId = this.appState.get('browserId');
         const url = _CONFIG.apiBaseUrl + '/api/login/access';
-        const payload = { from: 'checklogin' };
+        const payload = { from: 'checklogin', browserId };
         const response = await axios.post(url, payload, { withCredentials: true });
 
         if(response && response.data && response.data.loggedIn) {
