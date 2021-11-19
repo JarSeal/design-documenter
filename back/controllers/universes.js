@@ -28,7 +28,7 @@ universeRouter.post('/', async (request, response) => {
     const body = request.body;
     const formData = await Form.findOne({ formId: body.id });
     
-    const user = await User.findById(request.decodedToken.id);
+    const user = await User.findById(request.session._id);
     const error = await validateFormData(formData, request, user);
     if(error) {
         logger.log('Error with form validation. (+ error, formId, token)', error, body.id, request.token);

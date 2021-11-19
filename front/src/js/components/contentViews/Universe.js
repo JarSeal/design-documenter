@@ -28,9 +28,11 @@ class NewUser extends Component {
             this.universeId = this.Router.curRouteData.params.universeId;
             this.getData();
         } else {
-            const path404 = '/404/universe/' + (this.Router.curRouteData.params
-                ? this.Router.curRouteData.params.universeId
-                : '');
+            const path404 = '/404/universe/' + (
+                this.Router.curRouteData.params
+                    ? this.Router.curRouteData.params.universeId
+                    : ''
+            );
             this.Router.changeRoute(path404);
             return;
         }
@@ -43,7 +45,7 @@ class NewUser extends Component {
     getData = async () => {
         this.loadingData = true;
         const path = '/api/universes/' + this.universeId;
-        const response = await axios.get(_CONFIG.apiBaseUrl + path);
+        const response = await axios.get(_CONFIG.apiBaseUrl + path, { withCredentials: true });
         const uniData = response.data;
 
         if(!uniData) {

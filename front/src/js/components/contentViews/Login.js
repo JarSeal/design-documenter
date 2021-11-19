@@ -1,4 +1,3 @@
-import { saveUser } from "../../helpers/storage";
 import { Component } from "../../LIGHTER";
 import FormCreator from "../forms/FormCreator";
 
@@ -22,10 +21,11 @@ class Landing extends Component {
     }
 
     afterLogin = (response, remember) => {
-        saveUser(response, remember);
-        this.appState.set('user.username', response.data.username);
-        this.appState.set('user.token', response.data.token);
-        this.appState.set('user.loggedIn', true);
+        if(response && response.data && response.data.loggedIn) {
+            this.appState.set('user.username', response.data.username);
+            this.appState.set('user.loggedIn', true);
+            this.Router.changeRoute('/');
+        }
     }
 }
 

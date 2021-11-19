@@ -1,6 +1,8 @@
+import axios from 'axios';
 import Component from '../../LIGHTER/Component';
 import RouteLink from '../buttons/RouteLink';
 import Button from '../buttons/Button';
+import { _CONFIG } from '../../_CONFIG';
 
 class MainMenu extends Component {
     constructor(data) {
@@ -38,9 +40,17 @@ class MainMenu extends Component {
         }
     }
 
-    click = (e) => {
+    click = async (e) => {
         e.preventDefault();
+        this.appState.set('user.username', null);
         this.appState.set('user.loggedIn', false);
+
+        const url = _CONFIG.apiBaseUrl + '/api/login/access';
+        const payload = { from: 'logout' };
+        const response = await axios.post(url, payload, { withCredentials: true });
+        document.cookie = "connect.sid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        
+        this.Router.changeRoute('/login');
     }
 }
 

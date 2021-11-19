@@ -10,7 +10,6 @@ import Dropdown from "./formComponents/Dropdown";
 import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";
 import TextArea from "./formComponents/TextArea";
-import { getApiHeaders } from '../../helpers/storage';
 
 // Attributes for data:
 // - local = must be set to true if local forms are used (all the form data must then be in in the data) [Boolean]
@@ -635,17 +634,16 @@ class FormCreator extends Component {
         try {
             payload.id = this.id;
             let url = _CONFIG.apiBaseUrl + (this.data.api || '/api/forms/filled');
-            const config = getApiHeaders();
             let response;
 
             if(this.data.method && this.data.method === 'PUT') {
                 url += '/' + this.id;
-                response = await axios.put(url, payload, config);
+                response = await axios.put(url, payload, { withCredentials: true });
             } else if(this.data.method && this.data.method === 'POST') {
-                response = await axios.post(url, payload, config);
+                response = await axios.post(url, payload, { withCredentials: true });
             } else if(this.data.method && this.data.method === 'DELETE') {
                 url += '/' + this.id;
-                response = await axios.delete(url, payload, config);
+                response = await axios.delete(url, payload, { withCredentials: true });
             } else {
                 this.formState.set('sending', false);
                 this._setFormMsg(getText('form_submit_error'));
@@ -709,9 +707,7 @@ class FormCreator extends Component {
         let response;
         try {
             const url = _CONFIG.apiBaseUrl + '/api/forms/' + id;
-            const config = getApiHeaders();
-            axios.defaults.withCredentials = true;
-            response = await axios.get(url, config);
+            response = await axios.get(url, { withCredentials: true });
             
             // this.logger.log('API RESPONSE', response);
             this.data = Object.assign({}, this.data, response.data);

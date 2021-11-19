@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const loginRouter = require('express').Router();
 const User = require('./../models/user');
@@ -13,6 +12,25 @@ loginRouter.post('/access', async (request, response) => {
     if(request.body.from === 'admin') {
         check = await Form.find({ admin: true });
         console.log('CHECKING ADMIN', check);
+    } else if(request.body.from === 'checklogin') {
+        // Check if logged in and return username and status
+        if(request.session.username) {
+            result.username = request.session.username;
+            result.loggedIn = true;
+        } else {
+            result.loggedIn = false;
+            if(request.cookies['connect.sid']) {
+                response.clearCookie('connect.sid');
+            }
+        }
+    } else if(request.body.from === 'logout') {
+        if(request.session.username) {
+            request.session.destroy();
+            if(request.cookies['connect.sid']) {
+                response.clearCookie('connect.sid');
+            }
+        }
+        result.loggedIn = false;
     } else {
         const ids = request.body.ids;
         for(let i=0; i<ids.length; i++) {
@@ -41,17 +59,11 @@ loginRouter.post('/', async (request, response) => {
         // Login counter here and create a cool down period for x wrong logins
         return response.status(401).json({
             error: 'invalid username and/or password',
+            loggedIn: false,
         });
     }
 
-    const userForToken = {
-        username: user.username,
-        userLevel: user.userLevel,
-        id: user._id,
-    };
-
-    const token = jwt.sign(userForToken, process.env.SECRET);
-
+    // Create a new session:
     request.session.username = user.username;
     request.session.userLevel = user.userLevel;
     request.session._id = user._id;
@@ -59,7 +71,7 @@ loginRouter.post('/', async (request, response) => {
     response
         .status(200)
         .send({
-            // token,
+            loggedIn: true,
             username: user.username,
         });
 });
