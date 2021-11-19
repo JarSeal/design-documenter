@@ -33,14 +33,14 @@ mongoose.connect(config.MONGODB_URI, {
 
 app.use(cookieParser());
 app.use(session({
-    secret: 'mysecretusyufdj',
+    secret: process.env.SECRET,
     cookie: {
-        maxAge: 600000,
-        secure: false
+        maxAge: 300000,
+        secure: false,
     },
     saveUninitialized: false,
     resave: false,
-    unset: 'destroy'
+    unset: 'destroy',
 }));
 app.use(cors({
     origin: [

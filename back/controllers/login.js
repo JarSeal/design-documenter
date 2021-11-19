@@ -52,10 +52,14 @@ loginRouter.post('/', async (request, response) => {
 
     const token = jwt.sign(userForToken, process.env.SECRET);
 
+    request.session.username = user.username;
+    request.session.userLevel = user.userLevel;
+    request.session._id = user._id;
+
     response
         .status(200)
         .send({
-            token,
+            // token,
             username: user.username,
         });
 });

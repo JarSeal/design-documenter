@@ -1,9 +1,13 @@
 const checkAccess = (request, check) => {
     if(!check) return false;
     let userLevel = 0, userId;
-    if(request.token && request.decodedToken.userLevel) {
-        userLevel = request.decodedToken.userLevel;
-        userId = request.decodedToken.id;
+    // if(request.token && request.decodedToken.userLevel) {
+    //     userLevel = request.decodedToken.userLevel;
+    //     userId = request.decodedToken.id;
+    // }
+    if(request.session.user) {
+        userLevel = request.session.userLevel;
+        userId = request.session._id;
     }
     
     // Check user level
