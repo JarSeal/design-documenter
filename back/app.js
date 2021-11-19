@@ -52,12 +52,10 @@ app.use(cors({
     credentials: true,
     exposedHeaders: ['set-cookie'],
 }));
-app.use(middleware.cookieCheck);
 app.use('/', express.static('build'));
 app.use('/teest', express.static('build/teest'));
 app.use(express.json());
 app.use(middleware.requestLogger);
-app.use(middleware.tokenExtractor);
 
 if(process.env.SERVE_STATIC === 'production') {
     app.use(express.static('front'));
