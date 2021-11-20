@@ -1,5 +1,4 @@
 import { getText } from "../../helpers/lang";
-import { saveUser } from "../../helpers/storage";
 import { Component } from "../../LIGHTER";
 import Button from "../buttons/Button";
 import FormCreator from "../forms/FormCreator";

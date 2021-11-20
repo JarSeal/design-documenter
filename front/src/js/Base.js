@@ -1,10 +1,10 @@
+import axios from 'axios';
 import { State, Component, Router } from './LIGHTER';
 import Bbar from './components/bbar/Bbar';
 import MainLoader from './components/loaders/MainLoader';
 import { _CONFIG } from './_CONFIG';
 import baseHTML from './base.html';
 import './Base.scss';
-import { getUser, removeUser } from './helpers/storage';
 import { loadAssets } from './helpers/lang';
 import Dialog from './components/widgets/Dialog';
 import './components/widgets/Dialog.scss';
@@ -42,42 +42,38 @@ class Base extends Component {
     }
 
     _initAppState = () => {
-        // Check if current browser has been used to log in
-        let loggedIn = false,
-            username = null,
-            token = null;
-        const user = getUser();
-        if(user) {
-            username = user.user;
-            token = user.token;
-            loggedIn = true;
-        }
-
         // Init appState
         const state = new State({
             loading: { main: null },
             resizers: {},
             orientationLand: true,
             curRoute: '/',
+            browserId: this.data.browserId,
             user: {
-                loggedIn: loggedIn,
-                username: username,
-                token: token,
+                loggedIn: false,
+                username: null,
             },
             Dialog: null,
         });
         state.set('loading.main', true, this.paint);
-        state.addListener('user.loggedIn', this.listenLoggedStatus);
         return state;
     }
 
-    loadData() {
+    loadData = async () => {
         // Mock data loading with setTimeout
-        setTimeout(() => {
-            this.mainLoader.hide(() => {
-                this.appState.set('loading.main', false);
-            });
-        }, 500);
+        const browserId = this.appState.get('browserId');
+        const url = _CONFIG.apiBaseUrl + '/api/login/access';
+        const payload = { from: 'checklogin', browserId };
+        const response = await axios.post(url, payload, { withCredentials: true });
+
+        if(response && response.data && response.data.loggedIn) {
+            this.appState.set('user.username', response.data.username);
+            this.appState.set('user.loggedIn', response.data.loggedIn);
+        }
+
+        this.mainLoader.hide(() => {
+            this.appState.set('loading.main', false);
+        });
     }
 
     _initResizer() {
@@ -97,12 +93,10 @@ class Base extends Component {
     listenLoggedStatus = (loggedIn, oldValue) => {
         if(!loggedIn) {
             this.appState.set('user.username', null);
-            this.appState.set('user.token', null);
-            removeUser();
             this.Router.changeRoute('/login', true);
             return;
         }
-        this.paint();
+        this.Router.changeRoute('/', true);
     }
 }
 

@@ -28,7 +28,7 @@ const loginBeaconFormData = {
             id: 'submit-button',
             labelId: 'login_button',
         },
-        submitFields: ['username', 'password'],
+        submitFields: ['username', 'password', 'remember-me'],
         fieldsets: [
             {
                 id: 'main-fieldset-beacon-login',

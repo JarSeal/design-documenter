@@ -10,11 +10,11 @@ import Dropdown from "./formComponents/Dropdown";
 import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";
 import TextArea from "./formComponents/TextArea";
-import { getApiHeaders } from '../../helpers/storage';
 
 // Attributes for data:
 // - local = must be set to true if local forms are used (all the form data must then be in in the data) [Boolean]
 // - afterFormSentFn = function to call after succesfull form submission [Function]
+// - addToMessage = Object to add to the post or put body [Object]
 class FormCreator extends Component {
     constructor(data) {
         super(data);
@@ -635,17 +635,20 @@ class FormCreator extends Component {
         try {
             payload.id = this.id;
             let url = _CONFIG.apiBaseUrl + (this.data.api || '/api/forms/filled');
-            const config = getApiHeaders();
             let response;
+
+            if(this.data.addToMessage && this.data.addToMessage.length == 32) {
+                payload.browserId = this.data.addToMessage;
+            }
 
             if(this.data.method && this.data.method === 'PUT') {
                 url += '/' + this.id;
-                response = await axios.put(url, payload, config);
+                response = await axios.put(url, payload, { withCredentials: true });
             } else if(this.data.method && this.data.method === 'POST') {
-                response = await axios.post(url, payload, config);
+                response = await axios.post(url, payload, { withCredentials: true });
             } else if(this.data.method && this.data.method === 'DELETE') {
                 url += '/' + this.id;
-                response = await axios.delete(url, payload, config);
+                response = await axios.delete(url, payload, { withCredentials: true });
             } else {
                 this.formState.set('sending', false);
                 this._setFormMsg(getText('form_submit_error'));
@@ -709,16 +712,18 @@ class FormCreator extends Component {
         let response;
         try {
             const url = _CONFIG.apiBaseUrl + '/api/forms/' + id;
-            const config = getApiHeaders();
-            response = await axios.get(url, config);
+            response = await axios.get(url, { withCredentials: true });
             
             // this.logger.log('API RESPONSE', response);
             this.data = Object.assign({}, this.data, response.data);
             this.formState.set('getting', false);
         } catch(exception) {
-            let text;
+            let text, toLogout = false;
             if(exception.response && exception.response.status === 401) {
                 text = getText('unauthorised');
+                if(exception.response.data && exception.response.data._sess === false) {
+                    toLogout = true;
+                }
             } else {
                 text = getText('could_not_get_form_data');
             }
@@ -726,8 +731,14 @@ class FormCreator extends Component {
             this.formState.set('getting', false);
             this.formSubmitted = true;
             this.template = `<div class="error-msg">${text}</div>`;
-            this.reDrawSelf();
             this.logger.error('Form data retrieving failed (Form Creator).', exception, this);
+            if(toLogout) {
+                setTimeout(() => {
+                    this.Router.changeRoute('/logout');
+                }, 500);
+            } else {
+                this.reDrawSelf();
+            }
         }
     }
 

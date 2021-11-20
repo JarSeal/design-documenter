@@ -132,22 +132,23 @@ const validateFormData = async (formData, request, user) => {
 
 const validatePrivileges = async (form, request, user) => {
     if(form.useRightsLevel && form.useRightsLevel !== 0) {
-        if(!request.token || (request.decodedToken && !request.decodedToken.id)) {
-            logger.log(`Token missing, expired, or invalid. Trying to access form with id ${form.formId}. (+ token)`, request.token);
+        const sess = request.session;
+        if(!sess || !sess.username) {
+            logger.log(`User not authenticated or session has expired. Trying to access form with id ${form.formId}. (+ token)`, request.token);
             return {
                 code: 401,
                 obj: {
-                    unauthorised: true,
-                    msg: 'Token missing, expired, or invalid.'
+                    msg: 'User not authenticated or session has expired.',
+                    _sess: false,
                 },
             };
         } else {
             if(!user) {
-                user = await User.findById(request.decodedToken.id);
+                user = await User.findById(sess._id);
             }
             const requiredLevel = form.useRightsLevel;
             if(requiredLevel > user.userLevel) {
-                logger.log(`User not authorised. Trying to access form with id ${form.formId}. (+ token)`, request.token);
+                logger.log(`User not authorised. Trying to access form with id ${form.formId}.`);
                 return {
                     code: 401,
                     obj: {
@@ -157,7 +158,7 @@ const validatePrivileges = async (form, request, user) => {
                 };
             }
 
-            // Check here for possible groups
+            // Check here for possible groups and user list
         }
     }
 };

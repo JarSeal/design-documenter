@@ -2,6 +2,7 @@ import FourOFour from "./components/contentViews/FourOFour";
 import FourOOne from "./components/contentViews/FourOOne";
 import Landing from "./components/contentViews/Landing";
 import Login from "./components/contentViews/Login";
+import Logout from "./components/contentViews/Logout";
 import NewUser from "./components/contentViews/NewUser";
 import Settings from "./components/contentViews/Settings";
 import Universe from "./components/contentViews/Universe";
@@ -63,6 +64,12 @@ const _conf = {
             beforeDraw: async (routerData) => {
                 return await checkRouteAccess(routerData);
             },
+        },
+        {
+            route: '/logout',
+            id: 'route-logout',
+            titleId: 'route_title_login',
+            source: Logout,
         },
         {
             route: '/404/:type/:data',

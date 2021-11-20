@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const logger = require('./logger');
 
 const requestLogger = (request, response, next) => {
@@ -27,31 +26,8 @@ const errorHandler = (error, request, response, next) => {
     next(error);
 };
 
-const tokenExtractor = (request, response, next) => {
-    const authorization = request.get('authorization');
-    request.token = null;
-    if(authorization && authorization.toLowerCase().startsWith('bearer ')) {
-        request.token = authorization.substring(7);
-    }
-    if(request.token) {
-        try {
-            request.decodedToken = jwt.verify(request.token, process.env.SECRET);
-        } catch(e) {
-            return response.status(401).send({ error: 'invalid token' });
-        }
-    }
-    next();
-};
-
-const cookieCheck = (req, res, next) => {
-
-    next();
-};
-
 module.exports = {
     requestLogger,
     unknownEndpoint,
     errorHandler,
-    tokenExtractor,
-    cookieCheck,
 };

@@ -12,7 +12,8 @@
     "prettify": "prettier --write 'src/**/*.js'"
   },
   "dependencies": {
-    "axios": "^0.19.2"
+    "@fingerprintjs/fingerprintjs": "^3.3.0",
+    "axios": "^0.24.0"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",

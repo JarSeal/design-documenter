@@ -63,7 +63,7 @@ class Dialog extends Component {
         if(data.appear) {
             setTimeout(() => {
                 if(this.elem) this.elem.classList.add('appear');
-            }, 0);
+            }, 20);
         }
         this._setSizes();
     }

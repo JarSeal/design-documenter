@@ -1,4 +1,3 @@
-import { UI } from "../../../../../CONFIG";
 import { getAdminRights } from "../../helpers/storage";
 import { Component } from "../../LIGHTER";
 import TabSystem from "../buttons/TabSystem";

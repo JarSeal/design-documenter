@@ -1,6 +1,6 @@
 import Component from '../../LIGHTER/Component';
 import RouteLink from '../buttons/RouteLink';
-import Button from '../buttons/Button';
+import { _CONFIG } from '../../_CONFIG';
 
 class MainMenu extends Component {
     constructor(data) {
@@ -21,9 +21,9 @@ class MainMenu extends Component {
             link: '/settings',
             text: 'S',
         }));
-        this.logoutButton = this.addChild(new Button({
+        this.logoutButton = this.addChild(new RouteLink({
             id: 'logout-button',
-            click: this.click,
+            link: '/logout',
             text: 'L',
         }));
     }
@@ -36,11 +36,6 @@ class MainMenu extends Component {
         } else {
             this.newuserButton.draw();
         }
-    }
-
-    click = (e) => {
-        e.preventDefault();
-        this.appState.set('user.loggedIn', false);
     }
 }
 

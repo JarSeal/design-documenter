@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const loginRouter = require('express').Router();
 const User = require('./../models/user');
@@ -9,10 +8,26 @@ const { checkAccess } = require('../utils/checkAccess');
 loginRouter.post('/access', async (request, response) => {
 
     const result = {};
-    let check;
+    let check, removeCookie = false;
     if(request.body.from === 'admin') {
         check = await Form.find({ admin: true });
         console.log('CHECKING ADMIN', check);
+    } else if(request.body.from === 'checklogin') {
+        // Check if logged in and if the saved browserId is the same to the saved to session
+        const browserId = request.body.browserId;
+        if(request.session.username && browserId === request.session.browserId) {
+            result.username = request.session.username;
+            result.loggedIn = true;
+        } else {
+            result.loggedIn = false;
+            removeCookie = true;
+        }
+    } else if(request.body.from === 'logout') {
+        if(request.session.username) {
+            request.session.destroy();
+            removeCookie = true;
+        }
+        result.loggedIn = false;
     } else {
         const ids = request.body.ids;
         for(let i=0; i<ids.length; i++) {
@@ -23,6 +38,14 @@ loginRouter.post('/access', async (request, response) => {
             }
             result[ids[i].id] = checkAccess(request, check);
         }
+    }
+
+    if(!request.session || !request.session.username) {
+        result['_sess'] = false;
+    }
+
+    if(removeCookie && request.cookies['connect.sid']) {
+        response.clearCookie('connect.sid');
     }
     
     return response.json(result);
@@ -36,26 +59,31 @@ loginRouter.post('/', async (request, response) => {
     const passwordCorrect = user === null
         ? false
         : await bcrypt.compare(body.password, user.passwordHash);
+    const browserId = body.browserId;
 
-    if(!(user && passwordCorrect)) {
+    if(!(user && passwordCorrect && browserId && browserId.length == 32)) {
         // Login counter here and create a cool down period for x wrong logins
         return response.status(401).json({
             error: 'invalid username and/or password',
+            loggedIn: false,
         });
     }
 
-    const userForToken = {
-        username: user.username,
-        userLevel: user.userLevel,
-        id: user._id,
-    };
-
-    const token = jwt.sign(userForToken, process.env.SECRET);
+    // Create a new session:
+    request.session.username = user.username;
+    request.session.userLevel = user.userLevel;
+    request.session._id = user._id;
+    request.session.browserId = body.browserId;
+    if(body['remember-me']) {
+        request.session.cookie.maxAge = 864000000; // 10 days
+    } else {
+        request.session.cookie.maxAge = 3600000; // 1 hour
+    }
 
     response
         .status(200)
         .send({
-            token,
+            loggedIn: true,
             username: user.username,
         });
 });

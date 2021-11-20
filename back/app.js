@@ -3,6 +3,8 @@ const express = require('express');
 require('express-async-errors');
 const app = express();
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
 const usersRouter = require('./controllers/users');
 const loginRouter = require('./controllers/login');
 const formsRouter = require('./controllers/forms');
@@ -11,7 +13,6 @@ const healthRouter = require('./controllers/health');
 const middleware = require('./utils/middleware');
 const logger = require('./utils/logger');
 const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
 const createPresetForms = require('./controllers/forms/createPresetForms');
 
 logger.info('connecting to', config.MONGODB_URI);
@@ -30,13 +31,33 @@ mongoose.connect(config.MONGODB_URI, {
         logger.error('error connection to MongoDB:', error.message);
     });
 
-app.use(cors());
 app.use(cookieParser());
+app.use(session({
+    secret: process.env.SECRET,
+    cookie: {
+        maxAge: 3600000, // 1000 = 1 second
+        secure: false,
+        sameSite: 'lax',
+    },
+    saveUninitialized: false,
+    resave: false,
+    unset: 'destroy',
+    rolling: true,
+}));
+app.use(cors({
+    origin: [
+        'http://localhost:8080',
+        'https://localhost:8080',
+        'http://localhost:3001',
+        'https://localhost:3001',
+    ],
+    credentials: true,
+    exposedHeaders: ['set-cookie'],
+}));
 app.use('/', express.static('build'));
 app.use('/teest', express.static('build/teest'));
 app.use(express.json());
 app.use(middleware.requestLogger);
-app.use(middleware.tokenExtractor);
 
 if(process.env.SERVE_STATIC === 'production') {
     app.use(express.static('front'));
