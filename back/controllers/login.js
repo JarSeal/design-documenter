@@ -74,6 +74,11 @@ loginRouter.post('/', async (request, response) => {
     request.session.userLevel = user.userLevel;
     request.session._id = user._id;
     request.session.browserId = body.browserId;
+    if(body['remember-me']) {
+        request.session.cookie.maxAge = 864000000; // 10 days
+    } else {
+        request.session.cookie.maxAge = 3600000; // 1 hour
+    }
 
     response
         .status(200)
