@@ -718,9 +718,12 @@ class FormCreator extends Component {
             this.data = Object.assign({}, this.data, response.data);
             this.formState.set('getting', false);
         } catch(exception) {
-            let text;
+            let text, toLogout = false;
             if(exception.response && exception.response.status === 401) {
                 text = getText('unauthorised');
+                if(exception.response.data && exception.response.data._sess === false) {
+                    toLogout = true;
+                }
             } else {
                 text = getText('could_not_get_form_data');
             }
@@ -728,8 +731,14 @@ class FormCreator extends Component {
             this.formState.set('getting', false);
             this.formSubmitted = true;
             this.template = `<div class="error-msg">${text}</div>`;
-            this.reDrawSelf();
             this.logger.error('Form data retrieving failed (Form Creator).', exception, this);
+            if(toLogout) {
+                setTimeout(() => {
+                    this.Router.changeRoute('/logout');
+                }, 500);
+            } else {
+                this.reDrawSelf();
+            }
         }
     }
 

@@ -41,6 +41,7 @@ app.use(session({
     saveUninitialized: false,
     resave: false,
     unset: 'destroy',
+    rolling: true,
 }));
 app.use(cors({
     origin: [

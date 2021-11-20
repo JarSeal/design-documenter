@@ -138,8 +138,8 @@ const validatePrivileges = async (form, request, user) => {
             return {
                 code: 401,
                 obj: {
-                    unauthorised: true,
-                    msg: 'User not authenticated or session has expired.'
+                    msg: 'User not authenticated or session has expired.',
+                    _sess: false,
                 },
             };
         } else {
