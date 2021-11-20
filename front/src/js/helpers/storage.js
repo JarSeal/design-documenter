@@ -18,6 +18,7 @@ const checkRouteAccess = async (routeData) => {
         const response = await axios.post(url, payload, { withCredentials: true });
         const access = response.data[id];
         if(!access) {
+
             return '/login';
         }
     }

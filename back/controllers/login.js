@@ -8,7 +8,7 @@ const { checkAccess } = require('../utils/checkAccess');
 loginRouter.post('/access', async (request, response) => {
 
     const result = {};
-    let check;
+    let check, removeCookie = false;
     if(request.body.from === 'admin') {
         check = await Form.find({ admin: true });
         console.log('CHECKING ADMIN', check);
@@ -20,16 +20,12 @@ loginRouter.post('/access', async (request, response) => {
             result.loggedIn = true;
         } else {
             result.loggedIn = false;
-            if(request.cookies['connect.sid']) {
-                response.clearCookie('connect.sid');
-            }
+            removeCookie = true;
         }
     } else if(request.body.from === 'logout') {
         if(request.session.username) {
             request.session.destroy();
-            if(request.cookies['connect.sid']) {
-                response.clearCookie('connect.sid');
-            }
+            removeCookie = true;
         }
         result.loggedIn = false;
     } else {
@@ -42,6 +38,10 @@ loginRouter.post('/access', async (request, response) => {
             }
             result[ids[i].id] = checkAccess(request, check);
         }
+    }
+
+    if(removeCookie && request.cookies['connect.sid']) {
+        response.clearCookie('connect.sid');
     }
     
     return response.json(result);

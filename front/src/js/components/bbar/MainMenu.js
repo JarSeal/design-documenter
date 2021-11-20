@@ -25,7 +25,7 @@ class MainMenu extends Component {
         }));
         this.logoutButton = this.addChild(new Button({
             id: 'logout-button',
-            click: this.click,
+            click: this.logOut,
             text: 'L',
         }));
     }
@@ -40,7 +40,7 @@ class MainMenu extends Component {
         }
     }
 
-    click = async (e) => {
+    logOut = async (e) => {
         e.preventDefault();
         this.appState.set('user.username', null);
         this.appState.set('user.loggedIn', false);
@@ -48,7 +48,6 @@ class MainMenu extends Component {
         const url = _CONFIG.apiBaseUrl + '/api/login/access';
         const payload = { from: 'logout' };
         const response = await axios.post(url, payload, { withCredentials: true });
-        document.cookie = "connect.sid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         
         this.Router.changeRoute('/login');
     }
