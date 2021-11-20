@@ -40,6 +40,10 @@ loginRouter.post('/access', async (request, response) => {
         }
     }
 
+    if(!request.session || !request.session.username) {
+        result['_sess'] = false;
+    }
+
     if(removeCookie && request.cookies['connect.sid']) {
         response.clearCookie('connect.sid');
     }

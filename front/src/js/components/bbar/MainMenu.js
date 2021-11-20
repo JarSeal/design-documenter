@@ -1,7 +1,5 @@
-import axios from 'axios';
 import Component from '../../LIGHTER/Component';
 import RouteLink from '../buttons/RouteLink';
-import Button from '../buttons/Button';
 import { _CONFIG } from '../../_CONFIG';
 
 class MainMenu extends Component {
@@ -23,9 +21,9 @@ class MainMenu extends Component {
             link: '/settings',
             text: 'S',
         }));
-        this.logoutButton = this.addChild(new Button({
+        this.logoutButton = this.addChild(new RouteLink({
             id: 'logout-button',
-            click: this.logOut,
+            link: '/logout',
             text: 'L',
         }));
     }
@@ -38,18 +36,6 @@ class MainMenu extends Component {
         } else {
             this.newuserButton.draw();
         }
-    }
-
-    logOut = async (e) => {
-        e.preventDefault();
-        this.appState.set('user.username', null);
-        this.appState.set('user.loggedIn', false);
-
-        const url = _CONFIG.apiBaseUrl + '/api/login/access';
-        const payload = { from: 'logout' };
-        const response = await axios.post(url, payload, { withCredentials: true });
-        
-        this.Router.changeRoute('/login');
     }
 }
 
