@@ -18,7 +18,7 @@ class Logout extends Component {
         
         let url = _CONFIG.apiBaseUrl + '/api/login/access';
         let payload = { from: 'logout' };
-        const response = await axios.post(url, payload, { withCredentials: true });
+        await axios.post(url, payload, { withCredentials: true });
 
         const browserId = this.appState.get('browserId');
         url = _CONFIG.apiBaseUrl + '/api/login/access';
