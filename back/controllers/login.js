@@ -13,23 +13,20 @@ loginRouter.post('/access', async (request, response) => {
         check = await Form.find({ admin: true });
         console.log('CHECKING ADMIN', check);
     } else if(request.body.from === 'checklogin') {
+        // Done at the beginning of a page refresh
         // Check if logged in and if the saved browserId is the same to the saved to session
         browserId = request.body.browserId;
         if(checkIfLoggedIn(request.session) && browserId === request.session.browserId) {
             result.username = request.session.username;
         } else {
             request.session.browserId = browserId;
-            request.session.loggedIn = false;
         }
     } else if(request.body.from === 'logout') {
-        browserId = request.session.browserId;
         if(request.session.username) {
             request.session.destroy();
             if(request.cookies['connect.sid']) {
                 response.clearCookie('connect.sid');
             }
-            request.session.browserId = browserId;
-            request.session.loggedIn = false;
         }
     } else {
         const ids = request.body.ids;

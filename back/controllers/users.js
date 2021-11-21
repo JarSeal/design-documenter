@@ -9,6 +9,7 @@ const { validateFormData } = require('./forms/formEngine');
 // Get all users
 usersRouter.get('/', async (request, response) => {
 
+    // TODO: needs access right check, but for now, this is good for debugging
     const result = await User.find({}).populate('userGroups', {
         name: 1, id: 1
     });
@@ -20,6 +21,7 @@ usersRouter.post('/', async (request, response) => {
 
     const body = request.body;
     const formData = await Form.findOne({ formId: body.id });
+
     const error = await validateFormData(formData, request);
     if(error) {
         logger.log('Error with form validation. (+ error, formId, token)', error, body.id, request.token);

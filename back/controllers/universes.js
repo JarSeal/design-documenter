@@ -8,6 +8,7 @@ const { validateFormData } = require('./forms/formEngine');
 // Get all universes
 universeRouter.get('/', async (request, response) => {
     
+    // TODO: needs access right check, but for now, this is good for debugging
     const result = await Universe.find({})
         .sort({ 'created.date': 'desc' })
         .populate('created.by', { username: 1, name: 1 });
@@ -17,6 +18,7 @@ universeRouter.get('/', async (request, response) => {
 // Get one universe
 universeRouter.get('/:id', async (request, response) => {
 
+    // TODO: needs access right check, but for now, this is good for debugging
     const result = await Universe.findOne({ universeId: request.params.id })
         .populate('created.by', { username: 1, name: 1 });
     response.json(result);
@@ -27,7 +29,7 @@ universeRouter.post('/', async (request, response) => {
 
     const body = request.body;
     const formData = await Form.findOne({ formId: body.id });
-    
+
     const user = await User.findById(request.session._id);
     const error = await validateFormData(formData, request, user);
     if(error) {

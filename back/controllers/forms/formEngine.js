@@ -148,7 +148,7 @@ const validatePrivileges = async (form, request, user) => {
             }
             const requiredLevel = form.useRightsLevel;
             if(requiredLevel > user.userLevel) {
-                logger.log(`User not authorised. Trying to access form with id ${form.formId}.`);
+                logger.error(`User not authorised. Trying to access form with id ${form.formId}.`);
                 return {
                     code: 401,
                     obj: {
