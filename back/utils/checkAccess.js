@@ -2,7 +2,7 @@ const checkAccess = (request, check) => {
     if(!check) return false;
     let userLevel = 0, userId;
     
-    if(request.session.username) {
+    if(checkIfLoggedIn(request.session)) {
         userLevel = request.session.userLevel;
         userId = request.session._id;
     }
@@ -25,6 +25,12 @@ const checkAccess = (request, check) => {
     return false;
 };
 
+const checkIfLoggedIn = (sess) => {
+    if(!sess || !sess.loggedIn) return false;
+    return true;
+};
+
 module.exports = {
     checkAccess,
+    checkIfLoggedIn,
 };
