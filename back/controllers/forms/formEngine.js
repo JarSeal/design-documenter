@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+const { createRandomString } = require('../../../shared/parsers');
 const User = require('../../models/user');
 const shared = require('../../shared');
 const logger = require('./../../utils/logger');
@@ -163,9 +165,46 @@ const validatePrivileges = async (form, request, user) => {
     }
 };
 
+const createToken = async (sess) => {
+    if(!sess) {
+        logger.error('Session was not found while trying to create a new form token.');
+        return null;
+    }
+    clearOldTokens(sess);
+    const timestamp = + new Date();
+    const saltRounds = 5;
+    const token = await bcrypt.hash(createRandomString(16) + timestamp + process.env.SECRET, saltRounds);
+
+    sess.tokens = [{
+        token,
+        timestamp,
+    }].concat(sess.tokens);
+
+    return token;
+};
+
+const clearOldTokens = (sess) => {
+    if(!sess.tokens) {
+        sess.tokens = [];
+        return;
+    }
+    const tokenAge = 432000000; // 5 days
+    const maxTokens = 2; // the real max is maxTokens + 1
+
+    const timeNow = + new Date();
+    let counter = 0;
+    const newTokens = sess.tokens.filter(token => {
+        if(counter >= maxTokens) return false;
+        counter++;
+        return token && token.timestamp + tokenAge > timeNow;
+    });
+    sess.tokens = newTokens;
+};
+
 module.exports = {
     validateField,
     validateKeys,
     validateFormData,
     validatePrivileges,
+    createToken,
 };

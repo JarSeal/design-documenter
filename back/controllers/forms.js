@@ -1,7 +1,7 @@
 const formsRouter = require('express').Router();
 const logger = require('./../utils/logger');
 const Form = require('./../models/form');
-const { validatePrivileges } = require('./forms/formEngine');
+const { validatePrivileges, createToken } = require('./forms/formEngine');
 
 // Get all forms
 formsRouter.get('/', async (request, response) => {
@@ -25,10 +25,13 @@ formsRouter.get('/:id', async (request, response) => {
         return response.status(error.code).json(error.obj);
     }
     
+    const formToken = await createToken(request.session);
     const form = result.form;
     form.id = result.formId;
     form.api = result.path;
     form.method = result.method;
+    form.token = formToken;
+    console.log('ALLTOKENS', request.session.tokens);
     response.json(form);
 });
 

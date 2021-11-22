@@ -20,6 +20,7 @@ loginRouter.post('/access', async (request, response) => {
             result.username = request.session.username;
         } else {
             request.session.browserId = browserId;
+            if(!request.session.tokens) request.session.tokens = [];
         }
     } else if(request.body.from === 'logout') {
         if(request.session.username) {
