@@ -6,6 +6,7 @@ const { validatePrivileges } = require('./forms/formEngine');
 // Get all forms
 formsRouter.get('/', async (request, response) => {
 
+    // TODO: needs access right check, but for now, this is good for debugging
     const result = await Form.find({});
     response.json(result);
 });

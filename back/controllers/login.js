@@ -2,32 +2,32 @@ const bcrypt = require('bcrypt');
 const loginRouter = require('express').Router();
 const User = require('./../models/user');
 const Form = require('./../models/form');
-const { checkAccess } = require('../utils/checkAccess');
+const { checkAccess, checkIfLoggedIn } = require('../utils/checkAccess');
 // const Universe = require('./../models/universe');
 
 loginRouter.post('/access', async (request, response) => {
 
     const result = {};
-    let check, removeCookie = false;
+    let check, browserId;
     if(request.body.from === 'admin') {
         check = await Form.find({ admin: true });
         console.log('CHECKING ADMIN', check);
     } else if(request.body.from === 'checklogin') {
+        // Done at the beginning of a page refresh
         // Check if logged in and if the saved browserId is the same to the saved to session
-        const browserId = request.body.browserId;
-        if(request.session.username && browserId === request.session.browserId) {
+        browserId = request.body.browserId;
+        if(checkIfLoggedIn(request.session) && browserId === request.session.browserId) {
             result.username = request.session.username;
-            result.loggedIn = true;
         } else {
-            result.loggedIn = false;
-            removeCookie = true;
+            request.session.browserId = browserId;
         }
     } else if(request.body.from === 'logout') {
         if(request.session.username) {
             request.session.destroy();
-            removeCookie = true;
+            if(request.cookies['connect.sid']) {
+                response.clearCookie('connect.sid');
+            }
         }
-        result.loggedIn = false;
     } else {
         const ids = request.body.ids;
         for(let i=0; i<ids.length; i++) {
@@ -40,12 +40,11 @@ loginRouter.post('/access', async (request, response) => {
         }
     }
 
-    if(!request.session || !request.session.username) {
+    if(!checkIfLoggedIn(request.session)) {
         result['_sess'] = false;
-    }
-
-    if(removeCookie && request.cookies['connect.sid']) {
-        response.clearCookie('connect.sid');
+        result.loggedIn = false;
+    } else {
+        result.loggedIn = true;
     }
     
     return response.json(result);
@@ -74,6 +73,7 @@ loginRouter.post('/', async (request, response) => {
     request.session.userLevel = user.userLevel;
     request.session._id = user._id;
     request.session.browserId = body.browserId;
+    request.session.loggedIn = true;
     if(body['remember-me']) {
         request.session.cookie.maxAge = 864000000; // 10 days
     } else {

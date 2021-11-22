@@ -60,7 +60,6 @@ class Base extends Component {
     }
 
     loadData = async () => {
-        // Mock data loading with setTimeout
         const browserId = this.appState.get('browserId');
         const url = _CONFIG.apiBaseUrl + '/api/login/access';
         const payload = { from: 'checklogin', browserId };
