@@ -172,8 +172,13 @@ const createToken = async (sess) => {
     }
     clearOldTokens(sess);
     const timestamp = + new Date();
-    const saltRounds = 5;
-    const token = await bcrypt.hash(createRandomString(16) + timestamp + process.env.SECRET, saltRounds);
+    const saltRounds = 8;
+    const token = await bcrypt.hash(
+        createRandomString(32) +
+        timestamp +
+        process.env.FORM_TOKEN_SECRET,
+        saltRounds
+    );
 
     sess.tokens = [{
         token,
@@ -189,7 +194,7 @@ const clearOldTokens = (sess) => {
         return;
     }
     const tokenAge = 432000000; // 5 days
-    const maxTokens = 2; // the real max is maxTokens + 1
+    const maxTokens = 20; // the real max is maxTokens + 1
 
     const timeNow = + new Date();
     let counter = 0;
@@ -201,10 +206,63 @@ const clearOldTokens = (sess) => {
     sess.tokens = newTokens;
 };
 
+const addRandomId = (sess, randomId) => {
+    if(!sess) {
+        logger.error('Session was not found while trying to add a new randomId.');
+        return null;
+    }
+    const maxRandomIds = 2; // This is basically the amount that one user can have separate windows/tabs
+    if(!sess.randomIds) sess.randomIds = [];
+    if(sess.randomIds.length < maxRandomIds) {
+        sess.randomIds = [randomId].concat(sess.randomIds);
+    } else {
+        const temp = sess.randomIds.slice(0, maxRandomIds-1);
+        sess.randomIds = [randomId].concat(temp);
+    }
+    console.log('ADD sess.randomIds', sess.randomIds);
+};
+
+const checkSendToken = async (sess, token, sendToken) => {
+    if(!sess) {
+        logger.error('Session was not found while trying to check sendToken.');
+        return false;
+    }
+    clearOldTokens(sess);
+    const tokens = sess.tokens;
+    
+    let tokenFound = false;
+    for(let i=0; i<tokens.length; i++) {
+        if(token === tokens[i].token) {
+            tokenFound = true;
+            break;
+        }
+    }
+
+    if(!tokenFound) {
+        logger.log('Token was not found in the user\'s session\'s form tokens.', sess);
+        return false;
+    }
+    if(!sess.browserId || !sess.randomIds || !sess.randomIds.length) {
+        logger.log('Could not find user\'s browserId and/or randomId.', sess);
+        return false;
+    }
+
+    let result;
+    for(let i=0; i<sess.randomIds.length; i++) {
+        result = await bcrypt.compare(sess.randomIds[i] + token + sess.browserId, sendToken);
+        if(result) break;
+    }
+    console.log('randomIds', sess.randomIds);
+    if(!result) logger.log('Comparison between sendToken and session data failed.', sess, sendToken);
+    return result;
+};
+
 module.exports = {
     validateField,
     validateKeys,
     validateFormData,
     validatePrivileges,
     createToken,
+    addRandomId,
+    checkSendToken,
 };

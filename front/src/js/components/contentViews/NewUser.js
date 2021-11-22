@@ -6,7 +6,10 @@ class NewUser extends Component {
         super(data);
         this.appState = data.appState;
         this.template = `<div><h2>${data.title}</h2></div>`;
-        this.form = this.addChild(new FormCreator({ id: 'new-user-form' }));
+        this.form = this.addChild(new FormCreator({
+            appState: this.appState,
+            id: 'new-user-form',
+        }));
     }
 
     paint = () => {

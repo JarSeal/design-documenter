@@ -10,6 +10,7 @@ import Dropdown from "./formComponents/Dropdown";
 import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";
 import TextArea from "./formComponents/TextArea";
+import { createSendToken } from '../../helpers/storage';
 
 // Attributes for data:
 // - local = must be set to true if local forms are used (all the form data must then be in in the data) [Boolean]
@@ -19,6 +20,7 @@ class FormCreator extends Component {
     constructor(data) {
         super(data);
         this.logger = new Logger('Form Creator *****');
+        this.appState = data.appState;
         this.afterFormSentFn = data.afterFormSentFn;
         this.template = `<form class="form-creator"></form>`;
         this.components = {};
@@ -634,12 +636,14 @@ class FormCreator extends Component {
         this.formState.set('sending', true);
         try {
             payload.id = this.id;
+            payload.token = this.data.token;
+            payload.sendToken = await createSendToken(
+                this.data.token,
+                this.appState.get('browserId'),
+                this.appState.get('randomId'),
+            );
             let url = _CONFIG.apiBaseUrl + (this.data.api || '/api/forms/filled');
             let response;
-
-            if(this.data.addToMessage && this.data.addToMessage.length == 32) {
-                payload.browserId = this.data.addToMessage;
-            }
 
             if(this.data.method && this.data.method === 'PUT') {
                 url += '/' + this.id;
@@ -656,11 +660,21 @@ class FormCreator extends Component {
             }
 
             // this.logger.log('API RESPONSE', response);
-            this.formState.set('sending', false);
             if(response.data && response.data.errors) {
+                this.formState.set('sending', false);
                 this._serverSideFieldErrors(response);
+            } else if(response.data && response.data.tokenFail) {
+                const browserId = this.appState.get('browserId');
+                const randomId = this.appState.get('randomId');
+                url = _CONFIG.apiBaseUrl + '/api/login/access';
+                payload = { from: 'checklogin', browserId, randomId, formToken: true };
+                const response = await axios.post(url, payload, { withCredentials: true });
+                this.data.token = response.data.formToken;
+                this._setFormMsg('Had to recreate expired tokens. Try again.', true);
+                this.formState.set('sending', false);
             } else {
                 // Success
+                this.formState.set('sending', false);
                 this._resetForm();
                 const showOnlyMsg = this.data.afterSubmitShowOnlyMsg;  
                 if(showOnlyMsg) {

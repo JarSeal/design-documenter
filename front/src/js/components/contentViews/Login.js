@@ -8,8 +8,8 @@ class Landing extends Component {
         this.template = `<div><h2>${data.title}</h2></div>`;
         this.loginForm = this.addChild(new FormCreator({
             id: 'beacon-main-login',
+            appState: this.appState,
             afterFormSentFn: this.afterLogin,
-            addToMessage: this.appState.get('browserId'),
         }));
     }
 

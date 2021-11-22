@@ -31,7 +31,6 @@ formsRouter.get('/:id', async (request, response) => {
     form.api = result.path;
     form.method = result.method;
     form.token = formToken;
-    console.log('ALLTOKENS', request.session.tokens);
     response.json(form);
 });
 

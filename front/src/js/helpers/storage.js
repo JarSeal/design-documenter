@@ -1,4 +1,5 @@
 import axios from "axios";
+import bcryptjs from 'bcryptjs';
 import { Logger } from "../LIGHTER";
 import { _CONFIG } from "../_CONFIG";
 
@@ -46,7 +47,17 @@ const getAdminRights = async () => {
     return null;
 };
 
+const createSendToken = async (token, browserId, randomId) => {
+    const saltRounds = 10;
+    const newToken = await bcryptjs.hash(
+        randomId + token + browserId,
+        saltRounds,
+    );
+    return newToken;
+};
+
 export {
     checkRouteAccess,
     getAdminRights,
+    createSendToken,
 };

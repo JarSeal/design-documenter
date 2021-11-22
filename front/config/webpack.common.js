@@ -72,9 +72,11 @@ module.exports = {
   resolve: {
     modules: [paths.src, 'node_modules'],
     extensions: ['.js', '.json'],
+    fallback: { crypto: false },
     alias: {
       '@': paths.src,
       assets: paths.public,
     },
   },
+
 };

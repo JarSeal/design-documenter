@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "^3.3.0",
-    "axios": "^0.24.0"
+    "axios": "^0.24.0",
+    "bcryptjs": "^2.4.3"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",

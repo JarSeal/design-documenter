@@ -49,6 +49,7 @@ class Base extends Component {
             orientationLand: true,
             curRoute: '/',
             browserId: this.data.browserId,
+            randomId: this.data.randomId,
             user: {
                 loggedIn: false,
                 username: null,
@@ -61,8 +62,9 @@ class Base extends Component {
 
     loadData = async () => {
         const browserId = this.appState.get('browserId');
+        const randomId = this.appState.get('randomId');
         const url = _CONFIG.apiBaseUrl + '/api/login/access';
-        const payload = { from: 'checklogin', browserId };
+        const payload = { from: 'checklogin', browserId, randomId };
         const response = await axios.post(url, payload, { withCredentials: true });
 
         if(response && response.data && response.data.loggedIn) {
