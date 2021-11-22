@@ -3,6 +3,7 @@ const loginRouter = require('express').Router();
 const User = require('./../models/user');
 const Form = require('./../models/form');
 const { checkAccess, checkIfLoggedIn } = require('../utils/checkAccess');
+const { csrfProtection } = require('./forms/formEngine');
 // const Universe = require('./../models/universe');
 
 loginRouter.post('/access', async (request, response) => {
@@ -50,11 +51,12 @@ loginRouter.post('/access', async (request, response) => {
     return response.json(result);
 });
 
-loginRouter.post('/', async (request, response) => {
+loginRouter.post('/', csrfProtection, async (request, response) => {
 
     const body = request.body;
 
     const user = await User.findOne({ username: body.username });
+    console.log('USER', await bcrypt.compare(body.password, user.passwordHash));
     const passwordCorrect = user === null
         ? false
         : await bcrypt.compare(body.password, user.passwordHash);

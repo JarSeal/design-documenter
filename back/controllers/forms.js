@@ -1,7 +1,7 @@
 const formsRouter = require('express').Router();
 const logger = require('./../utils/logger');
 const Form = require('./../models/form');
-const { validatePrivileges } = require('./forms/formEngine');
+const { validatePrivileges, csrfProtection } = require('./forms/formEngine');
 
 // Get all forms
 formsRouter.get('/', async (request, response) => {
@@ -12,7 +12,7 @@ formsRouter.get('/', async (request, response) => {
 });
 
 // Get form by id
-formsRouter.get('/:id', async (request, response) => {
+formsRouter.get('/:id', csrfProtection, async (request, response) => {
     
     const formId = request.params.id;
     let result = await Form.findOne({ formId });
@@ -29,6 +29,7 @@ formsRouter.get('/:id', async (request, response) => {
     form.id = result.formId;
     form.api = result.path;
     form.method = result.method;
+    form.csrfToken = request.csrfToken();
     response.json(form);
 });
 

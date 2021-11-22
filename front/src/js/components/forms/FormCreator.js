@@ -641,6 +641,10 @@ class FormCreator extends Component {
                 payload.browserId = this.data.addToMessage;
             }
 
+            if(this.data.csrfToken) {
+                payload._csrf = this.data.csrfToken;
+            }
+
             if(this.data.method && this.data.method === 'PUT') {
                 url += '/' + this.id;
                 response = await axios.put(url, payload, { withCredentials: true });
