@@ -2,8 +2,9 @@ const bcrypt = require('bcrypt');
 const loginRouter = require('express').Router();
 const User = require('./../models/user');
 const Form = require('./../models/form');
+const logger = require('./../utils/logger');
 const { checkAccess, checkIfLoggedIn } = require('../utils/checkAccess');
-const { csrfProtection } = require('./forms/formEngine');
+const { createRandomString } = require('../../shared/parsers');
 // const Universe = require('./../models/universe');
 
 loginRouter.post('/access', async (request, response) => {
@@ -22,6 +23,18 @@ loginRouter.post('/access', async (request, response) => {
         } else {
             request.session.browserId = browserId;
         }
+    } else if(request.body.from === 'getCSRF') {
+        if(request.session
+            && request.body.browserId === request.session.browserId
+            && request.body.browserId !== undefined) {
+            console.log(request.session, request.body.browserId);
+            const timestamp = + new Date();
+            request.session.csrfSecret = timestamp + '-' + createRandomString(24);
+            result.csrfToken = request.csrfToken();
+        } else {
+            logger.log('Trying to getCSRF at /login/access but either session or browserId is invalid or missing. (+ sess, body)', request.session, request.body);
+        }
+        // Log and responderror here
     } else if(request.body.from === 'logout') {
         if(request.session.username) {
             request.session.destroy();
@@ -51,12 +64,11 @@ loginRouter.post('/access', async (request, response) => {
     return response.json(result);
 });
 
-loginRouter.post('/', csrfProtection, async (request, response) => {
+loginRouter.post('/', async (request, response) => {
 
     const body = request.body;
 
     const user = await User.findOne({ username: body.username });
-    console.log('USER', await bcrypt.compare(body.password, user.passwordHash));
     const passwordCorrect = user === null
         ? false
         : await bcrypt.compare(body.password, user.passwordHash);

@@ -1,7 +1,7 @@
 const formsRouter = require('express').Router();
 const logger = require('./../utils/logger');
 const Form = require('./../models/form');
-const { validatePrivileges, csrfProtection } = require('./forms/formEngine');
+const { validatePrivileges } = require('./forms/formEngine');
 
 // Get all forms
 formsRouter.get('/', async (request, response) => {
@@ -12,12 +12,12 @@ formsRouter.get('/', async (request, response) => {
 });
 
 // Get form by id
-formsRouter.get('/:id', csrfProtection, async (request, response) => {
-    
+formsRouter.get('/:id', async (request, response) => {
+
     const formId = request.params.id;
     let result = await Form.findOne({ formId });
     if(!result) {
-        logger.log(`Could not find form with id '${formId}'.`, request.token);
+        logger.log(`Could not find form with id '${formId}'.`);
         return response.status(404).json({ msg: 'Could not find form.', id: formId });
     }
     const error = await validatePrivileges(result, request);
@@ -29,7 +29,6 @@ formsRouter.get('/:id', csrfProtection, async (request, response) => {
     form.id = result.formId;
     form.api = result.path;
     form.method = result.method;
-    form.csrfToken = request.csrfToken();
     response.json(form);
 });
 
