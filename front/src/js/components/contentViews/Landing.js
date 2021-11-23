@@ -22,7 +22,7 @@ class Landing extends Component {
         this.mainScreenCompos.push(this.addChild(new Button({
             id: 'add-uni-button',
             attach: 'universe-wrapper',
-            attributes: { title: 'Add a Universe' },
+            attributes: { title: getText('create_new_universe') },
             text: '+',
             class: ['list-add-button', 'list-item'],
             click: (e) => {
@@ -33,6 +33,9 @@ class Landing extends Component {
                         afterFormSentFn: () => {
                             this.appState.get('Dialog').disappear();
                             this.universesList.updateList();
+                        },
+                        onErrors: (ex, res) => {
+                            if(res && res.status === 401) this.Router.changeRoute('/');
                         },
                     }),
                     title: getText('create_new_universe'),

@@ -1,7 +1,7 @@
 import { Component } from "../../LIGHTER";
 import FormCreator from "../forms/FormCreator";
 
-class Landing extends Component {
+class Login extends Component {
     constructor(data) {
         super(data);
         this.appState = data.appState;
@@ -33,4 +33,4 @@ class Landing extends Component {
     }
 }
 
-export default Landing;
+export default Login;

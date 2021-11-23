@@ -15,6 +15,7 @@ import TextArea from "./formComponents/TextArea";
 // - local = must be set to true if local forms are used (all the form data must then be in in the data) [Boolean]
 // - afterFormSentFn = function to call after succesfull form submission [Function]
 // - addToMessage = Object to add to the post or put body [Object]
+// - onErrors = Function to callback after form sending errors [Function] (returns exception and exception.response)
 class FormCreator extends Component {
     constructor(data) {
         super(data);
@@ -717,6 +718,8 @@ class FormCreator extends Component {
                 this._setFormMsg(getText('form_submit_error'));
                 this.logger.error('Form sending failed (Form Creator).', exception);
             }
+            // Call outside error callback if present:
+            if(this.data.onErrors) this.data.onErrors(exception, exception.response);
         }
     }
 
