@@ -16,10 +16,11 @@ import TextArea from "./formComponents/TextArea";
 // - afterFormSentFn = function to call after succesfull form submission [Function]
 // - addToMessage = Object to add to the post or put body [Object]
 // - onErrors = Function to callback after form sending errors [Function] (returns exception and exception.response)
+// - formLoadedFn = Function to callback after the form has finished loading [Function]
 class FormCreator extends Component {
     constructor(data) {
         super(data);
-        this.appState = data.appState,
+        this.appState = data.appState;
         this.logger = new Logger('Form Creator *****');
         this.afterFormSentFn = data.afterFormSentFn;
         this.template = `<form class="form-creator"></form>`;
@@ -57,6 +58,7 @@ class FormCreator extends Component {
                     this._createFormComponents(this.data);
                     this.rePaint();
                     this.mainSpinner.showSpinner(false);
+                    if(this.data.formLoadedFn) this.data.formLoadedFn();
                     setTimeout(() => {
                         this.mainSpinner.discard(true);
                         this.mainSpinner = null;

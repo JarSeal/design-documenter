@@ -37,6 +37,7 @@ class Landing extends Component {
                         onErrors: (ex, res) => {
                             if(res && res.status === 401) this.Router.changeRoute('/');
                         },
+                        formLoadedFn: () => { this.appState.get('Dialog').onResize(); },
                     }),
                     title: getText('create_new_universe'),
                 });
