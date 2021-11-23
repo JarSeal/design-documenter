@@ -18,6 +18,7 @@ import TextArea from "./formComponents/TextArea";
 class FormCreator extends Component {
     constructor(data) {
         super(data);
+        this.appState = data.appState,
         this.logger = new Logger('Form Creator *****');
         this.afterFormSentFn = data.afterFormSentFn;
         this.template = `<form class="form-creator"></form>`;
@@ -637,13 +638,22 @@ class FormCreator extends Component {
             let url = _CONFIG.apiBaseUrl + (this.data.api || '/api/forms/filled');
             let response;
 
-            if(this.data.addToMessage && this.data.addToMessage.length == 32) {
-                payload.browserId = this.data.addToMessage;
+            if(this.data.addToMessage) {
+                const keys = Object.keys(this.data.addToMessage);
+                for(let i=0; i<keys.length; i++) {
+                    if(!payload[keys[i]]) payload[keys[i]] = this.data.addToMessage[keys[i]]
+                }
             }
 
-            if(this.data.csrfToken) {
-                payload._csrf = this.data.csrfToken;
+            // Get the just-in-time CSRF token
+            const getCSRFPayload = { from: 'getCSRF', browserId: this.appState.get('browserId') };
+            const urlCSRF = _CONFIG.apiBaseUrl + '/api/login/access';
+            response = await axios.post(urlCSRF, getCSRFPayload, { withCredentials: true });
+            if(!response.data || !response.data.csrfToken) {
+                this.logger.error('Could not retrieve CSRF token.', response);
+                throw new Error('Call stack');
             }
+            payload._csrf = response.data.csrfToken;
 
             if(this.data.method && this.data.method === 'PUT') {
                 url += '/' + this.id;

@@ -29,6 +29,7 @@ class Landing extends Component {
                 this.appState.get('Dialog').appear({
                     component: new FormCreator({
                         id: 'new-universe-form',
+                        appState: this.appState,
                         afterFormSentFn: () => {
                             this.appState.get('Dialog').disappear();
                             this.universesList.updateList();

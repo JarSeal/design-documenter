@@ -27,7 +27,6 @@ loginRouter.post('/access', async (request, response) => {
         if(request.session
             && request.body.browserId === request.session.browserId
             && request.body.browserId !== undefined) {
-            console.log(request.session, request.body.browserId);
             const timestamp = + new Date();
             request.session.csrfSecret = timestamp + '-' + createRandomString(24);
             result.csrfToken = request.csrfToken();
