@@ -24,14 +24,14 @@ loginRouter.post('/access', async (request, response) => {
             request.session.browserId = browserId;
         }
     } else if(request.body.from === 'getCSRF') {
-        if(request.session
-            && request.body.browserId === request.session.browserId
-            && request.body.browserId !== undefined) {
+        if(!request.session) {
+            result.sessionExpired = true;
+        } else if(request.body.browserId && request.body.browserId === request.session.browserId) {
             const timestamp = + new Date();
             request.session.csrfSecret = timestamp + '-' + createRandomString(24);
             result.csrfToken = request.csrfToken();
         } else {
-            logger.log('Trying to getCSRF at /login/access but either session or browserId is invalid or missing. (+ sess, body)', request.session, request.body);
+            logger.log('Trying to getCSRF at /login/access but browserId is either invalid or missing. (+ sess, body)', request.session, request.body);
         }
         // Log and responderror here
     } else if(request.body.from === 'logout') {

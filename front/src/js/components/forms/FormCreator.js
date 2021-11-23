@@ -641,7 +641,7 @@ class FormCreator extends Component {
             if(this.data.addToMessage) {
                 const keys = Object.keys(this.data.addToMessage);
                 for(let i=0; i<keys.length; i++) {
-                    if(!payload[keys[i]]) payload[keys[i]] = this.data.addToMessage[keys[i]]
+                    if(!payload[keys[i]]) payload[keys[i]] = this.data.addToMessage[keys[i]];
                 }
             }
 
