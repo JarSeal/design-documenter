@@ -40,6 +40,14 @@ class TabSystem extends Component {
             }
         }
     }
+
+    getCurrent = () => {
+        for(let i=0; i<this.buttons.length; i++) {
+            if(this.buttons[i].isCurrent) {
+                return this.data.tabs[i];
+            }
+        }
+    }
 }
 
 export default TabSystem;

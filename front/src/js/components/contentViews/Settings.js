@@ -1,5 +1,7 @@
+import axios from "axios";
 import { getAdminRights } from "../../helpers/storage";
-import { Component } from "../../LIGHTER";
+import { Component, Logger } from "../../LIGHTER";
+import { _CONFIG } from "../../_CONFIG";
 import TabSystem from "../buttons/TabSystem";
 
 class Settings extends Component {
@@ -10,6 +12,7 @@ class Settings extends Component {
         this.template = `<div><h2>${data.title}</h2></div>`;
         this.adminRights = {};
         this.tabSystem;
+        this.tabs = [];
     }
 
     init = async () => {
@@ -21,41 +24,71 @@ class Settings extends Component {
         }
 
         this.adminRights = await getAdminRights();
-        console.log('End', this.adminRights);
 
-        const tabs = this._defineTabs();
+        this._defineTabs();
         this.tabSystem = this.addChild(new TabSystem({
             id: 'settings-tabs',
-            tabs,
+            tabs: this.tabs,
         }));
 
         this.rePaint();
     }
 
     paint = () => {
-        if(this.tabSystem) this.tabSystem.draw();
+        if(this.tabSystem) {
+            this.tabSystem.draw();
+            const currentTab = this.tabSystem.getCurrent();
+            this.addChild(new currentTab.component({ id: 'view-' + currentTab.id })).draw();
+        }
     }
 
     _defineTabs = () => {
-        const tabs = [];
-        const define = [{ // Define them here
+        const define = [{ // Define tabs here
             id: 'my-ui',
-            label: 'My UI',
+            label: 'My UI', // TODO: Change into a getText lang asset
+            component: Component,
         }, {
-            id: 'admin-users',
-            label: '[Admin] Users',
+            id: 'users',
+            label: 'Users', // TODO: Change into a getText lang asset
+            show: this.adminRights.useRights.includes('read-users'),
+            component: UsersList,
         }];
 
         for(let i=0; i<define.length; i++) {
-            tabs.push({
+            if(define[i].show === false) continue;
+            this.tabs.push({
                 label: define[i].label,
                 id: define[i].id,
                 routeLink: '/settings/' + define[i].id,
                 setLabelInTitle: true,
+                component: define[i].component,
             });
         }
+    }
+}
 
-        return tabs;
+class UsersList extends Component {
+    constructor(data) {
+        super(data);
+        this.template = `
+        <div class="settings-page">
+            Loading..
+        </div>`;
+        this._loadUsers();
+    }
+
+    _loadUsers = async () => {
+        const url = _CONFIG.apiBaseUrl + '/api/users';
+        try {
+            const response = await axios.get(url, { withCredentials: true });
+            const users = response.data;
+            console.log('users', users);
+        }
+        catch(exception) {
+            const logger = new Logger('Get users: *****');
+            logger.error('Could not get users data', exception);
+            throw new Error('Call stack');
+        }
     }
 }
 
