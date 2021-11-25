@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getText } from "../../helpers/lang";
 import { getAdminRights } from "../../helpers/storage";
 import { Component, Logger } from "../../LIGHTER";
 import { _CONFIG } from "../../_CONFIG";
@@ -71,7 +72,7 @@ class Settings extends Component {
 class UsersList extends Component {
     constructor(data) {
         super(data);
-        this.template = '<div class="settings-page"></div>';
+        this.template = '<div class="settings-tab-view"></div>';
         this.users = null;
         this._loadUsers();
     }
@@ -81,6 +82,8 @@ class UsersList extends Component {
             this.addChild(new Table({
                 id: 'users-table',
                 tableData: this.users,
+                fullWidth: true,
+                tableStructure: this._getTableStructure(),
             })).draw();
         }
     }
@@ -92,13 +95,34 @@ class UsersList extends Component {
             const response = await axios.get(url, { withCredentials: true });
             this.users = response.data;
             this.rePaint();
-            console.log('users', this.users);
         }
         catch(exception) {
             const logger = new Logger('Get users: *****');
             logger.error('Could not get users data', exception);
             throw new Error('Call stack');
         }
+    }
+
+    _getTableStructure = () => {
+        const structure = [
+            {
+                key: 'username',
+                heading: getText('username'),
+            },
+            {
+                key: 'name',
+                heading: getText('name'),
+            },
+            {
+                key: 'userLevel',
+                heading: getText('user_level'),
+            },
+            // {
+            //     attribute: 'created.date',
+            //     heading: getText('created'),
+            // },
+        ];
+        return structure;
     }
 }
 

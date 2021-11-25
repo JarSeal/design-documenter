@@ -1,0 +1,21 @@
+@import './../../../styles/colors';
+
+.table-compo {
+    text-align: left;
+    background-color: $table-background;
+    margin: 2rem 0;
+    th, td {
+        padding: 0.8rem 1.2rem 0.6rem;
+        font-size: 1.2rem;
+    }
+    th { vertical-align: bottom; }
+    thead { background-color: $table-thead-background; }
+    tbody {
+        td {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+    }
+}

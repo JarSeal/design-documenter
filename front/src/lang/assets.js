@@ -35,6 +35,10 @@ export const assetsObj = {
         en: 'Name',
         fi: 'Nimi',
     },
+    user_level: {
+        en: 'User level',
+        fi: 'Käyttäjätaso',
+    },
     description: {
         en: 'Description',
         fi: 'Kuvaus',
