@@ -1,4 +1,3 @@
-const CONFIG = require('./../../CONFIG').USER;
 
 const loginBeaconFormData = {
     formId: 'beacon-main-login',
