@@ -1,15 +1,18 @@
 import { Component } from "../../LIGHTER";
 import FormCreator from "../forms/FormCreator";
 
-class Landing extends Component {
+class Login extends Component {
     constructor(data) {
         super(data);
         this.appState = data.appState;
         this.template = `<div><h2>${data.title}</h2></div>`;
         this.loginForm = this.addChild(new FormCreator({
             id: 'beacon-main-login',
+            appState: this.appState,
             afterFormSentFn: this.afterLogin,
-            addToMessage: this.appState.get('browserId'),
+            addToMessage: {
+                browserId: this.appState.get('browserId'),
+            },
         }));
     }
 
@@ -30,4 +33,4 @@ class Landing extends Component {
     }
 }
 
-export default Landing;
+export default Login;

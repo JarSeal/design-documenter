@@ -1,3 +1,4 @@
+const csrf = require('csurf');
 const User = require('../../models/user');
 const shared = require('../../shared');
 const logger = require('./../../utils/logger');
@@ -163,9 +164,18 @@ const validatePrivileges = async (form, request, user) => {
     }
 };
 
+const csrfProtection = csrf({ cookie: false });
+let crsfToken = null;
+const csrfNewToken = (request) => {
+    if(request.crsfToken && !crsfToken) crsfToken = request.crsfToken;
+    return crsfToken();
+};
+
 module.exports = {
     validateField,
     validateKeys,
     validateFormData,
     validatePrivileges,
+    csrfProtection,
+    csrfNewToken,
 };

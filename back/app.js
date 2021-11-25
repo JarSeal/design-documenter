@@ -5,6 +5,7 @@ const app = express();
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const csrf = require('csurf');
 const usersRouter = require('./controllers/users');
 const loginRouter = require('./controllers/login');
 const formsRouter = require('./controllers/forms');
@@ -14,6 +15,7 @@ const middleware = require('./utils/middleware');
 const logger = require('./utils/logger');
 const mongoose = require('mongoose');
 const createPresetForms = require('./controllers/forms/createPresetForms');
+const { createRandomString } = require('../shared/parsers');
 
 logger.info('connecting to', config.MONGODB_URI);
 
@@ -62,6 +64,28 @@ app.use(middleware.requestLogger);
 if(process.env.SERVE_STATIC === 'production') {
     app.use(express.static('front'));
 }
+
+app.use((req, res, next) => {
+    const c = csrf({ cookie: false });
+    c(req, res, ()=>{validateToken(req, res, next, c);});
+});
+const validateToken = (req, res, next, c) => {
+    if(req.path === '/api/login/access') {
+        const timestamp = (+ new Date());
+        req.session.csrfSecret = timestamp + '-' + createRandomString(24);
+        const token = req.csrfToken();
+        req.body['_csrf'] = token;
+    }
+    
+    // Check if token has expired
+    const maxTime = 10000; // milliseconds (1000 = 1 second)
+    const tokenTime = req.session.csrfSecret.split('-')[0];
+    if(parseInt(tokenTime) + maxTime < (+ new Date())) {
+        // Expired
+        req.body['_csrf'] = 'expired';
+    }
+    c(req, res, next);
+};
 
 app.use('/api/login', loginRouter);
 app.use('/api/users', usersRouter);

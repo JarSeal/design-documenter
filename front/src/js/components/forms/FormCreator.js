@@ -15,9 +15,12 @@ import TextArea from "./formComponents/TextArea";
 // - local = must be set to true if local forms are used (all the form data must then be in in the data) [Boolean]
 // - afterFormSentFn = function to call after succesfull form submission [Function]
 // - addToMessage = Object to add to the post or put body [Object]
+// - onErrors = Function to callback after form sending errors [Function] (returns exception and exception.response)
+// - formLoadedFn = Function to callback after the form has finished loading [Function]
 class FormCreator extends Component {
     constructor(data) {
         super(data);
+        this.appState = data.appState;
         this.logger = new Logger('Form Creator *****');
         this.afterFormSentFn = data.afterFormSentFn;
         this.template = `<form class="form-creator"></form>`;
@@ -55,6 +58,7 @@ class FormCreator extends Component {
                     this._createFormComponents(this.data);
                     this.rePaint();
                     this.mainSpinner.showSpinner(false);
+                    if(this.data.formLoadedFn) this.data.formLoadedFn();
                     setTimeout(() => {
                         this.mainSpinner.discard(true);
                         this.mainSpinner = null;
@@ -637,9 +641,22 @@ class FormCreator extends Component {
             let url = _CONFIG.apiBaseUrl + (this.data.api || '/api/forms/filled');
             let response;
 
-            if(this.data.addToMessage && this.data.addToMessage.length == 32) {
-                payload.browserId = this.data.addToMessage;
+            if(this.data.addToMessage) {
+                const keys = Object.keys(this.data.addToMessage);
+                for(let i=0; i<keys.length; i++) {
+                    if(!payload[keys[i]]) payload[keys[i]] = this.data.addToMessage[keys[i]];
+                }
             }
+
+            // Get the just-in-time CSRF token
+            const getCSRFPayload = { from: 'getCSRF', browserId: this.appState.get('browserId') };
+            const urlCSRF = _CONFIG.apiBaseUrl + '/api/login/access';
+            response = await axios.post(urlCSRF, getCSRFPayload, { withCredentials: true });
+            if(!response.data || !response.data.csrfToken) {
+                this.logger.error('Could not retrieve CSRF token.', response);
+                throw new Error('Call stack');
+            }
+            payload._csrf = response.data.csrfToken;
 
             if(this.data.method && this.data.method === 'PUT') {
                 url += '/' + this.id;
@@ -703,6 +720,8 @@ class FormCreator extends Component {
                 this._setFormMsg(getText('form_submit_error'));
                 this.logger.error('Form sending failed (Form Creator).', exception);
             }
+            // Call outside error callback if present:
+            if(this.data.onErrors) this.data.onErrors(exception, exception.response);
         }
     }
 
