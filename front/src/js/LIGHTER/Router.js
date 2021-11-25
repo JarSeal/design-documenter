@@ -213,8 +213,10 @@ class Router {
             this.curRouteData.component.discard(true);
             this.curRouteData.component = null;
         }
+
         const routeState = this._createRouteState(route);
         window.history.pushState(routeState, '', route);
+
         this.prevRoute = this.curRoute;
         this.setRoute();
         let routeFound = false;
