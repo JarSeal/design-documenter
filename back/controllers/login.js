@@ -5,7 +5,6 @@ const Form = require('./../models/form');
 const logger = require('./../utils/logger');
 const { checkAccess, checkIfLoggedIn } = require('../utils/checkAccess');
 const { createRandomString } = require('../../shared/parsers');
-// const Universe = require('./../models/universe');
 
 loginRouter.post('/access', async (request, response) => {
 
