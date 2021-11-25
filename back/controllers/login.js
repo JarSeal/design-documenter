@@ -11,8 +11,19 @@ loginRouter.post('/access', async (request, response) => {
     const result = {};
     let check, browserId;
     if(request.body.from === 'admin') {
-        check = await Form.find({ admin: true });
-        console.log('CHECKING ADMIN', check);
+        // Get the requester's useRightsLevel and editorRightsLevel matching formIds
+        let userLevel = 0;
+        if(request.session && request.session.userLevel) userLevel = request.session.userLevel;
+        check = await Form.find({
+            useRightsLevel: { $lte: userLevel },
+            editorRightsLevel: { $lte: userLevel }
+        });
+        result.useRights = check
+            .filter(form => form.useRightsLevel <= userLevel)
+            .map(form => form.formId);
+        result.editorRights = check
+            .filter(form => form.editorRightsLevel <= userLevel)
+            .map(form => form.formId);
     } else if(request.body.from === 'checklogin') {
         // Done at the beginning of a page refresh
         // Check if logged in and if the saved browserId is the same to the saved to session

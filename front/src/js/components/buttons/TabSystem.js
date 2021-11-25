@@ -1,15 +1,15 @@
 import { Component } from "../../LIGHTER";
+import RouteLink from "./RouteLink";
 
 // Attributes:
 // - tabs = Array[Object]
 //     -> tab Object {
 //          label: String [required],
-//          id: String,
+//          id: String [required],
 //          routeLink: String,
-//          clickFn: Function,
-//          current: Boolean,
 //          class: Array[String] or String,
 //          disabled: Boolean,
+//          setLabelInTitle: Boolean,
 //        }
 class TabSystem extends Component {
     constructor(data) {
@@ -20,57 +20,24 @@ class TabSystem extends Component {
         // Create tabs buttons
         this.buttons = [];
         for(let i=0; i<data.tabs.length; i++) {
-            let id, tabClass, attributes;
-            if(data.tabs[i].id) {
-                id = data.tabs[i].id;
-            } else {
-                id = this.id + '-tab-' + i;
-            }
-            if(data.tabs[i].class) {
-                tabClass = data.tabs[i].class;
-                if(typeof tabClass === 'string' || tabClass instanceof String) {
-                    if(data.tabs[i].current) tabClass += ' current';
-                } else {
-                    tabClass.push('current');
-                }
-            } else {
-                if(data.tabs[i].current) tabClass = 'current';
-            }
+            let attributes, id = data.tabs[i].id;
             if(data.tabs[i].disabled) attributes = { disabled: '' };
-            this.buttons.push(this.addChild(new Component({
+            this.buttons.push(this.addChild(new RouteLink({
                 id,
-                class: tabClass,
+                class: data.tabs[i].class,
                 text: data.tabs[i].label,
-                tag: 'button',
+                link: data.tabs[i].routeLink,
                 attributes,
             })));
-        }
-    }
-
-    addClicker = (i) => {
-        if(this.tabs[i].clickFn) {
-            this.buttons[i].addListener({
-                type: 'click',
-                fn: (e) => {
-                    this.tabs[i].clickFn(e, this.tabs[i].routeLink ? () => {
-                        this.Router.changeRoute(this.tabs[i].routeLink, true);
-                    } : null);
-                },
-            });
-        } else if(this.tabs[i].routeLink) {
-            this.buttons[i].addListener({
-                type: 'click',
-                fn: () => {
-                    this.Router.changeRoute(this.tabs[i].routeLink, true);
-                },
-            });
         }
     }
 
     paint = () => {
         for(let i=0; i<this.buttons.length; i++) {
             this.buttons[i].draw();
-            this.addClicker(i);
+            if(this.buttons[i].isCurrent) {
+                document.title = this.buttons[i].data.text + ' | ' + document.title;
+            }
         }
     }
 }

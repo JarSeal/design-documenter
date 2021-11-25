@@ -8,7 +8,7 @@ class Settings extends Component {
         const defaultTab = 'my-ui';
         this.curTab = defaultTab;
         this.template = `<div><h2>${data.title}</h2></div>`;
-        this.isAdmin = {};
+        this.adminRights = {};
         this.tabSystem;
     }
 
@@ -16,12 +16,12 @@ class Settings extends Component {
         const params = this.Router.curRouteData.params;
         if(params && params.tab === 'default') {
             this.discard(true);
-            this.Router.changeRoute('/settings/' + this.curTab, true);
+            this.Router.changeRoute('/settings/' + this.curTab);
             return;
         }
 
-        this.isAdmin = await getAdminRights();
-        console.log('End', this.isAdmin);
+        this.adminRights = await getAdminRights();
+        console.log('End', this.adminRights);
 
         const tabs = this._defineTabs();
         this.tabSystem = this.addChild(new TabSystem({
@@ -38,7 +38,7 @@ class Settings extends Component {
 
     _defineTabs = () => {
         const tabs = [];
-        const define = [{
+        const define = [{ // Define them here
             id: 'my-ui',
             label: 'My UI',
         }, {
@@ -50,12 +50,8 @@ class Settings extends Component {
             tabs.push({
                 label: define[i].label,
                 id: define[i].id,
-                current: this.curTab === define[i].id,
                 routeLink: '/settings/' + define[i].id,
-                clickFn: (e, routeChange) => {
-                    this.curTab = define[i].id;
-                    routeChange();
-                },
+                setLabelInTitle: true,
             });
         }
 

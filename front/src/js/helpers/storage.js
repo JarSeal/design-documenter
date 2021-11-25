@@ -18,7 +18,7 @@ const checkRouteAccess = async (routeData) => {
         const response = await axios.post(url, payload, { withCredentials: true });
         const access = response.data[id];
         if(!access) {
-            if(response.data._sess === false) return '/logout';
+            if(!response.data.loggedIn) return '/logout';
             return '/login';
         }
     }
@@ -36,7 +36,7 @@ const getAdminRights = async () => {
     try {
         const response = await axios.post(url, payload, { withCredentials: true });
         const access = response.data;
-        console.log('RESPONSE for access', access);
+        return access;
     }
     catch(exception) {
         const logger = new Logger('getAdminRights: *****');
