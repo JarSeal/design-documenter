@@ -117,10 +117,10 @@ class UsersList extends Component {
                 key: 'userLevel',
                 heading: getText('user_level'),
             },
-            // {
-            //     attribute: 'created.date',
-            //     heading: getText('created'),
-            // },
+            {
+                key: 'created.date',
+                heading: getText('created'),
+            },
         ];
         return structure;
     }

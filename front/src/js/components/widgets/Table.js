@@ -46,13 +46,28 @@ class Table extends Component {
                     this._createRowClasses(this.tableStructure[j].class) +
                     this._createRowStyle(this.tableStructure[j]) +
                 '>';
-                console.log('TEIBBELI', this.tableData[i], this.tableStructure[j].key);
-                row += this.tableData[i][this.tableStructure[j].key];
+                row += this._getCellData(i, j);
                 row += '</td>';
             }
             row += '</tr>';
         }
         return row;
+    }
+
+    _getCellData = (tableIndex, structIndex) => {
+        const row = this.tableData[tableIndex];
+        const key = this.tableStructure[structIndex].key;
+        if(key.includes('.')) {
+            const splitKey = key.split('.');
+            let pos = row;
+            for(let i=0; i<splitKey.length; i++) {
+                pos = pos[splitKey[i]];
+                if(!pos) return '';
+            }
+            return pos;
+        } else {
+            return row[key];
+        }
     }
 
     _createTableHeader = () => {
