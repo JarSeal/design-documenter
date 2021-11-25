@@ -33,7 +33,6 @@ loginRouter.post('/access', async (request, response) => {
         } else {
             logger.log('Trying to getCSRF at /login/access but browserId is either invalid or missing. (+ sess, body)', request.session, request.body);
         }
-        // Log and responderror here
     } else if(request.body.from === 'logout') {
         if(request.session.username) {
             request.session.destroy();
@@ -54,7 +53,6 @@ loginRouter.post('/access', async (request, response) => {
     }
 
     if(!checkIfLoggedIn(request.session)) {
-        result['_sess'] = false;
         result.loggedIn = false;
     } else {
         result.loggedIn = true;
@@ -67,6 +65,7 @@ loginRouter.post('/', async (request, response) => {
 
     const body = request.body;
 
+    // Check user
     const user = await User.findOne({ username: body.username });
     const passwordCorrect = user === null
         ? false
@@ -80,6 +79,26 @@ loginRouter.post('/', async (request, response) => {
             loggedIn: false,
         });
     }
+
+    // Check form
+    const form = await Form.findOne({ formId: body.id });
+    if(!form) {
+        logger.error(`Could not find login form '${body.id}'.`);
+        return response.status(500).json({
+            error: 'form missing or invalid',
+            loggedIn: false,
+        });
+    } else {
+        if(form.editorOptions && form.editorOptions.loginAccessLevel
+            && user.userLevel < form.editorOptions.loginAccessLevel.value) {
+            logger.log(`User level is too small to log in from '${body.id}'. Current requirement is '${form.editorOptions.loginAccessLevel.value}' while the user has '${user.userLevel}'.`, user._id);
+            return response.status(401).json({
+                error: 'invalid username and/or password',
+                loggedIn: false,
+            });
+        }
+    }
+
 
     // Create a new session:
     request.session.username = user.username;
