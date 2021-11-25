@@ -3,6 +3,7 @@ import { getAdminRights } from "../../helpers/storage";
 import { Component, Logger } from "../../LIGHTER";
 import { _CONFIG } from "../../_CONFIG";
 import TabSystem from "../buttons/TabSystem";
+import Table from "../widgets/Table";
 
 class Settings extends Component {
     constructor(data) {
@@ -70,19 +71,28 @@ class Settings extends Component {
 class UsersList extends Component {
     constructor(data) {
         super(data);
-        this.template = `
-        <div class="settings-page">
-            Loading..
-        </div>`;
+        this.template = '<div class="settings-page"></div>';
+        this.users = null;
         this._loadUsers();
     }
 
+    paint = () => {
+        if(this.users) {
+            this.addChild(new Table({
+                id: 'users-table',
+                tableData: this.users,
+            })).draw();
+        }
+    }
+
     _loadUsers = async () => {
+        this.users = null;
         const url = _CONFIG.apiBaseUrl + '/api/users';
         try {
             const response = await axios.get(url, { withCredentials: true });
-            const users = response.data;
-            console.log('users', users);
+            this.users = response.data;
+            this.rePaint();
+            console.log('users', this.users);
         }
         catch(exception) {
             const logger = new Logger('Get users: *****');
