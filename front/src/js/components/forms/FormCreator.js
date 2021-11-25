@@ -728,10 +728,9 @@ class FormCreator extends Component {
     _loadFormData = async id => {
         this.formState.set('getting', true);
         this.formState.set('sending', false);
-        let response;
         try {
             const url = _CONFIG.apiBaseUrl + '/api/forms/' + id;
-            response = await axios.get(url, { withCredentials: true });
+            const response = await axios.get(url, { withCredentials: true });
             
             // this.logger.log('API RESPONSE', response);
             this.data = Object.assign({}, this.data, response.data);
@@ -740,7 +739,7 @@ class FormCreator extends Component {
             let text, toLogout = false;
             if(exception.response && exception.response.status === 401) {
                 text = getText('unauthorised');
-                if(exception.response.data && exception.response.data._sess === false) {
+                if(exception.response.data && exception.response.data.loggedIn === false) {
                     toLogout = true;
                 }
             } else {
