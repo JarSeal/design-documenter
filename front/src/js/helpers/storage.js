@@ -43,7 +43,6 @@ const getAdminRights = async () => {
         logger.error('Could not get admin rights', exception);
         throw new Error('Call stack');
     }
-    return null;
 };
 
 export {
