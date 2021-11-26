@@ -351,4 +351,21 @@ export const assetsObj = {
         en: 'Sun',
         fi: 'Su',
     },
+
+    order_number_suffix_st: {
+        en: 'st',
+        fi: '.',
+    },
+    order_number_suffix_nd: {
+        en: 'nd',
+        fi: '.',
+    },
+    order_number_suffix_rd: {
+        en: 'rd',
+        fi: '.',
+    },
+    order_number_suffix_th: {
+        en: 'th',
+        fi: '.',
+    },
 };
