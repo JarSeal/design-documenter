@@ -14,6 +14,9 @@ const variables = {
         // - WDS = short week day name (Mon),
         // - MN = full month name (January),
         // - MNS = short month name (Jan),
+        // - MI = minutes with leading zeros,
+        // - SS = seconds with leading zeros,
+        // - MS = milliseconds
         // Example: 'DTH MNS YYYY, HH:MM' = '6th Jan 2021, 10:25'
         date: 'DD.MM.YYYY',
         time: 'HH.MM',
