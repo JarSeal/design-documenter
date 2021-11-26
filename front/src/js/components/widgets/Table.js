@@ -46,8 +46,13 @@ class Table extends Component {
                     this._createRowClasses(this.tableStructure[j].class) +
                     this._createRowStyle(this.tableStructure[j]) +
                 '>';
-                row += this._getCellData(i, j);
+                row += this._formatCellData(
+                    this._getCellData(i, j),
+                    j
+                );
                 row += '</td>';
+                if(j === 3)
+                console.log('TYPE OF', typeof this._getCellData(i, j), new Date(this._getCellData(i, j)).getFullYear());
             }
             row += '</tr>';
         }
@@ -111,6 +116,17 @@ class Table extends Component {
         if(column.maxWidth) styles += 'max-width:' + column.maxWidth + ';';
         if(!styles.length) return '';
         return ' style="' + styles + '"';
+    }
+
+    _formatCellData = (value, structIndex) => {
+        const type = this.tableStructure[structIndex].type;
+        if(type) {
+            if(type === 'Date' && value && value.trim().length) {
+
+            }
+        }
+
+        return value;
     }
 }
 
