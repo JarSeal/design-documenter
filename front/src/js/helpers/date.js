@@ -18,9 +18,10 @@ const variables = {
         // - SS = seconds with leading zeros,
         // - MS = milliseconds
         // Example: 'DTH MNS YYYY, HH:MM' = '6th Jan 2021, 10:25'
+        // TODO: create the am and pm time for hours and the two letter thing (am or pm)
         date: 'DD.MM.YYYY',
         time: 'HH.MM',
-        full: 'DD.MM.YYYY, 0H:MI.SS.MS',
+        full: 'DD.MM.YYYY, 0H:MI',
     }
 };
 
