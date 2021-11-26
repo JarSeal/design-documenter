@@ -96,10 +96,10 @@ const parseDateFormat = (dateData, shape) => {
     return format;
 };
 
-export const createDate = (dateData, args) => {
+export const createDate = (dateData, shape) => {
     if(!dateData) return '';
     const newDate = new Date(dateData.toString().replace('Z', variables.defaultTimeDiff));
-    return parseDateFormat(newDate);
+    return parseDateFormat(newDate, shape);
 };
 
 export const getMonthName = (monthIndex, long) => {
