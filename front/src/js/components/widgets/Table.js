@@ -120,10 +120,10 @@ class Table extends Component {
     }
 
     _formatCellData = (value, structIndex) => {
-        if(!value || !value.length) return '';
         const type = this.tableStructure[structIndex].type;
         if(type) {
             if(type === 'Date') {
+                if(!value || !value.length) return '';
                 return createDate(value);
             }
         }
