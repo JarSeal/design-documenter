@@ -120,6 +120,7 @@ class UsersList extends Component {
             {
                 key: 'created.date',
                 heading: getText('created'),
+                type: 'Date',
             },
         ];
         return structure;

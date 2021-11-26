@@ -119,10 +119,11 @@ class Table extends Component {
     }
 
     _formatCellData = (value, structIndex) => {
+        if(!value || !value.length) return '';
         const type = this.tableStructure[structIndex].type;
         if(type) {
-            if(type === 'Date' && value && value.trim().length) {
-
+            if(type === 'Date') {
+                return value;
             }
         }
 
