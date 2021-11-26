@@ -1,3 +1,4 @@
+import { createDate } from "../../helpers/date";
 import { Component } from "../../LIGHTER";
 import './Table.scss';
 
@@ -123,7 +124,7 @@ class Table extends Component {
         const type = this.tableStructure[structIndex].type;
         if(type) {
             if(type === 'Date') {
-                return value;
+                return createDate(value);
             }
         }
 

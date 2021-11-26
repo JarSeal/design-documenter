@@ -1,16 +1,12 @@
 import { Logger } from "../LIGHTER";
 import { getText } from "./lang";
 
-const formDateStringBase = (dateData) => {
-
-};
-
 const variables = {
-    defaultTimeDiff: 2, // From UTC
+    defaultTimeDiff: '+08:00', // From UTC
     defaultFormat: {
         // Keywords:
-        // - DD and MM = day or month number with a leading zero,
-        // - D and M = day or month number without a leading zero,
+        // - 0D and 0M = day or month number with a leading zero,
+        // - DD and MM = day or month number without a leading zero,
         // - DTH = day number with st, nd, or th ending (or in other languages it could be a period)
         // - YYYY = full year (2021),
         // - YY = only decades (21),
@@ -25,21 +21,32 @@ const variables = {
     }
 };
 
-export const createDate = (dateData, args) => {
-    let dateString = '';
-    if(args) {
-        if(args.hideTime) {
-            if(args.showSeconds) {
+const parseDateFormat = (dateData, shape) => {
+    let format = variables.defaultFormat.full;
+    if(shape) format = shape;
 
-            }
-            if(args.showMilliseconds) {
-    
-            }
-        }
-        if(args.showOnlyYear) {
-
-        }
+    // Date
+    if(format.includes('DD')) format.replace('DD', dateData.getDate());
+    if(format.includes('0D')) dateData.getDate() < 10
+        ? '0' + format.replace('0D', dateData.getDate())
+        : format.replace('0D', dateData.getDate());
+    if(format.includes('DTH')) {
+        const date = dateData.getDate();
+        let suffix = getData('order_number_suffix_th');
+        if(date === 1) { suffix = getData('order_number_suffix_st'); }
+        else if(date === 2) { suffix = getData('order_number_suffix_nd'); }
+        else if(date === 3) { suffix = getData('order_number_suffix_rd'); }
+        format.replace('DTH', date + suffix);
     }
+
+    // Month
+    
+};
+
+export const createDate = (dateData, args) => {
+    if(!dateData) return '';
+    const newDate = new Date(dateData.toString().replace('Z', variables.defaultTimeDiff));
+    return parseDateFormat(newDate);
 };
 
 export const getMonthName = (monthIndex, long) => {
