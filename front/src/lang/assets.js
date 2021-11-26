@@ -191,4 +191,164 @@ export const assetsObj = {
         en: `Uups, the Universe with the id '$[0]' could not be found.`,
         fi: `Uups, Universumia id:llä '$[0]' ei löytynyt.`,
     },
+
+    // Month, long:
+    month_jan_long: {
+        en: 'January',
+        fi: 'Tammikuu',
+    },
+    month_feb_long: {
+        en: 'February',
+        fi: 'Helmikuu',
+    },
+    month_mar_long: {
+        en: 'March',
+        fi: 'Maaliskuu',
+    },
+    month_apr_long: {
+        en: 'April',
+        fi: 'Huhtikuu',
+    },
+    month_may_long: {
+        en: 'May',
+        fi: 'Toukokuu',
+    },
+    month_jun_long: {
+        en: 'June',
+        fi: 'Kesäkuu',
+    },
+    month_jul_long: {
+        en: 'July',
+        fi: 'Heinäkuu',
+    },
+    month_aug_long: {
+        en: 'August',
+        fi: 'Elokuu',
+    },
+    month_sep_long: {
+        en: 'September',
+        fi: 'Syyskuu',
+    },
+    month_oct_long: {
+        en: 'October',
+        fi: 'Lokakuu',
+    },
+    month_nov_long: {
+        en: 'November',
+        fi: 'Marraskuu',
+    },
+    month_dec_long: {
+        en: 'December',
+        fi: 'Joulukuu',
+    },
+
+    // Month, short:
+    month_jan_short: {
+        en: 'Jan',
+        fi: 'Tammi',
+    },
+    month_feb_short: {
+        en: 'Feb',
+        fi: 'Helmi',
+    },
+    month_mar_short: {
+        en: 'Mar',
+        fi: 'Maalis',
+    },
+    month_apr_short: {
+        en: 'Apr',
+        fi: 'Huhti',
+    },
+    month_may_short: {
+        en: 'May',
+        fi: 'Touko',
+    },
+    month_jun_short: {
+        en: 'Jun',
+        fi: 'Kesä',
+    },
+    month_jul_short: {
+        en: 'Jul',
+        fi: 'Heinä',
+    },
+    month_aug_short: {
+        en: 'Aug',
+        fi: 'Elo',
+    },
+    month_sep_short: {
+        en: 'Sep',
+        fi: 'Syys',
+    },
+    month_oct_short: {
+        en: 'Oct',
+        fi: 'Loka',
+    },
+    month_nov_short: {
+        en: 'Nov',
+        fi: 'Marras',
+    },
+    month_dec_short: {
+        en: 'Dec',
+        fi: 'Joulu',
+    },
+
+    // Week days, long:
+    weekday_mon_long: {
+        en: 'Monday',
+        fi: 'Maanantai',
+    },
+    weekday_tue_long: {
+        en: 'Tuesday',
+        fi: 'Tiistai',
+    },
+    weekday_wed_long: {
+        en: 'Wednesday',
+        fi: 'Keskiviikko',
+    },
+    weekday_thu_long: {
+        en: 'Thursday',
+        fi: 'Torstai',
+    },
+    weekday_fri_long: {
+        en: 'Friday',
+        fi: 'Perjantai',
+    },
+    weekday_sat_long: {
+        en: 'Saturday',
+        fi: 'Lauantai',
+    },
+    weekday_sun_long: {
+        en: 'Sunday',
+        fi: 'Sunnuntai',
+    },
+
+    // Week days, short:
+    weekday_mon_short: {
+        en: 'Mon',
+        fi: 'Ma',
+    },
+    weekday_tue_short: {
+        en: 'Tue',
+        fi: 'Ti',
+    },
+    weekday_wed_short: {
+        en: 'Wed',
+        fi: 'Ke',
+    },
+    weekday_thu_short: {
+        en: 'Thu',
+        fi: 'To',
+    },
+    weekday_fri_short: {
+        en: 'Fri',
+        fi: 'Pe',
+    },
+    weekday_sat_short: {
+        en: 'Sat',
+        fi: 'La',
+    },
+    weekday_sun_short: {
+        en: 'Sun',
+        fi: 'Su',
+    },
 };
