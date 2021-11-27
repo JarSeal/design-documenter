@@ -1,4 +1,5 @@
 import { createDate } from "../../helpers/date";
+import { getText } from "../../helpers/lang";
 import { Component } from "../../LIGHTER";
 import './Table.scss';
 
@@ -25,6 +26,30 @@ class Table extends Component {
         }
         this.tableData = data.tableData;
         this.template = `<div class="table-wrapper">${this._createTable()}</div>`;
+    }
+
+    addListeners = () => {
+        for(let i=0; i<this.tableStructure.length; i++) {
+            if(!this.tableStructure[i].unsortable) {
+                this.addListener({
+                    id: this.tableStructure[i].key + '-listener',
+                    target: document.getElementById(this.tableStructure[i].key + '-accessibility-sort-button'),
+                    type: 'click',
+                    fn: this._changeSortFN,
+                });
+                this.addListener({
+                    id: this.tableStructure[i].key + '-listener',
+                    target: document.getElementById(this.tableStructure[i].key + '-sort-header'),
+                    type: 'click',
+                    fn: this._changeSortFN,
+                });
+            }
+        }
+    }
+
+    _changeSortFN = (e) => {
+        e.preventDefault();
+        console.log('TEST', e.target);
     }
 
     _createTable = () => {
@@ -54,7 +79,7 @@ class Table extends Component {
             row += '<tr>';
             for(let j=0; j<this.tableStructure.length; j++) {
                 row += '<td' +
-                    this._createRowClasses(this.tableStructure[j].class) +
+                    this._createRowClasses(this.tableStructure[j]) +
                     this._createRowStyle(this.tableStructure[j]) +
                 '>';
                 row += this._formatCellData(
@@ -88,24 +113,34 @@ class Table extends Component {
         if(this.data.hideTableHeader) return '';
         let header = '<thead><tr>';
         for(let i=0; i<this.tableStructure.length; i++) {
-            header += '<th' +
-                this._createRowClasses(this.tableStructure[i].class) +
+            header += '<th';
+            if(!this.tableStructure[i].unsortable) header += ` id="${this.tableStructure[i].key}-sort-header"`;
+            header += this._createRowClasses(this.tableStructure[i], true) +
                 this._createRowStyle(this.tableStructure[i]) +
-            '>' +
-                (this.tableStructure[i].heading
-                    ? this.tableStructure[i].heading
-                    : this.tableStructure[i].key) +
-            '</th>';
+            '>';
+            header += this.tableStructure[i].heading
+                ? this.tableStructure[i].heading
+                : this.tableStructure[i].key;
+            if(!this.tableStructure[i].unsortable) {
+                header += `<button id="${this.tableStructure[i].key}-accessibility-sort" class="table-accessibility-sort">`;
+                    header += `${getText('sort_by')} ${this.tableStructure[i].heading}`;
+                header += '</button>';
+            }
+            header += '</th>';
         }
         header += '</tr></thead>';
         return header;
     }
 
-    _createRowClasses = (classes) => {
-        if(!classes) return '';
+    _createRowClasses = (structure, isHeader) => {
+        let classes = structure.classes;
+        let classString = '';
         if(typeof classes === 'string' || classes instanceof String) {
-            return ' class="' + classes + '"';
+            if(structure.sort) classes += ' sort-column';
+            classString = classes;
         } else {
+            classes = [];
+            if(structure.sort) classes.push('sort-column');
             let classList = '';
             for(let i=0; i<classes.length; i++) {
                 if(!classList.length) {
@@ -114,8 +149,19 @@ class Table extends Component {
                     classList += ' ' + classes[i];
                 }
             }
-            return ' class="' + classList + '"';
+            classString = classList;
         }
+        if(isHeader) {
+            if(!structure.unsortable) classString += ' sort-available';
+            if(structure.sort) {
+                if(structure.sort === 'asc') {
+                    classString += ' sort-asc';
+                } else {
+                    classString += ' sort-desc';
+                }
+            }
+        }
+        return ' class="' + classString + '"';
     }
 
     _createRowStyle = (column) => {
@@ -146,7 +192,6 @@ class Table extends Component {
             const splitProp = property.split('.');
             let aVal = a[splitProp[0]];
             let bVal = b[splitProp[0]];
-            // if(!aVal && !bVal) return -1*dir;
             for(let i=1; i<splitProp.length; i++) {
                 if(aVal) aVal = aVal[splitProp[i]];
                 if(bVal) bVal = bVal[splitProp[i]];

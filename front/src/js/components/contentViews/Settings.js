@@ -113,6 +113,7 @@ class UsersList extends Component {
             {
                 key: 'name',
                 heading: getText('name'),
+                unsortable: true,
             },
             {
                 key: 'userLevel',

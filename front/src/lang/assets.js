@@ -368,4 +368,9 @@ export const assetsObj = {
         en: 'th',
         fi: '.',
     },
+
+    sort_by: {
+        en: 'Sort by',
+        fi: 'Lajittele',
+    },
 };
