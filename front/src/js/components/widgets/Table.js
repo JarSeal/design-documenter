@@ -24,8 +24,6 @@ class Table extends Component {
             throw new Error('Call stack');
         }
         this.tableData = data.tableData;
-        console.log('tableData', this.tableData);
-        console.log('tableStructure', this.tableStructure);
         this.template = `<div class="table-wrapper">${this._createTable()}</div>`;
     }
 
@@ -39,7 +37,19 @@ class Table extends Component {
     }
 
     _createDataRows = () => {
-        let row = '';
+        let row = '', sortByKey = '', asc = false;
+        for(let i=0; i<this.tableStructure.length; i++) {
+            if(this.tableStructure[i].sort) {
+                sortByKey = this.tableStructure[i].key;
+                if(this.tableStructure.sort === 'asc') asc = true;
+                break;
+            }
+        }
+        if(!sortByKey) {
+            this.logger.error('Sorting key missing in table structure.');
+            throw new Error('Call stack');
+        }
+        this.tableData.sort(this._sortCompare(sortByKey, asc));
         for(let i=0; i<this.tableData.length; i++) {
             row += '<tr>';
             for(let j=0; j<this.tableStructure.length; j++) {
@@ -52,8 +62,6 @@ class Table extends Component {
                     j
                 );
                 row += '</td>';
-                if(j === 3)
-                console.log('TYPE OF', typeof this._getCellData(i, j), new Date(this._getCellData(i, j)).getFullYear());
             }
             row += '</tr>';
         }
@@ -129,6 +137,29 @@ class Table extends Component {
         }
 
         return value;
+    }
+
+    _sortCompare(property, asc) {
+        let dir = -1;
+        if(asc) dir = 1;
+        return (a, b) => {
+            const splitProp = property.split('.');
+            let aVal = a[splitProp[0]];
+            let bVal = b[splitProp[0]];
+            // if(!aVal && !bVal) return -1*dir;
+            for(let i=1; i<splitProp.length; i++) {
+                if(aVal) aVal = aVal[splitProp[i]];
+                if(bVal) bVal = bVal[splitProp[i]];
+            }
+            if((typeof aVal === 'string' || aVal instanceof String) && (typeof bVal === 'string' || bVal instanceof String)) {
+                if(aVal.toLowerCase() < bVal.toLowerCase()) return dir;
+                if(aVal.toLowerCase() > bVal.toLowerCase()) return -1*dir;
+            } else {
+                if(aVal < bVal) return dir;
+                if(aVal > bVal) return -1*dir;
+            }
+            return 0;
+        }
     }
 }
 

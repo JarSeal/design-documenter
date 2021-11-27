@@ -19,6 +19,7 @@ const variables = {
         // - MI = minutes with leading zeros,
         // - SS = seconds with leading zeros,
         // - MS = milliseconds
+        // - TZ = time difference to UTC
         // Example: 'DTH MNS YYYY, HH:MM' = '6th Jan 2021, 10:25'
         // TODO: create the am and pm time for hours and the two letter thing (am or pm)
         date: 'DD.MM.YYYY',
@@ -35,8 +36,8 @@ const parseDateFormat = (dateData, shape) => {
     if(shape) format = shape;
 
     // Date
-    if(format.includes('DD')) format = format.replace('DD', dateData.getDate());
-    if(format.includes('0D')) dateData.getDate() < 10
+    format = format.replace('DD', dateData.getDate());
+    dateData.getDate() < 10
         ? format = format.replace('0D', '0'+dateData.getDate())
         : format = format.replace('0D', dateData.getDate());
     if(format.includes('DTH')) {
@@ -49,49 +50,42 @@ const parseDateFormat = (dateData, shape) => {
     }
 
     // Week day name
-    if(format.includes('WDS')) {
-        format = format.replace('WDS', getText('weekday_'+dayNames[dateData.getDay()]+'_short'));
-    }
-    if(format.includes('WD')) {
-        format = format.replace('WD', getText('weekday_'+dayNames[dateData.getDay()]+'_long'));
-    }
+    format = format.replace('WDS', getText('weekday_'+dayNames[dateData.getDay()]+'_short'));
+    format = format.replace('WD', getText('weekday_'+dayNames[dateData.getDay()]+'_long'));
 
     // Month
-    if(format.includes('MM')) format = format.replace('MM', dateData.getMonth()+1);
-    if(format.includes('0M')) dateData.getMonth()+1 < 10
+    format = format.replace('MM', dateData.getMonth()+1);
+    dateData.getMonth()+1 < 10
         ? format = format.replace('0M', '0'+dateData.getMonth()+1)
         : format = format.replace('0M', dateData.getMonth()+1);
-    
-    // Month name
-    if(format.includes('MNS')) {
-        format = format.replace('MNS', getText('month_'+months[dateData.getMonth()]+'_short'));
-    }
-    if(format.includes('MN')) {
-        format = format.replace('MN', getText('month_'+months[dateData.getMonth()]+'_long'));
-    }
+    format = format.replace('MNS', getText('month_'+months[dateData.getMonth()]+'_short'));
+    format = format.replace('MN', getText('month_'+months[dateData.getMonth()]+'_long'));
 
     // Year
-    if(format.includes('YYYY')) format = format.replace('YYYY', dateData.getFullYear());
-    if(format.includes('YY')) format = format.replace('YY', dateData.getFullYear().toString().slice(-2));
+    format = format.replace('YYYY', dateData.getFullYear());
+    format = format.replace('YY', dateData.getFullYear().toString().slice(-2));
 
     // Hour
-    if(format.includes('HH')) format = format.replace('HH', dateData.getHours());
-    if(format.includes('0H')) dateData.getHours() < 10
+    format = format.replace('HH', dateData.getHours());
+    dateData.getHours() < 10
         ? format = format.replace('0H', '0'+dateData.getHours())
         : format = format.replace('0H', dateData.getHours());
 
     // Minute
-    if(format.includes('MI')) dateData.getMinutes() < 10
+    dateData.getMinutes() < 10
         ? format = format.replace('MI', '0'+dateData.getMinutes())
         : format = format.replace('MI', dateData.getMinutes());
 
     // Second
-    if(format.includes('SS')) dateData.getSeconds() < 10
+    dateData.getSeconds() < 10
         ? format = format.replace('SS', '0'+dateData.getSeconds())
         : format = format.replace('SS', dateData.getSeconds());
 
     // Millisecond
-    if(format.includes('MS')) format = format.replace('MS', dateData.getMilliseconds());
+    format = format.replace('MS', dateData.getMilliseconds());
+
+    // Timezone
+    format = format.replace('TZ', variables.defaultTimeDiff);
     
     return format;
 };

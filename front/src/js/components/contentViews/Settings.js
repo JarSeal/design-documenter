@@ -108,6 +108,7 @@ class UsersList extends Component {
             {
                 key: 'username',
                 heading: getText('username'),
+                sort: 'desc',
             },
             {
                 key: 'name',
