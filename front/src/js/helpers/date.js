@@ -2,7 +2,6 @@ import { Logger } from "../LIGHTER";
 import { getText } from "./lang";
 
 const variables = {
-    defaultTimeDiff: '+08:00', // From UTC
     defaultFormat: {
         // Keywords:
         // - 0D and 0M = day or month number with a leading zero,
@@ -19,7 +18,6 @@ const variables = {
         // - MI = minutes with leading zeros,
         // - SS = seconds with leading zeros,
         // - MS = milliseconds
-        // - TZ = time difference to UTC
         // Example: 'DTH MNS YYYY, HH:MM' = '6th Jan 2021, 10:25'
         // TODO: create the am and pm time for hours and the two letter thing (am or pm)
         date: 'DD.MM.YYYY',
@@ -83,16 +81,13 @@ const parseDateFormat = (dateData, shape) => {
 
     // Millisecond
     format = format.replace('MS', dateData.getMilliseconds());
-
-    // Timezone
-    format = format.replace('TZ', variables.defaultTimeDiff);
     
     return format;
 };
 
 export const createDate = (dateData, shape) => {
     if(!dateData) return '';
-    const newDate = new Date(dateData.toString().replace('Z', variables.defaultTimeDiff));
+    const newDate = new Date(dateData.toString());
     return parseDateFormat(newDate, shape);
 };
 

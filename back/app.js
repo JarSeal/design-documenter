@@ -17,6 +17,8 @@ const mongoose = require('mongoose');
 const createPresetForms = require('./controllers/forms/createPresetForms');
 const { createRandomString } = require('../shared/parsers');
 
+process.env.TZ = 'Europe/London';
+
 logger.info('connecting to', config.MONGODB_URI);
 
 mongoose.connect(config.MONGODB_URI, {
