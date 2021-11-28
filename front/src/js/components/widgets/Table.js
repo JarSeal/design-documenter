@@ -49,7 +49,28 @@ class Table extends Component {
 
     _changeSortFN = (e) => {
         e.preventDefault();
-        console.log('TEST', e.target);
+        const id = e.target.id;
+        const targetKey = id.split('-')[0];
+        let curDir = 'desc', newSortSet = false;
+        for(let i=0; i<this.tableStructure.length; i++) {
+            if(this.tableStructure[i].sort && targetKey !== this.tableStructure[i].key) {
+                curDir = this.tableStructure.sort;
+                break;
+            } else if(this.tableStructure[i].sort && targetKey === this.tableStructure[i].key) {
+                this.tableStructure[i].sort === 'desc' ? 'asc' : 'desc';
+                newSortSet = true;
+                break;
+            }
+        }
+        if(!newSortSet) {
+            for(let i=0; i<this.tableStructure.length; i++) {
+                if(targetKey === this.tableStructure[i].key) {
+                    this.tableStructure[i].sort = curDir;
+                    break;
+                }
+            }
+        }
+        
     }
 
     _createTable = () => {
