@@ -16,6 +16,9 @@ import './Table.scss';
 //       maxWidth: String, (CSS max-width)
 //       width: String, (CSS width)
 //       class: Array[String]/String, (CSS class(es) for the column)
+//       unsortable: Boolean, (if the column should not be sortable, default false)
+//       sort: String, (can be either 'desc' or 'asc')
+//       type: String, (special parsing for a column data (eg. 'Date'), this is defined at _formatCellData)
 //     }
 class Table extends Component {
     constructor(data) {
