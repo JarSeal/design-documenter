@@ -272,8 +272,8 @@ class Table extends Component {
     }
 
     _rowNumberOnHover = (rowIndex, structIndex) => {
-        if(this.data.showRowNumbers !== 'hover' || structIndex !== 0) return '';
-        return `<span class="table-hover-row-number"># ${rowIndex+1}</span>`;
+        if((this.data.showRowNumbers !== 'hover' && this.data.showRowNumbers !== 'small') || structIndex !== 0) return '';
+        return `<span class="table-${this.data.showRowNumbers}-row-number"># ${rowIndex+1}</span>`;
     }
 }
 
