@@ -7,6 +7,7 @@ import './Table.scss';
 // - tableData: Array[Object]
 // - hideTableHeader: Boolean,
 // - fullWidth: Boolean,
+// - emptyStateMsg: String,
 // - tableStructure: Array[Object] [required] (array order is the order of the columns)
 //     {
 //       key: String, [required] (the key in tableData item/object),
@@ -25,19 +26,27 @@ class Table extends Component {
             throw new Error('Call stack');
         }
         this.tableData = data.tableData;
-        this.template = `<div class="table-wrapper">${this._createTable()}</div>`;
+        this.template = `<div class="table-wrapper"></div>`;
+        this.tableComp;
     }
 
-    addListeners = () => {
+    paint = () => {
+        const table = this._createTable();
+        this.tableComp = this.addChild(new Component({ id: this.id + '-elem', template: table }));
+        this.tableComp.draw();
+        this.addTableListeners();
+    }
+
+    addTableListeners = () => {
         for(let i=0; i<this.tableStructure.length; i++) {
             if(!this.tableStructure[i].unsortable) {
-                this.addListener({
-                    id: this.tableStructure[i].key + '-listener',
+                this.tableComp.addListener({
+                    id: this.tableStructure[i].key + '-listener-acc',
                     target: document.getElementById(this.tableStructure[i].key + '-accessibility-sort-button'),
                     type: 'click',
                     fn: this._changeSortFN,
                 });
-                this.addListener({
+                this.tableComp.addListener({
                     id: this.tableStructure[i].key + '-listener',
                     target: document.getElementById(this.tableStructure[i].key + '-sort-header'),
                     type: 'click',
@@ -54,10 +63,14 @@ class Table extends Component {
         let curDir = 'desc', newSortSet = false;
         for(let i=0; i<this.tableStructure.length; i++) {
             if(this.tableStructure[i].sort && targetKey !== this.tableStructure[i].key) {
-                curDir = this.tableStructure.sort;
+                curDir = this.tableStructure[i].sort;
+                this.tableStructure[i].sort = null;
                 break;
             } else if(this.tableStructure[i].sort && targetKey === this.tableStructure[i].key) {
-                this.tableStructure[i].sort === 'desc' ? 'asc' : 'desc';
+                // Only changing the sort direction, not the column
+                this.tableStructure[i].sort === 'desc'
+                    ? this.tableStructure[i].sort = 'asc'
+                    : this.tableStructure[i].sort = 'desc';
                 newSortSet = true;
                 break;
             }
@@ -70,7 +83,8 @@ class Table extends Component {
                 }
             }
         }
-        
+        this.tableComp.discard(true);
+        this.rePaint();
     }
 
     _createTable = () => {
@@ -83,11 +97,14 @@ class Table extends Component {
     }
 
     _createDataRows = () => {
-        let row = '', sortByKey = '', asc = false;
+        if(!this.tableData.length) {
+            return this._emptyState();
+        }
+        let rows = '', sortByKey = '', asc = false;
         for(let i=0; i<this.tableStructure.length; i++) {
             if(this.tableStructure[i].sort) {
                 sortByKey = this.tableStructure[i].key;
-                if(this.tableStructure.sort === 'asc') asc = true;
+                if(this.tableStructure[i].sort === 'asc') asc = true;
                 break;
             }
         }
@@ -97,21 +114,21 @@ class Table extends Component {
         }
         this.tableData.sort(this._sortCompare(sortByKey, asc));
         for(let i=0; i<this.tableData.length; i++) {
-            row += '<tr>';
+            rows += '<tr>';
             for(let j=0; j<this.tableStructure.length; j++) {
-                row += '<td' +
+                rows += '<td' +
                     this._createRowClasses(this.tableStructure[j]) +
                     this._createRowStyle(this.tableStructure[j]) +
                 '>';
-                row += this._formatCellData(
+                rows += this._formatCellData(
                     this._getCellData(i, j),
                     j
                 );
-                row += '</td>';
+                rows += '</td>';
             }
-            row += '</tr>';
+            rows += '</tr>';
         }
-        return row;
+        return `<tbody>${rows}</tbody>`;
     }
 
     _getCellData = (tableIndex, structIndex) => {
@@ -143,7 +160,7 @@ class Table extends Component {
                 ? this.tableStructure[i].heading
                 : this.tableStructure[i].key;
             if(!this.tableStructure[i].unsortable) {
-                header += `<button id="${this.tableStructure[i].key}-accessibility-sort" class="table-accessibility-sort">`;
+                header += `<button id="${this.tableStructure[i].key}-accessibility-sort-button" class="table-accessibility-sort">`;
                     header += `${getText('sort_by')} ${this.tableStructure[i].heading}`;
                 header += '</button>';
             }
@@ -226,6 +243,16 @@ class Table extends Component {
             }
             return 0;
         }
+    }
+
+    _emptyState = () => {
+        let oneRow = '<tr class="table-comp-empty-state">';
+        oneRow += `<td colspan="${this.tableStructure.length}">`
+        oneRow += this.data.emptyStateMsg
+            ? this.data.emptyStateMsg
+            : getText('table_no_rows_empty_state_text');
+        oneRow += '</td></tr>';
+        return `<tbody>${oneRow}</tbody>`;
     }
 }
 

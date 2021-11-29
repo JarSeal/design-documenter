@@ -1,11 +1,15 @@
 @import './../../../styles/colors';
 
+.table-wrapper {
+    overflow: hidden;
+    overflow-x: auto;
+    position: relative;
+}
 .table-compo {
     text-align: left;
     background-color: $table-background;
-    margin: 2rem 0;
+    margin: 2rem 0 0;
     border-radius: 0.4rem;
-    overflow: hidden;
     th, td {
         padding: 1.4rem 1.8rem 1.2rem;
         font-size: 1.4rem;
@@ -16,7 +20,7 @@
     th {
         vertical-align: bottom;
         position: relative;
-        &.sort-asc, &.sort-desc {
+        &.sort-available {
             &:after {
                 display: inline-block;
                 content: "";
@@ -30,6 +34,7 @@
         &.sort-asc {
             &:after {
                 border-bottom: 0.5rem solid $font-color;
+                margin-bottom: 0.1rem;
             }
         }
         &.sort-desc {
@@ -45,13 +50,16 @@
             background-color: rgba(#000, 0.2);
         }
         .table-accessibility-sort {
-            width: 0;
-            height: 0;
+            width: 1px;
+            height: 1px;
             font-size: 0;
             line-height: 0;
             overflow: hidden;
             padding: 0;
             margin: 0;
+            position: absolute;
+            left: -800px;
+            top: -800px;
         }
     }
     thead { background-color: $table-thead-background; }
@@ -69,6 +77,16 @@
         }
         tr:hover {
             background-color: rgba(255, 255, 255, 0.1);
+        }
+        tr.table-comp-empty-state td {
+            text-align: center;
+            padding-top: 5rem;
+            padding-bottom: 5rem;
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.2);
+        }
+        tr.table-comp-empty-state:hover {
+            background-color: rgba(255, 255, 255, 0);
         }
     }
 }

@@ -373,4 +373,9 @@ export const assetsObj = {
         en: 'Sort by',
         fi: 'Lajittele',
     },
+
+    table_no_rows_empty_state_text: {
+        en: 'No data to show',
+        fi: 'Ei tietoa',
+    },
 };
