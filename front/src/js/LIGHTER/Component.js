@@ -136,6 +136,13 @@ class Component {
         this.simpletonIndex++;
     }
 
+    drawChildren = () => {
+        const keys = Object.keys(this.children);
+        for(let i=0; i<keys.length; i++) {
+            this.children[keys[i]].draw();
+        }
+    }
+
     addChild(component) {
         if(!component.isComponent) component = new Component(component);
         this.children[component.id] = component;
