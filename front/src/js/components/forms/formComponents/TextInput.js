@@ -42,10 +42,11 @@ class TextInput extends Component {
         if(data.error) data.class = 'form-elem--error';
     }
 
-    addListeners(data) {
+    addListeners = (data) => {
+        const inputElem = this.elem.querySelector('#'+this.inputId);
         this.addListener({
             id: this.inputId + '-keyup',
-            target: document.getElementById(this.inputId),
+            target: inputElem,
             type: 'keyup',
             fn: (e) => {
                 this.value = e.target.value;
@@ -94,6 +95,12 @@ class TextInput extends Component {
         this.data.value = this.value;
         if(noChangeFn) return;
         if(this.data.changeFn) this.data.changeFn({ target: inputElem });
+    }
+
+    focus = (caretPos) => {
+        const inputElem = this.elem.querySelector('#'+this.inputId);
+        inputElem.focus();
+        if(caretPos) inputElem.setSelectionRange(caretPos, caretPos);
     }
 }
 

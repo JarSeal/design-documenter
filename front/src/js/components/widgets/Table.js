@@ -47,8 +47,9 @@ class Table extends Component {
         this.template = `<div class="table-wrapper"></div>`;
         this.tableComp;
         this.statsComp;
-        this.searchComp;
-        this.searchString = '';
+        this.filterComp;
+        this.filterString = '';
+        this.filterCaretPos = null;
     }
 
     paint = (data) => {
@@ -56,12 +57,12 @@ class Table extends Component {
             this.statsComp = this.addChild({
                 id: this.id + '-stats',
                 class: 'table-stats',
-                text: getText('table_total_x_rows', [this.tableData.length]),
+                text: getText('table_total_x_rows', [this.allData.length]),
             });
             this.statsComp.draw();
         }
-        if(data.search) {
-            this._drawSearch();
+        if(data.filter) {
+            this._drawFilter();
         }
         const table = this._createTable();
         this.tableComp = this.addChild({ id: this.id + '-elem', template: table });
@@ -115,8 +116,12 @@ class Table extends Component {
                 }
             }
         }
+        this._refreshView();
+    }
+
+    _refreshView = () => {
         if(this.data.showStats) this.statsComp.discard(true);
-        if(this.data.search) this.searchComp.discard(true);
+        if(this.data.filter) this.filterComp.discard(true);
         this.tableComp.discard(true);
         this.rePaint();
     }
@@ -300,34 +305,62 @@ class Table extends Component {
         return `<span class="table-${this.data.showRowNumbers}-row-number"># ${rowIndex+1}</span>`;
     }
 
-    _drawSearch = () => {
-        this.searchComp = this.addChild({
-            id: this.id + '-search-wrapper',
-            class: 'table-search-wrapper',
+    _drawFilter = () => {
+        this.filterComp = this.addChild({
+            id: this.id + '-filter-wrapper',
+            class: 'table-filter-wrapper',
         });
-        this.searchComp.addChild(new Button({
-            id: this.id + '-search-clear',
-            class: 'table-search-clear',
-            text: 'X',
-            click: () => {
-                console.log('click');
-                this.searchString = '';
-                input.setValue('');
-            },
-        }));
+        if(this.filterString.length) {
+            this.filterComp.addChild(new Button({
+                id: this.id + '-filter-clear',
+                class: 'table-filter-clear',
+                text: 'X',
+                click: () => {
+                    this.filterString = '';
+                    this.filterCaretPos = null;
+                    input.setValue('');
+                    this._filterData();
+                },
+            }));
+        }
         const input = new TextInput({
-            id: this.id + '-search-input',
+            id: this.id + '-filter-input',
             label: '',
             hideMsg: true,
-            placeholder: 'Search',
+            placeholder: getText('filter'),
+            value: this.filterString,
             changeFn: (e) => {
-                this.searchString = e.target.value;
-                console.log('Change', e.target.value);
+                const val = e.target.value;
+                if(this.filterString === val) return;
+                this.filterString = val;
+                this.filterCaretPos = e.target.selectionStart;
+                this._filterData();
             },
         })
-        this.searchComp.addChild(input);
-        this.searchComp.draw();
-        this.searchComp.drawChildren();
+        this.filterComp.addChild(input);
+        this.filterComp.draw();
+        this.filterComp.drawChildren();
+
+        if(this.filterCaretPos !== null) input.focus(this.filterCaretPos);
+    }
+
+    _filterData = () => {
+        if(this.filterString === '') {
+            this.tableData = [...this.allData];
+            this._refreshView();
+            return;
+        }
+
+        const newData = [];
+        for(let i=0; i<this.allData.length; i++) {
+            if(this.allData[i].username.toLowerCase().includes(this.filterString.toLowerCase())) {
+                newData.push(this.allData[i]);
+                continue;
+            }
+        }
+
+        this.tableData = newData;
+        this._refreshView();
     }
 }
 

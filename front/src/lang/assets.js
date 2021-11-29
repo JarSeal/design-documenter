@@ -379,6 +379,11 @@ export const assetsObj = {
         fi: 'Ei tietoa',
     },
     table_total_x_rows: {
-        en: 'Total $[0] rows'
-    }
+        en: 'Total $[0] rows',
+        fi: 'Yhteensä $[0] riviä',
+    },
+    filter: {
+        en: 'Filter',
+        fi: 'Suodata',
+    },
 };
