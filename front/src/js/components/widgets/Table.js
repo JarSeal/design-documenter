@@ -1,6 +1,8 @@
 import { createDate } from "../../helpers/date";
 import { getText } from "../../helpers/lang";
 import { Component } from "../../LIGHTER";
+import Button from "../buttons/Button";
+import TextInput from "../forms/formComponents/TextInput";
 import './Table.scss';
 
 // Attributes for data:
@@ -41,9 +43,12 @@ class Table extends Component {
             ];
         }
         this.tableData = data.tableData;
+        this.allData = [...this.tableData];
         this.template = `<div class="table-wrapper"></div>`;
         this.tableComp;
         this.statsComp;
+        this.searchComp;
+        this.searchString = '';
     }
 
     paint = (data) => {
@@ -56,7 +61,7 @@ class Table extends Component {
             this.statsComp.draw();
         }
         if(data.search) {
-            console.log('SEARCHFJKD');
+            this._drawSearch();
         }
         const table = this._createTable();
         this.tableComp = this.addChild({ id: this.id + '-elem', template: table });
@@ -111,6 +116,7 @@ class Table extends Component {
             }
         }
         if(this.data.showStats) this.statsComp.discard(true);
+        if(this.data.search) this.searchComp.discard(true);
         this.tableComp.discard(true);
         this.rePaint();
     }
@@ -292,6 +298,36 @@ class Table extends Component {
     _rowNumberOnHover = (rowIndex, structIndex) => {
         if((this.data.showRowNumbers !== 'hover' && this.data.showRowNumbers !== 'small') || structIndex !== 0) return '';
         return `<span class="table-${this.data.showRowNumbers}-row-number"># ${rowIndex+1}</span>`;
+    }
+
+    _drawSearch = () => {
+        this.searchComp = this.addChild({
+            id: this.id + '-search-wrapper',
+            class: 'table-search-wrapper',
+        });
+        this.searchComp.addChild(new Button({
+            id: this.id + '-search-clear',
+            class: 'table-search-clear',
+            text: 'X',
+            click: () => {
+                console.log('click');
+                this.searchString = '';
+                input.setValue('');
+            },
+        }));
+        const input = new TextInput({
+            id: this.id + '-search-input',
+            label: '',
+            hideMsg: true,
+            placeholder: 'Search',
+            changeFn: (e) => {
+                this.searchString = e.target.value;
+                console.log('Change', e.target.value);
+            },
+        })
+        this.searchComp.addChild(input);
+        this.searchComp.draw();
+        this.searchComp.drawChildren();
     }
 }
 

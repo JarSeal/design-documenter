@@ -15,7 +15,7 @@ class TextInput extends Component {
     constructor(data) {
         super(data);
         if(!data.name) data.name = data.id;
-        if(!data.label) data.label = data.id;
+        if(!data.label && data.label !== '') data.label = data.id;
         this.inputId = this.id + '-input';
         this.template = `
             <div class="form-elem form-elem--text-input">
