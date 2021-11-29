@@ -130,11 +130,8 @@ class Component {
     drawHTML = (data) => {
         const id = this.id + '-simpleton-'+ this.simpletonIndex;
         const compData = Object.assign({}, { id }, data);
-        const childKeys = Object.keys(this.children);
         let compo = this.children[id];
-        if(!compo) {
-            compo = this.addChild(new Component(compData));
-        }
+        if(!compo) compo = this.addChild(compData);
         compo.draw();
         this.simpletonIndex++;
     }
