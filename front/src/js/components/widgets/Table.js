@@ -37,15 +37,15 @@ class Table extends Component {
 
     paint = (data) => {
         if(data.showStats) {
-            this.statsComp = this.addChild(new Component({
+            this.statsComp = this.addChild({
                 id: this.id + '-stats',
                 class: 'table-stats',
                 text: getText('table_total_x_rows', [this.tableData.length]),
-            }));
+            });
             this.statsComp.draw();
         }
         const table = this._createTable();
-        this.tableComp = this.addChild(new Component({ id: this.id + '-elem', template: table }));
+        this.tableComp = this.addChild({ id: this.id + '-elem', template: table });
         this.tableComp.draw();
         this.addTableListeners();
     }
