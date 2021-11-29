@@ -80,9 +80,15 @@
     tbody {
         tr {
             transition: background-color 0.08s ease-in-out;
+            td:first-child {
+                position: relative;
+            }
         }
         tr:hover {
             background-color: rgba(255, 255, 255, 0.1);
+            .table-hover-row-number {
+                opacity: 1;
+            }
         }
         tr.table-comp-empty-state td {
             text-align: center;
@@ -94,5 +100,18 @@
         tr.table-comp-empty-state:hover {
             background-color: rgba(255, 255, 255, 0);
         }
+    }
+    .table-hover-row-number {
+        position: absolute;
+        opacity: 0;
+        top: 0;
+        left: 0;
+        font-size: 0.9rem;
+        font-weight: 300;
+        display: block;
+        padding: 0 0.8rem 0.1rem 0.3rem;
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 0 0 1rem 0;
+        transition: opacity 0.3s ease-in-out;
     }
 }
