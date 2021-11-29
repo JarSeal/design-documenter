@@ -1,6 +1,17 @@
 @font-face {
-  font-family: 'Inter';
-  src: url('../fonts/Inter.ttf');
+  font-family: 'Oxygen';
+  font-weight: 400;
+  src: url('/fonts/Oxygen-Regular.ttf');
+}
+@font-face {
+  font-family: 'Oxygen';
+  font-weight: 700;
+  src: url('/fonts/Oxygen-Bold.ttf');
+}
+@font-face {
+  font-family: 'Oxygen';
+  font-weight: 300;
+  src: url('/fonts/Oxygen-Light.ttf');
 }
 
 @import 'variables';
