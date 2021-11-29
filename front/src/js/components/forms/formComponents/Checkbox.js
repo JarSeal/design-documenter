@@ -30,10 +30,10 @@ class Checkbox extends Component {
             </div>
         `;
         this.value = data.value || data.checked || false;
-        this.errorComp = this.addChild(new Component({
+        this.errorComp = this.addChild({
             id: this.id + '-error-msg',
             class: 'form-elem__error-msg',
-        }));
+        });
         if(data.error) data.class = 'form-elem--error';
     }
 

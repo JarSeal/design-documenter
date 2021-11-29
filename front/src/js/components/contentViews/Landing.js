@@ -17,7 +17,7 @@ class Landing extends Component {
     initMainScreen = () => {
         if(this.mainScreenInitiated) return;
         this.mainScreenCompos.push(
-            this.addChild(new Component({ id: 'universe-wrapper', class: 'list-wrapper' }))
+            this.addChild({ id: 'universe-wrapper', class: 'list-wrapper' })
         );
         this.mainScreenCompos.push(this.addChild(new Button({
             id: 'add-uni-button',

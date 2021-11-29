@@ -9,7 +9,7 @@ class FourOFour extends Component {
         this.template = `<div><h2>${data.title}</h2></div>`;
         this.params = {};
 
-        this.message = this.addChild(new Component({ id: '404-message', tag: 'p' }));
+        this.message = this.addChild({ id: '404-message', tag: 'p' });
         this.button = this.addChild(new RouteLink({
             id: 'back-to-root',
             link: '/',

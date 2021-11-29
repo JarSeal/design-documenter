@@ -17,11 +17,11 @@ class Dialog extends Component {
         this.resizeTimer;
 
         this.dialogCompos = [];
-        this.dialogCompos.push(this.addChild(new Component({
+        this.dialogCompos.push(this.addChild({
             id: this.id + '-box-wrapper',
             class: 'dialog-box',
             style: { transitionDuration: this.transitionTime + 'ms' },
-        })));
+        }));
         this.dialogCompos.push(this.addChild(new Button({
             id: this.id + '-close-button',
             class: 'close-button',
@@ -29,16 +29,16 @@ class Dialog extends Component {
             attributes: { title: getText('close_dialog') },
             click: this._closeDialogClick,
         })));
-        this.dialogCompos.push(this.addChild(new Component({
+        this.dialogCompos.push(this.addChild({
             id: this.id + '-inner-scroller',
             class: 'inner-scroller',
             attach: this.id + '-box-wrapper',
-        })));
-        this.dialogCompos.push(this.addChild(new Component({
+        }));
+        this.dialogCompos.push(this.addChild({
             id: this.id + '-inner-box',
             class: 'inner-box',
             attach: this.id + '-inner-scroller',
-        })));
+        }));
     }
 
     addListeners = () => {
@@ -72,13 +72,13 @@ class Dialog extends Component {
         this.compoToShow = this.addChild(dialogData.component);
         this.compoToShow.data.attach = this.id + '-inner-box';
         if(dialogData.title) {
-            this.dialogTitle = this.addChild(new Component({
+            this.dialogTitle = this.addChild({
                 id: this.id + '-main-title',
                 class: 'main-title',
                 tag: 'h3',
                 text: dialogData.title,
                 attach: this.id + '-box-wrapper',
-            }));
+            });
         }
         this.draw({ appear: true });
         this.isShowing = true;

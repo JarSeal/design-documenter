@@ -105,26 +105,26 @@ class FormCreator extends Component {
         // Form message top
         id = this.id+'-msg-top';
         this.componentsOrder.push(id);
-        this.components[id] = this.addChild(new Component({
+        this.components[id] = this.addChild({
             id, class: ['form-msg', 'form-msg-top']
-        }));
+        });
 
         // Form title and description
         text = this._getTextData(data.formTitle, data.formTitleId);
         if(text) {
             id = this.id+'-title';
             this.componentsOrder.push(id);
-            this.components[id] = this.addChild(new Component({
+            this.components[id] = this.addChild({
                 id, tag: 'h3', text, class: 'form-main-title'
-            }));
+            });
         }
         text = this._getTextData(data.formDesc, data.formDescId);
         if(text) {
             id = this.id+'-description';
             this.componentsOrder.push(id);
-            this.components[id] = this.addChild(new Component({
+            this.components[id] = this.addChild({
                 id, tag: 'p', text, class: 'form-main-description'
-            }));
+            });
         }
 
         // Fieldsets
@@ -136,24 +136,24 @@ class FormCreator extends Component {
             fieldset.tag = 'fieldset';
             if(fieldset.disabled) fieldset.attributes = { disabled: '' };
             this.componentsOrder.push(fieldsetId);
-            this.components[fieldsetId] = this.addChild(new Component(fieldset));
+            this.components[fieldsetId] = this.addChild(fieldset);
 
             // Fieldset title and description
             text = this._getTextData(fieldset.fieldsetTitle, fieldset.fieldsetTitleId);
             if(text) {
                 id = this.id+'-fieldset-'+i+'-title';
                 this.componentsOrder.push(id);
-                this.components[id] = this.addChild(new Component({
+                this.components[id] = this.addChild({
                     id, tag: 'h3', text, class: 'fieldset-title', attach: fieldsetId
-                }));
+                });
             }
             text = this._getTextData(fieldset.fieldsetDesc, fieldset.fieldsetDescId);
             if(text) {
                 id = this.id+'-fieldset-'+i+'-description';
                 this.componentsOrder.push(id);
-                this.components[id] = this.addChild(new Component({
+                this.components[id] = this.addChild({
                     id, tag: 'p', text, class: 'fieldset-description', attach: fieldsetId
-                }));
+                });
             }
 
             // Fields
@@ -165,9 +165,9 @@ class FormCreator extends Component {
                 if(field.type === 'divider') {
                     id = fieldIdPrefix+'-divider';
                     this.componentsOrder.push(id);
-                    this.components[id] = this.addChild(new Component({
+                    this.components[id] = this.addChild({
                         id, class: 'form-divider', attach: fieldsetId
-                    }));
+                    });
                 }
 
                 // Subheading
@@ -175,9 +175,9 @@ class FormCreator extends Component {
                     id = fieldIdPrefix+'-subheading';
                     text = this._getTextData(field.content, field.contentId);
                     this.componentsOrder.push(id);
-                    this.components[id] = this.addChild(new Component({
+                    this.components[id] = this.addChild({
                         id, tag: 'h4', class: 'form-subheading', attach: fieldsetId, text
-                    }));
+                    });
                 }
 
                 // Text input
@@ -222,9 +222,9 @@ class FormCreator extends Component {
         // Form message bottom
         id = this.id+'-msg-bottom';
         this.componentsOrder.push(id);
-        this.components[id] = this.addChild(new Component({
+        this.components[id] = this.addChild({
             id, class: ['form-msg', 'form-msg-bottom']
-        }));
+        });
 
         // Sending form State listener
         this.formState.addListener('sending', (newValue) => {
