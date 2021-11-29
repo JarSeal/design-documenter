@@ -29,6 +29,7 @@ class Component {
         this.Router = RouterRef;
         this.logger = logger;
         this.firstDraw = true;
+        this.isComponent = true;
         // *****************
         // [ RESERVED KEYS ]
         // data = {
@@ -139,6 +140,7 @@ class Component {
     }
 
     addChild(component) {
+        if(!component.isComponent) component = new Component(component);
         this.children[component.id] = component;
         component.parentId = this.id;
         return component;
