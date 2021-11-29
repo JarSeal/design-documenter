@@ -83,6 +83,7 @@ class UsersList extends Component {
                 id: 'users-table',
                 tableData: this.users,
                 fullWidth: true,
+                showStats: true,
                 tableStructure: this._getTableStructure(),
             })).draw();
         }

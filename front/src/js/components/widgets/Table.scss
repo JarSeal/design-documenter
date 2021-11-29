@@ -4,11 +4,17 @@
     overflow: hidden;
     overflow-x: auto;
     position: relative;
+    margin: 2rem 0;
+}
+.table-stats {
+    display: inline-block;
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.4);
 }
 .table-compo {
     text-align: left;
     background-color: $table-background;
-    margin: 2rem 0 0;
+    margin: 0;
     border-radius: 0.4rem;
     th, td {
         padding: 1.4rem 1.8rem 1.2rem;

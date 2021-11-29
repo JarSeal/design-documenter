@@ -378,4 +378,7 @@ export const assetsObj = {
         en: 'No data to show',
         fi: 'Ei tietoa',
     },
+    table_total_x_rows: {
+        en: 'Total $[0] rows'
+    }
 };

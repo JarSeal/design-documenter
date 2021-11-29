@@ -8,6 +8,7 @@ import './Table.scss';
 // - hideTableHeader: Boolean,
 // - fullWidth: Boolean,
 // - emptyStateMsg: String,
+// - showStats: Boolean,
 // - tableStructure: Array[Object] [required] (array order is the order of the columns)
 //     {
 //       key: String, [required] (the key in tableData item/object),
@@ -31,9 +32,18 @@ class Table extends Component {
         this.tableData = data.tableData;
         this.template = `<div class="table-wrapper"></div>`;
         this.tableComp;
+        this.statsComp;
     }
 
-    paint = () => {
+    paint = (data) => {
+        if(data.showStats) {
+            this.statsComp = this.addChild(new Component({
+                id: this.id + '-stats',
+                class: 'table-stats',
+                text: getText('table_total_x_rows', [this.tableData.length]),
+            }));
+            this.statsComp.draw();
+        }
         const table = this._createTable();
         this.tableComp = this.addChild(new Component({ id: this.id + '-elem', template: table }));
         this.tableComp.draw();
@@ -86,6 +96,7 @@ class Table extends Component {
                 }
             }
         }
+        if(this.data.showStats) this.statsComp.discard(true);
         this.tableComp.discard(true);
         this.rePaint();
     }
