@@ -9,7 +9,7 @@ import './Table.scss';
 // - fullWidth: Boolean,
 // - emptyStateMsg: String,
 // - showStats: Boolean,
-// - showRowNumbers: Boolean/String ('hover' means that the row number is only shown on hover)
+// - showRowNumbers: Boolean/String ('hover' means that the row number is only shown on hover and 'small' is the small numbers all the time, true creates a new column)
 // - tableStructure: Array[Object] [required] (array order is the order of the columns)
 //     {
 //       key: String, [required] (the key in tableData item/object),
@@ -29,6 +29,16 @@ class Table extends Component {
         if(!this.tableStructure) {
             this.logger.error('Table component needs to have a tableStructure attribute: Array of Objects ({key:String}).');
             throw new Error('Call stack');
+        }
+        if(this.data.showRowNumbers === true) {
+            this.tableStructure = [
+                {
+                    key: '_row-number',
+                    heading: '#',
+                    unsortable: true,
+                },
+                ...this.tableStructure
+            ];
         }
         this.tableData = data.tableData;
         this.template = `<div class="table-wrapper"></div>`;
@@ -150,6 +160,7 @@ class Table extends Component {
     _getCellData = (tableIndex, structIndex) => {
         const row = this.tableData[tableIndex];
         const key = this.tableStructure[structIndex].key;
+        if(key === '_row-number') return tableIndex + 1;
         if(key.includes('.')) {
             const splitKey = key.split('.');
             let pos = row;
@@ -214,6 +225,10 @@ class Table extends Component {
                     classString += ' sort-desc';
                 }
             }
+        }
+        if(structure.key === '_row-number') {
+            classString += classString.length ? ' ' : '';
+            classString += 'row-number-column';
         }
         return ' class="' + classString + '"';
     }
