@@ -55,6 +55,9 @@ class Table extends Component {
             });
             this.statsComp.draw();
         }
+        if(data.search) {
+            console.log('SEARCHFJKD');
+        }
         const table = this._createTable();
         this.tableComp = this.addChild({ id: this.id + '-elem', template: table });
         this.tableComp.draw();

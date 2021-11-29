@@ -85,6 +85,7 @@ class UsersList extends Component {
                 fullWidth: true,
                 showStats: true,
                 showRowNumbers: true,
+                search: true,
                 tableStructure: this._getTableStructure(),
             })).draw();
         }
