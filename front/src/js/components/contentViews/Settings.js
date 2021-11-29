@@ -84,6 +84,7 @@ class UsersList extends Component {
                 tableData: this.users,
                 fullWidth: true,
                 showStats: true,
+                showRowNumbers: 'hover',
                 tableStructure: this._getTableStructure(),
             })).draw();
         }

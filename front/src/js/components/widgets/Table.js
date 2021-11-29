@@ -9,6 +9,7 @@ import './Table.scss';
 // - fullWidth: Boolean,
 // - emptyStateMsg: String,
 // - showStats: Boolean,
+// - showRowNumbers: Boolean/String ('hover' means that the row number is only shown on hover)
 // - tableStructure: Array[Object] [required] (array order is the order of the columns)
 //     {
 //       key: String, [required] (the key in tableData item/object),
@@ -134,6 +135,7 @@ class Table extends Component {
                     this._createRowClasses(this.tableStructure[j]) +
                     this._createRowStyle(this.tableStructure[j]) +
                 '>';
+                rows += this._rowNumberOnHover(i, j),
                 rows += this._formatCellData(
                     this._getCellData(i, j),
                     j
@@ -267,6 +269,11 @@ class Table extends Component {
             : getText('table_no_rows_empty_state_text');
         oneRow += '</td></tr>';
         return `<tbody>${oneRow}</tbody>`;
+    }
+
+    _rowNumberOnHover = (rowIndex, structIndex) => {
+        if(this.data.showRowNumbers !== 'hover' || structIndex !== 0) return '';
+        
     }
 }
 
