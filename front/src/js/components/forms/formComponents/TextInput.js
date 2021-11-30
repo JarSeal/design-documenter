@@ -35,11 +35,15 @@ class TextInput extends Component {
             </div>
         `;
         this.value = data.value || '';
-        this.errorComp = this.addChild({
+        this.errorComp = new Component({
             id: this.id + '-error-msg',
             class: 'form-elem__error-msg',
         });
         if(data.error) data.class = 'form-elem--error';
+    }
+
+    erase = () => {
+        this.errorComp.discard(true);
     }
 
     addListeners = (data) => {
@@ -67,7 +71,7 @@ class TextInput extends Component {
             this.elem.classList.add('form-elem--error');
             if(data.error.errorMsg) {
                 this.elem.classList.add('form-elem--error-msg');
-                this.errorComp.draw({ text: data.error.errorMsg });
+                this.addChild(this.errorComp).draw({ text: data.error.errorMsg });
             }
         }
         if(data.disabled) inputElem.setAttribute('disabled', '');
@@ -79,7 +83,7 @@ class TextInput extends Component {
             this.elem.classList.add('form-elem--error');
             if(err.errorMsg && !this.data.hideMsg) {
                 this.elem.classList.add('form-elem--error-msg');
-                this.errorComp.draw({ text: err.errorMsg });
+                this.addChild(this.errorComp).draw({ text: err.errorMsg });
             }
         } else {
             this.errorComp.discard();
