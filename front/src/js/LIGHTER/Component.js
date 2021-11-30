@@ -136,10 +136,11 @@ class Component {
         this.simpletonIndex++;
     }
 
-    drawChildren = () => {
+    drawChildren = (full) => {
         const keys = Object.keys(this.children);
         for(let i=0; i<keys.length; i++) {
             this.children[keys[i]].draw();
+            if(full) this.children[keys[i]].drawChildren();
         }
     }
 
