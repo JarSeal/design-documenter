@@ -3,6 +3,7 @@ import { getText } from "../../helpers/lang";
 import { Component } from "../../LIGHTER";
 import Button from "../buttons/Button";
 import Checkbox from "../forms/formComponents/Checkbox";
+import CheckboxList from "../forms/formComponents/CheckboxList";
 import TextInput from "../forms/formComponents/TextInput";
 import './Table.scss';
 
@@ -398,13 +399,17 @@ class Table extends Component {
         this.filterSettingsComp.addChild(new Checkbox({
             id: this.id + '-filter-settings-case',
             class: 'filter-case-checkbox',
-            label: 'Match case',
+            label: getText('match_case'),
             hideMsg: true,
             value: this.filterMatchCase,
             changeFn: e => {
                 this.filterMatchCase = e.target.checked;
                 this._filterData();
             },
+        }));
+        this.filterSettingsComp.addChild(new CheckboxList({
+            id: this.id + '-filter-settings-col-selector',
+            label: getText('columns_to_filter'),
         }));
         this.filterComp.addChild(this.filterSettingsComp);
         this.filterComp.draw();
@@ -426,7 +431,7 @@ class Table extends Component {
             }
             if(node.localName.toLowerCase() === 'body') {
                 this.filterSettingsOpen = !this.filterSettingsOpen;
-                this.elem.classList.remove('filter-settings-open');
+                if(this.elem) this.elem.classList.remove('filter-settings-open');
                 window.removeEventListener('click', this._closeFilterSettings);
                 return;
             }

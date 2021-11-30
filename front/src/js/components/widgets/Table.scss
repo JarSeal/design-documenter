@@ -98,13 +98,24 @@
     top: 100%;
     opacity: 0;
     right: 300rem;
+    padding: 1rem 2rem 1rem;
     background-color: #fff;
     border-radius: 0.3rem;
     box-shadow: -0.4rem 0.4rem 1.2rem rgba(0, 0, 0, 0.4);
     transition: opacity 0.2s ease-in-out;
+    color: $font-color-invert;
     .filter-settings-open & {
         right: 0;
         opacity: 1;
+    }
+    .form-elem.filter-case-checkbox {
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 0.1rem solid rgba(0, 0, 0, 0.2);
+    }
+    .form-elem.form-elem--checkboxlist {
+        padding-bottom: 0;
+        margin-bottom: 0;
     }
 }
 .table-stats {

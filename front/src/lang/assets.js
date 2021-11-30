@@ -398,4 +398,12 @@ export const assetsObj = {
         en: 'All columns',
         fi: 'Kaikki sarakkeet',
     },
+    match_case: {
+        en: 'Match case',
+        fi: 'Kirjainkoon tarkistus',
+    },
+    columns_to_filter: {
+        en: 'Columns to filter',
+        fi: 'Filtteröitävät sarakkeet',
+    },
 };
