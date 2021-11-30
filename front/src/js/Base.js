@@ -75,7 +75,7 @@ class Base extends Component {
         });
     }
 
-    _initResizer() {
+    _initResizer = () => {
         let resizeTimer;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
