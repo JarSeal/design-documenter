@@ -2,6 +2,7 @@ import { createDate } from "../../helpers/date";
 import { getText } from "../../helpers/lang";
 import { Component } from "../../LIGHTER";
 import Button from "../buttons/Button";
+import Checkbox from "../forms/formComponents/Checkbox";
 import TextInput from "../forms/formComponents/TextInput";
 import './Table.scss';
 
@@ -56,6 +57,8 @@ class Table extends Component {
         this.filterCaretPos = null;
         this.filterKeys = [];
         this.filterSettingsOpen = false;
+        this.filterSettingsComp;
+        this.filterMatchCase = false;
         this.largeAmountLimit = 500; // If the data set is larger than this, than the filter will only start after enter key is pressed
         window.addEventListener('keyup', this.keyUp);
     }
@@ -111,8 +114,7 @@ class Table extends Component {
         }
     }
 
-    _changeSortFN = (e) => {
-        e.preventDefault();
+    _changeSortFN = e => {
         const id = e.target.id;
         const targetKey = id.split('-')[0];
         let curDir = 'desc', newSortSet = false;
@@ -389,12 +391,24 @@ class Table extends Component {
                 }
             },
         }));
-        this.filterComp.addChild({
+        this.filterSettingsComp = new Component({
             id: this.id + '-filter-settings',
             class: 'table-filter-settings',
         });
+        this.filterSettingsComp.addChild(new Checkbox({
+            id: this.id + '-filter-settings-case',
+            class: 'filter-case-checkbox',
+            label: 'Match case',
+            hideMsg: true,
+            value: this.filterMatchCase,
+            changeFn: e => {
+                this.filterMatchCase = e.target.checked;
+                this._filterData();
+            },
+        }));
+        this.filterComp.addChild(this.filterSettingsComp);
         this.filterComp.draw();
-        this.filterComp.drawChildren();
+        this.filterComp.drawChildren(true);
 
         if(this.filterSettingsOpen) this.elem.classList.add('filter-settings-open');
         if(this.filterCaretPos !== null) input.focus(this.filterCaretPos);
@@ -403,10 +417,21 @@ class Table extends Component {
 
     _closeFilterSettings = e => {
         const targetId = e.target.id;
-        if(targetId !== this.id + '-filter-settings' && targetId !== this.id + '-filter-settings-button') {
-            this.filterSettingsOpen = !this.filterSettingsOpen;
-            this.elem.classList.remove('filter-settings-open');
-            window.removeEventListener('click', this._closeFilterSettings);
+        let node = e.target, counter = 0;
+        while(true) {
+            if(!node) return;
+            const id = node.id;
+            if(id === this.id + '-filter-settings' || id === this.id + '-filter-settings-button') {
+                return;
+            }
+            if(node.localName.toLowerCase() === 'body') {
+                this.filterSettingsOpen = !this.filterSettingsOpen;
+                this.elem.classList.remove('filter-settings-open');
+                window.removeEventListener('click', this._closeFilterSettings);
+                return;
+            }
+            node = node.parentElement;
+            if(counter > 100) return;
         }
     }
 
@@ -427,6 +452,7 @@ class Table extends Component {
                     const splitKey = key.split('.');
                     let pos = row;
                     for(let i=0; i<splitKey.length; i++) {
+                        if(!pos) break;
                         pos = pos[splitKey[i]];
                         if(!pos) value = '';
                     }
@@ -434,6 +460,8 @@ class Table extends Component {
                 } else {
                     value = row[key];
                 }
+
+                if(!value) continue;
                 
                 for(let k=0; k<this.tableStructure.length; k++) {
                     if(key === this.tableStructure[k].key) {
@@ -443,9 +471,16 @@ class Table extends Component {
                 }
 
                 // Filtering check
-                if(value && value.toString().toLowerCase().includes(this.filterString.toLowerCase())) {
-                    newData.push(this.allData[i]);
-                    break;
+                if(this.filterMatchCase) {
+                    if(value && value.toString().includes(this.filterString)) {
+                        newData.push(this.allData[i]);
+                        break;
+                    }
+                } else {
+                    if(value && value.toString().toLowerCase().includes(this.filterString.toLowerCase())) {
+                        newData.push(this.allData[i]);
+                        break;
+                    }
                 }
             }
         }
