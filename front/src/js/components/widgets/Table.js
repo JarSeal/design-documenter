@@ -50,6 +50,7 @@ class Table extends Component {
         this.filterComp;
         this.filterString = '';
         this.filterCaretPos = null;
+        this.largeAmountLimit = 500; // If the data set is larger than this, than the filter will only start after enter key is pressed
     }
 
     paint = (data) => {
@@ -314,7 +315,6 @@ class Table extends Component {
             this.filterComp.addChild(new Button({
                 id: this.id + '-filter-clear',
                 class: 'table-filter-clear',
-                text: 'X',
                 click: () => {
                     this.filterString = '';
                     this.filterCaretPos = null;
@@ -334,9 +334,11 @@ class Table extends Component {
                 if(this.filterString === val) return;
                 this.filterString = val;
                 this.filterCaretPos = e.target.selectionStart;
-                this._filterData();
+                if(this.allData.length < this.largeAmountLimit) {
+                    this._filterData();
+                }
             },
-        })
+        });
         this.filterComp.addChild(input);
         this.filterComp.draw();
         this.filterComp.drawChildren();

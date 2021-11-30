@@ -102,6 +102,11 @@ class TextInput extends Component {
         inputElem.focus();
         if(caretPos) inputElem.setSelectionRange(caretPos, caretPos);
     }
+
+    blur = () => {
+        const inputElem = this.elem.querySelector('#'+this.inputId);
+        inputElem.blur();
+    }
 }
 
 export default TextInput;
