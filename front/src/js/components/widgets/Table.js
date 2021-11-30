@@ -14,7 +14,7 @@ import './Table.scss';
 // - showRowNumbers: Boolean/String ('hover' means that the row number is only shown on hover and 'small' is the small numbers all the time, true creates a new column)
 // - filter: Boolean, (enable table filtering input)
 // - filterHotkey: String, (single key to focus the filter input field)
-// - tableStructure: Array[Object] [required] (array order is the order of the columns)
+// - tableStructure: Array[Object], [required] (array order is the order of the columns)
 //     {
 //       key: String, [required] (the key in tableData item/object),
 //       heading: String,
@@ -23,6 +23,7 @@ import './Table.scss';
 //       width: String, (CSS width)
 //       class: Array[String]/String, (CSS class(es) for the column)
 //       unsortable: Boolean, (if the column should not be sortable, default false)
+//       doNotFilter: Boolean, (if the column data (cell) should be included in filter searches)
 //       sort: String, (can be either 'desc' or 'asc')
 //       type: String, (special parsing for a column data (eg. 'Date'), this is defined at _formatCellData)
 //     }
@@ -40,6 +41,7 @@ class Table extends Component {
                     key: '_row-number',
                     heading: '#',
                     unsortable: true,
+                    doNotFilter: true,
                 },
                 ...this.tableStructure
             ];
@@ -52,6 +54,8 @@ class Table extends Component {
         this.filterComp;
         this.filterString = '';
         this.filterCaretPos = null;
+        this.filterKeys = [];
+        this.filterSettingsOpen = false;
         this.largeAmountLimit = 500; // If the data set is larger than this, than the filter will only start after enter key is pressed
         window.addEventListener('keyup', this.keyUp);
     }
@@ -61,16 +65,21 @@ class Table extends Component {
     }
 
     paint = (data) => {
+        if(data.filter) {
+            this._drawFilter();
+            this.elem.classList.add('table-has-filter');
+        }
         if(data.showStats) {
             this.statsComp = this.addChild({
                 id: this.id + '-stats',
                 class: 'table-stats',
-                text: getText('table_total_x_rows', [this.allData.length]),
+                text: `${getText('total')} ${this.allData.length}` +
+                    (this.tableData.length === this.allData.length
+                        ? ''
+                        : `, ${getText('showing').toLowerCase()} ${this.tableData.length}`),
             });
             this.statsComp.draw();
-        }
-        if(data.filter) {
-            this._drawFilter();
+            this.elem.classList.add('table-has-stats');
         }
         const table = this._createTable();
         this.tableComp = this.addChild({ id: this.id + '-elem', template: table });
@@ -81,18 +90,24 @@ class Table extends Component {
     addTableListeners = () => {
         for(let i=0; i<this.tableStructure.length; i++) {
             if(!this.tableStructure[i].unsortable) {
-                this.tableComp.addListener({
-                    id: this.tableStructure[i].key + '-sort-listener-acc-' + this.id,
-                    target: document.getElementById(this.tableStructure[i].key + '-accessibility-sort-button-' + this.id),
-                    type: 'click',
-                    fn: this._changeSortFN,
-                });
-                this.tableComp.addListener({
-                    id: this.tableStructure[i].key + '-sort-listener-' + this.id,
-                    target: document.getElementById(this.tableStructure[i].key + '-sort-header' + this.id),
-                    type: 'click',
-                    fn: this._changeSortFN,
-                });
+                const accSortElem = document.getElementById(this.tableStructure[i].key + '-accessibility-sort-button-' + this.id);
+                if(accSortElem) {
+                    this.tableComp.addListener({
+                        id: this.tableStructure[i].key + '-sort-listener-acc-' + this.id,
+                        target: accSortElem,
+                        type: 'click',
+                        fn: this._changeSortFN,
+                    });
+                }
+                const headerSortElem = document.getElementById(this.tableStructure[i].key + '-sort-header-' + this.id);
+                if(headerSortElem) {
+                    this.tableComp.addListener({
+                        id: this.tableStructure[i].key + '-sort-listener-' + this.id,
+                        target: headerSortElem,
+                        type: 'click',
+                        fn: this._changeSortFN,
+                    });
+                }
             }
         }
     }
@@ -124,6 +139,7 @@ class Table extends Component {
                 }
             }
         }
+        this.filterCaretPos = null;
         this._refreshView();
     }
 
@@ -314,6 +330,12 @@ class Table extends Component {
     }
 
     _drawFilter = () => {
+        this.filterKeys = [];
+        for(let i=0; i<this.tableStructure.length; i++) {
+            if(!this.tableStructure[i].doNotFilter) {
+                this.filterKeys.push(this.tableStructure[i].key);
+            }
+        }
         this.filterComp = this.addChild({
             id: this.id + '-filter-wrapper',
             class: 'table-filter-wrapper',
@@ -353,9 +375,28 @@ class Table extends Component {
                 text: getText('press_enter_to_filter'),
             });
         }
+        this.filterComp.addChild(new Button({
+            id: this.id + '-large-filter-settings-button',
+            class: 'table-large-filter-settings-button',
+            text: getText('filtering_all_columns'),
+            click: () => {
+                this.filterSettingsOpen = !this.filterSettingsOpen;
+                const settingsElem = this.elem.querySelector('#'+this.id+'-filter-settings');
+                if(this.filterSettingsOpen) {
+                    settingsElem.classList.add('table-filter-settings--open');
+                } else {
+                    settingsElem.classList.remove('table-filter-settings--open');
+                }
+            },
+        }));
+        this.filterComp.addChild({
+            id: this.id + '-filter-settings',
+            class: 'table-filter-settings',
+        });
         this.filterComp.draw();
         this.filterComp.drawChildren();
 
+        if(this.filterSettingsOpen) this.elem.querySelector('#'+this.id+'-filter-settings').classList.add('table-filter-settings--open');
         if(this.filterCaretPos !== null) input.focus(this.filterCaretPos);
     }
 
@@ -367,10 +408,35 @@ class Table extends Component {
         }
 
         const newData = [];
+        let value;
         for(let i=0; i<this.allData.length; i++) {
-            if(this.allData[i].username.toLowerCase().includes(this.filterString.toLowerCase())) {
-                newData.push(this.allData[i]);
-                continue;
+            const row = this.allData[i];
+            for(let j=0; j<this.filterKeys.length; j++) {
+                const key = this.filterKeys[j];
+                if(key.includes('.')) {
+                    const splitKey = key.split('.');
+                    let pos = row;
+                    for(let i=0; i<splitKey.length; i++) {
+                        pos = pos[splitKey[i]];
+                        if(!pos) value = '';
+                    }
+                    value = pos;
+                } else {
+                    value = row[key];
+                }
+                
+                for(let k=0; k<this.tableStructure.length; k++) {
+                    if(key === this.tableStructure[k].key) {
+                        value = this._formatCellData(value, k);
+                        break;
+                    }
+                }
+
+                // Filtering check
+                if(value && value.toString().toLowerCase().includes(this.filterString.toLowerCase())) {
+                    newData.push(this.allData[i]);
+                    break;
+                }
             }
         }
 

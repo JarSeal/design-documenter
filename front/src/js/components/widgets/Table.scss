@@ -6,19 +6,25 @@
     position: relative;
     margin: 2rem 0;
 }
-.table-stats {
-    display: inline-block;
-    font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.4);
-    padding-top: 2.8rem;
-}
 .table-filter-wrapper {
     position: relative;
-    float: right;
+    right: 0;
+    .form-elem {
+        width: 100%;
+        padding-bottom: 1.8rem;
+        margin-bottom: 0.4rem;
+    }
+    .table-has-stats & {
+        .form-elem {
+            width: 100%;
+            padding-bottom: 2.2rem;
+            margin-bottom: -1.6rem;
+        }
+    }
 }
 .table-filter-clear {
     position: absolute;
-    left: -3.6rem;
+    right: 24.5rem;
     top: 0;
     width: 4rem;
     height: 4rem;
@@ -50,6 +56,21 @@
     bottom: 2.2rem;
     right: 0.4rem;
     font-size: 1rem;
+}
+.table-large-filter-settings-button {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.4);
+    border: none;
+    padding: 0;
+    background: none;
+}
+.table-stats {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.4);
+    padding-bottom: 0.4rem;
 }
 .table-compo {
     text-align: left;

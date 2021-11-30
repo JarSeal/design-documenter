@@ -378,9 +378,13 @@ export const assetsObj = {
         en: 'No data to show',
         fi: 'Ei tietoa',
     },
-    table_total_x_rows: {
-        en: 'Total $[0] rows',
-        fi: 'Yhteensä $[0] riviä',
+    total: {
+        en: 'Total',
+        fi: 'Yhteensä',
+    },
+    showing: {
+        en: 'Showing',
+        fi: 'Näytetään',
     },
     filter: {
         en: 'Filter',
