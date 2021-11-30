@@ -12,6 +12,8 @@ import './Table.scss';
 // - emptyStateMsg: String,
 // - showStats: Boolean,
 // - showRowNumbers: Boolean/String ('hover' means that the row number is only shown on hover and 'small' is the small numbers all the time, true creates a new column)
+// - filter: Boolean, (enable table filtering input)
+// - filterHotkey: String, (single key to focus the filter input field)
 // - tableStructure: Array[Object] [required] (array order is the order of the columns)
 //     {
 //       key: String, [required] (the key in tableData item/object),
