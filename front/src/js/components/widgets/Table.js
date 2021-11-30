@@ -50,7 +50,7 @@ class Table extends Component {
         this.filterComp;
         this.filterString = '';
         this.filterCaretPos = null;
-        this.largeAmountLimit = 2; // If the data set is larger than this, than the filter will only start after enter key is pressed
+        this.largeAmountLimit = 500; // If the data set is larger than this, than the filter will only start after enter key is pressed
         window.addEventListener('keyup', this.keyUp);
     }
 
@@ -80,14 +80,14 @@ class Table extends Component {
         for(let i=0; i<this.tableStructure.length; i++) {
             if(!this.tableStructure[i].unsortable) {
                 this.tableComp.addListener({
-                    id: this.tableStructure[i].key + '-sort-listener-acc',
-                    target: document.getElementById(this.tableStructure[i].key + '-accessibility-sort-button'),
+                    id: this.tableStructure[i].key + '-sort-listener-acc-' + this.id,
+                    target: document.getElementById(this.tableStructure[i].key + '-accessibility-sort-button-' + this.id),
                     type: 'click',
                     fn: this._changeSortFN,
                 });
                 this.tableComp.addListener({
-                    id: this.tableStructure[i].key + '-sort-listener',
-                    target: document.getElementById(this.tableStructure[i].key + '-sort-header'),
+                    id: this.tableStructure[i].key + '-sort-listener-' + this.id,
+                    target: document.getElementById(this.tableStructure[i].key + '-sort-header' + this.id),
                     type: 'click',
                     fn: this._changeSortFN,
                 });
@@ -154,7 +154,7 @@ class Table extends Component {
             }
         }
         if(!sortByKey) {
-            this.logger.error('Sorting key missing in table structure.');
+            this.logger.error('Sorting key missing in table structure.', this.id);
             throw new Error('Call stack');
         }
         this.tableData.sort(this._sortCompare(sortByKey, asc));
@@ -199,7 +199,7 @@ class Table extends Component {
         let header = '<thead><tr>';
         for(let i=0; i<this.tableStructure.length; i++) {
             header += '<th';
-            if(!this.tableStructure[i].unsortable) header += ` id="${this.tableStructure[i].key}-sort-header"`;
+            if(!this.tableStructure[i].unsortable) header += ` id="${this.tableStructure[i].key}-sort-header-${this.id}"`;
             header += this._createRowClasses(this.tableStructure[i], true) +
                 this._createRowStyle(this.tableStructure[i]) +
             '>';
@@ -207,7 +207,7 @@ class Table extends Component {
                 ? this.tableStructure[i].heading
                 : this.tableStructure[i].key;
             if(!this.tableStructure[i].unsortable) {
-                header += `<button id="${this.tableStructure[i].key}-accessibility-sort-button" class="table-accessibility-sort">`;
+                header += `<button id="${this.tableStructure[i].key}-accessibility-sort-button-${this.id}" class="table-accessibility-sort">`;
                     header += `${getText('sort_by')} ${this.tableStructure[i].heading}`;
                 header += '</button>';
             }
@@ -331,7 +331,7 @@ class Table extends Component {
             id: this.id + '-filter-input',
             label: '',
             hideMsg: true,
-            placeholder: getText('filter_placeholder'),
+            placeholder: getText('filter') + (this.data.filterHotkey ? ` [${this.data.filterHotkey.toUpperCase()}]` : ''),
             value: this.filterString,
             changeFn: (e) => {
                 const val = e.target.value;
@@ -392,7 +392,7 @@ class Table extends Component {
                 this._filterData();
             }
             this.elem.querySelector('#'+filterInputId).blur();
-        } else if(e.target.localName === 'body' && e.key === 'f') {
+        } else if(this.data.filter && this.data.filterHotkey && e.target.localName === 'body' && e.key === this.data.filterHotkey) {
             this.elem.querySelector('#'+filterInputId).focus();
         }
     }

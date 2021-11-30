@@ -85,6 +85,17 @@ class UsersList extends Component {
                 fullWidth: true,
                 showStats: true,
                 showRowNumbers: true,
+                filterHotkey: 'f',
+                filter: true,
+                tableStructure: this._getTableStructure(),
+            })).draw();
+
+            this.addChild(new Table({
+                id: 'users-table2',
+                tableData: this.users,
+                fullWidth: true,
+                showStats: true,
+                showRowNumbers: true,
                 filter: true,
                 tableStructure: this._getTableStructure(),
             })).draw();
