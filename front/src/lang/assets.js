@@ -382,8 +382,12 @@ export const assetsObj = {
         en: 'Total $[0] rows',
         fi: 'Yhteensä $[0] riviä',
     },
-    filter: {
-        en: 'Filter',
-        fi: 'Suodata',
+    filter_placeholder: {
+        en: 'Filter [f]',
+        fi: 'Suodata [f]',
+    },
+    press_enter_to_filter: {
+        en: 'Press Enter',
+        fi: 'Paina Enter',
     },
 };

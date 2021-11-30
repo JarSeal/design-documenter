@@ -50,7 +50,12 @@ class Table extends Component {
         this.filterComp;
         this.filterString = '';
         this.filterCaretPos = null;
-        this.largeAmountLimit = 500; // If the data set is larger than this, than the filter will only start after enter key is pressed
+        this.largeAmountLimit = 2; // If the data set is larger than this, than the filter will only start after enter key is pressed
+        window.addEventListener('keyup', this.keyUp);
+    }
+
+    erase = () => {
+        window.removeEventListener('keyup', this.keyUp);
     }
 
     paint = (data) => {
@@ -75,13 +80,13 @@ class Table extends Component {
         for(let i=0; i<this.tableStructure.length; i++) {
             if(!this.tableStructure[i].unsortable) {
                 this.tableComp.addListener({
-                    id: this.tableStructure[i].key + '-listener-acc',
+                    id: this.tableStructure[i].key + '-sort-listener-acc',
                     target: document.getElementById(this.tableStructure[i].key + '-accessibility-sort-button'),
                     type: 'click',
                     fn: this._changeSortFN,
                 });
                 this.tableComp.addListener({
-                    id: this.tableStructure[i].key + '-listener',
+                    id: this.tableStructure[i].key + '-sort-listener',
                     target: document.getElementById(this.tableStructure[i].key + '-sort-header'),
                     type: 'click',
                     fn: this._changeSortFN,
@@ -318,7 +323,6 @@ class Table extends Component {
                 click: () => {
                     this.filterString = '';
                     this.filterCaretPos = null;
-                    input.setValue('');
                     this._filterData();
                 },
             }));
@@ -327,7 +331,7 @@ class Table extends Component {
             id: this.id + '-filter-input',
             label: '',
             hideMsg: true,
-            placeholder: getText('filter'),
+            placeholder: getText('filter_placeholder'),
             value: this.filterString,
             changeFn: (e) => {
                 const val = e.target.value;
@@ -340,6 +344,13 @@ class Table extends Component {
             },
         });
         this.filterComp.addChild(input);
+        if(this.allData.length > this.largeAmountLimit) {
+            this.filterComp.addChild({
+                id: this.id + '-large-filter-info',
+                class: 'table-large-filter-info',
+                text: getText('press_enter_to_filter'),
+            });
+        }
         this.filterComp.draw();
         this.filterComp.drawChildren();
 
@@ -363,6 +374,27 @@ class Table extends Component {
 
         this.tableData = newData;
         this._refreshView();
+    }
+
+    keyUp = e => {
+        const targetId = e.target.id;
+        const filterInputId = this.id + '-filter-input-input';
+        if(targetId === filterInputId && e.key === 'Enter') {
+            this._filterData();
+            if(this.allData.length < this.largeAmountLimit) {
+                this.elem.querySelector('#'+filterInputId).blur();
+            }
+        } else if(e.key === 'Escape') {
+            if(this.filterString === '' && this.filterCaretPos === null && e.target.id !== filterInputId) return;
+            if(this.allData.length < this.largeAmountLimit) {
+                this.filterString = '';
+                this.filterCaretPos = null;
+                this._filterData();
+            }
+            this.elem.querySelector('#'+filterInputId).blur();
+        } else if(e.target.localName === 'body' && e.key === 'f') {
+            this.elem.querySelector('#'+filterInputId).focus();
+        }
     }
 }
 

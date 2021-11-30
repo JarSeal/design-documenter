@@ -44,6 +44,13 @@
         }
     }
 }
+.table-large-filter-info {
+    color: rgba(0, 0, 0, 0.4);
+    position: absolute;
+    bottom: 2.2rem;
+    right: 0.4rem;
+    font-size: 1rem;
+}
 .table-compo {
     text-align: left;
     background-color: $table-background;
