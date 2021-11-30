@@ -394,4 +394,8 @@ export const assetsObj = {
         en: 'Press Enter',
         fi: 'Paina Enter',
     },
+    filtering_all_columns: {
+        en: 'All columns',
+        fi: 'Kaikki sarakkeet',
+    },
 };

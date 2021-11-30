@@ -73,10 +73,9 @@ class Table extends Component {
             this.statsComp = this.addChild({
                 id: this.id + '-stats',
                 class: 'table-stats',
-                text: `${getText('total')} ${this.allData.length}` +
-                    (this.tableData.length === this.allData.length
-                        ? ''
-                        : `, ${getText('showing').toLowerCase()} ${this.tableData.length}`),
+                text: this.tableData.length === this.allData.length
+                        ? `${getText('total')} ${this.allData.length}`
+                        : `${getText('showing')} ${this.tableData.length} / ${this.allData.length}`,
             });
             this.statsComp.draw();
             this.elem.classList.add('table-has-stats');
@@ -370,22 +369,23 @@ class Table extends Component {
         this.filterComp.addChild(input);
         if(this.allData.length > this.largeAmountLimit) {
             this.filterComp.addChild({
-                id: this.id + '-large-filter-info',
-                class: 'table-large-filter-info',
+                id: this.id + '-filter-info',
+                class: 'table-filter-info',
                 text: getText('press_enter_to_filter'),
             });
         }
         this.filterComp.addChild(new Button({
-            id: this.id + '-large-filter-settings-button',
-            class: 'table-large-filter-settings-button',
+            id: this.id + '-filter-settings-button',
+            class: 'table-filter-settings-button',
             text: getText('filtering_all_columns'),
             click: () => {
                 this.filterSettingsOpen = !this.filterSettingsOpen;
-                const settingsElem = this.elem.querySelector('#'+this.id+'-filter-settings');
                 if(this.filterSettingsOpen) {
-                    settingsElem.classList.add('table-filter-settings--open');
+                    this.elem.classList.add('filter-settings-open');
+                    window.addEventListener('click', this._closeFilterSettings);
                 } else {
-                    settingsElem.classList.remove('table-filter-settings--open');
+                    this.elem.classList.remove('filter-settings-open');
+                    window.removeEventListener('click', this._closeFilterSettings);
                 }
             },
         }));
@@ -396,8 +396,18 @@ class Table extends Component {
         this.filterComp.draw();
         this.filterComp.drawChildren();
 
-        if(this.filterSettingsOpen) this.elem.querySelector('#'+this.id+'-filter-settings').classList.add('table-filter-settings--open');
+        if(this.filterSettingsOpen) this.elem.classList.add('filter-settings-open');
         if(this.filterCaretPos !== null) input.focus(this.filterCaretPos);
+        this.elem.style.minHeight = ((this.elem.querySelector('#'+this.id+'-filter-settings').offsetHeight + 62) / 10) + 'rem';
+    }
+
+    _closeFilterSettings = e => {
+        const targetId = e.target.id;
+        if(targetId !== this.id + '-filter-settings' && targetId !== this.id + '-filter-settings-button') {
+            this.filterSettingsOpen = !this.filterSettingsOpen;
+            this.elem.classList.remove('filter-settings-open');
+            window.removeEventListener('click', this._closeFilterSettings);
+        }
     }
 
     _filterData = () => {

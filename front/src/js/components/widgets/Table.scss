@@ -50,22 +50,62 @@
         }
     }
 }
-.table-large-filter-info {
+.table-filter-info {
     color: rgba(0, 0, 0, 0.4);
     position: absolute;
     bottom: 2.2rem;
     right: 0.4rem;
     font-size: 1rem;
 }
-.table-large-filter-settings-button {
+.table-filter-settings-button {
     position: absolute;
     bottom: 0;
     right: 0;
     font-size: 1.2rem;
     color: rgba(255, 255, 255, 0.4);
     border: none;
-    padding: 0;
+    border-bottom: 0.1rem solid transparent;
+    transition: border-bottom-color 0.2s ease-in-out;
+    padding: 0 0 0 1.6rem;
     background: none;
+    &:hover {
+        background: none;
+        border-bottom-color: rgba(255, 255, 255, 0.4);
+    }
+    &:before {
+        display: block;
+        content: "";
+        width: 0.1rem;
+        height: 0.1rem;
+        border: 0.4rem solid transparent;
+        border-top-color: rgba(255, 255, 255, 0.4);
+        position: absolute;
+        left: 0;
+        top: 0.5rem;
+        transition: transform 0.2s ease-in-out,
+                    top 0.2s ease-in-out;
+        .filter-settings-open & {
+            transform: rotate(180deg);
+            top: 0.1rem;
+        }
+    }
+}
+.table-filter-settings {
+    width: 24rem;
+    min-height: 20rem;
+    position: absolute;
+    z-index: 200;
+    top: 100%;
+    opacity: 0;
+    right: 300rem;
+    background-color: #fff;
+    border-radius: 0.3rem;
+    box-shadow: -0.4rem 0.4rem 1.2rem rgba(0, 0, 0, 0.4);
+    transition: opacity 0.2s ease-in-out;
+    .filter-settings-open & {
+        right: 0;
+        opacity: 1;
+    }
 }
 .table-stats {
     font-size: 1.2rem;
