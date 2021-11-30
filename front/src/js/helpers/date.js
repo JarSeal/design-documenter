@@ -48,16 +48,20 @@ const parseDateFormat = (dateData, shape) => {
     }
 
     // Week day name
-    format = format.replace('WDS', getText('weekday_'+dayNames[dateData.getDay()]+'_short'));
-    format = format.replace('WD', getText('weekday_'+dayNames[dateData.getDay()]+'_long'));
+    if(format.includes('WD')) {
+        format = format.replace('WDS', getText('weekday_'+dayNames[dateData.getDay()]+'_short'));
+        format = format.replace('WD', getText('weekday_'+dayNames[dateData.getDay()]+'_long'));
+    }
 
     // Month
     format = format.replace('MM', dateData.getMonth()+1);
     dateData.getMonth()+1 < 10
         ? format = format.replace('0M', '0'+dateData.getMonth()+1)
         : format = format.replace('0M', dateData.getMonth()+1);
-    format = format.replace('MNS', getText('month_'+months[dateData.getMonth()]+'_short'));
-    format = format.replace('MN', getText('month_'+months[dateData.getMonth()]+'_long'));
+    if(format.includes('MN')) {
+        format = format.replace('MNS', getText('month_'+months[dateData.getMonth()]+'_short'));
+        format = format.replace('MN', getText('month_'+months[dateData.getMonth()]+'_long'));
+    }
 
     // Year
     format = format.replace('YYYY', dateData.getFullYear());
