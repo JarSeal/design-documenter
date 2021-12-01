@@ -12,6 +12,7 @@ import './Table.scss';
 // - hideTableHeader: Boolean,
 // - fullWidth: Boolean,
 // - emptyStateMsg: String,
+// - rowClickFn: Function(e, rowData)
 // - showStats: Boolean,
 // - showRowNumbers: Boolean/String ('hover' means that the row number is only shown on hover and 'small' is the small numbers all the time, true creates a new column)
 // - filter: Boolean, (enable table filtering input)
@@ -119,6 +120,28 @@ class Table extends Component {
                 }
             }
         }
+        if(this.data.rowClickFn) {
+            this.tableComp.addListener({
+                id: this.id + '-row-click',
+                type: 'click',
+                fn: e => {
+                    let node = e.target, counter = 0, id;
+                    while(true) {
+                        if(node.localName.toLowerCase() === 'tr') {
+                            id = node.id;
+                            break;
+                        }
+                        node = node.parentElement;
+                        if(!node) break;
+                        if(counter > 100) break;
+                        counter++;
+                    }
+                    if(id && id.split('-')[0] === 'rowindex') {
+                        this.data.rowClickFn(e, this.tableData[id.split('-')[1]]);
+                    }
+                },
+            });
+        }
     }
 
     _changeSortFN = e => {
@@ -185,7 +208,7 @@ class Table extends Component {
         }
         this.tableData.sort(this._sortCompare(sortByKey, asc));
         for(let i=0; i<this.tableData.length; i++) {
-            rows += '<tr>';
+            rows += `<tr${this.data.rowClickFn ? ' class="table-row-clickable" id="rowindex-'+i+'"' : ''}>`;
             for(let j=0; j<this.tableStructure.length; j++) {
                 rows += '<td' +
                     this._createRowClasses(this.tableStructure[j]) +
@@ -537,7 +560,7 @@ class Table extends Component {
                 this._filterData();
             }
             this.elem.querySelector('#'+filterInputId).blur();
-        } else if(this.data.filter && this.data.filterHotkey && e.target.localName === 'body' && e.key === this.data.filterHotkey) {
+        } else if(this.data.filter && this.data.filterHotkey && e.target.localName.toLowerCase() === 'body' && e.key === this.data.filterHotkey) {
             this.elem.querySelector('#'+filterInputId).focus();
         }
     }

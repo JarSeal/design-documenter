@@ -95,6 +95,9 @@ class UsersList extends Component {
                 tableData: this.users,
                 fullWidth: true,
                 showStats: true,
+                rowClickFn: (e, rowData) => {
+                    console.log('THIS ROW', rowData, e);
+                },
                 showRowNumbers: true,
                 filter: false,
                 tableStructure: this._getTableStructure(),

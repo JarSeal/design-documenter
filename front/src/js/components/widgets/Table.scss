@@ -196,6 +196,9 @@
             td:first-child {
                 position: relative;
             }
+            &.table-row-clickable {
+                cursor: pointer;
+            }
         }
         tr:hover {
             background-color: rgba(255, 255, 255, 0.1);
