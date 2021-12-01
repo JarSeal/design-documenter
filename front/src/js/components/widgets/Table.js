@@ -60,6 +60,12 @@ class Table extends Component {
         this.filterSettingsOpen = false;
         this.filterSettingsComp;
         this.filterMatchCase = false;
+        this.filterSelectors = this.tableStructure.filter(struct => !struct.doNotFilter).map(struct => {
+            struct.label = struct.heading;
+            struct.selected = true;
+            this.filterKeys.push(struct.key);
+            return struct;
+        });
         this.largeAmountLimit = 500; // If the data set is larger than this, than the filter will only start after enter key is pressed
         window.addEventListener('keyup', this.keyUp);
     }
@@ -332,12 +338,6 @@ class Table extends Component {
     }
 
     _drawFilter = () => {
-        this.filterKeys = [];
-        for(let i=0; i<this.tableStructure.length; i++) {
-            if(!this.tableStructure[i].doNotFilter) {
-                this.filterKeys.push(this.tableStructure[i].key);
-            }
-        }
         this.filterComp = this.addChild({
             id: this.id + '-filter-wrapper',
             class: 'table-filter-wrapper',
@@ -380,7 +380,9 @@ class Table extends Component {
         this.filterComp.addChild(new Button({
             id: this.id + '-filter-settings-button',
             class: 'table-filter-settings-button',
-            text: getText('filtering_all_columns'),
+            text: this.filterSelectors.length === this.filterKeys.length
+                ? getText('filtering_all_columns')
+                : getText('filtering_some_columns'),
             click: () => {
                 this.filterSettingsOpen = !this.filterSettingsOpen;
                 if(this.filterSettingsOpen) {
@@ -410,6 +412,15 @@ class Table extends Component {
         this.filterSettingsComp.addChild(new CheckboxList({
             id: this.id + '-filter-settings-col-selector',
             label: getText('columns_to_filter'),
+            selectors: this.filterSelectors,
+            changeFn: (e, selectors) => {
+                this.filterSelectors = selectors;
+                this.filterKeys = [];
+                for(let i=0; i<selectors.length; i++) {
+                    if(selectors[i].selected) this.filterKeys.push(selectors[i].key);
+                }
+                this._filterData();
+            },
         }));
         this.filterComp.addChild(this.filterSettingsComp);
         this.filterComp.draw();
