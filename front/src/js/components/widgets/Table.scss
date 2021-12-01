@@ -232,4 +232,34 @@
         transition: opacity 0.2s ease-in-out;
     }
     .table-small-row-number { opacity: 1; }
+    tr.table-show-more-row {
+        text-align: center;
+        &:hover {
+            background-color: rgba(0, 0, 0, 0);
+        }
+        td {
+            position: relative;
+        }
+    }
+    .table-show-more,
+    .table-show-all {
+        border: none;
+        border-bottom: 0.1rem solid transparent;
+        background: none;
+        padding-left: 0;
+        padding-right: 0;
+        color: $font-color;
+        transition: border-bottom-color 0.2s ease-in-out;
+        &:hover {
+            background: none;
+            border-bottom-color: $font-color;
+        }
+    }
+    .table-show-all {
+        position: absolute;
+        top: 1.7rem;
+        right: 2rem;
+        font-size: 1rem;
+        color: rgba($font-color, 0.5);
+    }
 }

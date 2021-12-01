@@ -13,6 +13,7 @@ import './Table.scss';
 // - fullWidth: Boolean,
 // - emptyStateMsg: String,
 // - rowClickFn: Function(e, rowData)
+// - showGroupSize: Number,
 // - showStats: Boolean,
 // - showRowNumbers: Boolean/String ('hover' means that the row number is only shown on hover and 'small' is the small numbers all the time, true creates a new column)
 // - filter: Boolean, (enable table filtering input)
@@ -49,8 +50,12 @@ class Table extends Component {
                 ...this.tableStructure
             ];
         }
+        this.groupMax = 0;
+        if(data.showGroupSize) {
+            this.groupMax = data.showGroupSize;
+        }
         this.tableData = data.tableData;
-        this.allData = [...this.tableData];
+        this.allData = [...data.tableData];
         this.template = `<div class="table-wrapper"></div>`;
         this.tableComp;
         this.statsComp;
@@ -84,9 +89,7 @@ class Table extends Component {
             this.statsComp = this.addChild({
                 id: this.id + '-stats',
                 class: 'table-stats',
-                text: this.tableData.length === this.allData.length
-                        ? `${getText('total')} ${this.allData.length}`
-                        : `${getText('showing')} ${this.tableData.length} / ${this.allData.length}`,
+                text: this._showStatsText(),
             });
             this.statsComp.draw();
             this.elem.classList.add('table-has-stats');
@@ -94,10 +97,26 @@ class Table extends Component {
         const table = this._createTable();
         this.tableComp = this.addChild({ id: this.id + '-elem', template: table });
         this.tableComp.draw();
-        this.addTableListeners();
+        this._addTableListeners();
     }
 
-    addTableListeners = () => {
+    _showStatsText = () => {
+        let text = '';
+        if(this.groupMax) {
+            if(this.tableData.length !== this.allData.length) {
+                text = `${getText('showing')} ${Math.min(this.groupMax, this.tableData.length)} / ${this.tableData.length} (${getText('total').toLowerCase()} ${this.allData.length})`;
+            } else {
+                text = getText('showing') + ' ' + Math.min(this.groupMax, this.tableData.length) + ' / ' + this.allData.length;
+            }
+        } else {
+            text = this.tableData.length === this.allData.length
+                ? getText('total') + ' ' + this.allData.length
+                : getText('showing') + ' ' + this.tableData.length + ' / ' + this.allData.length;
+        }
+        return text;
+    }
+
+    _addTableListeners = () => {
         for(let i=0; i<this.tableStructure.length; i++) {
             if(!this.tableStructure[i].unsortable) {
                 const accSortElem = document.getElementById(this.tableStructure[i].key + '-accessibility-sort-button-' + this.id);
@@ -139,6 +158,27 @@ class Table extends Component {
                     if(id && id.split('-')[0] === 'rowindex') {
                         this.data.rowClickFn(e, this.tableData[id.split('-')[1]]);
                     }
+                },
+            });
+        }
+        if(this.groupMax) {
+            this.tableComp.addListener({
+                id: this.id + '-show-more-click',
+                target: this.elem.querySelector('#'+this.id + '-show-more-button'),
+                type: 'click',
+                fn: e => {
+                    this.groupMax += this.data.showGroupSize;
+                    if(this.groupMax > this.allData.length) this.groupMax = this.allData.length;
+                    this._refreshView();
+                },
+            });
+            this.tableComp.addListener({
+                id: this.id + '-show-all-click',
+                target: this.elem.querySelector('#'+this.id + '-show-all-button'),
+                type: 'click',
+                fn: e => {
+                    this.groupMax = this.allData.length;
+                    this._refreshView();
                 },
             });
         }
@@ -187,7 +227,19 @@ class Table extends Component {
         '>' +
             this._createTableHeader() +
             this._createDataRows() +
+            this._createShowMore() +
         '</table>';
+    }
+
+    _createShowMore = () => {
+        if(!this.groupMax || this.groupMax >= this.tableData.length) return '';
+        const showMoreAmount = Math.min(this.data.showGroupSize, this.tableData.length-this.groupMax);
+        return `<tr class="table-show-more-row">
+            <td colspan="${this.tableStructure.length}">
+                <button id="${this.id}-show-more-button" class="table-show-more">Show more (${showMoreAmount})</button>
+                <button id="${this.id}-show-all-button" class="table-show-all">Show all (${this.tableData.length})</button>
+            </td>
+        </tr>`;
     }
 
     _createDataRows = () => {
@@ -208,6 +260,7 @@ class Table extends Component {
         }
         this.tableData.sort(this._sortCompare(sortByKey, asc));
         for(let i=0; i<this.tableData.length; i++) {
+            if(this.groupMax && i+1 > this.groupMax) break;
             rows += `<tr${this.data.rowClickFn ? ' class="table-row-clickable" id="rowindex-'+i+'"' : ''}>`;
             for(let j=0; j<this.tableStructure.length; j++) {
                 rows += '<td' +
@@ -539,6 +592,7 @@ class Table extends Component {
             }
         }
 
+        if(this.groupMax) this.groupMax = this.data.showGroupSize;
         this.tableData = newData;
         this._refreshView();
     }

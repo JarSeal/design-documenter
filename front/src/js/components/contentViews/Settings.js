@@ -98,8 +98,9 @@ class UsersList extends Component {
                 rowClickFn: (e, rowData) => {
                     console.log('THIS ROW', rowData, e);
                 },
+                showGroupSize: 2,
                 showRowNumbers: true,
-                filter: false,
+                filter: true,
                 tableStructure: this._getTableStructure(),
             })).draw();
         }
