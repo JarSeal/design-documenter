@@ -346,9 +346,10 @@ class Table extends Component {
             this.filterComp.addChild(new Button({
                 id: this.id + '-filter-clear',
                 class: 'table-filter-clear',
-                click: () => {
+                click: e => {
                     this.filterString = '';
                     this.filterCaretPos = null;
+                    this._closeFilterSettings();
                     this._filterData();
                 },
             }));
@@ -406,6 +407,7 @@ class Table extends Component {
             value: this.filterMatchCase,
             changeFn: e => {
                 this.filterMatchCase = e.target.checked;
+                this.filterCaretPos = null;
                 this._filterData();
             },
         }));
@@ -420,6 +422,7 @@ class Table extends Component {
                 for(let i=0; i<selectors.length; i++) {
                     if(selectors[i].selected) this.filterKeys.push(selectors[i].key);
                 }
+                this.filterCaretPos = null;
                 this._filterData();
             },
         }));
@@ -433,22 +436,33 @@ class Table extends Component {
     }
 
     _closeFilterSettings = e => {
+        if(!e) {
+            this.filterSettingsOpen = false;
+            if(this.elem) this.elem.classList.remove('filter-settings-open');
+            window.removeEventListener('click', this._closeFilterSettings);
+            return;
+        }
         const targetId = e.target.id;
         let node = e.target, counter = 0;
         while(true) {
+            if(!node) node = document.getElementById(targetId);
             if(!node) return;
             const id = node.id;
             if(id === this.id + '-filter-settings' || id === this.id + '-filter-settings-button') {
                 return;
             }
             if(node.localName.toLowerCase() === 'body') {
-                this.filterSettingsOpen = !this.filterSettingsOpen;
+                this.filterSettingsOpen = false;
                 if(this.elem) this.elem.classList.remove('filter-settings-open');
                 window.removeEventListener('click', this._closeFilterSettings);
                 return;
             }
             node = node.parentElement;
-            if(counter > 100) return;
+            counter++;
+            if(counter > 100) {
+                window.removeEventListener('click', this._closeFilterSettings);
+                return;
+            }
         }
     }
 
@@ -515,6 +529,7 @@ class Table extends Component {
                 this.elem.querySelector('#'+filterInputId).blur();
             }
         } else if(e.key === 'Escape') {
+            this._closeFilterSettings();
             if(this.filterString === '' && this.filterCaretPos === null && e.target.id !== filterInputId) return;
             if(this.allData.length < this.largeAmountLimit) {
                 this.filterString = '';
