@@ -199,6 +199,9 @@
             &.table-row-clickable {
                 cursor: pointer;
             }
+            td.row-actionFn {
+                padding: 0.8rem 0.4rem 0.6rem 1.8rem;
+            }
         }
         tr:hover {
             background-color: rgba(255, 255, 255, 0.1);
@@ -216,6 +219,11 @@
         tr.table-comp-empty-state:hover {
             background-color: rgba(255, 255, 255, 0);
         }
+    }
+    .table-row-action-button {
+        min-width: 5rem;
+        padding: 0.7rem 1.4rem 0.6rem;
+        border-radius: 0.3rem;
     }
     .table-hover-row-number,
     .table-small-row-number {

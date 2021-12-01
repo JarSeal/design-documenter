@@ -84,7 +84,7 @@ class UsersList extends Component {
                 tableData: this.users,
                 fullWidth: true,
                 showStats: true,
-                showRowNumbers: true,
+                showRowNumbers: 'small',
                 filterHotkey: 'f',
                 filter: true,
                 tableStructure: this._getTableStructure(),
@@ -98,7 +98,7 @@ class UsersList extends Component {
                 rowClickFn: (e, rowData) => {
                     console.log('THIS ROW', rowData, e);
                 },
-                showGroupSize: 2,
+                showGroupSize: 3,
                 showRowNumbers: true,
                 filter: true,
                 tableStructure: this._getTableStructure(),
@@ -144,6 +144,20 @@ class UsersList extends Component {
                 key: 'created.date',
                 heading: getText('created'),
                 type: 'Date',
+            },
+            {
+                key: 'edit-item',
+                heading: 'Edit',
+                type: 'Action',
+                actionFn: (e, rowData) => { console.log('HERE', rowData.username); },
+                text: 'Edit',
+            },
+            {
+                key: 'delete-item',
+                heading: 'Delete',
+                type: 'Action',
+                actionFn: (e, rowData) => { console.log('HERE DELETE', rowData.username); },
+                text: 'DEL'
             },
         ];
         return structure;

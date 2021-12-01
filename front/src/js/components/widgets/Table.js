@@ -30,6 +30,8 @@ import './Table.scss';
 //       doNotFilter: Boolean, (if the column data (cell) should be included in filter searches)
 //       sort: String, (can be either 'desc' or 'asc')
 //       type: String, (special parsing for a column data (eg. 'Date'), this is defined at _formatCellData)
+//       actionFn: Function(e, rowData), (requires type: 'Action', this is the click fn on the action button. Automatic true for unsortable and doNotFilter)
+//       text: String, (action button text. If this is omitted, the heading will be used)
 //     }
 class Table extends Component {
     constructor(data) {
@@ -53,6 +55,12 @@ class Table extends Component {
         this.groupMax = 0;
         if(data.showGroupSize) {
             this.groupMax = data.showGroupSize;
+        }
+        for(let i=0; i<this.tableStructure.length; i++) {
+            if(this.tableStructure[i].actionFn) {
+                this.tableStructure[i].unsortable = true;
+                this.tableStructure[i].doNotFilter = true;
+            }
         }
         this.tableData = data.tableData;
         this.allData = [...data.tableData];
@@ -102,7 +110,7 @@ class Table extends Component {
 
     _showStatsText = () => {
         let text = '';
-        if(this.groupMax) {
+        if(this.groupMax && this.groupMax < this.tableData.length) {
             if(this.tableData.length !== this.allData.length) {
                 text = `${getText('showing')} ${Math.min(this.groupMax, this.tableData.length)} / ${this.tableData.length} (${getText('total').toLowerCase()} ${this.allData.length})`;
             } else {
@@ -138,12 +146,39 @@ class Table extends Component {
                     });
                 }
             }
+            if(this.tableStructure[i].actionFn) {
+                this.tableComp.addListener({
+                    id: this.id + '-action-click-' + this.tableStructure[i].key,
+                    type: 'click',
+                    fn: e => {
+                        const targetId = e.target.id;
+                        const buttonId = this.id + '-actionFn-' +  this.tableStructure[i].key;
+                        if(targetId !== buttonId) return;
+                        let node = e.target, counter = 0, id;
+                        while(true) {
+                            if(node.localName.toLowerCase() === 'tr') {
+                                id = node.id;
+                                break;
+                            }
+                            node = node.parentElement;
+                            if(!node) break;
+                            if(counter > 100) break;
+                            counter++;
+                        }
+                        if(id && id.split('-')[0] === 'rowindex') {
+                            this.tableStructure[i].actionFn(e, this.tableData[id.split('-')[1]]);
+                        }
+                        return true;
+                    },
+                });
+            }
         }
         if(this.data.rowClickFn) {
             this.tableComp.addListener({
                 id: this.id + '-row-click',
                 type: 'click',
                 fn: e => {
+                    if(e.target.id.includes(this.id + '-actionFn-')) return;
                     let node = e.target, counter = 0, id;
                     while(true) {
                         if(node.localName.toLowerCase() === 'tr') {
@@ -261,7 +296,7 @@ class Table extends Component {
         this.tableData.sort(this._sortCompare(sortByKey, asc));
         for(let i=0; i<this.tableData.length; i++) {
             if(this.groupMax && i+1 > this.groupMax) break;
-            rows += `<tr${this.data.rowClickFn ? ' class="table-row-clickable" id="rowindex-'+i+'"' : ''}>`;
+            rows += `<tr${this.data.rowClickFn ? ' class="table-row-clickable"' : ''} id="rowindex-${i}-${this.id}">`;
             for(let j=0; j<this.tableStructure.length; j++) {
                 rows += '<td' +
                     this._createRowClasses(this.tableStructure[j]) +
@@ -269,8 +304,7 @@ class Table extends Component {
                 '>';
                 rows += this._rowNumberOnHover(i, j),
                 rows += this._formatCellData(
-                    this._getCellData(i, j),
-                    j
+                    this._getCellData(i, j), j, i
                 );
                 rows += '</td>';
             }
@@ -352,6 +386,10 @@ class Table extends Component {
             classString += classString.length ? ' ' : '';
             classString += 'row-number-column';
         }
+        if(structure.actionFn) {
+            classString += classString.length ? ' ' : '';
+            classString += 'row-actionFn';
+        }
         return ' class="' + classString + '"';
     }
 
@@ -364,12 +402,17 @@ class Table extends Component {
         return ' style="' + styles + '"';
     }
 
-    _formatCellData = (value, structIndex) => {
+    _formatCellData = (value, structIndex, tableIndex) => {
         const type = this.tableStructure[structIndex].type;
         if(type) {
             if(type === 'Date') {
                 if(!value || !value.length) return '';
                 return createDate(value);
+            } else if(type === 'Action') {
+                const struct = this.tableStructure[structIndex];
+                return `<button id="${this.id}-actionFn-${struct.key}" class="table-row-action-button">
+                    ${struct.text ? struct.text : struct.heading}
+                </button>`;
             }
         }
 
@@ -572,7 +615,7 @@ class Table extends Component {
                 
                 for(let k=0; k<this.tableStructure.length; k++) {
                     if(key === this.tableStructure[k].key) {
-                        value = this._formatCellData(value, k);
+                        value = this._formatCellData(value, k, i);
                         break;
                     }
                 }
