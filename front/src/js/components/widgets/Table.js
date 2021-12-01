@@ -20,18 +20,18 @@ import './Table.scss';
 // - filterHotkey: String, (single key to focus the filter input field)
 // - tableStructure: Array[Object], [required] (array order is the order of the columns)
 //     {
-//       key: String, [required] (the key in tableData item/object),
-//       heading: String,
+//       key: String, [required] (The key in tableData item/object),
+//       heading: String, (Column heading)
 //       minWidth: String, (CSS min-width)
 //       maxWidth: String, (CSS max-width)
 //       width: String, (CSS width)
 //       class: Array[String]/String, (CSS class(es) for the column)
-//       unsortable: Boolean, (if the column should not be sortable, default false)
-//       doNotFilter: Boolean, (if the column data (cell) should be included in filter searches)
-//       sort: String, (can be either 'desc' or 'asc')
-//       type: String, (special parsing for a column data (eg. 'Date'), this is defined at _formatCellData)
-//       actionFn: Function(e, rowData), (requires type: 'Action', this is the click fn on the action button. Automatic true for unsortable and doNotFilter)
-//       text: String, (action button text. If this is omitted, the heading will be used)
+//       unsortable: Boolean, (If the column should not be sortable, default false)
+//       doNotFilter: Boolean, (If the column data (cell) should be included in filter searches)
+//       sort: String, (Can be either 'desc' or 'asc')
+//       type: String, (Special parsing for a column data (eg. 'Date'), this is defined at _formatCellData)
+//       actionFn: Function(e, rowData), (Requires type: 'Action', this is the click fn on the action button. Automatic true for unsortable and doNotFilter)
+//       actionText: String, (Action button text. If this is omitted, the heading will be used)
 //     }
 class Table extends Component {
     constructor(data) {
@@ -411,7 +411,7 @@ class Table extends Component {
             } else if(type === 'Action') {
                 const struct = this.tableStructure[structIndex];
                 return `<button id="${this.id}-actionFn-${struct.key}" class="table-row-action-button">
-                    ${struct.text ? struct.text : struct.heading}
+                    ${struct.actionText ? struct.actionText : struct.heading}
                 </button>`;
             }
         }

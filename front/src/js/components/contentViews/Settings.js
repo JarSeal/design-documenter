@@ -150,14 +150,13 @@ class UsersList extends Component {
                 heading: 'Edit',
                 type: 'Action',
                 actionFn: (e, rowData) => { console.log('HERE', rowData.username); },
-                text: 'Edit',
             },
             {
                 key: 'delete-item',
                 heading: 'Delete',
                 type: 'Action',
                 actionFn: (e, rowData) => { console.log('HERE DELETE', rowData.username); },
-                text: 'DEL'
+                actionText: 'DEL'
             },
         ];
         return structure;
