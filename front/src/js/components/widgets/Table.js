@@ -413,6 +413,7 @@ class Table extends Component {
             id: this.id + '-filter-settings-col-selector',
             label: getText('columns_to_filter'),
             selectors: this.filterSelectors,
+            minSelections: 1,
             changeFn: (e, selectors) => {
                 this.filterSelectors = selectors;
                 this.filterKeys = [];

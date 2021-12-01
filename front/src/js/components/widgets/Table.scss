@@ -91,7 +91,8 @@
     }
 }
 .table-filter-settings {
-    width: 24rem;
+    min-width: 24rem;
+    max-width: 34rem;
     min-height: 20rem;
     position: absolute;
     z-index: 200;

@@ -410,4 +410,12 @@ export const assetsObj = {
         en: 'Columns to filter',
         fi: 'Filtteröitävät sarakkeet',
     },
+    minimum_x: {
+        en: 'Minimum $[0]',
+        fi: 'Minimi $[0]',
+    },
+    maximum_x: {
+        en: 'Maximum $[0]',
+        fi: 'Maximi $[0]',
+    },
 };
