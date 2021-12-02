@@ -230,7 +230,9 @@ class Table extends Component {
                 type: 'click',
                 fn: e => {
                     // console.log(this.groupMax, e.target);
+                    console.log('HERE1');
                     if(!e.target.id.includes('-inputSelectorBox-')) return;
+                    console.log('HERE2');
                     if(e.target.id.includes('-header-inputSelectorBox-')) {
                         if(e.target.checked) {
                             this.selected = [];
@@ -275,7 +277,7 @@ class Table extends Component {
                 },
             });
         }
-        if(this.groupMax) {
+        if(this.groupMax && this.groupMax !== this.allData.length) {
             this.tableComp.addListener({
                 id: this.id + '-show-more-click',
                 target: this.elem.querySelector('#'+this.id + '-show-more-button'),
