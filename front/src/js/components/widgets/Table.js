@@ -203,7 +203,10 @@ class Table extends Component {
                 id: this.id + '-row-click',
                 type: 'click',
                 fn: e => {
-                    if(e.target.id.includes(this.id + '-actionFn-')) return;
+                    console.log('YEAH', e);
+                    if(e.target.id.includes(this.id + '-actionFn-')
+                        || e.target.id.includes('-inputSelectorBox-')
+                        || e.target.classList.contains('selection-box')) return;
                     let node = e.target, counter = 0, id;
                     while(true) {
                         if(node.localName.toLowerCase() === 'tr') {
@@ -226,7 +229,7 @@ class Table extends Component {
                 id: this.id + '-row-selection-click',
                 type: 'click',
                 fn: e => {
-                    console.log(this.groupMax, e.target);
+                    // console.log(this.groupMax, e.target);
                     if(!e.target.id.includes('-inputSelectorBox-')) return;
                     if(e.target.id.includes('-header-inputSelectorBox-')) {
                         if(e.target.checked) {
@@ -241,6 +244,7 @@ class Table extends Component {
                                 }
                             }
                         } else {
+                            console.log('here');
                             this.selected = [];
                         }
                         this._refreshView();
