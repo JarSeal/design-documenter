@@ -181,6 +181,9 @@
             top: -800px;
         }
     }
+    .row-selection {
+        padding: 0.8rem 0.4rem 0.6rem 1.8rem;
+    }
     thead { background-color: $table-thead-background; }
     tbody {
         td {
@@ -198,6 +201,9 @@
             }
             &.table-row-clickable {
                 cursor: pointer;
+            }
+            &.row-selection--selected .row-selection {
+                background-color: rgba(0, 0, 0, 0.4);
             }
             td.row-actionFn {
                 padding: 0.8rem 0.4rem 0.6rem 1.8rem;

@@ -15,6 +15,8 @@ import './Table.scss';
 // - rowClickFn: Function(e, rowData)
 // - showGroupSize: Number,
 // - showStats: Boolean,
+// - unsortable: Boolean, (makes all of the columns unsortable)
+// - selectable: Boolean, (if true adds checkboxes column and maintains an array of selected data which can be retrieved by calling the getSelected method)
 // - showRowNumbers: Boolean/String ('hover' means that the row number is only shown on hover and 'small' is the small numbers all the time, true creates a new column)
 // - filter: Boolean, (enable table filtering input)
 // - filterHotkey: String, (single key to focus the filter input field)
@@ -41,10 +43,21 @@ class Table extends Component {
             this.logger.error('Table component needs to have a tableStructure attribute: Array of Objects ({key:String}).');
             throw new Error('Call stack');
         }
+        if(this.data.selectable === true) {
+            this.tableStructure = [
+                {
+                    key: '_rowSelection',
+                    heading: '',
+                    unsortable: true,
+                    doNotFilter: true,
+                },
+                ...this.tableStructure
+            ];
+        }
         if(this.data.showRowNumbers === true) {
             this.tableStructure = [
                 {
-                    key: '_row-number',
+                    key: '_rowNumber',
                     heading: '#',
                     unsortable: true,
                     doNotFilter: true,
@@ -61,10 +74,18 @@ class Table extends Component {
                 this.tableStructure[i].unsortable = true;
                 this.tableStructure[i].doNotFilter = true;
             }
+            if(this.data.unsortable) {
+                this.tableStructure[i].unsortable = true;
+            }
         }
         this.tableData = data.tableData;
         this.allData = [...data.tableData];
+        for(let i=0; i<this.tableData.length; i++) {
+            this.tableData[i]['_tableIndex'] = i;
+            this.allData[i]['_tableIndex'] = i;
+        }
         this.template = `<div class="table-wrapper"></div>`;
+        this.selected = [];
         this.tableComp;
         this.statsComp;
         this.filterComp;
@@ -196,6 +217,37 @@ class Table extends Component {
                 },
             });
         }
+        if(this.data.selectable) {
+            this.tableComp.addListener({
+                id: this.id + '-row-selection-click',
+                type: 'click',
+                fn: e => {
+                    if(!e.target.id.includes('-inputSelectorBox-')) return;
+                    let node = e.target, counter = 0, id;
+                    while(true) {
+                        if(node.localName.toLowerCase() === 'tr') {
+                            id = node.id;
+                            break;
+                        }
+                        node = node.parentElement;
+                        if(!node) break;
+                        if(counter > 100) break;
+                        counter++;
+                    }
+                    if(id && id.split('-')[0] === 'rowindex') {
+                        const index = this.tableData[id.split('-')[1]]._tableIndex;
+                        if(this.selected.includes(index)) {
+                            node.classList.remove('row-selection--selected');
+                            this.selected = this.selected.filter(item => item !== index);
+                        } else {
+                            node.classList.add('row-selection--selected');
+                            this.selected.push(index);
+                        }
+                        console.log('SELECTION CLICK', this.getSelected());
+                    }
+                },
+            });
+        }
         if(this.groupMax) {
             this.tableComp.addListener({
                 id: this.id + '-show-more-click',
@@ -296,15 +348,16 @@ class Table extends Component {
         this.tableData.sort(this._sortCompare(sortByKey, asc));
         for(let i=0; i<this.tableData.length; i++) {
             if(this.groupMax && i+1 > this.groupMax) break;
-            rows += `<tr${this.data.rowClickFn ? ' class="table-row-clickable"' : ''} id="rowindex-${i}-${this.id}">`;
+            rows += `<tr${this._createDataRowClass(this.tableData[i]._tableIndex)} id="rowindex-${i}-${this.id}">`;
             for(let j=0; j<this.tableStructure.length; j++) {
                 rows += '<td' +
-                    this._createRowClasses(this.tableStructure[j]) +
-                    this._createRowStyle(this.tableStructure[j]) +
+                    this._createCellClasses(this.tableStructure[j]) +
+                    this._createCellStyle(this.tableStructure[j]) +
                 '>';
                 rows += this._rowNumberOnHover(i, j),
                 rows += this._formatCellData(
-                    this._getCellData(i, j), j, i
+                    this._getCellData(i, j),
+                    j,
                 );
                 rows += '</td>';
             }
@@ -313,10 +366,27 @@ class Table extends Component {
         return `<tbody>${rows}</tbody>`;
     }
 
+    _createDataRowClass = (index) => {
+        let classString;
+        if(this.data.rowClickFn) classString = 'table-row-clickable';
+        if(this.selected.includes(index)) {
+            if(classString && classString.length) {
+                classString += ' row-selection--selected';
+            } else {
+                classString = 'row-selection--selected';
+            }
+        }
+        return classString ? ` class="${classString}"` : '';
+    }
+
     _getCellData = (tableIndex, structIndex) => {
         const row = this.tableData[tableIndex];
         const key = this.tableStructure[structIndex].key;
-        if(key === '_row-number') return tableIndex + 1;
+        if(key === '_rowNumber') {
+            return tableIndex + 1;
+        } else if(key === '_rowSelection') {
+            return this._selectRowCheckbox(this.tableData[tableIndex]._tableIndex);
+        }
         if(key.includes('.')) {
             const splitKey = key.split('.');
             let pos = row;
@@ -336,8 +406,8 @@ class Table extends Component {
         for(let i=0; i<this.tableStructure.length; i++) {
             header += '<th';
             if(!this.tableStructure[i].unsortable) header += ` id="${this.tableStructure[i].key}-sort-header-${this.id}"`;
-            header += this._createRowClasses(this.tableStructure[i], true) +
-                this._createRowStyle(this.tableStructure[i]) +
+            header += this._createCellClasses(this.tableStructure[i], true) +
+                this._createCellStyle(this.tableStructure[i]) +
             '>';
             header += this.tableStructure[i].heading
                 ? this.tableStructure[i].heading
@@ -353,7 +423,7 @@ class Table extends Component {
         return header;
     }
 
-    _createRowClasses = (structure, isHeader) => {
+    _createCellClasses = (structure, isHeader) => {
         let classes = structure.classes;
         let classString = '';
         if(typeof classes === 'string' || classes instanceof String) {
@@ -390,10 +460,14 @@ class Table extends Component {
             classString += classString.length ? ' ' : '';
             classString += 'row-actionFn';
         }
+        if(structure.key === '_rowSelection') {
+            classString += classString.length ? ' ' : '';
+            classString += 'row-selection';
+        }
         return ' class="' + classString + '"';
     }
 
-    _createRowStyle = (column) => {
+    _createCellStyle = (column) => {
         let styles = '';
         if(column.width) styles += 'width:' + column.width + ';';
         if(column.minWidth) styles += 'min-width:' + column.minWidth + ';';
@@ -402,7 +476,7 @@ class Table extends Component {
         return ' style="' + styles + '"';
     }
 
-    _formatCellData = (value, structIndex, tableIndex) => {
+    _formatCellData = (value, structIndex) => {
         const type = this.tableStructure[structIndex].type;
         if(type) {
             if(type === 'Date') {
@@ -615,7 +689,7 @@ class Table extends Component {
                 
                 for(let k=0; k<this.tableStructure.length; k++) {
                     if(key === this.tableStructure[k].key) {
-                        value = this._formatCellData(value, k, i);
+                        value = this._formatCellData(value, k);
                         break;
                     }
                 }
@@ -660,6 +734,23 @@ class Table extends Component {
         } else if(this.data.filter && this.data.filterHotkey && e.target.localName.toLowerCase() === 'body' && e.key === this.data.filterHotkey) {
             this.elem.querySelector('#'+filterInputId).focus();
         }
+    }
+
+    _selectRowCheckbox = (index) => {
+        return `<label for="selection-${index}-inputSelectorBox-${this.id}" class="selection-box">
+            <div class="selection-box__mark"></div>
+            <input
+                type="checkbox"
+                name="selection-box-input-${index}-${this.id}"
+                id="selection-${index}-inputSelectorBox-${this.id}"
+                ${this.selected.includes(index) ? 'checked' : ''}
+            />
+        </label>`
+    }
+
+    getSelected = () => {
+        // return this.selected.map(index => this.allData[index]);
+        return this.allData.filter(item => this.selected.includes(item._tableIndex));
     }
 }
 
