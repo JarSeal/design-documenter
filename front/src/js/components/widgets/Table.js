@@ -35,6 +35,10 @@ import './Table.scss';
 //       actionFn: Function(e, rowData), (Requires type: 'Action', this is the click fn on the action button. Automatic true for unsortable and doNotFilter)
 //       actionText: String, (Action button text. If this is omitted, the heading will be used)
 //     }
+//
+// Different data types:
+// - 'Date': Parses the Date object string to a readable format. It uses the default Beaconjs format.
+// - 'Action': Adds an action button to the row. This should be used with the actionFn function, that gets the current row's data when the button is clicked.
 class Table extends Component {
     constructor(data) {
         super(data);
@@ -47,7 +51,7 @@ class Table extends Component {
             this.tableStructure = [
                 {
                     key: '_rowSelection',
-                    heading: '',
+                    heading: ' ',
                     unsortable: true,
                     doNotFilter: true,
                 },
@@ -222,7 +226,26 @@ class Table extends Component {
                 id: this.id + '-row-selection-click',
                 type: 'click',
                 fn: e => {
+                    console.log(this.groupMax, e.target);
                     if(!e.target.id.includes('-inputSelectorBox-')) return;
+                    if(e.target.id.includes('-header-inputSelectorBox-')) {
+                        if(e.target.checked) {
+                            this.selected = [];
+                            if(this.groupMax) {
+                                for(let i=0; i<this.groupMax; i++) {
+                                    this.selected.push(this.tableData[i]._tableIndex);
+                                }
+                            } else {
+                                for(let i=0; i<this.tableData.length; i++) {
+                                    this.selected.push(this.tableData[i]._tableIndex);
+                                }
+                            }
+                        } else {
+                            this.selected = [];
+                        }
+                        this._refreshView();
+                        return;
+                    }
                     let node = e.target, counter = 0, id;
                     while(true) {
                         if(node.localName.toLowerCase() === 'tr') {
@@ -416,6 +439,8 @@ class Table extends Component {
                 header += `<button id="${this.tableStructure[i].key}-accessibility-sort-button-${this.id}" class="table-accessibility-sort">`;
                     header += `${getText('sort_by')} ${this.tableStructure[i].heading}`;
                 header += '</button>';
+            } else if(this.tableStructure[i].key === '_rowSelection') {
+                header += this._selectRowCheckbox(0, true);
             }
             header += '</th>';
         }
@@ -736,14 +761,30 @@ class Table extends Component {
         }
     }
 
-    _selectRowCheckbox = (index) => {
-        return `<label for="selection-${index}-inputSelectorBox-${this.id}" class="selection-box">
-            <div class="selection-box__mark"></div>
+    _selectRowCheckbox = (index, isHeader) => {
+        let checked, headerClass = '';
+        if(isHeader) {
+            index = 'header';
+            if(this.groupMax) {
+                checked = this.groupMax === this.selected.length ? 'checked' : '';
+                headerClass = this.groupMax === this.selected.length
+                    ? ' selection-box--all'
+                    : this.selected.length ? ' selection-box--some' : '';
+            } else {
+                checked = this.tableData.length === this.selected.length ? 'checked' : '';
+                headerClass = this.tableData.length === this.selected.length
+                    ? ' selection-box--all'
+                    : this.selected.length ? ' selection-box--some' : '';
+            }
+        } else {
+            checked = this.selected.includes(index) ? 'checked' : '';
+        }
+        return `<label for="selection-${index}-inputSelectorBox-${this.id}" class="selection-box${headerClass}">
             <input
                 type="checkbox"
                 name="selection-box-input-${index}-${this.id}"
                 id="selection-${index}-inputSelectorBox-${this.id}"
-                ${this.selected.includes(index) ? 'checked' : ''}
+                ${checked}
             />
         </label>`
     }
