@@ -233,7 +233,8 @@ class Table extends Component {
                         if(e.target.checked) {
                             this.selected = [];
                             if(this.groupMax) {
-                                for(let i=0; i<this.groupMax; i++) {
+                                const count = Math.min(this.groupMax, this.tableData.length);
+                                for(let i=0; i<count; i++) {
                                     this.selected.push(this.tableData[i]._tableIndex);
                                 }
                             } else {
@@ -267,12 +268,37 @@ class Table extends Component {
                             node.classList.add('row-selection--selected');
                             this.selected.push(index);
                         }
-                        console.log('SELECTION CLICK', this.getSelected());
+                        const thElem = this.elem.querySelector('th.row-selection .selection-box');
+                        if(this.selected.length === 0) {
+                            thElem.classList.remove('selection-box--all');
+                            thElem.classList.remove('selection-box--some');
+                            thElem.querySelector('input').checked = false;
+                        } else if(this.groupMax) {
+                            if(this.selected.length === this.groupMax || this.selected.length === this.tableData.length) {
+                                thElem.classList.add('selection-box--all');
+                                thElem.classList.remove('selection-box--some');
+                                thElem.querySelector('input').checked = true;
+                            } else {
+                                thElem.classList.remove('selection-box--all');
+                                thElem.classList.add('selection-box--some');
+                                thElem.querySelector('input').checked = false;
+                            }
+                        } else {
+                            if(this.selected.length === this.tableData.length) {
+                                thElem.classList.add('selection-box--all');
+                                thElem.classList.remove('selection-box--some');
+                                thElem.querySelector('input').checked = true;
+                            } else {
+                                thElem.classList.remove('selection-box--all');
+                                thElem.classList.add('selection-box--some');
+                                thElem.querySelector('input').checked = false;
+                            }
+                        }
                     }
                 },
             });
         }
-        if(this.groupMax && this.groupMax !== this.allData.length) {
+        if(this.groupMax && this.groupMax < this.tableData.length) {
             this.tableComp.addListener({
                 id: this.id + '-show-more-click',
                 target: this.elem.querySelector('#'+this.id + '-show-more-button'),
@@ -370,6 +396,7 @@ class Table extends Component {
             throw new Error('Call stack');
         }
         this.tableData.sort(this._sortCompare(sortByKey, asc));
+        let selectionsFound = 0;
         for(let i=0; i<this.tableData.length; i++) {
             if(this.groupMax && i+1 > this.groupMax) break;
             rows += `<tr${this._createDataRowClass(this.tableData[i]._tableIndex)} id="rowindex-${i}-${this.id}">`;
@@ -386,6 +413,10 @@ class Table extends Component {
                 rows += '</td>';
             }
             rows += '</tr>';
+            if(this.selected.includes(this.tableData[i]._tableIndex)) selectionsFound++;
+            if(this.groupMax && i+2 > this.groupMax && selectionsFound !== this.selected.length) {
+                this.groupMax++;
+            }
         }
         return `<tbody>${rows}</tbody>`;
     }
@@ -561,7 +592,7 @@ class Table extends Component {
             id: this.id + '-filter-wrapper',
             class: 'table-filter-wrapper',
         });
-        if(this.filterString.length) {
+        if(this.filterString.length || (this.groupMax && this.groupMax > this.data.showGroupSize)) {
             this.filterComp.addChild(new Button({
                 id: this.id + '-filter-clear',
                 class: 'table-filter-clear',
@@ -688,6 +719,7 @@ class Table extends Component {
     _filterData = () => {
         if(this.filterString === '') {
             this.tableData = [...this.allData];
+            this.groupMax = this.data.showGroupSize || 0;
             this._refreshView();
             return;
         }
@@ -735,8 +767,25 @@ class Table extends Component {
             }
         }
 
-        if(this.groupMax) this.groupMax = this.data.showGroupSize;
-        this.tableData = newData;
+        const addToNewData = [];
+        const selectedArr = this.selected.map(sel => {
+            for(let i=0; i<this.allData.length; i++) {
+                if(this.allData[i]._tableIndex === sel) return this.allData[i];
+            }
+        });
+        for(let i=0; i<selectedArr.length; i++) {
+            const itemFound = false;
+            for(let j=0; j<newData.length; j++) {
+                if(newData[j]._tableIndex === selectedArr[i]._tableIndex) {
+                    itemFound = true;
+                    break;
+                }
+            }
+            if(!itemFound) addToNewData.push(selectedArr[i]);
+        }
+
+        this.groupMax = this.data.showGroupSize || 0;
+        this.tableData = newData.concat(addToNewData);
         this._refreshView();
     }
 
@@ -767,8 +816,10 @@ class Table extends Component {
         if(isHeader) {
             index = 'header';
             if(this.groupMax) {
-                checked = this.groupMax === this.selected.length ? 'checked' : '';
-                headerClass = this.groupMax === this.selected.length
+                checked = this.groupMax === this.selected.length || this.selected.length === this.tableData.length
+                    ? 'checked'
+                    : '';
+                headerClass = this.groupMax === this.selected.length || this.selected.length === this.tableData.length
                     ? ' selection-box--all'
                     : this.selected.length ? ' selection-box--some' : '';
             } else {
@@ -791,7 +842,6 @@ class Table extends Component {
     }
 
     getSelected = () => {
-        // return this.selected.map(index => this.allData[index]);
         return this.allData.filter(item => this.selected.includes(item._tableIndex));
     }
 }
