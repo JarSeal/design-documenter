@@ -352,10 +352,13 @@ class Table extends Component {
     }
 
     _refreshView = () => {
+        const scrollPosX = window.pageXOffset;
+        const scrollPosY = window.pageYOffset;
         if(this.data.showStats) this.statsComp.discard(true);
         if(this.data.filter) this.filterComp.discard(true);
         this.tableComp.discard(true);
         this.rePaint();
+        window.scrollTo(scrollPosX, scrollPosY);
     }
 
     _createTable = () => {
