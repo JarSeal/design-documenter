@@ -386,6 +386,10 @@ export const assetsObj = {
         en: 'Showing',
         fi: 'Näytetään',
     },
+    selected: {
+        en: 'Selected',
+        fi: 'Valittu',
+    },
     filter: {
         en: 'Filter',
         fi: 'Suodata',

@@ -146,6 +146,10 @@ class Table extends Component {
                 ? getText('total') + ' ' + this.allData.length
                 : getText('showing') + ' ' + this.tableData.length + ' / ' + this.allData.length;
         }
+        if(this.selected.length) {
+            text += '\u00a0\u00a0\u00a0\u00a0';
+            text += `(${getText('selected').toLowerCase()} ${this.selected.length})`;
+        }
         return text;
     }
 
@@ -295,6 +299,8 @@ class Table extends Component {
                             }
                         }
                     }
+                    const statsElem = this.elem.querySelector('#'+this.id+'-stats');
+                    statsElem.innerText = this._showStatsText();
                 },
             });
         }
