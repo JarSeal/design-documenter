@@ -97,6 +97,22 @@ class UsersList extends Component {
                 fullWidth: true,
                 showStats: true,
                 selectable: true,
+                tools: [
+                    {
+                        id: 'delete',
+                        text: 'Delete',
+                        clickFn: (e, selected) => {
+                            console.log('Delete');
+                        },
+                    },
+                    {
+                        id: 'edit',
+                        text: 'Edit',
+                        clickFn: (e, selected) => {
+                            console.log('Edit');
+                        },
+                    },
+                ],
                 rowClickFn: (e, rowData) => {
                     console.log('THIS ROW', rowData, e);
                 },

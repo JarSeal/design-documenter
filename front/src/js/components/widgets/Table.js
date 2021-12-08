@@ -17,6 +17,12 @@ import './Table.scss';
 // - showStats: Boolean,
 // - unsortable: Boolean, (makes all of the columns unsortable)
 // - selectable: Boolean, (if true adds checkboxes column and maintains an array of selected data which can be retrieved by calling the getSelected method)
+// - tools: Array[Object], (array order is the order of the 'selected' tool buttons, if this is set, the selectable switch is not needed)
+//     {
+//       id: String,
+//       text: String, (button text)
+//       clickFn: Function(e, selected(Array)), (when the selections have been made and button is clicked, this fn is fired)
+//     }
 // - showRowNumbers: Boolean/String ('hover' means that the row number is only shown on hover and 'small' is the small numbers all the time, true creates a new column)
 // - filter: Boolean, (enable table filtering input)
 // - filterHotkey: String, (single key to focus the filter input field)
