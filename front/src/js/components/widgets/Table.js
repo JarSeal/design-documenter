@@ -146,7 +146,10 @@ class Table extends Component {
                     class: 'table-tools-button',
                     text: data.tools[i].text,
                     attributes: data.tools[i].disabled ? { disabled: '' } : {},
-                    click: data.tools[i].clickFn,
+                    click: e => {
+                        const selected = this.allData.filter(row => this.selected.includes(row._tableIndex));
+                        data.tools[i].clickFn(e, selected);
+                    },
                 }));
             }
             this.toolsComp.draw();

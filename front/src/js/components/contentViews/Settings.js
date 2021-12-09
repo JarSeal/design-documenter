@@ -101,14 +101,14 @@ class UsersList extends Component {
                         id: 'delete',
                         text: 'Delete',
                         clickFn: (e, selected) => {
-                            console.log('Delete');
+                            console.log('Delete', e, selected);
                         },
                     },
                     {
                         id: 'edit',
                         text: 'Edit',
                         clickFn: (e, selected) => {
-                            console.log('Edit');
+                            console.log('Edit', e, selected);
                         },
                     },
                 ],
