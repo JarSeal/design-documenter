@@ -121,40 +121,11 @@ class Table extends Component {
         window.removeEventListener('keyup', this.keyUp);
     }
 
-    paint = (data) => {
-        if(data.filter) {
-            this._drawFilter();
-            this.elem.classList.add('table-has-filter');
-        }
-        if(data.showStats) {
-            this.statsComp = this.addChild({
-                id: this.id + '-stats',
-                class: 'table-stats',
-                text: this._showStatsText(),
-            });
-            this.statsComp.draw();
-            this.elem.classList.add('table-has-stats');
-        }
-        if(data.tools && data.tools.length) {
-            this.toolsComp = this.addChild({ id: this.id + '-tools-wrapper', class: 'tools-wrapper' });
-            for(let i=0; i<data.tools.length; i++) {
-                if(!data.tools[i].id) {
-                    this.logger.warn('Table tools should have an id defined', data.tools[i]);
-                }
-                this.toolsComp.addChild(new Button({
-                    id: this.id + '-' + data.tools[i].id,
-                    class: 'table-tools-button',
-                    text: data.tools[i].text,
-                    attributes: data.tools[i].disabled ? { disabled: '' } : {},
-                    click: e => {
-                        const selected = this.allData.filter(row => this.selected.includes(row._tableIndex));
-                        data.tools[i].clickFn(e, selected);
-                    },
-                }));
-            }
-            this.toolsComp.draw();
-            this.toolsComp.drawChildren();
-        }
+    paint = () => {
+        this._drawFilter();
+        this._drawStats();
+        this._drawTools();
+
         const table = this._createTable();
         this.tableComp = this.addChild({ id: this.id + '-elem', template: table });
         this.tableComp.draw();
@@ -625,7 +596,44 @@ class Table extends Component {
         return `<span class="table-${this.data.showRowNumbers}-row-number"># ${rowIndex+1}</span>`;
     }
 
+    _drawTools = () => {
+        if(!this.data.tools || !this.data.tools.length) return;
+            
+        this.toolsComp = this.addChild({ id: this.id + '-tools-wrapper', class: 'tools-wrapper' });
+        for(let i=0; i<this.data.tools.length; i++) {
+            if(!this.data.tools[i].id) {
+                this.logger.warn('Table tools should have an id defined', this.data.tools[i]);
+            }
+            this.toolsComp.addChild(new Button({
+                id: this.id + '-' + this.data.tools[i].id,
+                class: 'table-tools-button',
+                text: this.data.tools[i].text,
+                attributes: this.data.tools[i].disabled ? { disabled: '' } : {},
+                click: e => {
+                    const selected = this.allData.filter(row => this.selected.includes(row._tableIndex));
+                    this.data.tools[i].clickFn(e, selected);
+                },
+            }));
+        }
+        this.toolsComp.draw();
+        this.toolsComp.drawChildren();
+    }
+
+    _drawStats = () => {
+        if(!this.data.showStats) return;
+        
+        this.statsComp = this.addChild({
+            id: this.id + '-stats',
+            class: 'table-stats',
+            text: this._showStatsText(),
+        });
+        this.statsComp.draw();
+        this.elem.classList.add('table-has-stats');
+    }
+
     _drawFilter = () => {
+        if(!this.data.filter) return;
+
         this.filterComp = this.addChild({
             id: this.id + '-filter-wrapper',
             class: 'table-filter-wrapper',
@@ -721,6 +729,7 @@ class Table extends Component {
         if(this.filterSettingsOpen) this.elem.classList.add('filter-settings-open');
         if(this.filterCaretPos !== null) input.focus(this.filterCaretPos);
         this.elem.style.minHeight = ((this.elem.querySelector('#'+this.id+'-filter-settings').offsetHeight + 62) / 10) + 'rem';
+        this.elem.classList.add('table-has-filter');
     }
 
     _closeFilterSettings = e => {
