@@ -21,6 +21,7 @@ import './Table.scss';
 //     {
 //       id: String,
 //       text: String, (button text)
+//       disabled: Boolean,
 //       clickFn: Function(e, selected(Array)), (when the selections have been made and button is clicked, this fn is fired)
 //     }
 // - showRowNumbers: Boolean/String ('hover' means that the row number is only shown on hover and 'small' is the small numbers all the time, true creates a new column)
@@ -53,7 +54,7 @@ class Table extends Component {
             this.logger.error('Table component needs to have a tableStructure attribute: Array of Objects ({key:String}).');
             throw new Error('Call stack');
         }
-        if(this.data.selectable === true) {
+        if(data.selectable === true || (data.tools && data.tools.length)) {
             this.tableStructure = [
                 {
                     key: '_rowSelection',
@@ -64,7 +65,7 @@ class Table extends Component {
                 ...this.tableStructure
             ];
         }
-        if(this.data.showRowNumbers === true) {
+        if(data.showRowNumbers === true) {
             this.tableStructure = [
                 {
                     key: '_rowNumber',
@@ -84,7 +85,7 @@ class Table extends Component {
                 this.tableStructure[i].unsortable = true;
                 this.tableStructure[i].doNotFilter = true;
             }
-            if(this.data.unsortable) {
+            if(data.unsortable) {
                 this.tableStructure[i].unsortable = true;
             }
         }
@@ -96,6 +97,7 @@ class Table extends Component {
         }
         this.template = `<div class="table-wrapper"></div>`;
         this.selected = [];
+        this.toolsComp;
         this.tableComp;
         this.statsComp;
         this.filterComp;
@@ -132,6 +134,23 @@ class Table extends Component {
             });
             this.statsComp.draw();
             this.elem.classList.add('table-has-stats');
+        }
+        if(data.tools && data.tools.length) {
+            this.toolsComp = this.addChild({ id: this.id + '-tools-wrapper', class: 'tools-wrapper' });
+            for(let i=0; i<data.tools.length; i++) {
+                if(!data.tools[i].id) {
+                    this.logger.warn('Table tools should have an id defined', data.tools[i]);
+                }
+                this.toolsComp.addChild(new Button({
+                    id: this.id + '-' + data.tools[i].id,
+                    class: 'table-tools-button',
+                    text: data.tools[i].text,
+                    attributes: data.tools[i].disabled ? { disabled: '' } : {},
+                    click: data.tools[i].clickFn,
+                }));
+            }
+            this.toolsComp.draw();
+            this.toolsComp.drawChildren();
         }
         const table = this._createTable();
         this.tableComp = this.addChild({ id: this.id + '-elem', template: table });
@@ -233,7 +252,7 @@ class Table extends Component {
                 },
             });
         }
-        if(this.data.selectable) {
+        if(this.data.selectable === true || (this.data.tools && this.data.tools.length)) {
             this.tableComp.addListener({
                 id: this.id + '-row-selection-click',
                 type: 'click',
@@ -369,6 +388,7 @@ class Table extends Component {
         if(this.data.showStats) this.statsComp.discard(true);
         if(this.data.filter) this.filterComp.discard(true);
         this.tableComp.discard(true);
+        if(this.toolsComp) this.toolsComp.discard(true);
         this.rePaint();
         window.scrollTo(scrollPosX, scrollPosY);
     }

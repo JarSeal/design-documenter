@@ -96,7 +96,6 @@ class UsersList extends Component {
                 tableData: this.users,
                 fullWidth: true,
                 showStats: true,
-                selectable: true,
                 tools: [
                     {
                         id: 'delete',
@@ -130,13 +129,13 @@ class UsersList extends Component {
         try {
             const response = await axios.get(url, { withCredentials: true });
             this.users = response.data;
-            this.rePaint();
         }
         catch(exception) {
             const logger = new Logger('Get users: *****');
             logger.error('Could not get users data', exception);
             throw new Error('Call stack');
         }
+        this.rePaint();
     }
 
     _getTableStructure = () => {
