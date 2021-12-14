@@ -17,6 +17,13 @@ import './Table.scss';
 // - showStats: Boolean,
 // - unsortable: Boolean, (makes all of the columns unsortable)
 // - selectable: Boolean, (if true adds checkboxes column and maintains an array of selected data which can be retrieved by calling the getSelected method)
+// - tools: Array[Object], (array order is the order of the 'selected' tool buttons, if this is set, the selectable switch is not needed)
+//     {
+//       id: String,
+//       text: String, (button text)
+//       disabled: Boolean,
+//       clickFn: Function(e, selected(Array)), (when the selections have been made and button is clicked, this fn is fired)
+//     }
 // - showRowNumbers: Boolean/String ('hover' means that the row number is only shown on hover and 'small' is the small numbers all the time, true creates a new column)
 // - filter: Boolean, (enable table filtering input)
 // - filterHotkey: String, (single key to focus the filter input field)
@@ -47,7 +54,7 @@ class Table extends Component {
             this.logger.error('Table component needs to have a tableStructure attribute: Array of Objects ({key:String}).');
             throw new Error('Call stack');
         }
-        if(this.data.selectable === true) {
+        if(data.selectable === true || (data.tools && data.tools.length)) {
             this.tableStructure = [
                 {
                     key: '_rowSelection',
@@ -58,7 +65,7 @@ class Table extends Component {
                 ...this.tableStructure
             ];
         }
-        if(this.data.showRowNumbers === true) {
+        if(data.showRowNumbers === true) {
             this.tableStructure = [
                 {
                     key: '_rowNumber',
@@ -78,7 +85,7 @@ class Table extends Component {
                 this.tableStructure[i].unsortable = true;
                 this.tableStructure[i].doNotFilter = true;
             }
-            if(this.data.unsortable) {
+            if(data.unsortable) {
                 this.tableStructure[i].unsortable = true;
             }
         }
@@ -90,6 +97,7 @@ class Table extends Component {
         }
         this.template = `<div class="table-wrapper"></div>`;
         this.selected = [];
+        this.toolsComp;
         this.tableComp;
         this.statsComp;
         this.filterComp;
@@ -113,20 +121,11 @@ class Table extends Component {
         window.removeEventListener('keyup', this.keyUp);
     }
 
-    paint = (data) => {
-        if(data.filter) {
-            this._drawFilter();
-            this.elem.classList.add('table-has-filter');
-        }
-        if(data.showStats) {
-            this.statsComp = this.addChild({
-                id: this.id + '-stats',
-                class: 'table-stats',
-                text: this._showStatsText(),
-            });
-            this.statsComp.draw();
-            this.elem.classList.add('table-has-stats');
-        }
+    paint = () => {
+        this._drawFilter();
+        this._drawStats();
+        this._drawTools();
+
         const table = this._createTable();
         this.tableComp = this.addChild({ id: this.id + '-elem', template: table });
         this.tableComp.draw();
@@ -227,7 +226,7 @@ class Table extends Component {
                 },
             });
         }
-        if(this.data.selectable) {
+        if(this.data.selectable === true || (this.data.tools && this.data.tools.length)) {
             this.tableComp.addListener({
                 id: this.id + '-row-selection-click',
                 type: 'click',
@@ -363,6 +362,7 @@ class Table extends Component {
         if(this.data.showStats) this.statsComp.discard(true);
         if(this.data.filter) this.filterComp.discard(true);
         this.tableComp.discard(true);
+        if(this.toolsComp) this.toolsComp.discard(true);
         this.rePaint();
         window.scrollTo(scrollPosX, scrollPosY);
     }
@@ -596,7 +596,44 @@ class Table extends Component {
         return `<span class="table-${this.data.showRowNumbers}-row-number"># ${rowIndex+1}</span>`;
     }
 
+    _drawTools = () => {
+        if(!this.data.tools || !this.data.tools.length) return;
+            
+        this.toolsComp = this.addChild({ id: this.id + '-tools-wrapper', class: 'tools-wrapper' });
+        for(let i=0; i<this.data.tools.length; i++) {
+            if(!this.data.tools[i].id) {
+                this.logger.warn('Table tools should have an id defined', this.data.tools[i]);
+            }
+            this.toolsComp.addChild(new Button({
+                id: this.id + '-' + this.data.tools[i].id,
+                class: 'table-tools-button',
+                text: this.data.tools[i].text,
+                attributes: this.data.tools[i].disabled ? { disabled: '' } : {},
+                click: e => {
+                    const selected = this.allData.filter(row => this.selected.includes(row._tableIndex));
+                    this.data.tools[i].clickFn(e, selected);
+                },
+            }));
+        }
+        this.toolsComp.draw();
+        this.toolsComp.drawChildren();
+    }
+
+    _drawStats = () => {
+        if(!this.data.showStats) return;
+        
+        this.statsComp = this.addChild({
+            id: this.id + '-stats',
+            class: 'table-stats',
+            text: this._showStatsText(),
+        });
+        this.statsComp.draw();
+        this.elem.classList.add('table-has-stats');
+    }
+
     _drawFilter = () => {
+        if(!this.data.filter) return;
+
         this.filterComp = this.addChild({
             id: this.id + '-filter-wrapper',
             class: 'table-filter-wrapper',
@@ -692,6 +729,7 @@ class Table extends Component {
         if(this.filterSettingsOpen) this.elem.classList.add('filter-settings-open');
         if(this.filterCaretPos !== null) input.focus(this.filterCaretPos);
         this.elem.style.minHeight = ((this.elem.querySelector('#'+this.id+'-filter-settings').offsetHeight + 62) / 10) + 'rem';
+        this.elem.classList.add('table-has-filter');
     }
 
     _closeFilterSettings = e => {
