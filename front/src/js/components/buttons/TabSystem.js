@@ -10,6 +10,7 @@ import RouteLink from "./RouteLink";
 //          class: Array[String] or String,
 //          disabled: Boolean,
 //          setLabelInTitle: Boolean,
+//          show: Boolean,
 //        }
 class TabSystem extends Component {
     constructor(data) {
@@ -27,6 +28,7 @@ class TabSystem extends Component {
                 class: data.tabs[i].class,
                 text: data.tabs[i].label,
                 link: data.tabs[i].routeLink,
+                setLabelInTitle: data.tabs[i].setLabelInTitle,
                 attributes,
             })));
         }
@@ -34,9 +36,10 @@ class TabSystem extends Component {
 
     paint = () => {
         for(let i=0; i<this.buttons.length; i++) {
+            if(this.tabs[i].show === false) continue;
             this.buttons[i].draw();
-            if(this.buttons[i].isCurrent) {
-                document.title = this.buttons[i].data.text + ' | ' + document.title;
+            if(this.buttons[i].data.setLabelInTitle && this.buttons[i].isCurrent) {
+                document.title = this.buttons[i].data.text + ' | ' + document.title
             }
         }
     }

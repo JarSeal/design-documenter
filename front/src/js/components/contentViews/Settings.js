@@ -5,6 +5,7 @@ import { Component, Logger } from "../../LIGHTER";
 import { _CONFIG } from "../../_CONFIG";
 import TabSystem from "../buttons/TabSystem";
 import Table from "../widgets/Table";
+import FourOOne from "./FourOOne";
 
 class Settings extends Component {
     constructor(data) {
@@ -40,7 +41,11 @@ class Settings extends Component {
         if(this.tabSystem) {
             this.tabSystem.draw();
             const currentTab = this.tabSystem.getCurrent();
-            this.addChild(new currentTab.component({ id: 'view-' + currentTab.id })).draw();
+            if(currentTab) {
+                this.addChild(new currentTab.component({ id: 'view-' + currentTab.id })).draw();
+            } else {
+                this.addChild(new FourOOne({id: 'four-o-one-tab', title: '401'})).draw();
+            }
         }
     }
 
@@ -52,18 +57,16 @@ class Settings extends Component {
         }, {
             id: 'users',
             label: 'Users', // TODO: Change into a getText lang asset
+            adminUseRights: 'read-users',
             show: this.adminRights.useRights.includes('read-users'),
             component: UsersList,
         }];
 
         for(let i=0; i<define.length; i++) {
-            if(define[i].show === false) continue;
             this.tabs.push({
-                label: define[i].label,
-                id: define[i].id,
+                ...define[i],
                 routeLink: '/settings/' + define[i].id,
                 setLabelInTitle: true,
-                component: define[i].component,
             });
         }
     }
