@@ -10,6 +10,13 @@ const { validateFormData } = require('./forms/formEngine');
 usersRouter.get('/', async (request, response) => {
 
     // TODO: needs access right check, but for now, this is good for debugging
+
+    // 1. Check the user's admin rights
+    // 1.5 If no rights, return a 401
+    // 2. Get user's userLevel
+    // 3. Get the users that have smaller user level than the current user
+    // 4. Return the users
+
     const result = await User.find({}).populate('userGroups', {
         name: 1, id: 1
     });
