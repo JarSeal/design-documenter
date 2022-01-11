@@ -139,6 +139,7 @@
     th {
         vertical-align: bottom;
         position: relative;
+        background-color: $table-thead-background;
         &.sort-available {
             &:after {
                 display: inline-block;
@@ -164,9 +165,10 @@
         &.sort-available {
             transition: background-color 0.2s ease-in-out;
         }
-        &.sort-available:hover {
+        &.sort-available:hover,
+        &.sort-column:hover {
             cursor: pointer;
-            background-color: rgba(#000, 0.2);
+            background-color: #525252;
         }
         &.row-selection {
             vertical-align: bottom;
@@ -188,7 +190,6 @@
     .row-selection {
         padding: 0.8rem 0.8rem 0.6rem 1.8rem;
     }
-    thead { background-color: $table-thead-background; }
     tbody {
         td {
             background-color: rgba(0, 0, 0, 0.1);
