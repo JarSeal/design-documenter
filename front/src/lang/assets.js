@@ -422,4 +422,24 @@ export const assetsObj = {
         en: 'Maximum $[0]',
         fi: 'Maximi $[0]',
     },
+    delete_user: {
+        en: 'Delete user',
+        fi: 'Poista käyttäjä',
+    },
+    delete_single_user_confirmation: {
+        en: 'Are you sure you want to delete user \'$[0]\'? This cannot be undone.',
+        fi: 'Oletko varma, että haluat poistaa käyttäjän \'$[0]\'? Tätä toimintoa ei voi perua.',
+    },
+    cancel: {
+        en: 'Cancel',
+        fi: 'Peruuta',
+    },
+    confirm: {
+        en: 'Confirm',
+        fi: 'Vahvista',
+    },
+    delete: {
+        en: 'Delete',
+        fi: 'Poista',
+    },
 };
