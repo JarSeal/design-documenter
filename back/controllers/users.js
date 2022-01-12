@@ -1,25 +1,31 @@
 const bcrypt = require('bcrypt');
 const usersRouter = require('express').Router();
-const CONFIG = require('./../shared').CONFIG.USER;
+const CONFIG = require('./../shared').CONFIG;
+const readUsersFormData = require('./../../shared/formData/readUsersFormData');
 const logger = require('./../utils/logger');
 const User = require('./../models/user');
 const Form = require('./../models/form');
-const { validateFormData } = require('./forms/formEngine');
+const { validateFormData, validatePrivileges } = require('./forms/formEngine');
 
-// Get all users
+// Get all users (for admins)
 usersRouter.get('/', async (request, response) => {
 
-    // TODO: needs access right check, but for now, this is good for debugging
-
-    // 1. Check the user's admin rights
-    // 1.5 If no rights, return a 401
-    // 2. Get user's userLevel
-    // 3. Get the users that have smaller user level than the current user
-    // 4. Return the users
-
-    const result = await User.find({}).populate('userGroups', {
-        name: 1, id: 1
-    });
+    // Get formData, get user, and check the user's admin rights
+    const formId = readUsersFormData.formId;
+    const formData = await Form.findOne({ formId });
+    const user = await User.findById(request.session._id);
+    const error = await validatePrivileges(formData, request, user);
+    if(error) {
+        logger.log('Unauthorised. Not high enough userLevel.', error, request.session);
+        response.status(error.code).json(error.obj);
+        return;
+    }
+    
+    // Get the users that have smaller user level than the current user
+    const result = await User.find({ userLevel: { $lt: parseInt(user.userLevel) } });
+    // const result = await User.find({}).populate('userGroups', {
+    //     name: 1, id: 1
+    // });
     response.json(result);
 });
 
@@ -31,7 +37,7 @@ usersRouter.post('/', async (request, response) => {
 
     const error = await validateFormData(formData, request);
     if(error) {
-        logger.log('Error with form validation. (+ error, formId, token)', error, body.id, request.token);
+        logger.log('Error with form validation. (+ error, formId)', error, body.id);
         response.status(error.code).json(error.obj);
         return;
     }
@@ -44,7 +50,7 @@ usersRouter.post('/', async (request, response) => {
         });
         return;
     }
-    if(CONFIG.email.required) {
+    if(CONFIG.USER.email.required) {
         const findEmail = await User.findOne({ email: body.email.trim() });
         if(findEmail) {
             response.json({
