@@ -7,6 +7,8 @@ const User = require('./../models/user');
 const Form = require('./../models/form');
 const { validateFormData, validatePrivileges } = require('./forms/formEngine');
 
+
+
 // Get all users (for admins)
 usersRouter.get('/', async (request, response) => {
 
@@ -28,6 +30,8 @@ usersRouter.get('/', async (request, response) => {
     // });
     response.json(result);
 });
+
+
 
 // Register user
 usersRouter.post('/', async (request, response) => {
