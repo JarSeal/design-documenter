@@ -135,7 +135,7 @@ const validatePrivileges = async (form, request, user) => {
     if(form.useRightsLevel && form.useRightsLevel !== 0) {
         const sess = request.session;
         if(!sess || !sess.username) {
-            logger.log(`User not authenticated or session has expired. Trying to access form with id ${form.formId}. (+ token)`, request.token);
+            logger.log(`User not authenticated or session has expired. Trying to access form with id ${form.formId}.`);
             return {
                 code: 401,
                 obj: {
