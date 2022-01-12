@@ -123,6 +123,7 @@
     font-size: 1.2rem;
     color: rgba(255, 255, 255, 0.4);
     padding-bottom: 0.4rem;
+    padding-left: 0.2rem;
 }
 .table-compo {
     text-align: left;
@@ -350,5 +351,23 @@
             height: 1.4rem;
             border-radius: 50%;
         }
+    }
+}
+.tools-wrapper {
+    padding-left: 0.2rem;
+}
+.table-tools-button {
+    padding: 0.4rem 1rem;
+    border: none;
+    background-color: rgba($table-thead-background, 0.5);
+    color: #fff;
+    &:first-child {
+        border-radius: 0.3rem 0 0 0;
+    }
+    &:last-child {
+        border-radius: 0 0.3rem 0 0;
+    }
+    + .table-tools-button {
+        border-left: 0.2rem solid rgba(#000, 0.4);
     }
 }
