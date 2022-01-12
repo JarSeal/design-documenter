@@ -47,6 +47,7 @@ usersRouter.post('/', async (request, response) => {
         response.json({
             msg: 'Bad request. Validation errors.',
             errors: { username: 'username_taken' },
+            usernameTaken: true,
         });
         return;
     }
@@ -56,6 +57,7 @@ usersRouter.post('/', async (request, response) => {
             response.json({
                 msg: 'Bad request. Validation errors.',
                 errors: { email: 'email_taken' },
+                emailTaken: true,
             });
             return;
         }
