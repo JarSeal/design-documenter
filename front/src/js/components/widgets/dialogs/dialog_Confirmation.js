@@ -16,8 +16,9 @@ class ConfirmationDialog extends Component {
     constructor(data) {
         super(data);
         this.Dialog = this.data.Dialog;
-        this.isConfirmed = false;
-        this.spinner = this.addChild(new Spinner({ id: 'confirmation-spinner' }));
+        if(data.confirmSpinner) {
+            this.spinner = this.addChild(new Spinner({ id: 'confirmation-spinner' }));
+        }
         this.template = '<div class="confirmation-dialog">' +
             `<p>${data.message}</p>` +
         '</div>';
