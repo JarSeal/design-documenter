@@ -10,8 +10,9 @@ class Dialog extends Component {
         this.appState = data.appState;
         this.transitionTime = 140; // in milliseconds
         data.style = { transitionDuration: this.transitionTime + 'ms' };
-        data.class = 'alpha-black';
+        data.class = ['dialog', 'alpha-black'];
         this.isShowing = false;
+        this.isLocked = false;
         this.compoToShow;
         this.dialogTitle;
         this.resizeTimer;
@@ -92,11 +93,25 @@ class Dialog extends Component {
         this.appState.remove('resizers.dialog');
 
         setTimeout(() => {
+            this.unlock();
             this.discard(true);
         }, this.transitionTime);
     }
 
+    lock = () => {
+        if(!this.elem) return;
+        this.elem.classList.add('dialog-locked');
+        this.isLocked = true;
+    }
+
+    unlock = () => {
+        if(!this.elem) return;
+        this.elem.classList.remove('dialog-locked');
+        this.isLocked = false;
+    }
+
     _closeDialogClick = (e) => {
+        if(this.isLocked) return;
         const targetId = e.target.id;
         if(targetId === this.id || targetId === this.id+'-close-button') {
             this.disappear();

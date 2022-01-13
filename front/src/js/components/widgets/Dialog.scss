@@ -1,6 +1,7 @@
+@import '../../../styles/colors';
 $sidePadding: 4rem;
 
-#dialog {
+.dialog {
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0);
@@ -46,11 +47,36 @@ $sidePadding: 4rem;
         .form-divider {
             background-color: #999;
         }
-        .form-elem--submit {
+        .form-elem--submit,
+        .confirm-button,
+        .cancel-button {
             background-color: #999;
             &:hover {
                 background-color: #666;
+                color: #fff;
             }
+        }
+        .confirm-button--delete {
+            background-color: $form-button-delete-color;
+            color: #fff;
+            &:hover {
+                background-color: darken($form-button-delete-color, 10%);
+            }
+        }
+        p:first-child {
+            margin-top: 0;
+        }
+        .confirm-button,
+        .cancel-button {
+            margin-top: 2rem;
+        }
+        .confirm-button, 
+        .confirmation-dialog .spinner-icon {
+            float: right;
+        }
+        .confirmation-dialog .spinner-icon {
+            margin-top: 2.4rem;
+            margin-right: 2rem;
         }
     }
     &.has-title .inner-box {
@@ -88,5 +114,15 @@ $sidePadding: 4rem;
             opacity: 1;
             margin-top: 0;
         }
+    }
+}
+
+.dialog-locked {
+    button, a, input, textarea, select, form {
+        pointer-events: none;
+    }
+    .confirm-button,
+    .cancel-button {
+        opacity: 0.7;
     }
 }

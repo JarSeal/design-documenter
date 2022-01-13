@@ -1,4 +1,6 @@
-.form-elem--submit {
+.form-elem--submit,
+.confirm-button,
+.cancel-button {
     font-size: 1.8rem;
     font-weight: 400;
     padding: 1rem 4rem 0.6rem;
@@ -11,9 +13,10 @@
     border: none;
     border-radius: 0.3rem;
     border-bottom: 0.3rem solid rgba(#fff, 0);
-    transition:
-        border-bottom-color 0.2s ease-in-out,
-        background-color 0.2s ease-in-out;
+    transition: border-bottom-color 0.2s ease-in-out,
+                background-color 0.2s ease-in-out,
+                color 0.2s ease-in-out,
+                opacity 0.2s ease-in-out;
 }
 
 .form-creator {

@@ -1,6 +1,7 @@
 import { Component } from "../../../LIGHTER";
 import { getText } from "../../../helpers/lang";
 import Button from "../../buttons/Button";
+import Spinner from "../Spinner";
 
 // Attributes:
 // - Dialog: Dialog class
@@ -10,10 +11,13 @@ import Button from "../../buttons/Button";
 // - cancelButtonText: String
 // - cancelButtonFn: Function
 // - noCancelButton: Boolean (hide cancel button)
+// - confirmSpinner: Boolean (show spinner after confirmation)
 class ConfirmationDialog extends Component {
     constructor(data) {
         super(data);
         this.Dialog = this.data.Dialog;
+        this.isConfirmed = false;
+        this.spinner = this.addChild(new Spinner({ id: 'confirmation-spinner' }));
         this.template = '<div class="confirmation-dialog">' +
             `<p>${data.message}</p>` +
         '</div>';
@@ -24,8 +28,9 @@ class ConfirmationDialog extends Component {
             this.addChild(new Button({
                 id: this.id + '-cancel-button',
                 text: this.data.cancelButtonText || getText('cancel'),
-                class: 'cancel-confirmation-button',
+                class: 'cancel-button',
                 click: () => {
+                    if(this.Dialog.isLocked) return;
                     if(this.data.cancelButtonFn) {
                         this.data.cancelButtonFn();
                     } else {
@@ -37,15 +42,18 @@ class ConfirmationDialog extends Component {
         this.addChild(new Button({
             id: this.id + '-confirm-button',
             text: this.data.confirmButtonText || getText('confirm'),
-            class: 'confirm-confirmation-button',
+            class: ['confirm-button', 'confirm-button--delete'],
             click: () => {
+                if(this.Dialog.isLocked) return;
                 if(this.data.confirmButtonFn) {
+                    if(this.data.confirmSpinner) this.spinner.showSpinner(true);
                     this.data.confirmButtonFn();
                 } else {
                     this.Dialog.disappear();
                 }
             },
         })).draw();
+        if(this.data.confirmSpinner) this.spinner.draw();
     }
 }
 

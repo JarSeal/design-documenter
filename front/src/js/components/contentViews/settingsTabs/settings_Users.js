@@ -103,7 +103,7 @@ class UsersList extends Component {
                 key: 'editUser',
                 heading: 'Edit',
                 type: 'Action',
-                actionFn: (e, rowData) => { console.log('HERE', rowData.username); },
+                actionFn: (e, rowData) => { console.log('TODO', rowData.username); },
             },
             {
                 key: 'deleteUser',
@@ -117,8 +117,10 @@ class UsersList extends Component {
                             Dialog: this.Dialog,
                             message: getText('delete_single_user_confirmation', [rowData.username]),
                             confirmButtonText: getText('delete'),
+                            confirmSpinner: true,
                             confirmButtonFn: () => {
                                 // 1. Lock the Dialog functionality (cannot be closed) and show spinner
+                                this.Dialog.lock();
                                 // 2. Send the delete request to server
                                 // 2.a Get error response from server and show it in the dialog
                                 // 2.b Get success response from server, close dialog, and update users table
