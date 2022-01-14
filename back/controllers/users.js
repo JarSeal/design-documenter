@@ -32,6 +32,69 @@ usersRouter.get('/', async (request, response) => {
 });
 
 
+// Delete users
+usersRouter.post('/delete', async (request, response) => {
+    
+    const body = request.body;
+    const formData = await Form.findOne({ formId: body.id });
+
+    const error = await validateFormData(formData, request);
+    if(error) {
+        logger.log('Error with form validation. (+ error, formId)', error, body.id);
+        response.status(error.code).json(error.obj);
+        return;
+    }
+
+    // Check if the user being deleted exists and
+    // that the user deleting has a higher userLevel
+    // than the user about to be deleted
+    const users = body.users;
+    const usernames = [];
+    const errors = [];
+    for(let i=0; i<users.length; i++) {
+        const user = await User.findById(users[i]);
+        if(!user) {
+            logger.log('Could not find user to delete (id: ' + users[i] + ').');
+            errors.push({
+                userId: users[i],
+                userNotFoundError: true,
+                errorMsg: 'User not found.',
+            });
+            continue;
+        } else if(user.userLevel >= request.session.userLevel) {
+            logger.log('Could not delete user (id: ' + users[i] + '). Not high enough userLevel. (+ user.userLevel)', user.userLevel);
+            errors.push({
+                userId: users[i],
+                notAllowedToDeleteUserError: true,
+                errorMsg: 'Not allowed to delete user (userLevel lower or same than user being deleted).',
+            });
+            continue;
+        }
+        await User.findByIdAndRemove(users[i], (err, data) => {
+            if(err) {
+                logger.error('Error while trying to delete a user (id: ' + users[i] + '). (+ error)', error);
+                errors.push({
+                    error,
+                    dbError: true,
+                    user,
+                });
+            } else {
+                if(data && data.username) {
+                    usernames.push(data.username);
+                }
+            }
+        });
+    }
+
+    const responseObject = {
+        deletionResponse: true,
+        allDeleted: !errors.length,
+        deleted: usernames,
+    };
+    if(errors.length) responseObject.errors = errors;
+    response.json(responseObject);
+});
+
 
 // Register user
 usersRouter.post('/', async (request, response) => {

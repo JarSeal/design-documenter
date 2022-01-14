@@ -15,7 +15,7 @@ import TextArea from "./formComponents/TextArea";
 // - local = must be set to true if local forms are used (all the form data must then be in in the data) [Boolean]
 // - afterFormSentFn = function to call after succesfull form submission [Function]
 // - addToMessage = Object to add to the post or put body [Object]
-// - onErrors = Function to callback after form sending errors [Function] (returns exception and exception.response)
+// - onErrorsFn = Function to callback after form sending errors [Function] (returns exception and exception.response)
 // - formLoadedFn = Function to callback after the form has finished loading [Function]
 class FormCreator extends Component {
     constructor(data) {
@@ -128,7 +128,9 @@ class FormCreator extends Component {
         }
 
         // Fieldsets
-        for(let i=0; i<data.fieldsets.length; i++) {
+        let fieldsets = data.fieldsets;
+        if(!fieldsets) fieldsets = [];
+        for(let i=0; i<fieldsets.length; i++) {
             const fieldset = data.fieldsets[i];
             const fieldsetId = fieldset.id;
             this.fieldsetIds.push(fieldsetId);
@@ -240,8 +242,8 @@ class FormCreator extends Component {
                 // Enable submit button and fields
                 document.getElementById(this.submitButtonId).removeAttribute('disabled');
                 for(let i=0; i<this.fieldsetIds.length; i++) {
-                    for(let j=0; j<this.data.fieldsets.length; j++) {
-                        if(this.data.fieldsets[j].id === this.fieldsetIds[i] && !this.data.fieldsets[j].disabled) {
+                    for(let j=0; j<fieldsets.length; j++) {
+                        if(fieldsets[j].id === this.fieldsetIds[i] && !fieldsets[j].disabled) {
                             const elem = document.getElementById(this.fieldsetIds[i]);
                             elem.removeAttribute('disabled');
                             break;
@@ -628,7 +630,9 @@ class FormCreator extends Component {
             const fields = this.data.submitFields;
             const payload = {};
             for(let i=0; i<fields.length; i++) {
-                payload[fields[i]] = this.components[fields[i]].value;
+                if(this.components[fields[i]] && this.components[fields[i]].value !== undefined) {
+                    payload[fields[i]] = this.components[fields[i]].value;
+                }
             }
             this._sendForm(payload);
         }
@@ -663,23 +667,23 @@ class FormCreator extends Component {
                 response = await axios.put(url, payload, { withCredentials: true });
             } else if(this.data.method && this.data.method === 'POST') {
                 response = await axios.post(url, payload, { withCredentials: true });
-            } else if(this.data.method && this.data.method === 'DELETE') {
-                url += '/' + this.id;
-                response = await axios.delete(url, payload, { withCredentials: true });
             } else {
                 this.formState.set('sending', false);
                 this._setFormMsg(getText('form_submit_error'));
                 this.logger.error('Form sending failed (Form Creator). Method was unknown: ' + this.data.method);
             }
-
-            // this.logger.log('API RESPONSE', response);
+            
             this.formState.set('sending', false);
             if(response.data && response.data.errors) {
-                this._serverSideFieldErrors(response);
+                if(response.data.deletionResponse) {
+                    this._serverSideDeletionErrors(response);
+                } else {
+                    this._serverSideFieldErrors(response);
+                }
             } else {
                 // Success
                 this._resetForm();
-                const showOnlyMsg = this.data.afterSubmitShowOnlyMsg;  
+                const showOnlyMsg = this.data.afterSubmitShowOnlyMsg;
                 if(showOnlyMsg) {
                     this.formSubmitted = true;
                     this.reDrawSelf({
@@ -721,7 +725,7 @@ class FormCreator extends Component {
                 this.logger.error('Form sending failed (Form Creator).', exception);
             }
             // Call outside error callback if present:
-            if(this.data.onErrors) this.data.onErrors(exception, exception.response);
+            if(this.data.onErrorsFn) this.data.onErrorsFn(exception, exception.response);
         }
     }
 
@@ -790,6 +794,28 @@ class FormCreator extends Component {
         }
     }
 
+    _serverSideDeletionErrors = (response) => {
+        const errors = response.data.errors;
+        let errorMsg = '';
+        for(let i=0; i<errors.length; i++) {
+            if(errors[i].fatal) {
+                errorMsg = getText('form_submit_error');
+                break;
+            } else if(errors[i].userNotFoundError) {
+                errorMsg += getText('user_not_found_error', [errors[i].userId])+'\n';
+            } else if(errors[i].notAllowedToDeleteUserError) {
+                errorMsg += getText('not_allowed_to_delete_user_error', [errors[i].userId])+'\n';
+            }
+        }
+        this.formSubmitted = true;
+        this._resetForm();
+        this.reDrawSelf({
+            class: [this.cssClasses.formError, this.cssClasses.formSent],
+        });
+        this._setFormMsg(errorMsg);
+        if(this.data.onErrorsFn) this.data.onErrorsFn(new Error('Server side deletion error'), response);
+    }
+
     _checkAllFieldErrors = () => {
         let formHasErrors = false;
         for(let i=0; i<this.componentsOrder.length; i++) {
@@ -845,8 +871,10 @@ class FormCreator extends Component {
         this.formSentOnce = false;
         
         // Reset all values to initValues and errors to false
-        for(let i=0; i<this.data.fieldsets.length; i++) {
-            const fieldset = this.data.fieldsets[i];
+        let fieldsets = this.data.fieldsets;
+        if(!fieldsets) fieldsets = [];
+        for(let i=0; i<fieldsets.length; i++) {
+            const fieldset = fieldsets[i];
             for(let j=0; j<fieldset.fields.length; j++) {
                 const field = fieldset.fields[j];
                 let isField = false;

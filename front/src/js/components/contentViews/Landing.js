@@ -34,7 +34,7 @@ class Landing extends Component {
                             this.appState.get('Dialog').disappear();
                             this.universesList.updateList();
                         },
-                        onErrors: (ex, res) => {
+                        onErrorsFn: (ex, res) => {
                             if(res && res.status === 401) this.Router.changeRoute('/');
                         },
                         formLoadedFn: () => { this.appState.get('Dialog').onResize(); },

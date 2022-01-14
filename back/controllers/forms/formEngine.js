@@ -6,7 +6,8 @@ const logger = require('./../../utils/logger');
 const validateField = (form, key, value) => {
     if(key === 'id') return null;
     
-    const fieldsets = form.fieldsets;
+    let fieldsets = form.fieldsets;
+    if(!fieldsets) return null;
     for(let i=0; i<fieldsets.length; i++) {
         const fieldset = fieldsets[i];
         for(let j=0; j<fieldset.fields.length; j++) {

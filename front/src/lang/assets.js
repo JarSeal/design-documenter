@@ -442,4 +442,12 @@ export const assetsObj = {
         en: 'Delete',
         fi: 'Poista',
     },
+    user_not_found_error: {
+        en: '- User \'$[0]\' was not found',
+        fi: '- Käyttäjää \'$[0]\' ei löytynyt',
+    },
+    not_allowed_to_delete_user_error: {
+        en: '- You are not allowed to delete user: $[0]',
+        fi: '- Sinulla ei ole lupaa poistaa käyttäjää: $[0]',
+    },
 };
