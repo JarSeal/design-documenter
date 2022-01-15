@@ -128,7 +128,6 @@ class UsersList extends Component {
                 heading: 'Delete',
                 type: 'Action',
                 actionFn: (e, rowData) => {
-                    console.log('HERE DELETE', rowData);
                     this.Dialog.appear({
                         // component: new ConfirmationDialog({
                         //     id: 'del-one-user-dialog',
@@ -163,8 +162,8 @@ class UsersList extends Component {
                                 users: [rowData.id],
                             },
                             onErrorsFn: (ex, res) => {
-                                if(res && res.status === 401) this.Router.changeRoute('/');
                                 this.Dialog.unlock();
+                                if(res && res.status === 401) this.Router.changeRoute('/');
                             },
                             formLoadedFn: () => { this.Dialog.onResize(); },
                             // TODO: add cancel button object with text and fn
