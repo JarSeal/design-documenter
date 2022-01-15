@@ -121,7 +121,13 @@ class Table extends Component {
         window.removeEventListener('keyup', this.keyUp);
     }
 
-    paint = () => {
+    paint = (data) => {
+        this.tableData = data.tableData;
+        this.allData = [...data.tableData];
+        for(let i=0; i<this.tableData.length; i++) {
+            this.tableData[i]['_tableIndex'] = i;
+            this.allData[i]['_tableIndex'] = i;
+        }
         this._drawFilter();
         this._drawStats();
         this._drawTools();
@@ -890,6 +896,11 @@ class Table extends Component {
 
     getSelected = () => {
         return this.allData.filter(item => this.selected.includes(item._tableIndex));
+    }
+
+    updateTable = (newData) => {
+        this.data.tableData = newData;
+        this._refreshView();
     }
 }
 

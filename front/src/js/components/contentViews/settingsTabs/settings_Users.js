@@ -10,67 +10,66 @@ class UsersList extends Component {
     constructor(data) {
         super(data);
         this.template = '<div class="settings-tab-view"></div>';
-        this.users = null;
-        this._loadUsers();
+        this.users = [];
         this.Dialog = this.Router.commonData.appState.state.Dialog;
         this.appState = this.Router.commonData.appState;
-        this.table = this.addChild();
+        this.usersTable = this.addChild(new Table({
+            id: 'userssa-table',
+            fullWidth: true,
+            tableData: this.users,
+            showStats: true,
+            selectable: true,
+            showRowNumbers: true,
+            filterHotkey: 'f',
+            filter: true,
+            tableStructure: this._getTableStructure(),
+        }));
+        this.usersTable2 = this.addChild(new Table({
+            id: 'users-table2',
+            tableData: this.users,
+            fullWidth: true,
+            showStats: true,
+            tools: [
+                {
+                    id: 'delete',
+                    text: 'Delete',
+                    clickFn: (e, selected) => {
+                        console.log('Delete', e, selected);
+                    },
+                },
+                {
+                    id: 'edit',
+                    text: 'Edit',
+                    clickFn: (e, selected) => {
+                        console.log('Edit', e, selected);
+                    },
+                },
+            ],
+            rowClickFn: (e, rowData) => {
+                console.log('THIS ROW', rowData, e);
+            },
+            showGroupSize: 3,
+            showRowNumbers: true,
+            filter: true,
+            tableStructure: this._getTableStructure(),
+        }));
+        this._loadUsers(true);
     }
 
     paint = () => {
-        if(this.users) {
-            this.addChild(new Table({
-                id: 'users-table',
-                tableData: this.users,
-                fullWidth: true,
-                showStats: true,
-                selectable: true,
-                showRowNumbers: true,
-                filterHotkey: 'f',
-                filter: true,
-                tableStructure: this._getTableStructure(),
-            })).draw();
-
-            this.addChild(new Table({
-                id: 'users-table2',
-                tableData: this.users,
-                fullWidth: true,
-                showStats: true,
-                tools: [
-                    {
-                        id: 'delete',
-                        text: 'Delete',
-                        clickFn: (e, selected) => {
-                            console.log('Delete', e, selected);
-                        },
-                    },
-                    {
-                        id: 'edit',
-                        text: 'Edit',
-                        clickFn: (e, selected) => {
-                            console.log('Edit', e, selected);
-                        },
-                    },
-                ],
-                rowClickFn: (e, rowData) => {
-                    console.log('THIS ROW', rowData, e);
-                },
-                showGroupSize: 3,
-                showRowNumbers: true,
-                filter: true,
-                tableStructure: this._getTableStructure(),
-            })).draw();
+        if(this.users.length) {
+            this.usersTable.draw({ tableData: this.users });
+            this.usersTable2.draw({ tableData: this.users });
         }
     }
 
-    _loadUsers = async () => {
-        console.log('LOAD USERSSSSS');
-        this.users = null;
+    _loadUsers = async (rePaint) => {
+        this.users = [];
         const url = _CONFIG.apiBaseUrl + '/api/users';
         try {
             const response = await axios.get(url, { withCredentials: true });
             this.users = response.data;
-            this.rePaint();
+            if(rePaint) this.rePaint();
         }
         catch(exception) {
             const logger = new Logger('Get users: *****');
@@ -179,10 +178,10 @@ class UsersList extends Component {
         return structure;
     }
 
-    _updateTable = () => {
-        console.log('FOIRM SENT');
-        // this.discard(true);
-        // this.reDrawSelf();
+    _updateTable = async () => {
+        await this._loadUsers();
+        this.usersTable.updateTable(this.users);
+        this.usersTable2.updateTable(this.users);
     }
 }
 
