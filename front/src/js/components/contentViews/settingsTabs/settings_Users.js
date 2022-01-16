@@ -129,26 +129,6 @@ class UsersList extends Component {
                 type: 'Action',
                 actionFn: (e, rowData) => {
                     this.Dialog.appear({
-                        // component: new ConfirmationDialog({
-                        //     id: 'del-one-user-dialog',
-                        //     Dialog: this.Dialog,
-                        //     message: getText('delete_single_user_confirmation', [rowData.username]),
-                        //     confirmButtonText: getText('delete'),
-                        //     confirmSpinner: true,
-                        //     confirmButtonFn: async () => {
-                        //         // 1. Lock the Dialog functionality (cannot be closed) and show spinner
-                        //         this.Dialog.lock();
-                        //         // 2. Send the delete request to server
-                        //         const response = await this._deleteUsers([rowData.username]);
-                        //         // 2.a Get error response from server and show it in the dialog
-                        //         this.Dialog.disappear();
-                        //         this.discard(true);
-                        //         this.reDrawSelf();
-                        //         if(response.error) {
-                        //             this._showError(response);
-                        //         }
-                        //     },
-                        // }),
                         component: new FormCreator({
                             id: 'delete-users',
                             appState: this.appState,
@@ -170,6 +150,7 @@ class UsersList extends Component {
                             formLoadedFn: () => { this.Dialog.onResize(); },
                             extraButton: {
                                 label: getText('cancel'),
+                                class: 'some-class',
                                 clickFn: (e) => {
                                     e.preventDefault();
                                     this.Dialog.disappear();

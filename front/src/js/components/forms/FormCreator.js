@@ -228,15 +228,21 @@ class FormCreator extends Component {
             const extraButton = data.extraButton;
             id = this.id+'-extra-button';
             text = this._getTextData(extraButton.label, extraButton.labelId);
+            let classes = ['form-elem', 'form-elem--button', 'extra-button'];
+            if(extraButton.class) {
+                if(typeof extraButton.class === 'string' || extraButton.class instanceof String) {
+                    classes.push(extraButton.class);
+                } else {
+                    classes = [...extraButton.class, ...classes];
+                }
+            }
             this.componentsOrder.push(id);
             const extraButtonProps = {
                 id,
                 text,
+                class: classes,
                 click: (e) => { extraButton.clickFn(e); },
             };
-            if(extraButton.class) {
-                extraButtonProps.class = extraButton.class;
-            }
             this.components[id] = this.addChild(new Button(extraButtonProps));
         }
 
