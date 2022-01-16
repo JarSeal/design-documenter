@@ -153,7 +153,9 @@ class UsersList extends Component {
                             id: 'delete-users',
                             appState: this.appState,
                             formDesc: getText('delete_single_user_confirmation', [rowData.username]),
-                            // TODO: create beforeFormSendingFn and lock the dialog
+                            beforeFormSendingFn: () => {
+                                this.Dialog.lock();
+                            },
                             afterFormSentFn: () => {
                                 this.Dialog.disappear();
                                 this._updateTable();

@@ -14,6 +14,7 @@ import Button from '../buttons/Button';
 
 // Attributes for data:
 // - local = must be set to true if local forms are used (all the form data must then be in in the data) [Boolean]
+// - beforeFormSendingFn = function to call before actual form submission [Function]
 // - afterFormSentFn = function to call after succesfull form submission [Function]
 // - addToMessage = Object to add to the post or put body [Object]
 // - onErrorsFn = Function to callback after form sending errors [Function] (returns exception and exception.response)
@@ -658,6 +659,7 @@ class FormCreator extends Component {
         let formHasErrors = this._checkAllFieldErrors();
 
         if(!formHasErrors) {
+            if(this.data.beforeFormSendingFn) this.data.beforeFormSendingFn();
             const fields = this.data.submitFields;
             const payload = {};
             for(let i=0; i<fields.length; i++) {
