@@ -121,13 +121,16 @@ class Table extends Component {
         window.removeEventListener('keyup', this.keyUp);
     }
 
-    paint = (data) => {
+    init = (data) => {
         this.tableData = data.tableData;
         this.allData = [...data.tableData];
         for(let i=0; i<this.tableData.length; i++) {
             this.tableData[i]['_tableIndex'] = i;
             this.allData[i]['_tableIndex'] = i;
         }
+    }
+
+    paint = (data) => {
         this._drawFilter();
         this._drawStats();
         this._drawTools();
@@ -362,14 +365,19 @@ class Table extends Component {
         this._refreshView();
     }
 
-    _refreshView = () => {
+    _refreshView = (hard) => {
         const scrollPosX = window.pageXOffset;
         const scrollPosY = window.pageYOffset;
         if(this.data.showStats) this.statsComp.discard(true);
         if(this.data.filter) this.filterComp.discard(true);
         this.tableComp.discard(true);
         if(this.toolsComp) this.toolsComp.discard(true);
-        this.rePaint();
+        if(hard) {
+            this.discard(true);
+            this.reDrawSelf();
+        } else {
+            this.rePaint();
+        }
         window.scrollTo(scrollPosX, scrollPosY);
     }
 
@@ -900,7 +908,13 @@ class Table extends Component {
 
     updateTable = (newData) => {
         this.data.tableData = newData;
-        this._refreshView();
+        this.tableData = newData;
+        this.allData = [...newData];
+        for(let i=0; i<newData.length; i++) {
+            this.data.tableData[i]['_tableIndex'] = i;
+            this.allData[i]['_tableIndex'] = i;
+        }
+        this._refreshView(true);
     }
 }
 

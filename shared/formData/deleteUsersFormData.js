@@ -11,6 +11,7 @@ const readUsersFormData = {
     editorRightsUsers: [],
     editorRightsGroups: [],
     form: {
+        class: 'confirmation-form',
         afterSubmitShowOnlyMsg: true,
         submitButton: {
             id: 'delete-users-button',

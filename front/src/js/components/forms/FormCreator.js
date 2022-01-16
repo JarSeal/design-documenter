@@ -10,6 +10,7 @@ import Dropdown from "./formComponents/Dropdown";
 import SubmitButton from "./formComponents/SubmitButton";
 import TextInput from "./formComponents/TextInput";
 import TextArea from "./formComponents/TextArea";
+import Button from '../buttons/Button';
 
 // Attributes for data:
 // - local = must be set to true if local forms are used (all the form data must then be in in the data) [Boolean]
@@ -17,6 +18,7 @@ import TextArea from "./formComponents/TextArea";
 // - addToMessage = Object to add to the post or put body [Object]
 // - onErrorsFn = Function to callback after form sending errors [Function] (returns exception and exception.response)
 // - formLoadedFn = Function to callback after the form has finished loading [Function]
+// - extraButton = Object with 'label' or 'labelId' (String) and 'clickFn' (Function) properties (adds an extra button next to the submit button)
 class FormCreator extends Component {
     constructor(data) {
         super(data);
@@ -102,6 +104,15 @@ class FormCreator extends Component {
     _createFormComponents(data) {
         let id, text;
         
+        // Form class
+        if(data.class) {
+            if(typeof data.class === 'string' || data.class instanceof String) {
+                this.elem.classList.add(data.class);
+            } else {
+                this.elem.classList.add(...data.class);
+            }
+        }
+
         // Form message top
         id = this.id+'-msg-top';
         this.componentsOrder.push(id);
@@ -210,6 +221,26 @@ class FormCreator extends Component {
         this.components[id] = this.addChild(new Spinner({
             id,
         }));
+
+        // Extra button
+        if(data.extraButton) {
+            const extraButton = data.extraButton;
+            id = this.id+'-extra-button';
+            text = this._getTextData(extraButton.label, extraButton.labelId);
+            this.componentsOrder.push(id);
+            const extraButtonProps = {
+                id,
+                text,
+                click: (e) => {
+                    e.preventDefault();
+                    extraButton.clickFn();
+                },
+            };
+            if(extraButton.class) {
+                extraButtonProps.class = extraButton.class;
+            }
+            this.components[id] = this.addChild(new Button(extraButtonProps));
+        }
 
         // Submit button
         const button = data.submitButton;

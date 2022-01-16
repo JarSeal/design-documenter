@@ -166,7 +166,10 @@ class UsersList extends Component {
                                 if(res && res.status === 401) this.Router.changeRoute('/');
                             },
                             formLoadedFn: () => { this.Dialog.onResize(); },
-                            // TODO: add cancel button object with text and fn
+                            extraButton: {
+                                label: getText('cancel'),
+                                clickFn: () => { this.Dialog.disappear(); },
+                            },
                         }),
                         title: getText('delete_user') + ':',
                     });
