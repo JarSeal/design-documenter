@@ -232,10 +232,7 @@ class FormCreator extends Component {
             const extraButtonProps = {
                 id,
                 text,
-                click: (e) => {
-                    e.preventDefault();
-                    extraButton.clickFn();
-                },
+                click: (e) => { extraButton.clickFn(e); },
             };
             if(extraButton.class) {
                 extraButtonProps.class = extraButton.class;
