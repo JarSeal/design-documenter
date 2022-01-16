@@ -170,10 +170,13 @@ class UsersList extends Component {
                             formLoadedFn: () => { this.Dialog.onResize(); },
                             extraButton: {
                                 label: getText('cancel'),
-                                clickFn: () => { this.Dialog.disappear(); },
+                                clickFn: (e) => {
+                                    e.preventDefault();
+                                    this.Dialog.disappear();
+                                },
                             },
                         }),
-                        title: getText('delete_user') + ':',
+                        title: getText('delete_user') + ': ' + rowData.username,
                     });
                 },
                 actionText: 'Del',
