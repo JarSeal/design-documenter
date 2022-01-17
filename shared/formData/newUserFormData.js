@@ -29,14 +29,14 @@ const newUserFormData = {
         afterSubmitMsgId: 'new_user_registered',
         afterSubmitShowOnlyMsg: true,
         submitButton: {
-            id: 'submit-button-id',
+            id: 'submit-new-user-button-id',
             labelId: 'create_new_user_button',
         },
         submitFields: [ 'username', 'name', 'email', 'password' ],
         fieldsets: [
             {
                 // FIELDSET
-                id: 'main-fieldset',
+                id: 'new-user-main-fs',
                 fields: [
                     { type: 'divider' },
                     {
