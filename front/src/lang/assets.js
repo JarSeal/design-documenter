@@ -59,6 +59,10 @@ export const assetsObj = {
         en: 'Submit',
         fi: 'Lähetä',
     },
+    save: {
+        en: 'Save',
+        fi: 'Tallenna',
+    },
     minimum_x_characters: {
         en: 'Minimum $[0] characters',
         fi: 'Vähintään $[0] merkkiä',
@@ -168,24 +172,24 @@ export const assetsObj = {
         fi: 'Ei oikeuksia.',
     },
     user_level_9_super_admin: {
-        en: 'Super Admin',
-        fi: 'Super admin',
+        en: '9: Super Admin',
+        fi: '9: Super admin',
     },
     user_level_8_administrator: {
-        en: 'Administrator',
-        fi: 'Administraattori',
+        en: '8: Administrator',
+        fi: '8: Administraattori',
     },
     user_level_2_beacon_user: {
-        en: 'Basic Beacon User',
-        fi: 'Beacon-käyttäjä',
+        en: '2: Basic Beacon User',
+        fi: '2: Beacon-käyttäjä',
     },
     user_level_1_loggedin_user: {
-        en: 'Basic User',
-        fi: 'Peruskäyttäjä',
+        en: '1: Basic User',
+        fi: '1: Peruskäyttäjä',
     },
     user_level_0_anonymous_user: {
-        en: 'Not-Logged-In User',
-        fi: 'Kirjautumaton käyttäjä',
+        en: '0: Not-Logged-In User',
+        fi: '0: Kirjautumaton käyttäjä',
     },
     '404_default_message': {
         en: 'Sorry, could not locate the address that was asked.',

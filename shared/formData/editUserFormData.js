@@ -17,7 +17,7 @@ const newUserFormData = {
         afterSubmitShowOnlyMsg: true,
         submitButton: {
             id: 'submit-edit-user-button-id',
-            labelId: 'create_new_user_button',
+            labelId: 'save',
         },
         submitFields: [ 'name', 'email', 'userLevel' ],
         fieldsets: [
@@ -31,7 +31,7 @@ const newUserFormData = {
                         type: 'textinput',
                         id: 'username',
                         labelId: 'username',
-                        locked: true,
+                        disabled: true,
                     },
                     {
                         // NAME
