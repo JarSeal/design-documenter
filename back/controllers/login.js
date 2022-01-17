@@ -30,6 +30,7 @@ loginRouter.post('/access', async (request, response) => {
         browserId = request.body.browserId;
         if(checkIfLoggedIn(request.session) && browserId === request.session.browserId) {
             result.username = request.session.username;
+            result.userLevel = request.session.userLevel || 0;
         } else {
             request.session.browserId = browserId;
         }
@@ -127,6 +128,7 @@ loginRouter.post('/', async (request, response) => {
         .send({
             loggedIn: true,
             username: user.username,
+            userLevel: user.userLevel,
         });
 });
 

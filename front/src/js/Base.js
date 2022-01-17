@@ -52,6 +52,7 @@ class Base extends Component {
             user: {
                 loggedIn: false,
                 username: null,
+                userLevel: 0,
             },
             Dialog: null,
         });
@@ -68,6 +69,7 @@ class Base extends Component {
         if(response && response.data && response.data.loggedIn) {
             this.appState.set('user.username', response.data.username);
             this.appState.set('user.loggedIn', response.data.loggedIn);
+            this.appState.set('user.userLevel', response.data.userLevel || 0);
         }
 
         this.mainLoader.hide(() => {

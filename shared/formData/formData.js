@@ -3,6 +3,7 @@ const newUserFormData = require('./newUserFormData');
 const newUniverseFormData = require('./newUniverseFormData');
 const readUsersFormData = require('./readUsersFormData');
 const deleteUsersFormData = require('./deleteUsersFormData');
+const editUserFormData = require('./editUserFormData');
 
 const formData = [
     loginBeaconFormData,
@@ -10,6 +11,7 @@ const formData = [
     newUniverseFormData,
     readUsersFormData,
     deleteUsersFormData,
+    editUserFormData,
 ];
 
 module.exports = formData;

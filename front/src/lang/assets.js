@@ -140,12 +140,12 @@ export const assetsObj = {
         fi: 'Uusi käyttäjä rekisteröity.',
     },
     form_submit_error: {
-        en: 'Form could not been sent due to a server error. Please try again or contact support.',
-        fi: 'Lomakkeen lähetys epäonnistui palvelinvirheen takia. Kokeile uudelleen tai ota yhteyttä tukeen.',
+        en: 'Form could not been sent due to an error. Please try again or contact support.',
+        fi: 'Lomakkeen lähetys epäonnistui virheen takia. Kokeile uudelleen tai ota yhteyttä tukeen.',
     },
     could_not_get_form_data: {
-        en: 'Form data could not be retrieved due to a server error. Please try again or contact support.',
-        fi: 'Lomaketta ei voitu noutaa palvelinvirheen takia. Kokeile uudelleen tai ota yhteyttä tukeen.',
+        en: 'Form data could not be retrieved due to an error. Please try again or contact support.',
+        fi: 'Lomaketta ei voitu noutaa virheen takia. Kokeile uudelleen tai ota yhteyttä tukeen.',
     },
     close_dialog: {
         en: 'Close dialog',
@@ -176,6 +176,10 @@ export const assetsObj = {
         fi: 'Administraattori',
     },
     user_level_2_beacon_user: {
+        en: 'Basic Beacon User',
+        fi: 'Beacon-käyttäjä',
+    },
+    user_level_1_loggedin_user: {
         en: 'Basic User',
         fi: 'Peruskäyttäjä',
     },
@@ -425,6 +429,10 @@ export const assetsObj = {
     delete_user: {
         en: 'Delete user',
         fi: 'Poista käyttäjä',
+    },
+    edit_user: {
+        en: 'Edit user',
+        fi: 'Muokkaa käyttäjää',
     },
     delete_single_user_confirmation: {
         en: 'Are you sure you want to delete user \'$[0]\'? This cannot be undone.',

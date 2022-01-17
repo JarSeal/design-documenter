@@ -101,6 +101,7 @@ const testFormData = {
                         { value: '4', label: 'Four', disabled: true },
                         { value: '5', label: 'Five' },
                     ],
+                    getOptionsFn: '', // getOptionsFn id / String (if the options are missing, then a function can be used to retrieve the options)
                     emptyIsAnOption: true, // Boolean
                     required: true, // Boolean
                     disabled: false, // Boolean

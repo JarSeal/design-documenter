@@ -121,7 +121,39 @@ class UsersList extends Component {
                 key: 'editUser',
                 heading: 'Edit',
                 type: 'Action',
-                actionFn: (e, rowData) => { console.log('TODO', rowData.username); },
+                actionFn: (e, rowData) => {
+                    this.Dialog.appear({
+                        component: new FormCreator({
+                            id: 'edit-user-form',
+                            appState: this.appState,
+                            editDataId: rowData.id,
+                            beforeFormSendingFn: () => {
+                                this.Dialog.lock();
+                            },
+                            afterFormSentFn: () => {
+                                this.Dialog.disappear();
+                                this._updateTable();
+                            },
+                            addToMessage: {
+                                users: [rowData.id],
+                            },
+                            onErrorsFn: (ex, res) => {
+                                this.Dialog.unlock();
+                                if(res && res.status === 401) this.Router.changeRoute('/');
+                            },
+                            formLoadedFn: () => { this.Dialog.onResize(); },
+                            extraButton: {
+                                label: getText('cancel'),
+                                class: 'some-class',
+                                clickFn: (e) => {
+                                    e.preventDefault();
+                                    this.Dialog.disappear();
+                                },
+                            },
+                        }),
+                        title: getText('edit_user') + ': ' + rowData.username,
+                    });
+                },
             },
             {
                 key: 'deleteUser',

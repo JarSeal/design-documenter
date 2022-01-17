@@ -4,6 +4,7 @@ const shared = require('../../shared/index.js');
 import { Component, Logger, State } from "../../LIGHTER";
 import { _CONFIG } from "../../_CONFIG";
 import validationFns from './formData/validationFns';
+import optionsFns from './formData/optionsFns';
 import Spinner from '../widgets/Spinner';
 import Checkbox from "./formComponents/Checkbox";
 import Dropdown from "./formComponents/Dropdown";
@@ -17,6 +18,7 @@ import Button from '../buttons/Button';
 // - beforeFormSendingFn = function to call before actual form submission [Function]
 // - afterFormSentFn = function to call after succesfull form submission [Function]
 // - addToMessage = Object to add to the post or put body [Object]
+// - editDataId = Data id to be retrieved with the form data to populate the form [String] (for edit forms)
 // - onErrorsFn = Function to callback after form sending errors [Function] (returns exception and exception.response)
 // - formLoadedFn = Function to callback after the form has finished loading [Function]
 // - extraButton = Object with 'label' or 'labelId' (String) and 'clickFn' (Function) properties (adds an extra button next to the submit button)
@@ -336,10 +338,21 @@ class FormCreator extends Component {
         if(!id) id = fieldIdPrefix+'-dropdown';
         const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
         this.fieldErrors.set(id, false);
-        const options = [];
-        for(let i=0; i<field.options.length; i++) {
-            options.push(field.options[i]);
-            options[i].label = this._getTextData(field.options[i].label, field.options[i].labelId);
+        let options = [];
+        if(field.options) {
+            for(let i=0; i<field.options.length; i++) {
+                options.push(field.options[i]);
+                options[i].label = this._getTextData(field.options[i].label, field.options[i].labelId);
+            }
+        } else {
+            if(!field.getOptionsFn) {
+                this.logger.error('The drop down field has to have either the options or the getOptionsFn property.');
+                throw new Error('Call stack');
+            }
+            options = optionsFns[field.getOptionsFn]({ readerLevel: this.appState.get('user.userLevel') });
+            for(let i=0; i<options.length; i++) {
+                options[i].label = this._getTextData(options[i].label, options[i].labelId);
+            }
         }
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new Dropdown({
@@ -417,6 +430,8 @@ class FormCreator extends Component {
         if(!id) id = fieldIdPrefix+'-textinput';
         const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
         const placeholder = this._getTextData(field.placeholder, field.placeholderId);
+        console.log('TADAAA', id, this.data);
+        if(this.data.data && this.data.data[id]) field.initValue = this.data.data[id];
         this.fieldErrors.set(id, false);
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new TextInput({
@@ -769,7 +784,9 @@ class FormCreator extends Component {
         this.formState.set('getting', true);
         this.formState.set('sending', false);
         try {
-            const url = _CONFIG.apiBaseUrl + '/api/forms/' + id;
+            let additionalDataId = '';
+            if(this.data.editDataId) additionalDataId = '+' + this.data.editDataId;
+            const url = _CONFIG.apiBaseUrl + '/api/forms/' + id + additionalDataId;
             const response = await axios.get(url, { withCredentials: true });
             
             // this.logger.log('API RESPONSE', response);

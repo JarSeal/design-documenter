@@ -85,6 +85,10 @@ const USER_LEVELS = [
         labelId: 'user_level_2_beacon_user',
     },
     {
+        userLevel: 1,
+        labelId: 'user_level_1_loggedin_user',
+    },
+    {
         userLevel: 0,
         labelId: 'user_level_0_anonymous_user',
     },
