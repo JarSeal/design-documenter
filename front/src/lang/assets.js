@@ -474,4 +474,8 @@ export const assetsObj = {
         en: 'You will lose all the changes you made in the dialog. Do you want to continue?',
         fi: 'Menetät kaikki muokkaukset, jotka teit tähän dialogiin. Haluatko jatkaa?',
     },
+    user: {
+        en: 'User',
+        fi: 'Käyttäjä',
+    },
 };
