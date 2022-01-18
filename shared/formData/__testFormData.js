@@ -102,6 +102,8 @@ const testFormData = {
                         { value: '5', label: 'Five' },
                     ],
                     getOptionsFn: '', // getOptionsFn id / String (if the options are missing, then a function can be used to retrieve the options)
+                    minValue: 1, // Number (when min and maxValue are defined, all the values have to be numbers)
+                    maxValue: 100, // Number (min and maxValue are for backend validation)
                     emptyIsAnOption: true, // Boolean
                     required: true, // Boolean
                     disabled: false, // Boolean
