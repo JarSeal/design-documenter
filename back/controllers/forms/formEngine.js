@@ -50,14 +50,27 @@ const checkbox = (field, value) => {
 const dropdown = (field, value) => {
     if(field.required && String(value).trim() === '') return 'Required';
     // Validate that the value passed is one of the options
-    let valueFound = false;
-    for(let i=0; i<field.options.length; i++) {
-        if(String(field.options[i].value).trim() === String(value).trim()) {
-            valueFound = true;
-            break;
+    if(field.options) {
+        let valueFound = false;
+        for(let i=0; i<field.options.length; i++) {
+            if(String(field.options[i].value).trim() === String(value).trim()) {
+                valueFound = true;
+                break;
+            }
         }
+        if(!valueFound) {
+            logger.log('A value was presented that is not one of the options for a dropdown. (+ value, field)', value, field);
+            return 'Unknown value';
+        }
+    } else if(field.minValue && field.maxValue) {
+        if(field.minValue > value || field.maxValue < value) {
+            logger.log('Value is out of validation range for a dropdown. (+ value, field)', value, field);
+            return 'Value is out of validation range.';
+        }
+    } else {
+        logger.log('No validation provided. No options or minValue and maxValue for a dropdown. (+ value, field)', value, field);
+        return 'No validation provided. Needs to have options or minValue and maxValue defined.';
     }
-    if(!valueFound) return 'Unknown value';
     return null;
 };
 

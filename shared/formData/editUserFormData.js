@@ -2,7 +2,7 @@ const CONFIG = require('./../../CONFIG').USER;
 
 const newUserFormData = {
     formId: 'edit-user-form',
-    path: '/api/users/:userId',
+    path: '/api/users',
     method: 'PUT',
     type: 'form',
     useRightsLevel: 8,
@@ -13,13 +13,13 @@ const newUserFormData = {
     editorRightsGroups: [],
     form: {
         onErrorsMsgId: 'form_has_errors',
-        afterSubmitMsgId: 'user_edited',
+        afterSubmitMsg: '',
         afterSubmitShowOnlyMsg: true,
         submitButton: {
             id: 'submit-edit-user-button-id',
             labelId: 'save',
         },
-        submitFields: [ 'name', 'email', 'userLevel' ],
+        submitFields: [ 'userId', 'name', 'email', 'userLevel' ],
         fieldsets: [
             {
                 // FIELDSET
@@ -62,6 +62,8 @@ const newUserFormData = {
                         labelId: 'user_level',
                         required: true,
                         getOptionsFn: 'userLevels',
+                        minValue: 1,
+                        maxValue: 8,
                     },
                     { type: 'divider' },
                 ],

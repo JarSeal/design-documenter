@@ -134,11 +134,10 @@ class UsersList extends Component {
                                 this.Dialog.disappear();
                                 this._updateTable();
                             },
-                            addToMessage: {
-                                users: [rowData.id],
-                            },
+                            addToMessage: { userId: rowData.id },
                             onErrorsFn: (ex, res) => {
                                 this.Dialog.unlock();
+                                this._updateTable();
                                 if(res && res.status === 401) this.Router.changeRoute('/');
                             },
                             formLoadedFn: () => { this.Dialog.onResize(); },
@@ -177,6 +176,7 @@ class UsersList extends Component {
                             },
                             onErrorsFn: (ex, res) => {
                                 this.Dialog.unlock();
+                                this._updateTable();
                                 if(res && res.status === 401) this.Router.changeRoute('/');
                             },
                             formLoadedFn: () => { this.Dialog.onResize(); },

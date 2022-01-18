@@ -716,7 +716,6 @@ class FormCreator extends Component {
             payload._csrf = response.data.csrfToken;
 
             if(this.data.method && this.data.method === 'PUT') {
-                url += '/' + this.id;
                 response = await axios.put(url, payload, { withCredentials: true });
             } else if(this.data.method && this.data.method === 'POST') {
                 response = await axios.post(url, payload, { withCredentials: true });
@@ -809,6 +808,7 @@ class FormCreator extends Component {
             this.formSubmitted = true;
             this.template = `<div class="error-msg">${text}</div>`;
             this.logger.error('Form data retrieving failed (Form Creator).', exception, this);
+            if(this.data.onErrorsFn) this.data.onErrorsFn(exception, exception.response);
             if(toLogout) {
                 setTimeout(() => {
                     this.Router.changeRoute('/logout');

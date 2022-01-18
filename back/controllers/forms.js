@@ -45,13 +45,13 @@ formsRouter.get('/:id', async (request, response) => {
             return response.status(form.data._error.code).json(form.data._error.obj);
         }
     }
-    
+
     response.json(form);
 });
 
 const getAdditionalData = async (formId, dataId, userLevel) => {
     if(formId === 'edit-user-form') {
-        const user = User.findById(dataId);
+        const user = await User.findById(dataId);
         if(!user) {
             return {
                 _error: { code: 404,
