@@ -119,7 +119,7 @@ class UsersList extends Component {
             },
             {
                 key: 'editUser',
-                heading: 'Edit',
+                heading: getText('edit'),
                 type: 'Action',
                 actionFn: (e, rowData) => {
                     this.Dialog.appear({
@@ -140,6 +140,7 @@ class UsersList extends Component {
                                 this._updateTable();
                                 if(res && res.status === 401) this.Router.changeRoute('/');
                             },
+                            onFormChages: () => { this.Dialog.changeHappened(); },
                             formLoadedFn: () => { this.Dialog.onResize(); },
                             extraButton: {
                                 label: getText('cancel'),
@@ -156,8 +157,9 @@ class UsersList extends Component {
             },
             {
                 key: 'deleteUser',
-                heading: 'Delete',
+                heading: getText('delete'),
                 type: 'Action',
+                actionText: getText('del'),
                 actionFn: (e, rowData) => {
                     this.Dialog.appear({
                         component: new FormCreator({
@@ -191,8 +193,7 @@ class UsersList extends Component {
                         }),
                         title: getText('delete_user') + ': ' + rowData.username,
                     });
-                },
-                actionText: 'Del',
+                },                
             },
         ];
         return structure;

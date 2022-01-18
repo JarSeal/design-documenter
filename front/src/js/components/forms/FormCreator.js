@@ -19,9 +19,10 @@ import Button from '../buttons/Button';
 // - afterFormSentFn = function to call after succesfull form submission [Function]
 // - addToMessage = Object to add to the post or put body [Object]
 // - editDataId = Data id to be retrieved with the form data to populate the form [String] (for edit forms)
-// - onErrorsFn = Function to callback after form sending errors [Function] (returns exception and exception.response)
+// - onErrorsFn = Function to callback after form sending errors [Function] (properties: exception, exception.response)
 // - formLoadedFn = Function to callback after the form has finished loading [Function]
 // - extraButton = Object with 'label' or 'labelId' (String) and 'clickFn' (Function) properties (adds an extra button next to the submit button)
+// - onFormChages = Function to callback when a change to the form is made [Function]
 class FormCreator extends Component {
     constructor(data) {
         super(data);
@@ -327,6 +328,7 @@ class FormCreator extends Component {
                     });
                 }
                 this._displayFieldError(id);
+                if(this.data.onFormChages) this.data.onFormChages();
             },
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
@@ -383,6 +385,7 @@ class FormCreator extends Component {
                     });
                 }
                 this._displayFieldError(id);
+                if(this.data.onFormChages) this.data.onFormChages();
             },
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
@@ -421,6 +424,7 @@ class FormCreator extends Component {
                     });
                 }
                 this._displayFieldError(id);
+                if(this.data.onFormChages) this.data.onFormChages();
             },
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
@@ -465,6 +469,7 @@ class FormCreator extends Component {
                     });
                 }
                 this._displayFieldError(id);
+                if(this.data.onFormChages) this.data.onFormChages();
             },
         }));
         this.components[id]['fieldsetId'] = fieldsetId;

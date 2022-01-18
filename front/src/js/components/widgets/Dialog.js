@@ -7,12 +7,14 @@ import Button from "../buttons/Button";
 class Dialog extends Component {
     constructor(data) {
         super(data);
+        this.data = data;
         this.appState = data.appState;
         this.transitionTime = 140; // in milliseconds
         data.style = { transitionDuration: this.transitionTime + 'ms' };
         data.class = ['dialog', 'alpha-black'];
         this.isShowing = false;
         this.isLocked = false;
+        this.hasChanges = false;
         this.compoToShow;
         this.dialogTitle;
         this.resizeTimer;
@@ -70,6 +72,7 @@ class Dialog extends Component {
     }
 
     appear = (dialogData) => {
+        this.hasChanges = false;
         this.compoToShow = this.addChild(dialogData.component);
         this.compoToShow.data.attach = this.id + '-inner-box';
         if(dialogData.title) {
@@ -89,11 +92,13 @@ class Dialog extends Component {
         if(!this.elem) return;
         this.elem.classList.remove('appear');
         this.isShowing = false;
+        this.hasChanges = false;
 
         this.appState.remove('resizers.dialog');
 
         setTimeout(() => {
             this.unlock();
+            this.dialogTitle = null;
             this.discard(true);
         }, this.transitionTime);
     }
@@ -112,9 +117,16 @@ class Dialog extends Component {
 
     _closeDialogClick = (e) => {
         if(this.isLocked) return;
+        e.stopPropagation();
         const targetId = e.target.id;
         if(targetId === this.id || targetId === this.id+'-close-button') {
-            this.disappear();
+            if(this.hasChanges) {
+                if(confirm(getText('changes_will_be_lost_prompt'))) {
+                    this.disappear();
+                }
+            } else {
+                this.disappear();
+            }
         }
     }
 
@@ -135,6 +147,14 @@ class Dialog extends Component {
 
     onResize = () => {
         this._setSizes();
+    }
+
+    changeHappened = () => {
+        if(this.dialogTitle && this.hasChanges === false) {
+            // Create the asterix after the data when the dialog has a change for the first time
+            this.dialogTitle.draw({ text: this.dialogTitle.data.text + ' *' });
+        }
+        this.hasChanges = true;
     }
 }
 

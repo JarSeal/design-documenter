@@ -450,9 +450,17 @@ export const assetsObj = {
         en: 'Confirm',
         fi: 'Vahvista',
     },
+    edit: {
+        en: 'Edit',
+        fi: 'Muokkaa',
+    },
     delete: {
         en: 'Delete',
         fi: 'Poista',
+    },
+    del: {
+        en: 'Del',
+        fi: 'Del',
     },
     user_not_found_error: {
         en: '- User \'$[0]\' was not found',
@@ -461,5 +469,9 @@ export const assetsObj = {
     not_allowed_to_delete_user_error: {
         en: '- You are not allowed to delete user: $[0]',
         fi: '- Sinulla ei ole lupaa poistaa käyttäjää: $[0]',
+    },
+    changes_will_be_lost_prompt: {
+        en: 'You will lose all the changes you made in the dialog. Do you want to continue?',
+        fi: 'Menetät kaikki muokkaukset, jotka teit tähän dialogiin. Haluatko jatkaa?',
     },
 };
