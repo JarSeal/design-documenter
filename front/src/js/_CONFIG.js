@@ -5,6 +5,7 @@ import Login from "./components/contentViews/Login";
 import Logout from "./components/contentViews/Logout";
 import NewUser from "./components/contentViews/NewUser";
 import Settings from "./components/contentViews/Settings";
+import OneUser from "./components/contentViews/settingsTabs/settings_OneUser";
 import Universe from "./components/contentViews/Universe";
 import { getText } from "./helpers/lang";
 import { checkRouteAccess } from "./helpers/storage";
@@ -55,6 +56,15 @@ const _conf = {
         {
             route: '/settings',
             redirect: '/settings/default',
+        },
+        {
+            route: '/settings/user/:user',
+            id: 'route-one-user',
+            source: OneUser,
+            titleId: 'route_title_settings',
+            beforeDraw: async (routerData) => {
+                return await checkRouteAccess(routerData);
+            },
         },
         {
             route: '/settings/:tab',

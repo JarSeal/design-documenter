@@ -273,6 +273,10 @@ class Router {
         return { ...this.curRouteData, prevRouteData: this.prevRouteData };
     }
 
+    getRouteParams() {
+        return this.curRouteData.params;
+    }
+
     isCurrent(route) {
         return this.basePath + route === this.curRoute
             || this.basePath + route === this.curRoute + '/'

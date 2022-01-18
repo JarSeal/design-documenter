@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const usersRouter = require('express').Router();
 const CONFIG = require('./../shared').CONFIG;
 const readUsersFormData = require('./../../shared/formData/readUsersFormData');
+const readOneUserFormData = require('./../../shared/formData/readOneUserFormData');
 const logger = require('./../utils/logger');
 const User = require('./../models/user');
 const Form = require('./../models/form');
@@ -17,7 +18,7 @@ usersRouter.get('/', async (request, response) => {
     const user = await User.findById(request.session._id);
     const error = await validatePrivileges(formData, request, user);
     if(error) {
-        logger.log('Unauthorised. Not high enough userLevel. (+ error, session)', error, request.session);
+        logger.log('Unauthorised. Not high enough userLevel for get users. (+ error, session)', error, request.session);
         response.status(error.code).json(error.obj);
         return;
     }
@@ -28,6 +29,49 @@ usersRouter.get('/', async (request, response) => {
     //     name: 1, id: 1
     // });
     response.json(result);
+});
+
+
+// Get one user
+usersRouter.get('/:userId', async (request, response) => {
+
+    const formId = readOneUserFormData.formId;
+    const formData = await Form.findOne({ formId });
+    const user = await User.findById(request.session._id);
+    const error = await validatePrivileges(formData, request, user);
+    if(error) {
+        logger.log('Unauthorised. Not high enough userLevel for get one user. (+ error, session, userId)', error, request.session, userId);
+        response.status(error.code).json(error.obj);
+        return;
+    }
+
+    const userId = request.params.userId;
+    let userToView = await User.findOne({ username: userId })
+        .populate('edited.by', { username: 1 })
+        .populate('created.by', { username: 1 });
+    if(!userToView) {
+        userToView = await User.findById(userId)
+            .populate('edited.by', { username: 1 })
+            .populate('created.by', { username: 1 });
+    }
+
+    if(!userToView) {
+        logger.log('Could not find user with this id: ' + userId + ' (+ session)', request.session);
+        response.status(404).json({
+            msg: 'User was not found. It has propably been deleted.',
+            userNotFoundError: true,
+        });
+        return;
+    } else if(userToView.userLevel >= user.userLevel) {
+        logger.log('Unauthorised. Not high enough userLevel to view current user. (+ session, userId)', request.session, userId);
+        response.status(401).json({
+            unauthorised: true,
+            msg: 'User not authorised.'
+        });
+        return;
+    }
+    
+    response.json(userToView);
 });
 
 
