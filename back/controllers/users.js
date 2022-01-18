@@ -1,12 +1,11 @@
 const bcrypt = require('bcrypt');
-const mongoose = require('mongoose');
 const usersRouter = require('express').Router();
 const CONFIG = require('./../shared').CONFIG;
 const readUsersFormData = require('./../../shared/formData/readUsersFormData');
 const logger = require('./../utils/logger');
 const User = require('./../models/user');
 const Form = require('./../models/form');
-const { validateFormData, validatePrivileges } = require('./forms/formEngine');
+const { validateFormData, validatePrivileges, createNewEditedArray } = require('./forms/formEngine');
 
 
 // Get all users (for admins)
@@ -75,16 +74,13 @@ usersRouter.put('/', async (request, response) => {
         return;
     }
 
+    const edited = await createNewEditedArray(body.userId, request.session._id);
+
     const updatedUser = {
         email: body.email.trim(),
         name: body.name.trim(),
         userLevel: parseInt(body.userLevel),
-        $push: {
-            edited: {
-                by: mongoose.Types.ObjectId(request.session._id),
-                date: new Date(),
-            }
-        },
+        edited,
     };
 
     const savedUser = await User.findByIdAndUpdate(body.userId, updatedUser, { new: true });

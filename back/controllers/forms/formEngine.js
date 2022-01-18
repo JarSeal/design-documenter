@@ -1,4 +1,5 @@
 const csrf = require('csurf');
+const mongoose = require('mongoose');
 const User = require('../../models/user');
 const shared = require('../../shared');
 const logger = require('./../../utils/logger');
@@ -185,6 +186,25 @@ const csrfNewToken = (request) => {
     return crsfToken();
 };
 
+const createNewEditedArray = async (userId, editorId) => {
+    const maxEditedLogs = 10;
+    const user = await User.findById(userId);
+    const edited = user.edited || [];
+    let newEdited = [];
+    if(edited.length >= maxEditedLogs) {
+        const startIndex = edited.length - maxEditedLogs + 1;
+        for(let i=startIndex; i<edited.length; i++) {
+            newEdited.push(edited[i]);
+        }
+    }
+    console.log('newEdited', newEdited);
+    newEdited.push({
+        by: mongoose.Types.ObjectId(editorId),
+        date: new Date(),
+    });
+    return newEdited;
+};
+
 module.exports = {
     validateField,
     validateKeys,
@@ -192,4 +212,5 @@ module.exports = {
     validatePrivileges,
     csrfProtection,
     csrfNewToken,
+    createNewEditedArray,
 };
