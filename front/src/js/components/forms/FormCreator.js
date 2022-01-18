@@ -33,6 +33,7 @@ class FormCreator extends Component {
         this.components = {};
         this.componentsOrder = [];
         this.curLang = getLang();
+        this.formHasChanges = false;
         this.formSentOnce = false;
         this.formSubmitted = false;
         this.fieldErrors = new State();
@@ -328,6 +329,7 @@ class FormCreator extends Component {
                     });
                 }
                 this._displayFieldError(id);
+                this.formHasChanges = true;
                 if(this.data.onFormChages) this.data.onFormChages();
             },
         }));
@@ -385,6 +387,7 @@ class FormCreator extends Component {
                     });
                 }
                 this._displayFieldError(id);
+                this.formHasChanges = true;
                 if(this.data.onFormChages) this.data.onFormChages();
             },
         }));
@@ -424,6 +427,7 @@ class FormCreator extends Component {
                     });
                 }
                 this._displayFieldError(id);
+                this.formHasChanges = true;
                 if(this.data.onFormChages) this.data.onFormChages();
             },
         }));
@@ -469,6 +473,7 @@ class FormCreator extends Component {
                     });
                 }
                 this._displayFieldError(id);
+                this.formHasChanges = true;
                 if(this.data.onFormChages) this.data.onFormChages();
             },
         }));
@@ -679,6 +684,9 @@ class FormCreator extends Component {
             this.formSentOnce = true;
             this.elem.classList.add(this.cssClasses.formSent);
         }
+
+        // Check if form does not have changes (and if the form is an edit form (has editDataId property))
+        if(!this.formHasChanges && this.data.editDataId) return;
 
         // Check form errors
         let formHasErrors = this._checkAllFieldErrors();

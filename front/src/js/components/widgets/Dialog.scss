@@ -57,6 +57,13 @@ $sidePadding: 4rem;
                 color: #fff;
             }
         }
+        .save-button {
+            background-color: #666;
+            color: #fff;
+            &:hover {
+                background-color: #333;
+            }
+        }
         .confirm-button--delete {
             background-color: $form-button-delete-color;
             color: #fff;

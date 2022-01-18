@@ -18,6 +18,7 @@ const newUserFormData = {
         submitButton: {
             id: 'submit-edit-user-button-id',
             labelId: 'save',
+            class: 'save-button',
         },
         submitFields: [ 'userId', 'name', 'email', 'userLevel' ],
         fieldsets: [
