@@ -14,6 +14,7 @@ class Spinner extends Component {
     }
 
     paint = (data) => {
+        console.log('HERE', data);
         this.showSpinner(data.show);
     }
 

@@ -3,6 +3,7 @@ import axios from "axios";
 import { getText } from "../../../helpers/lang";
 import { _CONFIG } from "../../../_CONFIG";
 import FormCreator from "../../forms/FormCreator";
+import Spinner from "../../widgets/Spinner";
 
 class OneUser extends Component {
     constructor(data) {
@@ -14,6 +15,7 @@ class OneUser extends Component {
         this.userData;
         this.Dialog = this.Router.commonData.appState.state.Dialog;
         this.appState = this.Router.commonData.appState;
+        this.spinner = this.addChild(new Spinner({ id: 'user-loader-indicator' }));
     }
 
     init = () => {
@@ -25,7 +27,7 @@ class OneUser extends Component {
         if(this.userData) {
             
         } else {
-            // Spinner
+            this.spinner.draw({ show: true });
         }
     }
 
@@ -36,139 +38,16 @@ class OneUser extends Component {
             const response = await axios.get(url, { withCredentials: true });
             this.userData = response.data;
             console.log('RECEIVED DATA', this.userData);
-            this.rePaint();
+            this.spinner.showSpinner(false);
+            setTimeout(() => {
+                this.rePaint();
+            }, 400);
         }
         catch(exception) {
             const logger = new Logger('Get users: *****');
             logger.error('Could not get users data', exception);
             throw new Error('Call stack');
         }
-    }
-
-    _deleteUsers = async (users) => {
-        if(!users || !users.length) return;
-        const url = _CONFIG.apiBaseUrl + '/api/users';
-        try {
-            const response = await axios.delete(url, { withCredentials: true, users });
-            console.log('DELETED', response);
-            return response;
-        }
-        catch(exception) {
-            const logger = new Logger('Delete users: *****');
-            logger.error('Could not delete users', exception, users);
-            throw new Error('Call stack');
-        }
-    }
-
-    _getTableStructure = () => {
-        const structure = [
-            {
-                key: 'username',
-                heading: getText('username'),
-                sort: 'desc',
-            },
-            {
-                key: 'name',
-                heading: getText('name'),
-            },
-            {
-                key: 'email',
-                heading: getText('email'),
-            },
-            {
-                key: 'userLevel',
-                heading: getText('user_level'),
-            },
-            {
-                key: 'created.date',
-                heading: getText('created'),
-                type: 'Date',
-            },
-            {
-                key: 'editUser',
-                heading: getText('edit'),
-                type: 'Action',
-                actionFn: (e, rowData) => {
-                    this.Dialog.appear({
-                        component: new FormCreator({
-                            id: 'edit-user-form',
-                            appState: this.appState,
-                            editDataId: rowData.id,
-                            beforeFormSendingFn: () => {
-                                this.Dialog.lock();
-                            },
-                            afterFormSentFn: () => {
-                                this.Dialog.disappear();
-                                this._updateTable();
-                            },
-                            addToMessage: { userId: rowData.id },
-                            onErrorsFn: (ex, res) => {
-                                this.Dialog.unlock();
-                                this._updateTable();
-                                if(res && res.status === 401) this.Router.changeRoute('/');
-                            },
-                            onFormChages: () => { this.Dialog.changeHappened(); },
-                            formLoadedFn: () => { this.Dialog.onResize(); },
-                            extraButton: {
-                                label: getText('cancel'),
-                                class: 'some-class',
-                                clickFn: (e) => {
-                                    e.preventDefault();
-                                    this.Dialog.disappear();
-                                },
-                            },
-                        }),
-                        title: getText('edit_user') + ': ' + rowData.username,
-                    });
-                },
-            },
-            {
-                key: 'deleteUser',
-                heading: getText('delete'),
-                type: 'Action',
-                actionText: getText('del'),
-                actionFn: (e, rowData) => {
-                    this.Dialog.appear({
-                        component: new FormCreator({
-                            id: 'delete-users',
-                            appState: this.appState,
-                            formDesc: getText('delete_single_user_confirmation', [rowData.username]),
-                            beforeFormSendingFn: () => {
-                                this.Dialog.lock();
-                            },
-                            afterFormSentFn: () => {
-                                this.Dialog.disappear();
-                                this._updateTable();
-                            },
-                            addToMessage: {
-                                users: [rowData.id],
-                            },
-                            onErrorsFn: (ex, res) => {
-                                this.Dialog.unlock();
-                                this._updateTable();
-                                if(res && res.status === 401) this.Router.changeRoute('/');
-                            },
-                            formLoadedFn: () => { this.Dialog.onResize(); },
-                            extraButton: {
-                                label: getText('cancel'),
-                                class: 'some-class',
-                                clickFn: (e) => {
-                                    e.preventDefault();
-                                    this.Dialog.disappear();
-                                },
-                            },
-                        }),
-                        title: getText('delete_user') + ': ' + rowData.username,
-                    });
-                },                
-            },
-        ];
-        return structure;
-    }
-
-    _updateTable = async () => {
-        await this._loadUsers();
-        this.usersTable.updateTable(this.users);
     }
 }
 
