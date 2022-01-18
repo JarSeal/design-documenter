@@ -33,6 +33,7 @@ const userGroupSchema = mongoose.Schema({
     },
     edited: [
         {
+            _id: false,
             by: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'User',

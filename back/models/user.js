@@ -32,13 +32,18 @@ const userSchema = mongoose.Schema({
         maxlength: 1,
     },
     created: {
-        by: String,
+        by: {
+            type: mongoose.Schema.Types.ObjectId,
+        },
         publicForm: Boolean,
         date: Date,
     },
     edited: [
         {
-            by: String,
+            _id: false,
+            by: {
+                type: mongoose.Schema.Types.ObjectId,
+            },
             selfEdited: Boolean,
             date: Date,
         }
