@@ -13,6 +13,7 @@ class Dialog extends Component {
         data.style = { transitionDuration: this.transitionTime + 'ms' };
         data.class = ['dialog', 'alpha-black'];
         this.isShowing = false;
+        this.isTransitioning = false;
         this.isLocked = false;
         this.hasChanges = false;
         this.compoToShow;
@@ -72,8 +73,11 @@ class Dialog extends Component {
     }
 
     appear = (dialogData) => {
+        if(this.isShowing) this.disappear();
+        if(this.isTransitioning) return;
+        this.isTransitioning = true;
         this.hasChanges = false;
-        this.compoToShow = this.addChild(dialogData.component);
+        this.compoToShow = this.addChild(new dialogData.component(dialogData.componentData));
         this.compoToShow.data.attach = this.id + '-inner-box';
         if(dialogData.title) {
             this.dialogTitle = this.addChild({
@@ -86,10 +90,14 @@ class Dialog extends Component {
         }
         this.draw({ appear: true });
         this.isShowing = true;
+        setTimeout(() => {
+            this.isTransitioning = false;
+        }, this.transitionTime + 50);
     }
 
     disappear = () => {
         if(!this.elem) return;
+        this.isTransitioning = true;
         this.elem.classList.remove('appear');
         this.isShowing = false;
         this.hasChanges = false;
@@ -99,7 +107,11 @@ class Dialog extends Component {
         setTimeout(() => {
             this.unlock();
             this.dialogTitle = null;
-            this.discard(true);
+            this.discard(true, () =>  {
+                setTimeout(() => {
+                    this.isTransitioning = false;
+                }, 300);
+            });
         }, this.transitionTime);
     }
 
