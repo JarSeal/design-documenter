@@ -196,6 +196,8 @@ const createNewEditedArray = async (userId, editorId) => {
         for(let i=startIndex; i<edited.length; i++) {
             newEdited.push(edited[i]);
         }
+    } else {
+        newEdited = edited;
     }
     newEdited.push({
         by: mongoose.Types.ObjectId(editorId),
