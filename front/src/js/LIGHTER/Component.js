@@ -101,7 +101,7 @@ class Component {
     init(data) {}
     paint(data) {}
 
-    discard(fullDiscard) {
+    discard(fullDiscard, callback) {
         if(this.discarding) return;
         this.discarding = true;
         // Remove listeners
@@ -123,6 +123,7 @@ class Component {
         if(fullDiscard) delete ids[this.id];
         this.erase();
         this.discarding = false;
+        if(callback) callback();
     }
 
     erase() {} // Additional discard logic from the custom Component
