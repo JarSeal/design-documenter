@@ -43,6 +43,14 @@ export const assetsObj = {
         en: 'Created',
         fi: 'Luotu',
     },
+    edited: {
+        en: 'Edited',
+        fi: 'Muokattu',
+    },
+    date: {
+        en: 'Date',
+        fi: 'Päiväys',
+    },
     description: {
         en: 'Description',
         fi: 'Kuvaus',
