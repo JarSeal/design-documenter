@@ -90,15 +90,6 @@ class Base extends Component {
             }, 0);
         });
     }
-
-    listenLoggedStatus = (loggedIn, oldValue) => {
-        if(!loggedIn) {
-            this.appState.set('user.username', null);
-            this.Router.changeRoute('/login', true);
-            return;
-        }
-        this.Router.changeRoute('/', true);
-    }
 }
 
 export default Base;

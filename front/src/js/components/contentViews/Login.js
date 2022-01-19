@@ -9,7 +9,7 @@ class Login extends Component {
         this.loginForm = this.addChild(new FormCreator({
             id: 'beacon-main-login',
             appState: this.appState,
-            afterFormSentFn: this.afterLogin,
+            afterFormSentFn: this._afterLogin,
             addToMessage: {
                 browserId: this.appState.get('browserId'),
             },
@@ -24,7 +24,7 @@ class Login extends Component {
         }
     }
 
-    afterLogin = (response, remember) => {
+    _afterLogin = (response, remember) => {
         if(response && response.data && response.data.loggedIn) {
             this.appState.set('user.username', response.data.username);
             this.appState.set('user.loggedIn', true);
