@@ -171,6 +171,10 @@
             cursor: pointer;
             background-color: #525252;
         }
+        &.unsortable:hover {
+            cursor: default;
+            background-color: $table-thead-background;
+        }
         &.row-selection {
             vertical-align: bottom;
             padding-bottom: 0.9rem;

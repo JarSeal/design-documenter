@@ -523,7 +523,11 @@ class Table extends Component {
             classString = classList;
         }
         if(isHeader) {
-            if(!structure.unsortable) classString += ' sort-available';
+            if(structure.unsortable) {
+                classString += ' unsortable';
+            } else {
+                classString += ' sort-available';
+            }
             if(structure.sort) {
                 if(structure.sort === 'asc') {
                     classString += ' sort-asc';
