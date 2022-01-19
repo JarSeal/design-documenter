@@ -172,6 +172,7 @@ class LogsDialog extends Component {
         this.editedTable = this.addChild(new Table({
             id: 'edited-logs-table',
             fullWidth: true,
+            unsortable: true,
             tableData: this.data.userData.edited,
             tableStructure: this._getTableStructure(),
             rowClickFn: (e, rowData) => {
@@ -191,12 +192,10 @@ class LogsDialog extends Component {
                 heading: getText('date'),
                 sort: 'asc',
                 type: 'Date',
-                unsortable: true,
             },
             {
                 key: 'by.username',
                 heading: getText('username'),
-                unsortable: true,
             },
         ];
         return structure;
