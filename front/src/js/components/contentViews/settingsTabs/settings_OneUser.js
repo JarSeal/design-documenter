@@ -7,6 +7,7 @@ import FormCreator from "../../forms/FormCreator";
 import Spinner from "../../widgets/Spinner";
 import Button from "../../buttons/Button";
 import './settings_OneUser.scss';
+import Table from "../../widgets/Table";
 
 class OneUser extends Component {
     constructor(data) {
@@ -49,7 +50,7 @@ class OneUser extends Component {
                             },
                             afterFormSentFn: () => {
                                 this.Dialog.disappear();
-                                // this._updateTable();
+                                // this._updateTable(); TODO: UPDATE VIEW
                             },
                             addToMessage: { userId: this.userData.id },
                             onErrorsFn: (ex, res) => {
@@ -75,7 +76,16 @@ class OneUser extends Component {
                 id: 'user-logs-tool',
                 type: 'button',
                 text: 'Logs',
-                click: () => { console.log('Click LOG buttonm JEEE!'); }
+                click: () => {
+                    if(!this.userData) return;
+                    this.Dialog.appear({
+                        component: LogsDialog,
+                        componentData: {
+                            id: 'user-logs-dialog',
+                            userData: this.userData,
+                        },
+                    });
+                }
             }]
         });
         this.userId = this.Router.getRouteParams().user;
@@ -147,3 +157,48 @@ class OneUser extends Component {
 }
 
 export default OneUser;
+
+class LogsDialog extends Component {
+    constructor(data) {
+        super(data);
+        this.template = '<div>' +
+            '<div class="created-wrapper">' +
+                `<h3>${getText('created')}</h3>` +
+            '</div>' +
+            '<div class="edited-wrapper">' +
+                `<h3>${getText('edited')}</h3>` +
+            '</div>' +
+        '</div>';
+        this.editedTable = this.addChild(new Table({
+            id: 'edited-logs-table',
+            fullWidth: true,
+            tableData: this.data.userData.edited,
+            tableStructure: this._getTableStructure(),
+            rowClickFn: (e, rowData) => {
+                this.Router.changeRoute('/settings/user/' + rowData.by.username, true);
+            },
+        }));
+    }
+
+    paint = () => {
+        this.editedTable.draw();
+    }
+
+    _getTableStructure = () => {
+        const structure = [
+            {
+                key: 'date',
+                heading: getText('date'),
+                sort: 'asc',
+                type: 'Date',
+                unsortable: true,
+            },
+            {
+                key: 'by.username',
+                heading: getText('username'),
+                unsortable: true,
+            },
+        ];
+        return structure;
+    }
+}
