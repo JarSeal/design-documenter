@@ -31,6 +31,19 @@ class OneUser extends Component {
     }
 
     init = () => {
+        this.appState.get('updateMainMenu')({
+            tools: [{
+                id: 'edit-user-tool',
+                type: 'button',
+                text: 'Edit',
+                click: () => { console.log('Click EDIT buttonm JEEE!'); }
+            }, {
+                id: 'user-logs-tool',
+                type: 'button',
+                text: 'Logs',
+                click: () => { console.log('Click LOG buttonm JEEE!'); }
+            }]
+        });
         this.userId = this.Router.getRouteParams().user;
         this._loadUserData();
     }

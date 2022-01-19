@@ -1,0 +1,67 @@
+
+.main-menu {
+    height: inherit;
+    button {
+        display: inline-block;
+        border: none;
+        background-color: #333;
+        font-size: 1.2rem;
+        color: #fff;
+        padding: 1.2rem 0 1rem;
+    }
+}
+
+.landscape .main-menu button {
+    width: 100%;
+    border-top: 0.1rem solid #444;
+    border-bottom: 0.1rem solid #111;
+}
+.portrait .main-menu button {
+    width: 6.4rem;
+    height: inherit;
+    border-left: 0.1rem solid #444;
+    border-right: 0.1rem solid #111;
+}
+
+#nav-menu {
+    display: inline-block;
+    .landscape & {
+        width: 100%;
+    }
+    .portrait & {
+        height: inherit;
+        vertical-align: top;
+    }
+}
+
+#tool-menu {
+    display: inline-block;
+    .landscape & {
+        width: 100%;
+        padding: 2rem 0;
+    }
+    .portrait & {
+        padding: 0 1rem;
+        height: inherit;
+        vertical-align: top;
+    }
+    button {
+        background-color: #999;
+        color: #111;
+    }
+}
+
+#sticky-menu {
+    position: absolute;
+    .landscape & {
+        width: 100%;
+        bottom: 2rem;
+        left: 0;
+    }
+    .portrait & {
+        height: inherit;
+        bottom: 0;
+        right: 2rem;
+        vertical-align: top;
+    }
+}
