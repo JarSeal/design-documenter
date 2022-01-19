@@ -80,23 +80,23 @@ const ROUTE_ACCESS = [
 const USER_LEVELS = [
     {
         userLevel: 9,
-        labelId: 'user_level_9_super_admin',
+        labelId: 'user_level_9',
     },
     {
         userLevel: 8,
-        labelId: 'user_level_8_administrator',
+        labelId: 'user_level_8',
     },
     {
         userLevel: 2,
-        labelId: 'user_level_2_beacon_user',
+        labelId: 'user_level_2',
     },
     {
         userLevel: 1,
-        labelId: 'user_level_1_loggedin_user',
+        labelId: 'user_level_1',
     },
     {
         userLevel: 0,
-        labelId: 'user_level_0_anonymous_user',
+        labelId: 'user_level_0',
     },
 ];
 

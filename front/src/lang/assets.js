@@ -171,23 +171,23 @@ export const assetsObj = {
         en: 'Unauthorised.',
         fi: 'Ei oikeuksia.',
     },
-    user_level_9_super_admin: {
+    user_level_9: {
         en: '9: Super Admin',
         fi: '9: Super admin',
     },
-    user_level_8_administrator: {
+    user_level_8: {
         en: '8: Administrator',
         fi: '8: Administraattori',
     },
-    user_level_2_beacon_user: {
+    user_level_2: {
         en: '2: Basic Beacon User',
         fi: '2: Beacon-käyttäjä',
     },
-    user_level_1_loggedin_user: {
+    user_level_1: {
         en: '1: Basic User',
         fi: '1: Peruskäyttäjä',
     },
-    user_level_0_anonymous_user: {
+    user_level_0: {
         en: '0: Not-Logged-In User',
         fi: '0: Kirjautumaton käyttäjä',
     },
@@ -477,5 +477,9 @@ export const assetsObj = {
     user: {
         en: 'User',
         fi: 'Käyttäjä',
+    },
+    last_edited: {
+        en: 'Last edited',
+        fi: 'Viimeksi muokattu',
     },
 };
