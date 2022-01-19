@@ -156,6 +156,8 @@ class Component {
         let fullDiscard = true;
         if(notFull) fullDiscard = false;
         this.children[id].discard(fullDiscard);
+        delete this.children[id];
+        delete ids[id];
     }
 
     addListener(listener) {
