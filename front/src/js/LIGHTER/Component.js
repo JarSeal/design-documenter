@@ -151,6 +151,13 @@ class Component {
         return component;
     }
 
+    discardChild(id, notFull) {
+        if(!this.children[id]) return;
+        let fullDiscard = true;
+        if(notFull) fullDiscard = false;
+        this.children[id].discard(fullDiscard);
+    }
+
     addListener(listener) {
         let { id, target, type, fn } = listener;
         if(!type || !fn) {
