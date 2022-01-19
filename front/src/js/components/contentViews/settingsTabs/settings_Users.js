@@ -96,7 +96,8 @@ class UsersList extends Component {
                 type: 'Action',
                 actionFn: (e, rowData) => {
                     this.Dialog.appear({
-                        component: new FormCreator({
+                        component: FormCreator,
+                        componentData: {
                             id: 'edit-user-form',
                             appState: this.appState,
                             editDataId: rowData.id,
@@ -123,7 +124,7 @@ class UsersList extends Component {
                                     this.Dialog.disappear();
                                 },
                             },
-                        }),
+                        },
                         title: getText('edit_user') + ': ' + rowData.username,
                     });
                 },
@@ -135,7 +136,8 @@ class UsersList extends Component {
                 actionText: getText('del'),
                 actionFn: (e, rowData) => {
                     this.Dialog.appear({
-                        component: new FormCreator({
+                        component: FormCreator,
+                        componentData: {
                             id: 'delete-users',
                             appState: this.appState,
                             formDesc: getText('delete_single_user_confirmation', [rowData.username]),
@@ -163,7 +165,7 @@ class UsersList extends Component {
                                     this.Dialog.disappear();
                                 },
                             },
-                        }),
+                        },
                         title: getText('delete_user') + ': ' + rowData.username,
                     });
                 },                

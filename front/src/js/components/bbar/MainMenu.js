@@ -8,12 +8,12 @@ class MainMenu extends Component {
     constructor(data) {
         super(data);
         this.appState = data.appState;
+        this.switchTime = 300; // milliseconds
         this.template = '<div class="main-menu">' +
             '<div id="nav-menu"></div>' +
-            '<div id="tool-menu"></div>' +
+            `<div id="tool-menu" class="show-tool-menu" style="transition-duration:${this.switchTime}ms"></div>` +
             '<div id="sticky-menu"></div>' +
         '</div>';
-        this.switchTime = 300; // milliseconds
 
         this.homeButton = this.addChild(new RouteLink({
             id: 'home-button',
@@ -43,6 +43,7 @@ class MainMenu extends Component {
         this.menuState = {
             backButton: false,
             toolsMenu: [],
+            newMenuState: [],
         };
 
         this.appState.set('updateMainMenu', this.updateMainMenu);
@@ -56,14 +57,33 @@ class MainMenu extends Component {
     }
 
     _hideTools = () => {
-        const tools = this.menuState.toolsMenu;
-        for(let i=0; i<tools.length; i++) {
-            this.discardChild(tools[i].id);
+        this._drawOldTools();
+        const navMenuElem = this.elem.querySelector('#tool-menu');
+        setTimeout(() => {
+            navMenuElem.classList.remove('show-tool-menu');
+        }, 20);
+        setTimeout(() => {
+            const tools = this.menuState.toolsMenu;
+            for(let i=0; i<tools.length; i++) {
+                this.discardChild(tools[i].id);
+            }
+            let newTools = [];
+            if(this.menuState.newMenuState && this.menuState.newMenuState.tools) {
+                newTools = [...this.menuState.newMenuState.tools];
+                this.menuState.newMenuState.tools = [];
+            }
+            this._drawTools(newTools);
+        }, this.switchTime + 100);
+    }
+
+    _drawOldTools = () => {
+        for(let i=0; i<this.menuState.toolsMenu.length; i++) {
+            const id = this.menuState.toolsMenu[i].id;
+            if(this.children[id]) this.children[id].draw();
         }
     }
 
     _drawTools = (newTools) => {
-        this.menuState.tools = [];
         for(let i=0; i<newTools.length; i++) {
             const tool = newTools[i];
             tool.attach = 'tool-menu';
@@ -71,6 +91,8 @@ class MainMenu extends Component {
             this.menuState.toolsMenu.push(comp);
             comp.draw();
         }
+        const navMenuElem = this.elem.querySelector('#tool-menu');
+        navMenuElem.classList.add('show-tool-menu');
     }
 
     _drawStickyMenu = () => {
@@ -83,8 +105,7 @@ class MainMenu extends Component {
     }
 
     updateMainMenu = (newMenuState) => {
-        console.log('NEW MENU', newMenuState);
-        this._drawTools(newMenuState.tools)
+        this.menuState.newMenuState = newMenuState;
     }
 }
 

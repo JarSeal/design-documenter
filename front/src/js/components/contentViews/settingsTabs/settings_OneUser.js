@@ -17,7 +17,7 @@ class OneUser extends Component {
         '</div>';
         this.userId;
         this.userData;
-        this.Dialog = this.Router.commonData.appState.state.Dialog;
+        this.Dialog = this.Router.commonData.appState.get('Dialog');
         this.appState = this.Router.commonData.appState;
         this.spinner = this.addChild(new Spinner({ id: 'user-loader-indicator' }));
         this.userDataElems = [];
@@ -36,7 +36,41 @@ class OneUser extends Component {
                 id: 'edit-user-tool',
                 type: 'button',
                 text: 'Edit',
-                click: () => { console.log('Click EDIT buttonm JEEE!'); }
+                click: () => {
+                    if(!this.userData) return;
+                    this.Dialog.appear({
+                        component: FormCreator,
+                        componentData: {
+                            id: 'edit-user-form',
+                            appState: this.appState,
+                            editDataId: this.userData.id,
+                            beforeFormSendingFn: () => {
+                                this.Dialog.lock();
+                            },
+                            afterFormSentFn: () => {
+                                this.Dialog.disappear();
+                                // this._updateTable();
+                            },
+                            addToMessage: { userId: this.userData.id },
+                            onErrorsFn: (ex, res) => {
+                                this.Dialog.unlock();
+                                // this._updateTable();
+                                if(res && res.status === 401) this.Router.changeRoute('/');
+                            },
+                            onFormChages: () => { this.Dialog.changeHappened(); },
+                            formLoadedFn: () => { this.Dialog.onResize(); },
+                            extraButton: {
+                                label: getText('cancel'),
+                                class: 'some-class',
+                                clickFn: (e) => {
+                                    e.preventDefault();
+                                    this.Dialog.disappear();
+                                },
+                            },
+                        },
+                        title: getText('edit_user') + ': ' + this.userData.username,
+                    });
+                }
             }, {
                 id: 'user-logs-tool',
                 type: 'button',

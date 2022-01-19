@@ -14,6 +14,17 @@ class Landing extends Component {
         this.mainScreenCompos = [];
     }
 
+    init = () => {
+        this.appState.get('updateMainMenu')({
+            tools: [{
+                id: 'edit-user-tool',
+                type: 'button',
+                text: 'New',
+                click: () => { this._showNewUniDialog(); }
+            }]
+        });
+    }
+
     initMainScreen = () => {
         if(this.mainScreenInitiated) return;
         this.mainScreenCompos.push(
@@ -26,21 +37,7 @@ class Landing extends Component {
             text: '+',
             class: ['list-add-button', 'list-item'],
             click: (e) => {
-                this.appState.get('Dialog').appear({
-                    component: new FormCreator({
-                        id: 'new-universe-form',
-                        appState: this.appState,
-                        afterFormSentFn: () => {
-                            this.appState.get('Dialog').disappear();
-                            this.universesList.updateList();
-                        },
-                        onErrorsFn: (ex, res) => {
-                            if(res && res.status === 401) this.Router.changeRoute('/');
-                        },
-                        formLoadedFn: () => { this.appState.get('Dialog').onResize(); },
-                    }),
-                    title: getText('create_new_universe'),
-                });
+                this._showNewUniDialog();
             },
         })));
         this.universesList = this.addChild(new ListLoader({
@@ -57,6 +54,26 @@ class Landing extends Component {
         for(let i=0; i<this.mainScreenCompos.length; i++) {
             this.mainScreenCompos[i].draw();
         }
+    }
+
+    _showNewUniDialog = () => {
+        const Dialog = this.appState.get('Dialog');
+        Dialog.appear({
+            component: FormCreator,
+            componentData: {
+                id: 'new-universe-form',
+                appState: this.appState,
+                afterFormSentFn: () => {
+                    this.appState.get('Dialog').disappear();
+                    this.universesList.updateList();
+                },
+                onErrorsFn: (ex, res) => {
+                    if(res && res.status === 401) this.Router.changeRoute('/');
+                },
+                formLoadedFn: () => { this.appState.get('Dialog').onResize(); },
+            },
+            title: getText('create_new_universe'),
+        });
     }
 }
 
