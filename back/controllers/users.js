@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const isValidObjectId = require('./../utils/helpers').isValidObjectId;
 const usersRouter = require('express').Router();
 const CONFIG = require('./../shared').CONFIG;
 const readUsersFormData = require('./../../shared/formData/readUsersFormData');
@@ -50,9 +51,11 @@ usersRouter.get('/:userId', async (request, response) => {
         .populate('edited.by', { username: 1 })
         .populate('created.by', { username: 1 });
     if(!userToView) {
-        userToView = await User.findById(userId)
-            .populate('edited.by', { username: 1 })
-            .populate('created.by', { username: 1 });
+        if(isValidObjectId(userId)) {
+            userToView = await User.findById(userId)
+                .populate('edited.by', { username: 1 })
+                .populate('created.by', { username: 1 });
+        }
     }
 
     if(!userToView) {
