@@ -96,8 +96,7 @@ class Dialog extends Component {
     }
 
     disappear = () => {
-        if(!this.elem) return;
-        if(this.isTransitioning) return;
+        if(!this.elem || this.isTransitioning) return;
         this.isTransitioning = true;
         this.elem.classList.remove('appear');
         this.isShowing = false;
