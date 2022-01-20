@@ -8,6 +8,8 @@ import Spinner from "../../widgets/Spinner";
 import Button from "../../buttons/Button";
 import './settings_OneUser.scss';
 import Table from "../../widgets/Table";
+import FourOOne from "../FourOOne";
+import FourOFour from "../FourOFour";
 
 class OneUser extends Component {
     constructor(data) {
@@ -21,7 +23,7 @@ class OneUser extends Component {
         this.Dialog = this.Router.commonData.appState.get('Dialog');
         this.appState = this.Router.commonData.appState;
         this.spinner = this.addChild(new Spinner({ id: 'user-loader-indicator' }));
-        this.userDataElems = [];
+        this.userDataComps = [];
         this.backButton = this.addChild(new Button({ // TODO MOVE TO OWN COMPONENT
             id: 'back-button',
             text: 'Back',
@@ -50,12 +52,12 @@ class OneUser extends Component {
                             },
                             afterFormSentFn: () => {
                                 this.Dialog.disappear();
-                                // this._updateTable(); TODO: UPDATE VIEW
+                                this._loadUserData();
                             },
                             addToMessage: { userId: this.userData.id },
                             onErrorsFn: (ex, res) => {
                                 this.Dialog.unlock();
-                                // this._updateTable();
+                                this._loadUserData();
                                 if(res && res.status === 401) this.Router.changeRoute('/');
                             },
                             onFormChages: () => { this.Dialog.changeHappened(); },
@@ -104,19 +106,34 @@ class OneUser extends Component {
         try {
             const response = await axios.get(url, { withCredentials: true });
             this.userData = response.data;
-            console.log('RECEIVED DATA', this.userData);
             this.spinner.showSpinner(false);
             this._createElements();
         }
         catch(exception) {
             this.spinner.showSpinner(false);
-            const logger = new Logger('Get users: *****');
-            logger.error('Could not get users data', exception);
-            throw new Error('Call stack');
+            const status = exception.response.status;
+            this.appState.get('updateMainMenu')({ tools: [] });
+            if(status === 401) {
+                this.addChild(new FourOOne({id:'one-user-401'})).draw();
+            } else if(status === 404) {
+                this.addChild(new FourOFour({
+                    id:'one-user-404',
+                    bodyText: getText('user_not_found'),
+                })).draw();
+            } else {
+                this.addChild({
+                    id: 'one-user-bigerror',
+                    template: `<div><h2>${getText('error')}</h2></div>`,
+                }).draw();
+                const logger = new Logger('Get one user: *****');
+                logger.error('Could not get users data', exception.response);
+                throw new Error('Call stack');
+            }
         }
     }
 
     _createElements = () => {
+        this._clearComps();
         const contentDefinition = [
             { id: 'username', tag: 'h1', label: getText('username') },
             { id: 'name', label: getText('name') },
@@ -145,14 +162,24 @@ class OneUser extends Component {
                 value = this.userData[item.id];
             }
             if(!value.length) value = '&nbsp;';
-            this.addChild({
+            const comp = this.addChild({
                 id: 'user-data-' + item.id,
                 template: '<div class="user-data-item">' +
                     `<span class="user-data-item__label">${item.label}</span>` +
                     `<${tag} class="user-data-item__value">${value}</${tag}>` +
                 '</div>',
-            }).draw();
+            });
+            this.userDataComps.push(comp);
+            comp.draw();
         }
+    }
+
+    _clearComps = () => {
+        const comps = this.userDataComps;
+        for(let i=0; i<comps.length; i++) {
+            this.discardChild(comps[i].id);
+        }
+        this.userDataComps = [];
     }
 }
 
@@ -162,15 +189,20 @@ class LogsDialog extends Component {
     constructor(data) {
         super(data);
         this.template = '<div>' +
-            '<div class="created-wrapper">' +
+            '<div class="created-wrapper" id="created-log">' +
                 `<h3>${getText('created')}</h3>` +
             '</div>' +
-            '<div class="edited-wrapper">' +
+            '<div class="edited-wrapper" id="edited-logs">' +
                 `<h3>${getText('edited')}</h3>` +
             '</div>' +
         '</div>';
+        this.createdElem = this.addChild({
+            id: 'created-elem',
+            template: '',
+        });
         this.editedTable = this.addChild(new Table({
             id: 'edited-logs-table',
+            attach: 'edited-logs',
             fullWidth: true,
             unsortable: true,
             tableData: this.data.userData.edited,
