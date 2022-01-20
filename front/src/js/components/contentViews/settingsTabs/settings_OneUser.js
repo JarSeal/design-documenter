@@ -33,7 +33,7 @@ class OneUser extends Component {
             click: () => {
                 const urlParams = new URLSearchParams(window.location.search);
                 const bParam = urlParams.get('b');
-                this.Router.changeRoute(bParam, true);
+                this.Router.changeRoute(bParam, { forceUpdate: true });
             },
         }));
     }
@@ -230,7 +230,7 @@ class LogsDialog extends Component {
             rowClickFn: (e, rowData) => {
                 this.Router.changeRoute(
                     '/settings/user/' + rowData.by.username,
-                    true
+                    { forceUpdate: true }
                 );
             },
         }));

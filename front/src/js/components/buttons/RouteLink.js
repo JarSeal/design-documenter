@@ -33,7 +33,7 @@ class RouteLink extends Component {
     click = (e) => {
         e.preventDefault();
         if(this.isCurrent && !this.data.bypassCurrentCheck) return;
-        this.Router.changeRoute(this.data.link, true);
+        this.Router.changeRoute(this.data.link, { forceUpdate: true });
     }
 }
 

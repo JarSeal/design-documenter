@@ -166,7 +166,11 @@ class Router {
 
     routeChangeListener = (e) => {
         this.setRoute();
-        this.changeRoute(this.curRoute, true, true, true);
+        this.changeRoute(this.curRoute, {
+            forceUpdate: true,
+            ignoreBasePath: true,
+            doNotSetState: true,
+        });
     }
 
     _createPageTitle(title) {
@@ -184,7 +188,25 @@ class Router {
         }
     }
 
-    changeRoute = async (route, forceUpdate, ignoreBasePath, doNotSetState) => {
+    replaceRoute = (route, ignoreBasePath) => {
+        let basePath = this.basePath;
+        if(ignoreBasePath) basePath = '';
+        route = basePath + route;
+        const routeState = this._createRouteState(route);
+        window.history.replaceState(routeState, '', route);
+    }
+
+    // Options: Object
+    // - forceUpdate: Boolean
+    // - ignoreBasePath: Boolean
+    // - doNotSetState: Boolean
+    // - replaceState: Boolean (if true, doNotSetState is also true, so no need to declare it)
+    changeRoute = async (route, options) => {
+        if(!options) options = {};
+        const forceUpdate = options.forceUpdate,
+            ignoreBasePath = options.ignoreBasePath,
+            doNotSetState = options.doNotSetState,
+            replaceState = options.replaceState;
         let basePath = this.basePath;
         if(ignoreBasePath) basePath = '';
         route = basePath + route;
@@ -214,9 +236,11 @@ class Router {
             this.curRouteData.component = null;
         }
 
-        if(!doNotSetState) {
+        if(!doNotSetState && !replaceState) {
             const routeState = this._createRouteState(route);
             window.history.pushState(routeState, '', route);
+        } else if(replaceState) {
+            this.replaceRoute(route, true);
         }
 
         this.prevRoute = this.curRoute;

@@ -18,8 +18,11 @@ class Settings extends Component {
     init = async () => {
         const params = this.Router.curRouteData.params;
         if(params && params.tab === 'default') {
-            this.discard(true);
-            this.Router.changeRoute('/settings/' + this.curTab);
+            // this.Router.replaceRoute('/settings/' + this.curTab);
+            this.Router.changeRoute('/settings/' + this.curTab, {
+                forceUpdate: true,
+                replaceState: true,
+            });
             return;
         }
 
