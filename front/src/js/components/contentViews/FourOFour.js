@@ -6,20 +6,24 @@ class FourOFour extends Component {
     constructor(data) {
         super(data);
         this.appState = data.appState;
-        this.template = `<div><h2>${data.title}</h2></div>`;
+        this.template = '<div>' +
+            `<h2>${data.title || 404}</h2>` +
+        '</div>';
         this.params = {};
 
         this.message = this.addChild({ id: '404-message', tag: 'p' });
         this.button = this.addChild(new RouteLink({
             id: 'back-to-root',
             link: '/',
-            text: 'Try again from here..',
+            text: getText('back_to_start'),
         }));
     }
 
     paint = () => {
         let text;
-        if(this.Router.curRouteData.params) {
+        if(this.data.bodyText) {
+            text = this.data.bodyText;
+        } else if(this.Router.curRouteData.params) {
             this.params = this.Router.curRouteData.params;
             if(this.params.type === 'universe') {
                 text = getText('404_universe', [this.decodeUri(this.params.data)]);
