@@ -265,7 +265,8 @@ class Router {
         return first === second || first + '/' === second || first === second + '/';
     }
 
-    getRoute() {
+    getRoute(noBasePath) {
+        if(noBasePath) return this.curRoute.replace(this.basePath, '');
         return this.curRoute;
     }
 
