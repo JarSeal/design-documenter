@@ -9,6 +9,8 @@ class MainMenu extends Component {
         super(data);
         this.appState = data.appState;
         this.switchTime = 300; // milliseconds
+        this.nudgeTimer;
+        this.drawTimer;
         this.template = '<div class="main-menu">' +
             '<div id="nav-menu"></div>' +
             `<div id="tool-menu" class="show-tool-menu" style="transition-duration:${this.switchTime}ms"></div>` +
@@ -59,10 +61,12 @@ class MainMenu extends Component {
     _hideTools = () => {
         this._drawOldTools();
         const navMenuElem = this.elem.querySelector('#tool-menu');
-        setTimeout(() => {
+        clearTimeout(this.nudgeTimer);
+        clearTimeout(this.drawTimer);
+        this.nudgeTimer = setTimeout(() => {
             navMenuElem.classList.remove('show-tool-menu');
         }, 20);
-        setTimeout(() => {
+        this.drawTimer = setTimeout(() => {
             const tools = this.menuState.toolsMenu;
             for(let i=0; i<tools.length; i++) {
                 this.discardChild(tools[i].id);
