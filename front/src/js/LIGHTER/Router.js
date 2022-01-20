@@ -344,6 +344,7 @@ class Router {
     _getRouteParams(model, route) {
         if(!model.includes(':')) return false;
         const modelParts = model.split('/');
+        route = route.split('?')[0];
         const routeParts = route.split('/');
         let length = modelParts.length;
         if(routeParts.length > modelParts.length) length = routeParts.length;
