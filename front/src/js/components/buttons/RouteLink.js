@@ -7,7 +7,9 @@ class RouteLink extends Component {
     constructor(data) {
         super(data);
         this.isCurrent = false;
-        this.template = `<button></button>`;
+        let tag = 'button';
+        if(data.tag) tag = data.tag;
+        this.template = `<${tag}></${tag}>`;
     }
 
     addListeners = () => {
