@@ -191,6 +191,10 @@ export const assetsObj = {
         en: 'User was not found.',
         fi: 'Käyttäjää ei löytynyt',
     },
+    public_form: {
+        en: 'Public form',
+        fi: 'Julkinen lomake',
+    },
     user_level_9: {
         en: '9: Super Admin',
         fi: '9: Super admin',

@@ -10,6 +10,7 @@ import './settings_OneUser.scss';
 import Table from "../../widgets/Table";
 import FourOOne from "../FourOOne";
 import FourOFour from "../FourOFour";
+import RouteLink from "../../buttons/RouteLink";
 
 class OneUser extends Component {
     constructor(data) {
@@ -29,7 +30,11 @@ class OneUser extends Component {
             text: 'Back',
             noRedraws: true,
             attach: 'back-button-holder',
-            click: () => { history.back(); },
+            click: () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const bParam = urlParams.get('b');
+                this.Router.changeRoute(bParam, true);
+            },
         }));
     }
 
@@ -196,11 +201,26 @@ class LogsDialog extends Component {
                 `<h3>${getText('edited')}</h3>` +
             '</div>' +
         '</div>';
-        this.createdElem = this.addChild({
+        this.addChild({
             id: 'created-elem',
-            template: '',
+            attach: 'created-log',
+            template: '<div>' +
+                `<span>${createDate(this.data.userData.created.date)}</span>` +
+                (this.data.userData.created.publicForm
+                    ? ` (${getText('public_form')})`
+                    : ' by&nbsp;') +
+            '</div>',
         });
-        this.editedTable = this.addChild(new Table({
+        if(!this.data.userData.created.publicForm) {
+            this.addChild(new RouteLink({
+                id: 'created-by-user-link',
+                link: '/settings/user/' + this.data.userData.created.by.username,
+                text: this.data.userData.created.by.username,
+                attach: 'created-elem',
+                tag: 'a',
+            }));
+        }
+        this.addChild(new Table({
             id: 'edited-logs-table',
             attach: 'edited-logs',
             fullWidth: true,
@@ -208,13 +228,16 @@ class LogsDialog extends Component {
             tableData: this.data.userData.edited,
             tableStructure: this._getTableStructure(),
             rowClickFn: (e, rowData) => {
-                this.Router.changeRoute('/settings/user/' + rowData.by.username, true);
+                this.Router.changeRoute(
+                    '/settings/user/' + rowData.by.username,
+                    true
+                );
             },
         }));
     }
 
     paint = () => {
-        this.editedTable.draw();
+        this.drawChildren();
     }
 
     _getTableStructure = () => {

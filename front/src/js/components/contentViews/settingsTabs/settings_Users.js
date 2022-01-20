@@ -24,7 +24,7 @@ class UsersList extends Component {
             filter: true,
             tableStructure: this._getTableStructure(),
             rowClickFn: (e, rowData) => {
-                this.Router.changeRoute('/settings/user/' + rowData.username);
+                this.Router.changeRoute('/settings/user/' + rowData.username + '?b=/settings/users');
             },
         }));
         this._loadUsers(true);
