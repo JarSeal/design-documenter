@@ -166,7 +166,7 @@ class Router {
 
     routeChangeListener = (e) => {
         this.setRoute();
-        this.changeRoute(this.curRoute, true, true);
+        this.changeRoute(this.curRoute, true, true, true);
     }
 
     _createPageTitle(title) {
@@ -184,7 +184,7 @@ class Router {
         }
     }
 
-    changeRoute = async (route, forceUpdate, ignoreBasePath) => {
+    changeRoute = async (route, forceUpdate, ignoreBasePath, doNotSetState) => {
         let basePath = this.basePath;
         if(ignoreBasePath) basePath = '';
         route = basePath + route;
@@ -214,8 +214,10 @@ class Router {
             this.curRouteData.component = null;
         }
 
-        const routeState = this._createRouteState(route);
-        window.history.pushState(routeState, '', route);
+        if(!doNotSetState) {
+            const routeState = this._createRouteState(route);
+            window.history.pushState(routeState, '', route);
+        }
 
         this.prevRoute = this.curRoute;
         this.setRoute();
