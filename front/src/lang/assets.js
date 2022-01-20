@@ -176,8 +176,20 @@ export const assetsObj = {
         fi: 'Universumi-ID on käytössä',
     },
     unauthorised: {
-        en: 'Unauthorised.',
-        fi: 'Ei oikeuksia.',
+        en: 'Unauthorised',
+        fi: 'Ei oikeuksia',
+    },
+    back_to_start: {
+        en: 'Back to start..',
+        fi: 'Takaisin alkuun..',
+    },
+    error: {
+        en: 'Error',
+        fi: 'Virhe',
+    },
+    user_not_found: {
+        en: 'User was not found.',
+        fi: 'Käyttäjää ei löytynyt',
     },
     user_level_9: {
         en: '9: Super Admin',
