@@ -23,12 +23,13 @@ class OneUser extends Component {
         this.userData;
         this.Dialog = this.Router.commonData.appState.get('Dialog');
         this.appState = this.Router.commonData.appState;
+        this.updateMainMenu = this.appState.get('updateMainMenu');
         this.spinner = this.addChild(new Spinner({ id: 'user-loader-indicator' }));
         this.userDataComps = [];
     }
 
     init = () => {
-        this.appState.get('updateMainMenu')({
+        this.updateMainMenu({
             backButton: true,
             tools: [{
                 id: 'edit-user-tool',

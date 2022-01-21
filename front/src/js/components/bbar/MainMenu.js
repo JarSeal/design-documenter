@@ -123,18 +123,18 @@ class MainMenu extends Component {
     }
 
     _checkBackButton = (navMenuElem) => {
-        if(!this.Router.prevRoute && this.Router.getCurHistoryState().backButton === undefined) {
+        const curHistoryState = this.Router.getCurHistoryState();
+        if(!this.Router.prevRoute && curHistoryState.backButton === undefined) {
             const referrer = document.referrer.split('/');
             let refHostname = '';
-            if(referrer.length > 2) refHostname = referrer[2];
-            if(refHostname.split(':')[0] != location.hostname) {
+            if(referrer.length > 2) refHostname = referrer[2].split(':')[0];
+            if(refHostname != location.hostname) {
                 this.menuState.newMenuState.backButton = false;
             }
             this.Router.setCurHistoryState({ backButton: this.menuState.newMenuState.backButton });
         }
-        const historyState = this.Router.getCurHistoryState();
-        if(historyState.backButton !== undefined) {
-            this.menuState.newMenuState.backButton = historyState.backButton;
+        if(curHistoryState.backButton !== undefined) {
+            this.menuState.newMenuState.backButton = curHistoryState.backButton;
         }
 
         if(this.menuState.newMenuState.backButton) {
@@ -143,14 +143,13 @@ class MainMenu extends Component {
             this.menuState.newMenuState.backButton = false;
             this.menuState.backButton = true;
             this.backButtonPressed = false;
-            this.Router.setNextHistoryState({ backButton: true });
+            
         } else {
             // Hide backButton
             navMenuElem.classList.remove('show-back-button');
             this.menuState.backButton = false;
-            this.Router.setNextHistoryState({ backButton: false });
         }
-        // Set historyState to Router
+        this.Router.setNextHistoryState({ backButton: this.menuState.backButton });
     }
 
     _goBack = () => {
