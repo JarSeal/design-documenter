@@ -41,6 +41,14 @@ class MainMenu extends Component {
             attach: 'sticky-menu',
             text: 'Logout',
         }));
+        this.backButton = this.addChild(new Button({
+            id: 'main-back-button',
+            class: 'main-back-button',
+            text: 'Back',
+            click: () => {
+                console.log('Main shit');
+            },
+        }));
 
         this.menuState = {
             backButton: false,
@@ -52,6 +60,7 @@ class MainMenu extends Component {
 
     }
 
+    // This gets called everytime the view changes
     paint = () => {
         this.homeButton.draw();
         this._hideTools();
@@ -77,6 +86,7 @@ class MainMenu extends Component {
                 this.menuState.newMenuState.tools = [];
             }
             this._drawTools(newTools);
+            this._checkBackButton();
         }, this.switchTime + 100);
     }
 
@@ -108,6 +118,24 @@ class MainMenu extends Component {
         }
     }
 
+    _checkBackButton = () => {
+        this.backButton.draw();
+        if(this.menuState.newMenuState.backButton) {
+            // Show backButton
+            console.log('SHOW');
+            this.backButton.elem.classList.add('main-back-button--show');
+            this.menuState.backButton = true;
+        } else {
+            // Hide backButton
+            console.log('HIDE');
+            this.backButton.elem.classList.remove('main-back-button--show');
+            this.menuState.backButton = false;
+        }
+    }
+
+    // newMenuState: Object
+    // - backButton: Boolean
+    // - tools: [{component data for Button}]
     updateMainMenu = (newMenuState) => {
         this.menuState.newMenuState = newMenuState;
     }

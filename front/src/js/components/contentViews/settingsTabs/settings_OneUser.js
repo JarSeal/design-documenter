@@ -40,6 +40,7 @@ class OneUser extends Component {
 
     init = () => {
         this.appState.get('updateMainMenu')({
+            backButton: true,
             tools: [{
                 id: 'edit-user-tool',
                 type: 'button',
