@@ -49,6 +49,8 @@ class Router {
         }
         RouterRef = this;
         this.routes = [];
+        this.nextHistoryState = {};
+        this.curHistoryState = {};
         this.basePath = routesData.basePath || '';
         this.titlePrefix = routesData.titlePrefix || '';
         this.titleSuffix = routesData.titleSuffix || '';
@@ -158,8 +160,9 @@ class Router {
         }
         window.onpopstate = this.routeChangeListener;
         if(changeUrlPath) {
-            const routeState = this._createRouteState(this.curRoute);
+            const routeState = this._createRouteState();
             window.history.pushState(routeState, '', this.curRoute);
+            this.curHistoryState = routeState;
         }
         routerInitiated = true;
     }
@@ -171,29 +174,39 @@ class Router {
             ignoreBasePath: true,
             doNotSetState: true,
         });
+        this.curHistoryState = e.state || {};
     }
 
     _createPageTitle(title) {
         return this.titlePrefix + title + this.titleSuffix;
     }
 
-    _createRouteState(route) {
-        for(let i=0; i<this.routes.length; i++) {
-            if(this._compareRoutes(this.routes[i].route, route)) {
-                return {
-                    route: this.routes[i].route,
-                    title: this._createPageTitle(this.routes[i].title),
-                };
-            }
-        }
+    _createRouteState() {
+        const newState = Object.assign({}, this.nextHistoryState);
+        this.nextHistoryState = {};
+        this.curHistoryState = {};
+        return newState;
     }
 
     replaceRoute = (route, ignoreBasePath) => {
         let basePath = this.basePath;
         if(ignoreBasePath) basePath = '';
         route = basePath + route;
-        const routeState = this._createRouteState(route);
+        const routeState = this._createRouteState();
         window.history.replaceState(routeState, '', route);
+    }
+
+    setNextHistoryState = (newState) => {
+        this.nextHistoryState = Object.assign(this.nextHistoryState, newState);
+    }
+
+    setCurHistoryState = (newState) => {
+        this.curHistoryState = Object.assign(this.curHistoryState, newState);
+        window.history.replaceState(this.curHistoryState, '');
+    }
+
+    getCurHistoryState = () => {
+        return this.curHistoryState;
     }
 
     // Options: Object
@@ -237,7 +250,7 @@ class Router {
         }
 
         if(!doNotSetState && !replaceState) {
-            const routeState = this._createRouteState(route);
+            const routeState = this._createRouteState();
             window.history.pushState(routeState, '', route);
         } else if(replaceState) {
             this.replaceRoute(route, true);
