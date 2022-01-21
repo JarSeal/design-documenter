@@ -46,7 +46,7 @@ class MainMenu extends Component {
         this.backButton = this.addChild(new Button({
             id: 'main-back-button',
             class: 'main-back-button',
-            text: 'Back',
+            html: '&#x2190;',
             attach: 'nav-menu',
             click: this._goBack,
         }));

@@ -37,14 +37,19 @@
         position: absolute;
         top: 0;
         left: 0;
+        font-size: 3rem;
+        font-weight: 700;
+        padding-top: 1.5rem;
+        padding-bottom: 2.2rem;
+        border: none;
+        background: none;
+        line-height: 0;
         z-index: 10;
         pointer-events: none;
         transition-timing-function: ease-in-out;
-        .landscape & {
-            transition-property: left;
-        }
-        .portrait & {
-            transition-property: top;
+        transition-property: all;
+        &:hover {
+            font-size: 4rem;
         }
     }
     &.show-back-button .main-back-button {
