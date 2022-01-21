@@ -149,7 +149,7 @@ class MainMenu extends Component {
             navMenuElem.classList.remove('show-back-button');
             this.menuState.backButton = false;
         }
-        this.Router.setNextHistoryState({ backButton: this.menuState.backButton });
+        this.Router.setCurHistoryState({ backButton: this.menuState.backButton });
     }
 
     _goBack = () => {
