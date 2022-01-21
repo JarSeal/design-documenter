@@ -11,19 +11,21 @@ class MainMenu extends Component {
         this.switchTime = 300; // milliseconds
         this.nudgeTimer;
         this.drawTimer;
+        this.backButtonPressed = false;
         this.template = '<div class="main-menu">' +
-            '<div id="nav-menu"></div>' +
+            `<div id="nav-menu" style="transition-duration:${this.switchTime}ms"></div>` +
             `<div id="tool-menu" class="show-tool-menu" style="transition-duration:${this.switchTime}ms"></div>` +
             '<div id="sticky-menu"></div>' +
         '</div>';
 
         this.homeButton = this.addChild(new RouteLink({
             id: 'home-button',
+            class: 'home-button',
             link: '/',
             attach: 'nav-menu',
             text: 'Home',
         }));
-        this.newuserButton = this.addChild(new RouteLink({
+        this.newuserButton = this.addChild(new RouteLink({ // TEMP
             id: 'new-user-button',
             link: '/newuser',
             attach: 'sticky-menu',
@@ -45,9 +47,8 @@ class MainMenu extends Component {
             id: 'main-back-button',
             class: 'main-back-button',
             text: 'Back',
-            click: () => {
-                console.log('Main shit');
-            },
+            attach: 'nav-menu',
+            click: this._goBack,
         }));
 
         this.menuState = {
@@ -69,11 +70,14 @@ class MainMenu extends Component {
 
     _hideTools = () => {
         this._drawOldTools();
-        const navMenuElem = this.elem.querySelector('#tool-menu');
+        const toolMenuElem = this.elem.querySelector('#tool-menu');
+        const navMenuElem = this.elem.querySelector('#nav-menu');
+        if(this.menuState.backButton) navMenuElem.classList.add('show-back-button');
         clearTimeout(this.nudgeTimer);
         clearTimeout(this.drawTimer);
         this.nudgeTimer = setTimeout(() => {
-            navMenuElem.classList.remove('show-tool-menu');
+            navMenuElem.classList.remove('show-back-button');
+            toolMenuElem.classList.remove('show-tool-menu');
         }, 20);
         this.drawTimer = setTimeout(() => {
             const tools = this.menuState.toolsMenu;
@@ -85,19 +89,20 @@ class MainMenu extends Component {
                 newTools = [...this.menuState.newMenuState.tools];
                 this.menuState.newMenuState.tools = [];
             }
-            this._drawTools(newTools);
-            this._checkBackButton();
+            this._drawTools(newTools, toolMenuElem);
+            this._checkBackButton(navMenuElem);
         }, this.switchTime + 100);
     }
 
     _drawOldTools = () => {
+        this.backButton.draw();
         for(let i=0; i<this.menuState.toolsMenu.length; i++) {
             const id = this.menuState.toolsMenu[i].id;
             if(this.children[id]) this.children[id].draw();
         }
     }
 
-    _drawTools = (newTools) => {
+    _drawTools = (newTools, toolMenuElem) => {
         for(let i=0; i<newTools.length; i++) {
             const tool = newTools[i];
             tool.attach = 'tool-menu';
@@ -105,8 +110,7 @@ class MainMenu extends Component {
             this.menuState.toolsMenu.push(comp);
             comp.draw();
         }
-        const navMenuElem = this.elem.querySelector('#tool-menu');
-        navMenuElem.classList.add('show-tool-menu');
+        toolMenuElem.classList.add('show-tool-menu');
     }
 
     _drawStickyMenu = () => {
@@ -118,19 +122,41 @@ class MainMenu extends Component {
         }
     }
 
-    _checkBackButton = () => {
-        this.backButton.draw();
+    _checkBackButton = (navMenuElem) => {
+        if(!this.Router.prevRoute && this.Router.getCurHistoryState().backButton === undefined) {
+            const referrer = document.referrer.split('/');
+            let refHostname = '';
+            if(referrer.length > 2) refHostname = referrer[2];
+            if(refHostname.split(':')[0] != location.hostname) {
+                this.menuState.newMenuState.backButton = false;
+            }
+            this.Router.setCurHistoryState({ backButton: this.menuState.newMenuState.backButton });
+        }
+        const historyState = this.Router.getCurHistoryState();
+        if(historyState.backButton !== undefined) {
+            this.menuState.newMenuState.backButton = historyState.backButton;
+        }
+
         if(this.menuState.newMenuState.backButton) {
             // Show backButton
-            console.log('SHOW');
-            this.backButton.elem.classList.add('main-back-button--show');
+            navMenuElem.classList.add('show-back-button');
+            this.menuState.newMenuState.backButton = false;
             this.menuState.backButton = true;
+            this.backButtonPressed = false;
+            this.Router.setNextHistoryState({ backButton: true });
         } else {
             // Hide backButton
-            console.log('HIDE');
-            this.backButton.elem.classList.remove('main-back-button--show');
+            navMenuElem.classList.remove('show-back-button');
             this.menuState.backButton = false;
+            this.Router.setNextHistoryState({ backButton: false });
         }
+        // Set historyState to Router
+    }
+
+    _goBack = () => {
+        if(this.backButtonPressed || !this.menuState.backButton) return;
+        this.backButtonPressed = true;
+        window.history.back();
     }
 
     // newMenuState: Object

@@ -25,17 +25,6 @@ class OneUser extends Component {
         this.appState = this.Router.commonData.appState;
         this.spinner = this.addChild(new Spinner({ id: 'user-loader-indicator' }));
         this.userDataComps = [];
-        this.backButton = this.addChild(new Button({ // TODO MOVE TO OWN COMPONENT
-            id: 'back-button',
-            text: 'Back',
-            noRedraws: true,
-            attach: 'back-button-holder',
-            click: () => {
-                const urlParams = new URLSearchParams(window.location.search);
-                const bParam = urlParams.get('b');
-                this.Router.changeRoute(bParam, { forceUpdate: true });
-            },
-        }));
     }
 
     init = () => {
@@ -101,7 +90,6 @@ class OneUser extends Component {
     }
 
     paint = () => {
-        this.backButton.draw();
         this.spinner.draw();
     }
 

@@ -28,6 +28,34 @@
 
 #nav-menu {
     display: inline-block;
+    position: relative;
+    .home-button {
+        position: relative;
+        z-index: 20;
+    }
+    .main-back-button {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 10;
+        pointer-events: none;
+        transition-timing-function: ease-in-out;
+        .landscape & {
+            transition-property: left;
+        }
+        .portrait & {
+            transition-property: top;
+        }
+    }
+    &.show-back-button .main-back-button {
+        pointer-events: all;
+        .landscape & {
+            left: 100%;
+        }
+        .portrait & {
+            top: 100%;
+        }
+    }
     .landscape & {
         width: 100%;
     }
