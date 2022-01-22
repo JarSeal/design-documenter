@@ -1,3 +1,4 @@
+import { getText } from "../../helpers/lang";
 import { Component } from "../../LIGHTER";
 import FormCreator from "../forms/FormCreator";
 
@@ -5,6 +6,7 @@ class Login extends Component {
     constructor(data) {
         super(data);
         this.appState = data.appState;
+        console.log('WAGAE', this.updateMainMenu, this.appState);
         this.template = `<div><h2>${data.title}</h2></div>`;
         this.loginForm = this.addChild(new FormCreator({
             id: 'beacon-main-login',
@@ -14,6 +16,20 @@ class Login extends Component {
                 browserId: this.appState.get('browserId'),
             },
         }));
+    }
+
+    init = () => {
+        const updateMainMenu = this.appState.get('updateMainMenu');
+        updateMainMenu({
+            tools: [{
+                id: 'register-new-user-button',
+                type: 'button',
+                text: getText('new_user'),
+                click: () => {
+                    this.Router.changeRoute('/newuser');
+                },
+            }],
+        });
     }
 
     paint = () => {
