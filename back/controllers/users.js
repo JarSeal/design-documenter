@@ -7,7 +7,7 @@ const readOneUserFormData = require('./../../shared/formData/readOneUserFormData
 const logger = require('./../utils/logger');
 const User = require('./../models/user');
 const Form = require('./../models/form');
-const { validateFormData, validatePrivileges, createNewEditedArray } = require('./forms/formEngine');
+const { createNewEditedArray, getAndValidateForm } = require('./forms/formEngine');
 
 
 // Get all users (for admins)
@@ -15,17 +15,16 @@ usersRouter.get('/', async (request, response) => {
 
     // Get formData, get user, and check the user's admin rights
     const formId = readUsersFormData.formId;
-    const formData = await Form.findOne({ formId });
     const user = await User.findById(request.session._id);
-    const error = await validatePrivileges(formData, request, user);
+    const error = await getAndValidateForm(formId, 'GET', request, user);
     if(error) {
-        logger.log('Unauthorised. Not high enough userLevel for get users. (+ error, session)', error, request.session);
         response.status(error.code).json(error.obj);
         return;
     }
     
     // Get the users that have smaller user level than the current user
     const result = await User.find({ userLevel: { $lt: parseInt(user.userLevel) } });
+
     // const result = await User.find({}).populate('userGroups', {
     //     name: 1, id: 1
     // });
@@ -37,11 +36,9 @@ usersRouter.get('/', async (request, response) => {
 usersRouter.get('/:userId', async (request, response) => {
 
     const formId = readOneUserFormData.formId;
-    const formData = await Form.findOne({ formId });
     const user = await User.findById(request.session._id);
-    const error = await validatePrivileges(formData, request, user);
+    const error = await getAndValidateForm(formId, 'GET', request, user);
     if(error) {
-        logger.log('Unauthorised. Not high enough userLevel for get one user. (+ error, session, userId)', error, request.session, userId);
         response.status(error.code).json(error.obj);
         return;
     }
@@ -82,11 +79,8 @@ usersRouter.get('/:userId', async (request, response) => {
 usersRouter.put('/', async (request, response) => {
 
     const body = request.body;
-    const formData = await Form.findOne({ formId: body.id });
-
-    const error = await validateFormData(formData, request);
+    const error = await getAndValidateForm(body.id, 'PUT', request);
     if(error) {
-        logger.log('Error with form validation. (+ error, formId)', error, body.id);
         response.status(error.code).json(error.obj);
         return;
     }
@@ -147,11 +141,8 @@ usersRouter.put('/', async (request, response) => {
 usersRouter.post('/delete', async (request, response) => {
     
     const body = request.body;
-    const formData = await Form.findOne({ formId: body.id });
-
-    const error = await validateFormData(formData, request);
+    const error = await getAndValidateForm(body.id, 'POST', request);
     if(error) {
-        logger.log('Error with form validation. (+ error, formId)', error, body.id);
         response.status(error.code).json(error.obj);
         return;
     }
@@ -211,11 +202,8 @@ usersRouter.post('/delete', async (request, response) => {
 usersRouter.post('/', async (request, response) => {
 
     const body = request.body;
-    const formData = await Form.findOne({ formId: body.id });
-
-    const error = await validateFormData(formData, request);
+    const error = await getAndValidateForm(body.id, 'POST', request);
     if(error) {
-        logger.log('Error with form validation. (+ error, formId)', error, body.id);
         response.status(error.code).json(error.obj);
         return;
     }
@@ -245,6 +233,7 @@ usersRouter.post('/', async (request, response) => {
     const passwordHash = await bcrypt.hash(body.password, saltRounds);
 
     const userCount = await User.find({}).limit(1);
+    const formData = await Form.findOne({ formId: body.id });
     let userLevel = formData.form.server && formData.form.server.newUserLevel
         ? formData.form.server.newUserLevel
         : 1;

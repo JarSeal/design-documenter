@@ -1,8 +1,29 @@
 const csrf = require('csurf');
 const mongoose = require('mongoose');
 const User = require('../../models/user');
+const Form = require('../../models/form');
 const shared = require('../../shared');
 const logger = require('./../../utils/logger');
+
+const getAndValidateForm = async (formId, method, request, user) => {
+    let error = null;
+    const formData = await Form.findOne({ formId });
+
+    if(method === 'GET') {
+        if(!user) {
+            user = await User.findById(request.session._id);
+        }
+        error = await validatePrivileges(formData, request, user);
+    } else if(method === 'POST' || method === 'PUT') {
+        error = await validateFormData(formData, request);
+    }
+
+    if(error) {
+        logger.log('Unauthorised, getAndValidateForm failed. (+ error, formId, session)', error, formId, request.session);
+    }
+
+    return error;
+};
 
 const validateField = (form, key, value) => {
     if(key === 'id') return null;
@@ -207,6 +228,7 @@ const createNewEditedArray = async (userId, editorId) => {
 };
 
 module.exports = {
+    getAndValidateForm,
     validateField,
     validateKeys,
     validateFormData,
