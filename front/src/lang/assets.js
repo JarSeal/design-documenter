@@ -87,7 +87,7 @@ export const assetsObj = {
         en: 'Remember me',
         fi: 'Muista minut',
     },
-    login_button: {
+    login: {
         en: 'Login',
         fi: 'Kirjaudu',
     },
@@ -142,6 +142,10 @@ export const assetsObj = {
     route_universe: {
         en: 'Universe',
         fi: 'Universumi',
+    },
+    new_user: {
+        en: 'New user',
+        fi: 'Uusi käyttäjä',
     },
     register_new_user: {
         en: 'Register a new user',
