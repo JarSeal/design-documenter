@@ -218,6 +218,7 @@ class LogsDialog extends Component {
             tableData: this.data.userData.edited,
             tableStructure: this._getTableStructure(),
             rowClickFn: (e, rowData) => {
+                if(!rowData.by || !rowData.by.username) return;
                 this.Router.changeRoute(
                     '/settings/user/' + rowData.by.username,
                     { forceUpdate: true }
