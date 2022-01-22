@@ -26,6 +26,46 @@ class UsersList extends Component {
             rowClickFn: (e, rowData) => {
                 this.Router.changeRoute('/settings/user/' + rowData.username);
             },
+            tools: [{
+                id: 'multi-delete-tool',
+                text: getText('delete'),
+                clickFn: (e, selected) => {
+                    if(!selected.length) return;
+                    this.Dialog.appear({
+                        component: FormCreator,
+                        componentData: {
+                            id: 'delete-users',
+                            appState: this.appState,
+                            formDesc: getText('delete_many_users_confirmation')+'\n'+this._listUsernames(selected),
+                            beforeFormSendingFn: () => {
+                                this.Dialog.lock();
+                            },
+                            afterFormSentFn: () => {
+                                this.Dialog.disappear();
+                                this._updateTable();
+                            },
+                            addToMessage: {
+                                users: selected.map(sel => sel.id),
+                            },
+                            onErrorsFn: (ex, res) => {
+                                this.Dialog.unlock();
+                                this._updateTable();
+                                if(res && res.status === 401) this.Router.changeRoute('/');
+                            },
+                            formLoadedFn: () => { this.Dialog.onResize(); },
+                            extraButton: {
+                                label: getText('cancel'),
+                                class: 'some-class',
+                                clickFn: (e) => {
+                                    e.preventDefault();
+                                    this.Dialog.disappear();
+                                },
+                            },
+                        },
+                        title: getText('delete_users') + ': ',
+                    });
+                },
+            }],
         }));
         this._loadUsers(true);
     }
@@ -212,6 +252,15 @@ class UsersList extends Component {
     _updateTable = async () => {
         await this._loadUsers();
         this.usersTable.updateTable(this.users);
+    }
+
+    _listUsernames = (selected) => {
+        let names = '';
+        for(let i=0; i<selected.length; i++) {
+            if(i !== 0) names += ', ';
+            names += selected[i].username;
+        }
+        return names;
     }
 }
 
