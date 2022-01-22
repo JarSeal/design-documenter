@@ -30,6 +30,41 @@ class UsersList extends Component {
         this._loadUsers(true);
     }
 
+    init = () => {
+        const updateMainMenu = this.appState.get('updateMainMenu');
+        updateMainMenu({
+            tools: [{
+                id: 'register-new-user',
+                type: 'button',
+                text: getText('new_user'),
+                click: () => {
+                    this.Dialog.appear({
+                        component: FormCreator,
+                        componentData: {
+                            id: 'new-user-form',
+                            appState: this.appState,
+                            beforeFormSendingFn: () => {
+                                this.Dialog.lock();
+                            },
+                            afterFormSentFn: () => {
+                                this.Dialog.disappear();
+                                this._updateTable();
+                            },
+                            onErrorsFn: (ex, res) => {
+                                this.Dialog.unlock();
+                                this._updateTable();
+                                if(res && res.status === 401) this.Router.changeRoute('/');
+                            },
+                            onFormChages: () => { this.Dialog.changeHappened(); },
+                            formLoadedFn: () => { this.Dialog.onResize(); },
+                        },
+                        title: getText('new_user'),
+                    });
+                },
+            }],
+        });
+    }
+
     paint = () => {
         if(this.users.length) {
             this.usersTable.draw({ tableData: this.users });
