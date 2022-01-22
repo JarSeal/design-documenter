@@ -25,12 +25,6 @@ class MainMenu extends Component {
             attach: 'nav-menu',
             text: 'Home',
         }));
-        this.newuserButton = this.addChild(new RouteLink({ // TEMP
-            id: 'new-user-button',
-            link: '/newuser',
-            attach: 'sticky-menu',
-            text: '+New',
-        }));
         this.settingsButton = this.addChild(new RouteLink({
             id: 'settings-button',
             link: '/settings',
@@ -117,8 +111,6 @@ class MainMenu extends Component {
         if(this.appState.get('user.loggedIn')) {
             this.settingsButton.draw();
             this.logoutButton.draw();
-        } else {
-            this.newuserButton.draw();
         }
     }
 
