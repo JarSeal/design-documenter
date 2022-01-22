@@ -1,5 +1,6 @@
 import { Component } from "../../LIGHTER";
 import RouteLink from "./RouteLink";
+import './TabSystem.scss';
 
 // Attributes:
 // - tabs = Array[Object]
