@@ -2,6 +2,7 @@ import { getAdminRights } from "../../helpers/storage";
 import { Component } from "../../LIGHTER";
 import TabSystem from "../buttons/TabSystem";
 import FourOOne from "./FourOOne";
+import AdminSettings from "./settingsTabs/settings_Admin";
 import UsersList from "./settingsTabs/settings_Users";
 
 class Settings extends Component {
@@ -59,6 +60,11 @@ class Settings extends Component {
             adminUseRights: 'read-users',
             show: this.adminRights.useRights.includes('read-users'),
             component: UsersList,
+        }, {
+            id: 'admin-settings',
+            label: 'Admin',
+            show: this.adminRights.useRights.includes('read-users'),
+            component: AdminSettings,
         }];
 
         for(let i=0; i<define.length; i++) {
