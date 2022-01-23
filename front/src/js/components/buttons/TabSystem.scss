@@ -28,7 +28,7 @@ $tab-total-height: 4.5rem;
             padding-top: 1.5rem;
             margin-top: 0;
             border-top: 0.3rem solid rgba(#fff, 0.5);
-            box-shadow: 0 0 1rem rgba(#000, 0.5);
+            box-shadow: 0 -0.2rem 1rem rgba(#000, 0.5);
             border-left: none;
             &:hover {
                 background-color: lighten($tab-button-selected-background, 20%);
@@ -36,6 +36,12 @@ $tab-total-height: 4.5rem;
             + button {
                 border-left: none;
             }
+        }
+        &:first-child {
+            border-radius: 0.4rem 0 0 0;
+        }
+        &:last-child {
+            border-radius: 0 0.4rem 0 0;
         }
     }
 }
