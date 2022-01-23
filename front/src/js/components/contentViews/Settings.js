@@ -8,7 +8,7 @@ import UsersList from "./settingsTabs/settings_Users";
 class Settings extends Component {
     constructor(data) {
         super(data);
-        const defaultTab = 'my-ui';
+        const defaultTab = 'my-settings';
         this.curTab = defaultTab;
         this.template = `<div><h2>${data.title}</h2></div>`;
         this.adminRights = {};
@@ -50,9 +50,13 @@ class Settings extends Component {
     }
 
     _defineTabs = () => {
-        const define = [{ // Define tabs here
-            id: 'my-ui',
-            label: 'My UI', // TODO: Change into a getText lang asset
+        const define = [{
+            id: 'my-settings',
+            label: 'My Settings', // TODO: Change into a getText lang asset
+            component: Component,
+        }, {
+            id: 'my-profile',
+            label: 'My Profile', // TODO: Change into a getText lang asset
             component: Component,
         }, {
             id: 'users',
@@ -62,8 +66,9 @@ class Settings extends Component {
             component: UsersList,
         }, {
             id: 'admin-settings',
-            label: 'Admin',
-            show: this.adminRights.useRights.includes('read-users'),
+            label: 'Admin', // TODO: Change into a getText lang asset
+            adminUseRights: 'read-users', // TODO change to admin settings
+            show: this.adminRights.useRights.includes('read-users'), // TODO change to admin settings
             component: AdminSettings,
         }];
 
