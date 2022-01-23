@@ -6,7 +6,6 @@ class Login extends Component {
     constructor(data) {
         super(data);
         this.appState = data.appState;
-        console.log('WAGAE', this.updateMainMenu, this.appState);
         this.template = `<div><h2>${data.title}</h2></div>`;
         this.loginForm = this.addChild(new FormCreator({
             id: 'beacon-main-login',

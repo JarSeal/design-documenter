@@ -23,12 +23,12 @@ class RouteLink extends Component {
     paint = (data) => {
         if(this.Router.isCurrent(data.link)) {
             setTimeout(() => {
-                this.elem.classList.add('current');
+                if(this.elem) this.elem.classList.add('current');
             }, 50);
             this.isCurrent = true;
         } else {
             setTimeout(() => {
-                this.elem.classList.remove('current');
+                if(this.elem) this.elem.classList.remove('current');
             }, 50);
             this.isCurrent = false;
         }
