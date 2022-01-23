@@ -1,6 +1,7 @@
 import { getAdminRights } from "../../helpers/storage";
 import { Component } from "../../LIGHTER";
 import TabSystem from "../buttons/TabSystem";
+import ViewTitle from "../widgets/ViewTitle";
 import FourOOne from "./FourOOne";
 import AdminSettings from "./settingsTabs/settings_Admin";
 import UsersList from "./settingsTabs/settings_Users";
@@ -10,10 +11,14 @@ class Settings extends Component {
         super(data);
         const defaultTab = 'my-settings';
         this.curTab = defaultTab;
-        this.template = `<div><h2>${data.title}</h2></div>`;
+        this.template = `<div></div>`;
         this.adminRights = {};
         this.tabSystem;
         this.tabs = [];
+        this.viewTitle = this.addChild(new ViewTitle({
+            id: 'view-title',
+            text: data.title,
+        }));
     }
 
     init = async () => {
@@ -38,6 +43,7 @@ class Settings extends Component {
     }
 
     paint = () => {
+        this.viewTitle.draw();
         if(this.tabSystem) {
             this.tabSystem.draw();
             const currentTab = this.tabSystem.getCurrent();
