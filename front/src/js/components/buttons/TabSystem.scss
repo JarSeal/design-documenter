@@ -4,13 +4,18 @@ $tab-total-height: 4.5rem;
 .tab-system {
     width: 100%;
     height: $tab-total-height;
-    vertical-align: bottom;
+    // vertical-align: bottom;
     button {
         position: relative;
         z-index: 10;
+        bottom: 0;
         background-color: $tab-button-background;
         padding: 1rem 2.5rem;
-        transition: padding-top 0.2s ease-in-out;
+        margin-top: 0.8rem;
+        transition: padding-top 0.2s ease-in-out,
+                    background-color 0.2s ease-in-out,
+                    border-top-height 0.2s ease-in-out,
+                    box-shadow 0.2s ease-in-out;
         &:hover {
             background-color: lighten($tab-button-background, 20%);
         }
@@ -21,6 +26,7 @@ $tab-total-height: 4.5rem;
             z-index: 20;
             background-color: $tab-button-selected-background;
             padding-top: 1.5rem;
+            margin-top: 0;
             border-top: 0.3rem solid rgba(#fff, 0.5);
             box-shadow: 0 0 1rem rgba(#000, 0.5);
             border-left: none;
