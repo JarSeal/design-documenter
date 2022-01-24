@@ -1,12 +1,14 @@
 const logger = require('./../../utils/logger');
 const Form = require('./../../models/form');
+const AdminSetting = require('./../../models/adminSetting');
 const formData = require('./../../shared').formData;
 const routeAccess = require('./../../shared').CONFIG.ROUTE_ACCESS;
 
 const createPresetForms = async () => {
-    let newForm, checkForm;
+    let newForm, checkForm, adminSettings;
     for(let i=0; i<formData.length; i++) {
         checkForm = await Form.findOne({ formId: formData[i].formId });
+        if(formData[i].formId === 'admin-settings-form') adminSettings = formData[i];
         if(!checkForm) {
             formData[i].created = {
                 by: null,
@@ -30,6 +32,28 @@ const createPresetForms = async () => {
             newForm = new Form(routeAccess[i]);
             await newForm.save();
             logger.log(`Preset form (route access) '${routeAccess[i].formId}' created.`);
+        }
+    }
+
+    // Create admin settings
+    if(adminSettings) {
+        const adminFieldsets = adminSettings.form.fieldsets;
+        for(let i=0; i<adminFieldsets.length; i++) {
+            const fs = adminFieldsets[i];
+            for(let j=0; j<fs.fields.length; j++) {
+                const field = fs.fields[j];
+                const checkField = await AdminSetting.findOne({ settingId: field.id });
+                if(!checkField) {
+                    const setting = new AdminSetting({
+                        settingId: field.id,
+                        value: field.defaultValue,
+                        defaultValue: field.defaultValue,
+                        labelId: field.labelId,
+                        descriptionId: field.descriptionId,
+                    });
+                    await setting.save();
+                }
+            }
         }
     }
 };
