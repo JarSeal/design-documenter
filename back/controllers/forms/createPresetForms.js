@@ -38,6 +38,7 @@ const createPresetForms = async () => {
     // Create admin settings
     if(adminSettings) {
         const adminFieldsets = adminSettings.form.fieldsets;
+        let settingsSaved = 0;
         for(let i=0; i<adminFieldsets.length; i++) {
             const fs = adminFieldsets[i];
             for(let j=0; j<fs.fields.length; j++) {
@@ -52,9 +53,11 @@ const createPresetForms = async () => {
                         descriptionId: field.descriptionId,
                     });
                     await setting.save();
+                    settingsSaved++;
                 }
             }
         }
+        if(settingsSaved) logger.log(`Saved ${settingsSaved} admin setting${settingsSaved === 1 ? 's' : ''}.`);
     }
 };
 
