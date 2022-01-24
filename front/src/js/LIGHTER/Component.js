@@ -40,6 +40,7 @@ class Component {
         //     style (optional, flat object, element inline style(s))
         //     attributes (optional, flat object, element attributes as key and value as value)
         //     appendHtml (optional, string, element's appended innerHTML text/html)
+        //     prepend (optional, boolean, use prepend instead append)
         //     html (optional, string, element's replacing innerHTML text/html)
         //     text (optional, string, element innerText text)
         //     tag (optional, string, element tag name/type)
@@ -74,7 +75,11 @@ class Component {
             // Append element as parent's child
             const template = document.createElement('template');
             template.innerHTML = this.template;
-            if(this.parent) this.parent.appendChild(template.content.firstChild);
+            if(this.parent) {
+                data.prepend
+                    ? this.parent.prepend(template.content.firstChild)
+                    : this.parent.append(template.content.firstChild);
+            }
         }
         this.elem = document.getElementById(this.id);
         this._setElemData(this.elem, data);
