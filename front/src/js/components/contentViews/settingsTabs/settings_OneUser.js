@@ -97,12 +97,12 @@ class OneUser extends Component {
 
     _loadUserData = async () => {
         this.usersData = null;
-        // this.viewTitle.showSpinner(true);
+        this.viewTitle.showSpinner(true);
         const url = _CONFIG.apiBaseUrl + '/api/users' + '/' + this.userId;
         try {
             const response = await axios.get(url, { withCredentials: true });
             this.userData = response.data;
-            // this.viewTitle.showSpinner(false);
+            this.viewTitle.showSpinner(false);
             this._createElements();
         }
         catch(exception) {
