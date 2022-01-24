@@ -1,14 +1,13 @@
-const usersRouter = require('express').Router();
+const settingsRouter = require('express').Router();
 const adminSettingsFormData = require('./../../shared/formData/adminSettingsFormData');
 // const logger = require('./../utils/logger');
-const AdminSettings = require('./../models/adminSettings');
+const AdminSettings = require('./../models/adminSetting');
 const { createNewEditedArray, getAndValidateForm } = require('./forms/formEngine');
 
 
 // Get all admin settings
-usersRouter.get('/admin', async (request, response) => {
+settingsRouter.get('/admin', async (request, response) => {
 
-    // Get formData, get user, and check the user's admin rights
     const formId = adminSettingsFormData.formId;
     const error = await getAndValidateForm(formId, 'GET', request);
     if(error) {
@@ -23,7 +22,7 @@ usersRouter.get('/admin', async (request, response) => {
 
 
 // Edit admin settings
-usersRouter.put('/admin', async (request, response) => {
+settingsRouter.put('/admin', async (request, response) => {
 
     const body = request.body;
     const error = await getAndValidateForm(body.id, 'PUT', request);
@@ -51,4 +50,4 @@ usersRouter.put('/admin', async (request, response) => {
     response.json(updatedAdminSetting);
 });
 
-module.exports = usersRouter;
+module.exports = settingsRouter;

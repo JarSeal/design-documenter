@@ -21,7 +21,7 @@ const adminSettingsFormData = {
             labelId: 'save',
             class: 'save-button',
         },
-        submitFields: [ ], // MAYBE NOT NEEDED FOR PARTIAL EDIT FEATURE
+        submitFields: [ 'max-login-attempts' ], // MAYBE NOT NEEDED FOR PARTIAL EDIT FEATURE
         fieldsets: [
             {
                 // FIELDSET
@@ -32,7 +32,6 @@ const adminSettingsFormData = {
                         // USERNAME
                         type: 'textinput',
                         id: 'max-login-attempts',
-                        groupId: 'login',
                         labelId: 'max_login_attempts',
                         descriptionId: 'max_login_attempts_desc',
                         defaultValue: 5,
