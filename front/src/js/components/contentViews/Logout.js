@@ -4,6 +4,7 @@ import { _CONFIG } from '../../_CONFIG';
 
 class Logout extends Component {
     constructor(data) {
+        // Technically not a view, but it is a route
         super(data);
         this.appState = data.appState;
     }
