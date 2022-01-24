@@ -1,16 +1,18 @@
 import Component from '../../LIGHTER/Component';
 import RouteLink from '../buttons/RouteLink';
 import { getText } from "../../helpers/lang";
+import ViewTitle from '../widgets/ViewTitle';
 
 class FourOFour extends Component {
     constructor(data) {
         super(data);
         this.appState = data.appState;
-        this.template = '<div>' +
-            `<h2>${data.title || 404}</h2>` +
-        '</div>';
         this.params = {};
-
+        this.viewTitle = this.addChild(new ViewTitle({
+            id: this.id+'-view-title',
+            heading: data.title || 404,
+            prepend: true,
+        }));
         this.message = this.addChild({ id: '404-message', tag: 'p' });
         this.button = this.addChild(new RouteLink({
             id: 'back-to-root',
@@ -35,6 +37,7 @@ class FourOFour extends Component {
             text = getText('404_default_message');
         }
 
+        this.viewTitle.draw();
         this.message.draw({ text });
         this.button.draw();
     }

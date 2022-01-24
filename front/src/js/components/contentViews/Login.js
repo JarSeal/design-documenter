@@ -1,12 +1,16 @@
 import { getText } from "../../helpers/lang";
 import { Component } from "../../LIGHTER";
 import FormCreator from "../forms/FormCreator";
+import ViewTitle from "../widgets/ViewTitle";
 
 class Login extends Component {
     constructor(data) {
         super(data);
         this.appState = data.appState;
-        this.template = `<div><h2>${data.title}</h2></div>`;
+        this.viewTitle = this.addChild(new ViewTitle({
+            id: this.id+'-view-title',
+            heading: data.title,
+        }));
         this.loginForm = this.addChild(new FormCreator({
             id: 'beacon-main-login',
             appState: this.appState,
@@ -32,6 +36,7 @@ class Login extends Component {
     }
 
     paint = () => {
+        this.viewTitle.draw();
         if(this.appState.get('user.loggedIn')) {
             this.Router.changeRoute('/');
         } else {

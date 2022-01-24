@@ -4,27 +4,28 @@ import { getText } from "../../../helpers/lang";
 import { _CONFIG } from "../../../_CONFIG";
 import { createDate } from "../../../helpers/date";
 import FormCreator from "../../forms/FormCreator";
-import Spinner from "../../widgets/Spinner";
-import Button from "../../buttons/Button";
 import './settings_OneUser.scss';
 import Table from "../../widgets/Table";
 import FourOOne from "../FourOOne";
 import FourOFour from "../FourOFour";
 import RouteLink from "../../buttons/RouteLink";
+import ViewTitle from "../../widgets/ViewTitle";
 
 class OneUser extends Component {
     constructor(data) {
         super(data);
         this.template = '<div class="one-user">' +
             '<div id="back-button-holder"></div>' +
-            `<h2>${getText('user')}</h2>` +
         '</div>';
+        this.viewTitle = this.addChild(new ViewTitle({
+            id: this.id+'-view-title',
+            heading: getText('user'),
+        }));
         this.userId;
         this.userData;
         this.Dialog = this.Router.commonData.appState.get('Dialog');
         this.appState = this.Router.commonData.appState;
         this.updateMainMenu = this.appState.get('updateMainMenu');
-        this.spinner = this.addChild(new Spinner({ id: 'user-loader-indicator' }));
         this.userDataComps = [];
     }
 
@@ -69,7 +70,7 @@ class OneUser extends Component {
                         },
                         title: getText('edit_user') + ': ' + this.userData.username,
                     });
-                }
+                },
             }, {
                 id: 'user-logs-tool',
                 type: 'button',
@@ -83,29 +84,29 @@ class OneUser extends Component {
                             userData: this.userData,
                         },
                     });
-                }
-            }]
+                },
+            }],
         });
         this.userId = this.Router.getRouteParams().user;
         this._loadUserData();
     }
 
     paint = () => {
-        this.spinner.draw();
+        this.viewTitle.draw({ spinner: true });
     }
 
     _loadUserData = async () => {
         this.usersData = null;
-        this.spinner.showSpinner(true);
+        // this.viewTitle.showSpinner(true);
         const url = _CONFIG.apiBaseUrl + '/api/users' + '/' + this.userId;
         try {
             const response = await axios.get(url, { withCredentials: true });
             this.userData = response.data;
-            this.spinner.showSpinner(false);
+            // this.viewTitle.showSpinner(false);
             this._createElements();
         }
         catch(exception) {
-            this.spinner.showSpinner(false);
+            this.viewTitle.showSpinner(false);
             const status = exception.response.status;
             this.appState.get('updateMainMenu')({ tools: [] });
             if(status === 401) {

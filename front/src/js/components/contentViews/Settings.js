@@ -16,8 +16,8 @@ class Settings extends Component {
         this.tabSystem;
         this.tabs = [];
         this.viewTitle = this.addChild(new ViewTitle({
-            id: 'view-title',
-            text: data.title,
+            id: this.id+'-view-title',
+            heading: data.title,
         }));
     }
 

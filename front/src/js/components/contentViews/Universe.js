@@ -2,7 +2,6 @@ import axios from 'axios';
 import { Component } from "../../LIGHTER";
 import { parsers } from "../../shared";
 import { _CONFIG } from '../../_CONFIG';
-import Spinner from "../widgets/Spinner";
 import ViewTitle from '../widgets/ViewTitle';
 
 class NewUser extends Component {
@@ -11,8 +10,8 @@ class NewUser extends Component {
         this.appState = data.appState;
         this.universeId;
         this.viewTitle = this.addChild(new ViewTitle({
-            id: 'view-title',
-            text: '',
+            id: this.id+'-view-title',
+            heading: '',
         }));
     }
 

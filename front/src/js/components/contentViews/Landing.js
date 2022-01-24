@@ -4,14 +4,18 @@ import Button from "../buttons/Button";
 import FormCreator from "../forms/FormCreator";
 import UniverseItem from "../widgets/listItems/UniverseItem";
 import ListLoader from "../widgets/ListLoader";
+import ViewTitle from "../widgets/ViewTitle";
 
 class Landing extends Component {
     constructor(data) {
         super(data);
         this.appState = data.appState;
-        this.template = `<div><h2>${data.title}</h2></div>`;
         this.mainScreenInitiated = false;
         this.mainScreenCompos = [];
+        this.viewTitle = this.addChild(new ViewTitle({
+            id: this.id+'-view-title',
+            heading: data.title,
+        }));
     }
 
     init = () => {
@@ -26,6 +30,7 @@ class Landing extends Component {
     }
 
     initMainScreen = () => {
+        this.viewTitle.draw();
         if(this.mainScreenInitiated) return;
         this.mainScreenCompos.push(
             this.addChild({ id: 'universe-wrapper', class: 'list-wrapper' })
