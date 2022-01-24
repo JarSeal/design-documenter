@@ -518,4 +518,12 @@ export const assetsObj = {
         en: 'Last edited',
         fi: 'Viimeksi muokattu',
     },
+    max_login_attempts: {
+        en: 'Max login attempts',
+        fi: 'Max kirjautumisyrityksiä',
+    },
+    max_login_attempts_desc: {
+        en: 'Maximum number of login attempts before the account is locked for a length of the cooldown period.',
+        fi: 'Maksimi määrä kirjautumisyrityksiä ennen kuin tili lukitaan jäähdyttelyjakson ajaksi.',
+    },
 };
