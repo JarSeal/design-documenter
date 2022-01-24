@@ -14,7 +14,6 @@ class Logout extends Component {
     }
 
     logOut = async (appState) => {
-        console.log('appState', appState);
         appState.set('user.loggedIn', false);
         appState.set('user.username', null);
         
