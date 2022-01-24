@@ -3,6 +3,7 @@ import axios from "axios";
 import { getText } from "../../../helpers/lang";
 import { _CONFIG } from "../../../_CONFIG";
 import FormCreator from "../../forms/FormCreator";
+import SettingsGroup from "../../widgets/SettingsGroup";
 
 class AdminSettings extends Component {
     constructor(data) {
@@ -11,7 +12,8 @@ class AdminSettings extends Component {
         this.users = [];
         this.Dialog = this.Router.commonData.appState.state.Dialog;
         this.appState = this.Router.commonData.appState;
-        this.settingComponents = [];
+        this.settingsComponents = [];
+        this.settingsData = [];
     }
 
     init = () => {
@@ -19,8 +21,8 @@ class AdminSettings extends Component {
     }
 
     paint = () => {
-        for(let i=0; i<this.settingComponents.length; i++) {
-            this.settingComponents[i].draw();
+        for(let i=0; i<this.settingsComponents.length; i++) {
+            this.settingsComponents[i].draw();
         }
     }
 
@@ -43,23 +45,30 @@ class AdminSettings extends Component {
         if(result.data) {
             settingsData = result.data;
         } else {
-            Logger.log('Could not retrieve admin settings form data.');
+            Logger.log('Could not retrieve admin settings data.');
             return;
         }
         console.log('SETTINGSDATA', settingsData);
 
-        this._createSettingComponents(formData, settingsData);
+        this._createsettingsComponents(formData, settingsData);
     }
 
-    _createSettingComponents = (formData, settingsData) => {
+    _createsettingsComponents = (formData, settingsData) => {
         const fieldsets = formData.fieldsets;
-        for(let i=0; i<this.settingComponents.length; i++) {
-            if(this.settingComponents[i]) this.settingComponents[i].discard(true);
+        for(let i=0; i<this.settingsComponents.length; i++) {
+            if(this.settingsComponents[i]) this.settingsComponents[i].discard(true);
         }
-        this.settingComponents = [];
+        this.settingsComponents = [];
+        this.settingsData = [];
 
         for(let i=0; i<fieldsets.length; i++) {
             const fs = fieldsets[i];
+            const data = {
+                fsId: fs.id,
+                fsTitleId: fs.fieldsetTitleId,
+                fsDescriptionId: fs.descriptionId,
+                fields: [],
+            };
             for(let j=0; j<fs.fields.length; j++) {
                 const fieldId = fs.fields[j].id;
                 let value;
@@ -69,9 +78,23 @@ class AdminSettings extends Component {
                         break;
                     }
                 }
-                this.settingComponents.push(this.addChild({ id: fieldId, text: value }));
+                data.fields.push({
+                    id: fieldId,
+                    type: fs.fields[j].type,
+                    value,
+                    labelId: fs.fields[j].labelId,
+                    descriptionId: fs.fields[j].descriptionId,
+                    defaultValue: fs.fields[j].defaultValue,
+                    options: fs.fields[j].options,
+                });
             }
+            this.settingsData.push(data);
+            this.settingsComponents.push(this.addChild(new SettingsGroup({
+                id: 'admin-settings-g-' + fs.id,
+                settingsData: data,
+            })));
         }
+        console.log('DATA', this.settingsData);
 
         this.rePaint();
     }
