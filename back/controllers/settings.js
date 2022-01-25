@@ -39,6 +39,13 @@ settingsRouter.put('/admin', async (request, response) => {
             settingNotFoundError: true,
         });
         return;
+    } else if(body[setting.settingId] === null || body[setting.settingId] === undefined) {
+        logger.error('Could not find value with key \'' + setting.settingId + '\' in the payload. (+ body)', body);
+        response.status(400).json({
+            msg: 'Bad request.',
+            settingValueNotFoundError: true,
+        });
+        return;
     }
     const edited = await createNewEditedArray(setting.edited, request.session._id);
 
