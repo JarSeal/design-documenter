@@ -39,7 +39,7 @@ const adminSettingsFormData = {
                         regex: '[0-9]+$',
                     },
                     {
-                        // Max login attempts
+                        // Login cooldown time
                         type: 'textinput',
                         id: 'login-cooldown-time',
                         labelId: 'login_cooldown_time',
@@ -48,39 +48,38 @@ const adminSettingsFormData = {
                         required: true,
                         regex: '[0-9]+$',
                     },
-                    // {
-                    //     // NAME
-                    //     type: 'textinput',
-                    //     id: 'name',
-                    //     labelId: 'name',
-                    //     required: CONFIG.name.required,
-                    //     minLength: CONFIG.name.minLength,
-                    //     maxLength: 40,
-                    //     regex: '[a-zA-ZåöäñüéèêâîôûčßàìòùóçęįųķļņģëïõžšæøėēūāīÅÖÄÑÜÉÈÊÂÎÔÛČẞÀÌÒÙÓÇĘĮŲĶĻŅĢËÏÕŽŠÆØĖĒŪĀĪ]+$', // Current langs: finnish, english, swedish, norwegian, danish, german, french, spanish, italian, estonian, latvian, lithuanian
-                    //     regexErrorMsgId: 'field_has_invalid_characters',
-                    // },
-                    // { type: 'divider' },
-                    // {
-                    //     // EMAIL
-                    //     type: 'textinput',
-                    //     id: 'email',
-                    //     labelId: 'email',
-                    //     required: CONFIG.email.required,
-                    //     maxLength: 50,
-                    //     email: true,
-                    // },
-                    // { type: 'divider' },
-                    // {
-                    //     // USERLEVEL
-                    //     type: 'dropdown',
-                    //     id: 'userLevel',
-                    //     labelId: 'user_level',
-                    //     required: true,
-                    //     getOptionsFn: 'userLevels',
-                    //     minValue: 1,
-                    //     maxValue: 8,
-                    // },
-                    // { type: 'divider' },
+                ],
+            },
+            {
+                // Session
+                id: 'admin-settings-session-fs',
+                fieldsetTitleId: 'session',
+                fields: [
+                    {
+                        // Session age
+                        type: 'textinput',
+                        id: 'session-age',
+                        labelId: 'session_age',
+                        descriptionId: 'session_age_desc',
+                        defaultValue: 600,
+                        required: true,
+                        regex: '[0-9]+$',
+                    },
+                ],
+            },
+            {
+                // Registration
+                id: 'admin-settings-registration-fs',
+                fieldsetTitleId: 'registration',
+                fields: [
+                    {
+                        // Public registration
+                        type: 'checkbox',
+                        id: 'public-user-registration',
+                        labelId: 'public_user_registration',
+                        descriptionId: 'public_user_registration_desc',
+                        defaultValue: true,
+                    },
                 ],
             },
         ],
