@@ -401,7 +401,8 @@ class FormCreator extends Component {
         if(!id) id = fieldIdPrefix+'-checkbox';
         const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
         this.fieldErrors.set(id, false);
-        if(this.data.data && this.data.data[id]) field.initValue = this.data.data[id];
+        if(this.data.data && this.data.data[id]) field.initValue = this.data.data[id] === true || this.data.data[id] === 'true'
+            ? true : false;
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new Checkbox({
             id,

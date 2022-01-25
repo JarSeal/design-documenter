@@ -21,7 +21,9 @@ const adminSettingsFormData = {
             labelId: 'save',
             class: 'save-button',
         },
-        submitFields: [ 'max-login-attempts', 'login-cooldown-time' ],
+        submitFields: [
+            'max-login-attempts', 'login-cooldown-time', 'session-age', 'public-user-registration',
+        ],
         fieldsets: [
             {
                 // FIELDSET
