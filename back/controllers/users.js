@@ -115,7 +115,8 @@ usersRouter.put('/', async (request, response) => {
         return;
     }
 
-    const edited = await createNewEditedArray(body.userId, request.session._id);
+    const user = await User.findById(body.userId);
+    const edited = createNewEditedArray(user.edited, request.session._id);
 
     const updatedUser = {
         email: body.email.trim(),

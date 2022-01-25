@@ -29,12 +29,23 @@ const adminSettingsFormData = {
                 fieldsetTitleId: 'login',
                 fields: [
                     {
-                        // USERNAME
+                        // Max login attempts
                         type: 'textinput',
                         id: 'max-login-attempts',
                         labelId: 'max_login_attempts',
                         descriptionId: 'max_login_attempts_desc',
                         defaultValue: 5,
+                        required: true,
+                        regex: '[0-9]+$',
+                    },
+                    {
+                        // Max login attempts
+                        type: 'textinput',
+                        id: 'login-cooldown-time',
+                        labelId: 'login_cooldown_time',
+                        descriptionId: 'login_cooldown_time_desc',
+                        defaultValue: 15,
+                        required: true,
                         regex: '[0-9]+$',
                     },
                     // {

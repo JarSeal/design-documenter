@@ -518,6 +518,10 @@ export const assetsObj = {
         en: 'Last edited',
         fi: 'Viimeksi muokattu',
     },
+    edit_setting: {
+        en: 'Edit setting',
+        fi: 'Muokkaa asetusta',
+    },
     max_login_attempts: {
         en: 'Max login attempts',
         fi: 'Max kirjautumisyrityksiä',
@@ -525,5 +529,13 @@ export const assetsObj = {
     max_login_attempts_desc: {
         en: 'Maximum number of login attempts before the account is locked for a length of the cooldown period.',
         fi: 'Maksimi määrä kirjautumisyrityksiä ennen kuin tili lukitaan jäähdyttelyjakson ajaksi.',
+    },
+    login_cooldown_time: {
+        en: 'Login cooldown time',
+        fi: 'Kirjautumisen jäähdyttelyjakson aika',
+    },
+    login_cooldown_time_desc: {
+        en: 'The time (in minutes) to for the user to cooldown after too many unsuccessful login attempts.',
+        fi: 'Jäähdyttelyjakso (minuuteissa), jonka käyttäjä joutuu odottamaan liian monen epäonnistuneen kirjatutumisyrityksen jälkeen.',
     },
 };

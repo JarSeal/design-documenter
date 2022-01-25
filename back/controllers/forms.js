@@ -2,6 +2,7 @@ const formsRouter = require('express').Router();
 const logger = require('./../utils/logger');
 const Form = require('./../models/form');
 const User = require('./../models/user');
+const AdminSetting = require('./../models/adminSetting');
 const { validatePrivileges } = require('./forms/formEngine');
 
 // Get all forms
@@ -44,6 +45,31 @@ formsRouter.get('/:id', async (request, response) => {
             logger.log(`Error with additional form data. FormId: '${formId}'. Additional Id: '${splitId[1]}'. (+ form.data._error)`, form.data._error);
             return response.status(form.data._error.code).json(form.data._error.obj);
         }
+        if(form.partialEditPossible) {
+            let fieldFound = false, fsFound = false;
+            for(let i=0; i<form.fieldsets.length; i++) {
+                const fs = form.fieldsets[i];
+                if(!fieldFound) {
+                    for(let j=0; j<fs.fields.length; j++) {
+                        const field = fs.fields[j];
+                        if(form.data[field.id] !== undefined) {
+                            fieldFound = field;
+                            break;
+                        }
+                    }
+                }
+                if(!fsFound && fieldFound) {
+                    fs.fields = [
+                        {type:'divider'},
+                        fieldFound,
+                        {type:'divider'},
+                    ];
+                    fsFound = fs;
+                    break;
+                }
+            }
+            form.fieldsets = [fsFound];
+        }
     }
 
     response.json(form);
@@ -72,6 +98,22 @@ const getAdditionalData = async (formId, dataId, userLevel) => {
             };
         }
         return user;
+    } else if(formId === 'admin-settings-form') {
+        let setting = await AdminSetting.findById(dataId);
+        if(!setting) {
+            return {
+                _error: { code: 404,
+                    obj: {
+                        msg: 'Could not find admin setting.',
+                        settingNotFound: true,
+                    },
+                },
+            };
+        }
+        setting[setting.settingId] = setting.value;
+        const settingValue = {};
+        settingValue[setting.settingId] = setting.value;
+        return settingValue;
     } else {
         return {
             _error: { code: 400,

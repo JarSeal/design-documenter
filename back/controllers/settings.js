@@ -25,6 +25,7 @@ settingsRouter.get('/admin', async (request, response) => {
 settingsRouter.put('/admin', async (request, response) => {
 
     const body = request.body;
+    console.log('BODY', body);
     const error = await getAndValidateForm(body.id, 'PUT', request);
     if(error) {
         response.status(error.code).json(error.obj);

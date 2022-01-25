@@ -207,10 +207,9 @@ const csrfNewToken = (request) => {
     return crsfToken();
 };
 
-const createNewEditedArray = async (userId, editorId) => {
-    const maxEditedLogs = 10;
-    const user = await User.findById(userId);
-    const edited = user.edited || [];
+const createNewEditedArray = (oldEdited, editorId) => {
+    const maxEditedLogs = 10; // TODO: Make this into a setting
+    const edited = oldEdited || [];
     let newEdited = [];
     if(edited.length >= maxEditedLogs) {
         const startIndex = edited.length - maxEditedLogs + 1;

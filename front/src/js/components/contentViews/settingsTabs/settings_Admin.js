@@ -37,7 +37,6 @@ class AdminSettings extends Component {
             Logger.log('Could not retrieve admin settings form data.');
             return;
         }
-        console.log('FORMDATA', formData);
 
         // Load current settings
         url = _CONFIG.apiBaseUrl + '/api/settings/admin';
@@ -48,7 +47,6 @@ class AdminSettings extends Component {
             Logger.log('Could not retrieve admin settings data.');
             return;
         }
-        console.log('SETTINGSDATA', settingsData);
 
         this._createsettingsComponents(formData, settingsData);
     }
@@ -71,15 +69,17 @@ class AdminSettings extends Component {
             };
             for(let j=0; j<fs.fields.length; j++) {
                 const fieldId = fs.fields[j].id;
-                let value;
+                let value, mongoId;
                 for(let k=0; k<settingsData.length; k++) {
                     if(settingsData[k].settingId === fieldId) {
                         value = settingsData[k].value;
+                        mongoId = settingsData[k].id;
                         break;
                     }
                 }
                 data.fields.push({
                     id: fieldId,
+                    mongoId,
                     type: fs.fields[j].type,
                     value,
                     labelId: fs.fields[j].labelId,
@@ -94,7 +94,6 @@ class AdminSettings extends Component {
                 settingsData: data,
             })));
         }
-        console.log('DATA', this.settingsData);
 
         this.rePaint();
     }
