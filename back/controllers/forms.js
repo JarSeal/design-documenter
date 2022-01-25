@@ -45,7 +45,7 @@ formsRouter.get('/:id', async (request, response) => {
             logger.log(`Error with additional form data. FormId: '${formId}'. Additional Id: '${splitId[1]}'. (+ form.data._error)`, form.data._error);
             return response.status(form.data._error.code).json(form.data._error.obj);
         }
-        if(form.partialEditPossible) {
+        if(form.singleEdit) {
             let fieldFound = false, fsFound = false;
             for(let i=0; i<form.fieldsets.length; i++) {
                 const fs = form.fieldsets[i];

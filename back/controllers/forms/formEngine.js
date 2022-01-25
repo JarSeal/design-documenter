@@ -142,12 +142,14 @@ const validateFormData = async (formData, request, user) => {
     if(error) return error;
 
     const keys = Object.keys(body);
-    const keysFound = validateKeys(formData.form, keys);
-    if(!keysFound) {
-        return {
-            code: 400,
-            obj: { msg: 'Bad request. Payload missing or incomplete.' },
-        };
+    if(!formData.form.singleEdit) {
+        const keysFound = validateKeys(formData.form, keys);
+        if(!keysFound) {
+            return {
+                code: 400,
+                obj: { msg: 'Bad request. Payload missing or incomplete.' },
+            };
+        }
     }
 
     const errors = {};

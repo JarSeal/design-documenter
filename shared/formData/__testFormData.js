@@ -17,6 +17,7 @@ const testFormData = {
     afterSubmitMsg: { en: 'Form sent', fi: 'Lomake lähetetty' }, // Lang object / String
     afterSubmitMsgId: 'form_sent', // String (transalation id for getText)
     afterSubmitShowOnlyMsg: true, // Boolean
+    singleEdit: false, // Boolean
     submitButton: {
         id: 'submit-button-id', // String
         label: { en: 'Submit', fi: 'Lähetä' }, // Lang object / String
