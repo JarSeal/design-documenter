@@ -538,4 +538,28 @@ export const assetsObj = {
         en: 'The time (in minutes) to for the user to cooldown after too many unsuccessful login attempts.',
         fi: 'Jäähdyttelyjakso (minuuteissa), jonka käyttäjä joutuu odottamaan liian monen epäonnistuneen kirjatutumisyrityksen jälkeen.',
     },
+    session: {
+        en: 'Session',
+        fi: 'Sessio',
+    },
+    session_age: {
+        en: 'Session age',
+        fi: 'Session ikä',
+    },
+    session_age_desc: {
+        en: 'User session age in seconds. This means that when the user has been idle for this amount, he is then logged out.',
+        fi: 'Käyttäjän session ikä sekunteina. Tämä tarkoittaa sitä, että jos käyttäjä on ollut tekemättä mitään näin kauan, hänet kirjataan ulos.',
+    },
+    registration: {
+        en: 'Registration',
+        fi: 'Rekisteröinti',
+    },
+    public_user_registration: {
+        en: 'Public user registration',
+        fi: 'Julkinen käyttäjän rekisteröinti',
+    },
+    public_user_registration_desc: {
+        en: 'Whether or not public users have access to register themselves as new users.',
+        fi: 'Pystyvätkö julkiset käyttäjät rekisteröimään itselleen tilin.',
+    },
 };
