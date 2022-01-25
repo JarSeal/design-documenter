@@ -97,7 +97,7 @@ class SettingsGroup extends Component {
                 attach: this.fsInnerWrapperId,
                 template: '<div class="settings-field">' +
                     `<div class="settings-field__label">${getText(field.labelId)}:</div>` +
-                    `<div class="settings-field__value">${field.value}</div>` +
+                    `<div class="settings-field__value">${this._displayValue(field)}</div>` +
                     (field.descriptionId
                         ? `<div class="settings-field__description">${getText(field.descriptionId)}</div>`
                         : '') +
@@ -107,6 +107,16 @@ class SettingsGroup extends Component {
                 '</div>',
             }));
         }
+    }
+
+    _displayValue = (field) => {
+        console.log('VALUE', field);
+        if(field.type === 'checkbox') {
+            return field.value === true || field.value === 'true'
+                ? getText('on').toUpperCase()
+                : getText('off').toUpperCase();
+        }
+        return field.value;
     }
 }
 
