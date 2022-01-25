@@ -27,6 +27,13 @@ class AdminSettings extends Component {
     }
 
     _loadAdminSettings = async () => {
+        // Clear old components
+        for(let i=0; i<this.settingsComponents.length; i++) {
+            if(this.settingsComponents[i]) this.settingsComponents[i].discard(true);
+        }
+        this.settingsComponents = [];
+        this.settingsData = [];
+        
         // Load form data
         let url = _CONFIG.apiBaseUrl + '/api/forms/admin-settings-form',
             formData, settingsData;
@@ -53,12 +60,6 @@ class AdminSettings extends Component {
 
     _createsettingsComponents = (formData, settingsData) => {
         const fieldsets = formData.fieldsets;
-        for(let i=0; i<this.settingsComponents.length; i++) {
-            if(this.settingsComponents[i]) this.settingsComponents[i].discard(true);
-        }
-        this.settingsComponents = [];
-        this.settingsData = [];
-
         for(let i=0; i<fieldsets.length; i++) {
             const fs = fieldsets[i];
             const data = {
@@ -92,6 +93,7 @@ class AdminSettings extends Component {
             this.settingsComponents.push(this.addChild(new SettingsGroup({
                 id: 'admin-settings-g-' + fs.id,
                 settingsData: data,
+                updateSettings: this._loadAdminSettings,
             })));
         }
 

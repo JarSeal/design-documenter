@@ -13,6 +13,7 @@ const { Component } = require("../../LIGHTER");
 //         {id:String, type:String, value:String, defaultValue:String|Number, options:Dropdown options, labelId, descriptionId}
 //       ]
 //   }
+//  - updateSettings: Function
 class SettingsGroup extends Component {
     constructor(data) {
         super(data);
@@ -22,6 +23,7 @@ class SettingsGroup extends Component {
         this.fields = [];
         this.appState = this.Router.commonData.appState;
         this.Dialog = this.appState.get('Dialog');
+        this.updateSettings = data.updateSettings;
     }
 
     addListeners = () => {
@@ -38,14 +40,17 @@ class SettingsGroup extends Component {
                         id: 'admin-settings-form',
                         appState: this.appState,
                         editDataId: fieldId,
+                        addToMessage: { mongoId: fieldId },
                         beforeFormSendingFn: () => {
                             this.Dialog.lock();
                         },
                         afterFormSentFn: () => {
+                            this.updateSettings();
                             this.Dialog.disappear();
                         },
                         onErrorsFn: (ex, res) => {
                             this.Dialog.unlock();
+                            this.updateSettings();
                             if(res && res.status === 401) this.Router.changeRoute('/');
                         },
                         onFormChages: () => { this.Dialog.changeHappened(); },

@@ -15,13 +15,13 @@ const adminSettingsFormData = {
         onErrorsMsgId: 'form_has_errors',
         afterSubmitMsg: '',
         afterSubmitShowOnlyMsg: true,
-        partialEditPossible: true, // TODO: IMPLEMENT THIS FEATURE
+        singleEdit: true,
         submitButton: {
             id: 'submit-admin-settings-button-id',
             labelId: 'save',
             class: 'save-button',
         },
-        submitFields: [ 'max-login-attempts' ], // MAYBE NOT NEEDED FOR PARTIAL EDIT FEATURE
+        submitFields: [ 'max-login-attempts', 'login-cooldown-time' ],
         fieldsets: [
             {
                 // FIELDSET
