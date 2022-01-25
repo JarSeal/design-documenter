@@ -83,12 +83,12 @@ class Component {
         }
         this.elem = document.getElementById(this.id);
         this._setElemData(this.elem, data);
-        this.addListeners(data);
         if(this.firstDraw) {
             this.init(data);
             this.firstDraw = false;
         }
         this.paint(data);
+        this.addListeners(data);
         this.simpletonIndex = 0;
         this.drawing = false;
     }
