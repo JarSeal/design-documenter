@@ -518,6 +518,14 @@ export const assetsObj = {
         en: 'Last edited',
         fi: 'Viimeksi muokattu',
     },
+    on: {
+        en: 'On',
+        fi: 'Päällä',
+    },
+    off: {
+        en: 'Off',
+        fi: 'Ei päällä',
+    },
     edit_setting: {
         en: 'Edit setting',
         fi: 'Muokkaa asetusta',
