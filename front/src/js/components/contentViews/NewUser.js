@@ -25,7 +25,7 @@ class NewUser extends Component {
                 type: 'button',
                 text: getText('login'),
                 click: () => {
-                    this.Router.changeRoute('/');
+                    this.Router.changeRoute('/login');
                 },
             }],
         });
