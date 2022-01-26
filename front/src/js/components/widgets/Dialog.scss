@@ -43,6 +43,17 @@ $sidePadding: 4rem;
             position: relative;
             left: 50%;
             transform: translate3d(-50%, 0, 0);
+            min-width: 50rem;
+            .form-elem__label {
+                width: 26rem;
+            }
+            @media only screen and (max-width: 740px) {
+                min-width: auto;
+                width: 100%;
+                .form-elem__label {
+                    width: auto;
+                }
+            }
         }
         .form-divider {
             background-color: #999;
