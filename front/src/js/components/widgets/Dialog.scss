@@ -46,12 +46,14 @@ $sidePadding: 4rem;
             min-width: 50rem;
             .form-elem__label {
                 width: 26rem;
+                max-width: none;
             }
             @media only screen and (max-width: 740px) {
-                min-width: auto;
+                min-width: none;
                 width: 100%;
                 .form-elem__label {
                     width: auto;
+                    max-width: 26rem;
                 }
             }
         }
