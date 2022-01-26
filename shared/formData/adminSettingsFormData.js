@@ -39,6 +39,8 @@ const adminSettingsFormData = {
                         defaultValue: 5,
                         required: true,
                         regex: '[0-9]+$',
+                        settingType: 'integer',
+                        settingReadRight: 0, // Defaults to 0
                     },
                     {
                         // Login cooldown time
@@ -48,6 +50,7 @@ const adminSettingsFormData = {
                         descriptionId: 'login_cooldown_time_desc',
                         defaultValue: 15,
                         required: true,
+                        settingType: 'integer',
                         regex: '[0-9]+$',
                     },
                 ],
@@ -65,6 +68,7 @@ const adminSettingsFormData = {
                         descriptionId: 'session_age_desc',
                         defaultValue: 600,
                         required: true,
+                        settingType: 'integer',
                         regex: '[0-9]+$',
                     },
                 ],
@@ -81,6 +85,7 @@ const adminSettingsFormData = {
                         labelId: 'public_user_registration',
                         descriptionId: 'public_user_registration_desc',
                         defaultValue: true,
+                        settingType: 'boolean',
                     },
                 ],
             },

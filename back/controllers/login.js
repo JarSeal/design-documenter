@@ -5,6 +5,7 @@ const Form = require('./../models/form');
 const logger = require('./../utils/logger');
 const { checkAccess, checkIfLoggedIn } = require('../utils/checkAccess');
 const { createRandomString } = require('../../shared/parsers');
+const { getSetting, getSettings } = require('../utils/settingsService');
 
 loginRouter.post('/access', async (request, response) => {
 
@@ -26,14 +27,17 @@ loginRouter.post('/access', async (request, response) => {
             .map(form => form.formId);
     } else if(request.body.from === 'checklogin') {
         // Done at the beginning of a page refresh
-        // Check if logged in and if the saved browserId is the same to the saved to session
+        // Check if logged in and if the saved browserId is the same as the one saved in the session
         browserId = request.body.browserId;
         if(checkIfLoggedIn(request.session) && browserId === request.session.browserId) {
             result.username = request.session.username;
             result.userLevel = request.session.userLevel || 0;
+            result.settings = getSettings(request);
         } else {
             request.session.browserId = browserId;
+            result.settings = getSettings(request);
         }
+        result.serviceSettings = await getSettings(request);
     } else if(request.body.from === 'getCSRF') {
         if(!request.session) {
             result.sessionExpired = true;
@@ -117,10 +121,14 @@ loginRouter.post('/', async (request, response) => {
     request.session._id = user._id;
     request.session.browserId = body.browserId;
     request.session.loggedIn = true;
+    let sessionAge;
+    const settings = getSettings(request);
     if(body['remember-me']) {
-        request.session.cookie.maxAge = 864000000; // 10 days
+        request.session.cookie.maxAge = 864000000; // 10 days in milliseconds
     } else {
-        request.session.cookie.maxAge = 3600000; // 1 hour
+        sessionAge = await getSetting(request, 'session-age', true, true);
+        if(!sessionAge || sessionAge < 300) sessionAge = 300; // Minimum 5 minutes
+        request.session.cookie.maxAge = sessionAge * 1000; // Milliseconds
     }
 
     response
@@ -129,6 +137,7 @@ loginRouter.post('/', async (request, response) => {
             loggedIn: true,
             username: user.username,
             userLevel: user.userLevel,
+            settings,
         });
 });
 

@@ -25,6 +25,16 @@ const adminSettingSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    settingReadRight: {
+        type: Number,
+        required: true,
+        minlength: 1,
+        maxlength: 1,
+    },
+    type: {
+        type: String,
+        required: true,
+    },
     edited: [
         {
             _id: false,

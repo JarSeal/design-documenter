@@ -51,6 +51,8 @@ const createPresetForms = async () => {
                         defaultValue: field.defaultValue,
                         labelId: field.labelId,
                         descriptionId: field.descriptionId,
+                        settingReadRight: field.settingReadRight || 0,
+                        type: field.settingType,
                     });
                     await setting.save();
                     settingsSaved++;
