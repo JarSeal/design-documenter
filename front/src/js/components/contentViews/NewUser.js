@@ -33,11 +33,7 @@ class NewUser extends Component {
 
     paint = () => {
         this.viewTitle.draw();
-        if(this.appState.get('user.loggedIn')) {
-            this.Router.changeRoute('/');
-        } else {
-            this.form.draw();
-        }
+        this.form.draw();
     }
 }
 

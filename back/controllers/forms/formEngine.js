@@ -1,19 +1,17 @@
 const csrf = require('csurf');
 const mongoose = require('mongoose');
-const User = require('../../models/user');
 const Form = require('../../models/form');
 const shared = require('../../shared');
 const logger = require('./../../utils/logger');
+const { checkAccess, checkIfLoggedIn } = require('../../utils/checkAccess');
+const { getSettings } = require('../../utils/settingsService');
 
-const getAndValidateForm = async (formId, method, request, user) => {
+const getAndValidateForm = async (formId, method, request) => {
     let error = null;
     const formData = await Form.findOne({ formId });
 
     if(method === 'GET') {
-        if(!user) {
-            user = await User.findById(request.session._id);
-        }
-        error = await validatePrivileges(formData, request, user);
+        error = await validatePrivileges(formData, request);
     } else if(method === 'POST' || method === 'PUT') {
         error = await validateFormData(formData, request);
     }
@@ -129,7 +127,7 @@ const validateKeys = (form, keys) => {
     return keysFound === submitFields.length;
 };
 
-const validateFormData = async (formData, request, user) => {
+const validateFormData = async (formData, request) => {
     const body = request.body;
     if(!formData || !formData.form) {
         return {
@@ -138,7 +136,7 @@ const validateFormData = async (formData, request, user) => {
         };
     }
 
-    const error = await validatePrivileges(formData, request, user);
+    const error = await validatePrivileges(formData, request);
     if(error) return error;
 
     const keys = Object.keys(body);
@@ -169,10 +167,11 @@ const validateFormData = async (formData, request, user) => {
     return null;
 };
 
-const validatePrivileges = async (form, request, user) => {
+const validatePrivileges = async (form, request) => {
+    const settings = await getSettings(request, true);
     if(form.useRightsLevel && form.useRightsLevel !== 0) {
         const sess = request.session;
-        if(!sess || !sess.username) {
+        if(!checkIfLoggedIn(sess)) {
             logger.log(`User not authenticated or session has expired. Trying to access form with id ${form.formId}.`);
             return {
                 code: 401,
@@ -181,24 +180,18 @@ const validatePrivileges = async (form, request, user) => {
                     _sess: false,
                 },
             };
-        } else {
-            if(!user) {
-                user = await User.findById(sess._id);
-            }
-            const requiredLevel = form.useRightsLevel;
-            if(requiredLevel > user.userLevel) {
-                logger.error(`User not authorised. Trying to access form with id ${form.formId}.`);
-                return {
-                    code: 401,
-                    obj: {
-                        unauthorised: true,
-                        msg: 'User not authorised.'
-                    },
-                };
-            }
-
-            // Check here for possible groups and user list
         }
+    }
+
+    if(!checkAccess(request, form, settings)) {
+        logger.error(`User not authorised. Trying to access form with id ${form.formId}.`);
+        return {
+            code: 401,
+            obj: {
+                unauthorised: true,
+                msg: 'User not authorised.'
+            },
+        };
     }
 };
 

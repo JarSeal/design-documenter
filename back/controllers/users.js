@@ -15,15 +15,14 @@ usersRouter.get('/', async (request, response) => {
 
     // Get formData, get user, and check the user's admin rights
     const formId = readUsersFormData.formId;
-    const user = await User.findById(request.session._id);
-    const error = await getAndValidateForm(formId, 'GET', request, user);
+    const error = await getAndValidateForm(formId, 'GET', request);
     if(error) {
         response.status(error.code).json(error.obj);
         return;
     }
     
     // Get the users that have smaller user level than the current user
-    const result = await User.find({ userLevel: { $lt: parseInt(user.userLevel) } });
+    const result = await User.find({ userLevel: { $lt: parseInt(request.session.userLevel) } });
 
     // const result = await User.find({}).populate('userGroups', {
     //     name: 1, id: 1
@@ -36,8 +35,7 @@ usersRouter.get('/', async (request, response) => {
 usersRouter.get('/:userId', async (request, response) => {
 
     const formId = readOneUserFormData.formId;
-    const user = await User.findById(request.session._id);
-    const error = await getAndValidateForm(formId, 'GET', request, user);
+    const error = await getAndValidateForm(formId, 'GET', request);
     if(error) {
         response.status(error.code).json(error.obj);
         return;
@@ -62,7 +60,7 @@ usersRouter.get('/:userId', async (request, response) => {
             userNotFoundError: true,
         });
         return;
-    } else if(userToView.userLevel >= user.userLevel) {
+    } else if(userToView.userLevel >= request.session.userLevel) {
         logger.log('Unauthorised. Not high enough userLevel to view current user. (+ session, userId)', request.session, userId);
         response.status(401).json({
             unauthorised: true,

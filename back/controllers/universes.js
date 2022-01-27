@@ -2,7 +2,6 @@ const universeRouter = require('express').Router();
 const logger = require('./../utils/logger');
 const Universe = require('./../models/universe');
 const Form = require('./../models/form');
-const User = require('./../models/user');
 const { validateFormData } = require('./forms/formEngine');
 
 // Get all universes
@@ -30,8 +29,7 @@ universeRouter.post('/', async (request, response) => {
     const body = request.body;
     const formData = await Form.findOne({ formId: body.id });
 
-    const user = await User.findById(request.session._id);
-    const error = await validateFormData(formData, request, user);
+    const error = await validateFormData(formData, request);
     if(error) {
         logger.log('Error with form validation. (+ error, formId, token)', error, body.id, request.token);
         return response.status(error.code).json(error.obj);
@@ -51,14 +49,14 @@ universeRouter.post('/', async (request, response) => {
         universeId: body.universeId.trim(),
         description: body.universeDescription.trim(),
         created: {
-            by: user.id,
+            by: request.session._id,
             date: new Date(),
         },
     });
 
     const savedUniverse = await universe.save();
     
-    logger.log(`Created universe '${body.universeTitle.trim()}'' (id: '${body.universeId.trim()}'). (+ token)`, request.token);
+    logger.log(`Created universe '${body.universeTitle.trim()}'' (id: '${body.universeId.trim()}').`);
 
     response.json(savedUniverse);
 });

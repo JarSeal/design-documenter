@@ -27,7 +27,7 @@ const getSetting = async (request, id, admin, noReload) => {
         let setting;
         admin
             ? setting = await AdminSetting.find({ settingId: id })
-            : null;
+            : null; // TODO: Add regular user settings here
         if(!setting) return null;
         let userLevel = 0;
         if(checkIfLoggedIn(request)) userLevel = request.session.userLevel;

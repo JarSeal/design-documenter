@@ -71,6 +71,7 @@ class Base extends Component {
             this.appState.set('user.loggedIn', response.data.loggedIn);
             this.appState.set('user.userLevel', response.data.userLevel || 0);
         }
+        this.appState.set('serviceSettings', response.data.serviceSettings);
 
         this.mainLoader.hide(() => {
             this.appState.set('loading.main', false);

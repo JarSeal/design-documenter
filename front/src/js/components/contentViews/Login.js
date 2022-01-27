@@ -7,6 +7,7 @@ class Login extends Component {
     constructor(data) {
         super(data);
         this.appState = data.appState;
+        this.publicUserRegistration;
         this.viewTitle = this.addChild(new ViewTitle({
             id: this.id+'-view-title',
             heading: data.title,
@@ -22,17 +23,20 @@ class Login extends Component {
     }
 
     init = () => {
-        const updateMainMenu = this.appState.get('updateMainMenu');
-        updateMainMenu({
-            tools: [{
-                id: 'register-new-user-button',
-                type: 'button',
-                text: getText('new_user'),
-                click: () => {
-                    this.Router.changeRoute('/newuser');
-                },
-            }],
-        });
+        this.publicUserRegistration = this.appState.get('serviceSettings')['public-user-registration'];
+        if(this.publicUserRegistration) {
+            const updateMainMenu = this.appState.get('updateMainMenu');
+            updateMainMenu({
+                tools: [{
+                    id: 'register-new-user-button',
+                    type: 'button',
+                    text: getText('new_user'),
+                    click: () => {
+                        this.Router.changeRoute('/newuser');
+                    },
+                }],
+            });
+        }
     }
 
     paint = () => {

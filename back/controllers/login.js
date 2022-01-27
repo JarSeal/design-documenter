@@ -32,10 +32,8 @@ loginRouter.post('/access', async (request, response) => {
         if(checkIfLoggedIn(request.session) && browserId === request.session.browserId) {
             result.username = request.session.username;
             result.userLevel = request.session.userLevel || 0;
-            result.settings = getSettings(request);
         } else {
             request.session.browserId = browserId;
-            result.settings = getSettings(request);
         }
         result.serviceSettings = await getSettings(request);
     } else if(request.body.from === 'getCSRF') {
@@ -58,20 +56,18 @@ loginRouter.post('/access', async (request, response) => {
     } else {
         const ids = request.body.ids;
         for(let i=0; i<ids.length; i++) {
-            if(ids[i].from === 'universe') {
+            const id = ids[i];
+            if(id.from === 'universe') {
                 // TODO, do universe here (find by universeId)
             } else { // Default is Form
-                check = await Form.findOne({ formId: ids[i].id });
+                check = await Form.findOne({ formId: id.id });
             }
-            result[ids[i].id] = checkAccess(request, check);
+            const settings = await getSettings(request, true);
+            result[id.id] = checkAccess(request, check, settings);
         }
     }
 
-    if(!checkIfLoggedIn(request.session)) {
-        result.loggedIn = false;
-    } else {
-        result.loggedIn = true;
-    }
+    result.loggedIn = checkIfLoggedIn(request.session);
     
     return response.json(result);
 });
