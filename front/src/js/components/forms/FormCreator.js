@@ -22,7 +22,8 @@ import Button from '../buttons/Button';
 // - onErrorsFn = Function to callback after form sending errors [Function] (properties: exception, exception.response)
 // - formLoadedFn = Function to callback after the form has finished loading [Function]
 // - extraButton = Object with 'label' or 'labelId' (String) and 'clickFn' (Function) properties (adds an extra button next to the submit button)
-// - onFormChages = Function to callback when a change to the form is made [Function]
+// - onFormChanges = Function to callback when a change to the form is made [Function]
+// - fieldInitValues = Object with field id as key and value as field value
 class FormCreator extends Component {
     constructor(data) {
         super(data);
@@ -300,6 +301,7 @@ class FormCreator extends Component {
         const placeholder = this._getTextData(field.placeholder, field.placeholderId);
         this.fieldErrors.set(id, false);
         if(this.data.data && this.data.data[id]) field.initValue = this.data.data[id];
+        if(this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new TextArea({
             id,
@@ -330,7 +332,7 @@ class FormCreator extends Component {
                 }
                 this._displayFieldError(id);
                 this.formHasChanges = true;
-                if(this.data.onFormChages) this.data.onFormChages();
+                if(this.data.onFormChanges) this.data.onFormChanges();
             },
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
@@ -344,6 +346,7 @@ class FormCreator extends Component {
         const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
         this.fieldErrors.set(id, false);
         if(this.data.data && this.data.data[id]) field.initValue = this.data.data[id];
+        if(this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
         let options = [];
         if(field.options) {
             for(let i=0; i<field.options.length; i++) {
@@ -388,7 +391,7 @@ class FormCreator extends Component {
                 }
                 this._displayFieldError(id);
                 this.formHasChanges = true;
-                if(this.data.onFormChages) this.data.onFormChages();
+                if(this.data.onFormChanges) this.data.onFormChanges();
             },
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
@@ -403,6 +406,7 @@ class FormCreator extends Component {
         this.fieldErrors.set(id, false);
         if(this.data.data && this.data.data[id]) field.initValue = this.data.data[id] === true || this.data.data[id] === 'true'
             ? true : false;
+        if(this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new Checkbox({
             id,
@@ -429,7 +433,7 @@ class FormCreator extends Component {
                 }
                 this._displayFieldError(id);
                 this.formHasChanges = true;
-                if(this.data.onFormChages) this.data.onFormChages();
+                if(this.data.onFormChanges) this.data.onFormChanges();
             },
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
@@ -443,6 +447,7 @@ class FormCreator extends Component {
         const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
         const placeholder = this._getTextData(field.placeholder, field.placeholderId);
         if(this.data.data && this.data.data[id]) field.initValue = this.data.data[id];
+        if(this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
         this.fieldErrors.set(id, false);
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new TextInput({
@@ -475,7 +480,7 @@ class FormCreator extends Component {
                 }
                 this._displayFieldError(id);
                 this.formHasChanges = true;
-                if(this.data.onFormChages) this.data.onFormChages();
+                if(this.data.onFormChanges) this.data.onFormChanges();
             },
         }));
         this.components[id]['fieldsetId'] = fieldsetId;
