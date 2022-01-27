@@ -135,6 +135,7 @@ loginRouter.post('/', async (request, response) => {
             loggedIn: true,
             username: user.username,
             userLevel: user.userLevel,
+            rememberMe: body['remember-me'],
             serviceSettings: settings,
         });
 });
