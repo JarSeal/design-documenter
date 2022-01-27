@@ -104,6 +104,7 @@ class Router {
                     route: routes[i],
                     curRouteData: this.curRouteData,
                     curRoute: this.curRoute,
+                    commonData: this.commonData,
                     prevRouteData: null,
                     prevRoute: null,
                 });
@@ -230,6 +231,7 @@ class Router {
                     route: this.routes[i],
                     curRouteData: this.curRouteData,
                     curRoute: this.curRoute,
+                    commonData: this.commonData,
                     prevRouteData: this.prevRouteData,
                     prevRoute: this.prevRouteData,
                 });
@@ -370,9 +372,8 @@ class Router {
     }
 
     _createNewView(routeData) {
-        const commonData = this.commonData;
         routeData.component = new routeData.source({
-            ...commonData,
+            ...this.commonData,
             id: routeData.id,
             parentId: routeData.parentId,
             title: routeData.title,
