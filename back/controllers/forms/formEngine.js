@@ -189,7 +189,7 @@ const validatePrivileges = async (form, request) => {
             code: 401,
             obj: {
                 unauthorised: true,
-                msg: 'User not authorised.'
+                msg: 'User not authorised.',
             },
         };
     }
