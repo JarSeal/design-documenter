@@ -48,6 +48,23 @@ const userSchema = mongoose.Schema({
             date: Date,
         }
     ],
+    security: {
+        loginAttempts: Number,
+        coolDown: Boolean,
+        coolDownStarted: Date,
+        lastLogins: [
+            {
+                _id: false,
+                date: Date,
+            }
+        ],
+        lastAttempts: [
+            {
+                _id: false,
+                date: Date,
+            }
+        ],
+    },
 });
 
 userSchema.plugin(uniqueValidator);
