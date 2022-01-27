@@ -53,6 +53,7 @@ class Login extends Component {
             this.appState.set('user.username', response.data.username);
             this.appState.set('user.loggedIn', true);
             this.appState.set('user.userLevel', response.data.userLevel);
+            this.appState.set('serviceSettings', response.data.serviceSettings);
             this.Router.changeRoute('/');
         }
     }

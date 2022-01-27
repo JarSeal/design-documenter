@@ -36,6 +36,19 @@ const getSetting = async (request, id, admin, noReload) => {
     return all[id];
 };
 
+const getPublicSettings = async (request, noReload) => {
+    if(!noReload) {
+        await reloadSettings(request);
+    }
+    const publicSettings = {};
+    const keys = Object.keys(publicSettingsRemapping);
+    for(let i=0; i<keys.length; i++) {
+        const newKey = publicSettingsRemapping[keys[i]].newKey;
+        publicSettings[newKey] = all[keys[i]];
+    }
+    return publicSettings;
+};
+
 const getValue = (setting) => {
     if(setting.type === 'integer') {
         return parseInt(setting.value);
@@ -47,7 +60,17 @@ const getValue = (setting) => {
     }
 };
 
+const publicSettingsRemapping = {
+    'public-user-registration': {
+        newKey: 'canCreateUser',
+        transferValue: (value) => {
+            return value;
+        },
+    },
+};
+
 module.exports = {
     getSettings,
     getSetting,
+    getPublicSettings,
 };

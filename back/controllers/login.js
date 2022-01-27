@@ -5,7 +5,7 @@ const Form = require('./../models/form');
 const logger = require('./../utils/logger');
 const { checkAccess, checkIfLoggedIn } = require('../utils/checkAccess');
 const { createRandomString } = require('../../shared/parsers');
-const { getSetting, getSettings } = require('../utils/settingsService');
+const { getSetting, getSettings, getPublicSettings } = require('../utils/settingsService');
 
 loginRouter.post('/access', async (request, response) => {
 
@@ -35,7 +35,7 @@ loginRouter.post('/access', async (request, response) => {
         } else {
             request.session.browserId = browserId;
         }
-        result.serviceSettings = await getSettings(request);
+        result.serviceSettings = await getPublicSettings(request);
     } else if(request.body.from === 'getCSRF') {
         if(!request.session) {
             result.sessionExpired = true;
@@ -64,6 +64,7 @@ loginRouter.post('/access', async (request, response) => {
             }
             const settings = await getSettings(request, true);
             result[id.id] = checkAccess(request, check, settings);
+            result.serviceSettings = await getPublicSettings(request, true);
         }
     }
 
@@ -118,13 +119,14 @@ loginRouter.post('/', async (request, response) => {
     request.session.browserId = body.browserId;
     request.session.loggedIn = true;
     let sessionAge;
-    const settings = getSettings(request);
+    const settings = await getPublicSettings(request);
     if(body['remember-me']) {
-        request.session.cookie.maxAge = 864000000; // 10 days in milliseconds
+        sessionAge = await getSetting(request, 'remember-me-session-age', true, true);
+        request.session.cookie.maxAge = sessionAge * 60 * 1000; // Milliseconds
     } else {
         sessionAge = await getSetting(request, 'session-age', true, true);
         if(!sessionAge || sessionAge < 300) sessionAge = 300; // Minimum 5 minutes
-        request.session.cookie.maxAge = sessionAge * 1000; // Milliseconds
+        request.session.cookie.maxAge = sessionAge * 60 * 1000; // Milliseconds
     }
 
     response
@@ -133,7 +135,7 @@ loginRouter.post('/', async (request, response) => {
             loggedIn: true,
             username: user.username,
             userLevel: user.userLevel,
-            settings,
+            serviceSettings: settings,
         });
 });
 

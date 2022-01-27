@@ -555,8 +555,16 @@ export const assetsObj = {
         fi: 'Session ikä',
     },
     session_age_desc: {
-        en: 'User session age in seconds. This means that when the user has been idle for this amount, he is then logged out.',
-        fi: 'Käyttäjän session ikä sekunteina. Tämä tarkoittaa sitä, että jos käyttäjä on ollut tekemättä mitään näin kauan, hänet kirjataan ulos.',
+        en: 'User session age in minutes. This means that when the user has been idle for this amount, he is then logged out.',
+        fi: 'Käyttäjän session ikä minuutteina. Tämä tarkoittaa sitä, että jos käyttäjä on ollut tekemättä mitään näin kauan, hänet kirjataan ulos.',
+    },
+    remember_me_session_age: {
+        en: '"Remember me" session age',
+        fi: '"Muista minut" session ikä',
+    },
+    remember_me_session_age_desc: {
+        en: 'User session age in minutes, when the "Remember me" chechbox has been ticked. This means that when the user has been idle for this amount, he is then logged out. Should be longer than the regular session age.',
+        fi: 'Käyttäjän session ikä minuutteina, kun "Muista minut" kohta on valittu kirjautumisessa. Tämä tarkoittaa sitä, että jos käyttäjä on ollut tekemättä mitään näin kauan, hänet kirjataan ulos. Tämän tulisi olla pidempi kuin normaalin session ikä.',
     },
     registration: {
         en: 'Registration',

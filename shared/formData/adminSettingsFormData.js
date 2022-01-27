@@ -23,6 +23,7 @@ const adminSettingsFormData = {
         },
         submitFields: [
             'max-login-attempts', 'login-cooldown-time', 'session-age', 'public-user-registration',
+            'user-registration-level',
         ],
         fieldsets: [
             {
@@ -66,7 +67,18 @@ const adminSettingsFormData = {
                         id: 'session-age',
                         labelId: 'session_age',
                         descriptionId: 'session_age_desc',
-                        defaultValue: 600,
+                        defaultValue: 60, // one hour
+                        required: true,
+                        settingType: 'integer',
+                        regex: '[0-9]+$',
+                    },
+                    {
+                        // 'Remember me' session age
+                        type: 'textinput',
+                        id: 'remember-me-session-age',
+                        labelId: 'remember_me_session_age',
+                        descriptionId: 'remember_me_session_age_desc',
+                        defaultValue: 10080, // 7 days
                         required: true,
                         settingType: 'integer',
                         regex: '[0-9]+$',
