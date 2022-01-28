@@ -56,6 +56,7 @@ const userSchema = mongoose.Schema({
             {
                 _id: false,
                 date: Date,
+                browserId: String,
             }
         ],
         lastAttempts: [

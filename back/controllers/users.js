@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const isValidObjectId = require('./../utils/helpers').isValidObjectId;
+const { isValidObjectId, createNewEditedArray } = require('./../utils/helpers');
 const usersRouter = require('express').Router();
 const CONFIG = require('./../shared').CONFIG;
 const readUsersFormData = require('./../../shared/formData/readUsersFormData');
@@ -7,7 +7,7 @@ const readOneUserFormData = require('./../../shared/formData/readOneUserFormData
 const logger = require('./../utils/logger');
 const User = require('./../models/user');
 const Form = require('./../models/form');
-const { createNewEditedArray, getAndValidateForm } = require('./forms/formEngine');
+const { getAndValidateForm } = require('./forms/formEngine');
 const { checkIfLoggedIn } = require('./../utils/checkAccess');
 
 

@@ -3,6 +3,7 @@ const loginRouter = require('express').Router();
 const User = require('./../models/user');
 const Form = require('./../models/form');
 const logger = require('./../utils/logger');
+const { createNewLoginLogsArray } = require('./../utils/helpers');
 const { checkAccess, checkIfLoggedIn } = require('../utils/checkAccess');
 const { createRandomString } = require('../../shared/parsers');
 const { getSetting, getSettings, getPublicSettings } = require('../utils/settingsService');
@@ -79,13 +80,46 @@ loginRouter.post('/', async (request, response) => {
 
     // Check user
     const user = await User.findOne({ username: body.username });
+    const userSecurity = user.security
+        ? user.security
+        : {
+            loginAttempts: 0,
+            coolDown: false,
+            coolDownStarted: null,
+            lastLogins: [],
+            lastAttempts: [],
+        };
+    // Check here if the user is under cooldown period
+    
     const passwordCorrect = user === null
         ? false
         : await bcrypt.compare(body.password, user.passwordHash);
     const browserId = body.browserId;
 
     if(!(user && passwordCorrect && browserId && browserId.length == 32)) {
-        // Login counter here and create a cool down period for x wrong logins
+        if(user) {
+            const maxLoginAttempts = await getSetting(request, 'max-login-attempts', true);
+            userSecurity.loginAttempts = userSecurity.loginAttempts + 1 || 1;
+            if(userSecurity.loginAttempts >= maxLoginAttempts) {
+                userSecurity.coolDown = true;
+                userSecurity.coolDownStarted = new Date();
+                logger.log('User set to cooldown period (id: ' + user._id + ').');
+            } else {
+                userSecurity.coolDown = false;
+                userSecurity.coolDownStarted = null;
+            }
+            
+            userSecurity.lastAttempts = userSecurity.lastAttempts || [];
+            userSecurity.lastAttempts.push({
+                date: new Date()
+            });
+
+            const savedUser = await User.findByIdAndUpdate(user._id, { security: userSecurity }, { new: true });
+            if(!savedUser) {
+                logger.log('Could not update user security data. User was not found (id: ' + user._id + ').');
+            }
+        }
+
         return response.status(401).json({
             error: 'invalid username and/or password',
             loggedIn: false,
@@ -111,6 +145,19 @@ loginRouter.post('/', async (request, response) => {
         }
     }
 
+    // Clear attempts
+    userSecurity.loginAttempts = 0;
+    userSecurity.coolDown = false;
+    userSecurity.coolDownStarted = null;
+    userSecurity.lastAttempts = [];
+    userSecurity.lastLogins = createNewLoginLogsArray(userSecurity.lastLogins || [], {
+        date: new Date(),
+        browserId: body.browserId,
+    });
+    const savedUser = await User.findByIdAndUpdate(user._id, { security: userSecurity }, { new: true });
+    if(!savedUser) {
+        logger.log('Could not clear user attempts. User was not found (id: ' + user._id + ').');
+    }
 
     // Create a new session:
     request.session.username = user.username;
