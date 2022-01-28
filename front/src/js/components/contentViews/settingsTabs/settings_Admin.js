@@ -1,8 +1,6 @@
 import { Component, Logger } from "../../../LIGHTER";
 import axios from "axios";
-import { getText } from "../../../helpers/lang";
 import { _CONFIG } from "../../../_CONFIG";
-import FormCreator from "../../forms/FormCreator";
 import SettingsGroup from "../../widgets/SettingsGroup";
 
 class AdminSettings extends Component {
@@ -33,7 +31,7 @@ class AdminSettings extends Component {
         }
         this.settingsComponents = [];
         this.settingsData = [];
-        
+
         // Load form data
         let url = _CONFIG.apiBaseUrl + '/api/forms/admin-settings-form',
             formData, settingsData;
