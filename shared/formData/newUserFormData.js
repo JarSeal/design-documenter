@@ -28,25 +28,15 @@ const newUserFormData = {
         onErrorsMsgId: 'form_has_errors',
         afterSubmitMsgId: 'new_user_registered',
         afterSubmitShowOnlyMsg: true,
-        server: {
-            useRightLevel: 0, // 0 = Public form
-            useRightUsers: [],
-            useRightGroups: [],
-            editFormLevel: 9,
-            editFormUsers: [],
-            editFormGroups: [],
-            newUserLevel: 1, // Level of the new user
-            newUserGroups: [], // Groups that the registered user belongs
-        },
         submitButton: {
-            id: 'submit-button-id',
+            id: 'submit-new-user-button-id',
             labelId: 'create_new_user_button',
         },
         submitFields: [ 'username', 'name', 'email', 'password' ],
         fieldsets: [
             {
                 // FIELDSET
-                id: 'main-fieldset',
+                id: 'new-user-main-fs',
                 fields: [
                     { type: 'divider' },
                     {

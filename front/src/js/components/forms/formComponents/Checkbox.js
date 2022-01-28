@@ -23,17 +23,19 @@ class Checkbox extends Component {
                         class="form-elem__checkbox"
                         type="checkbox"
                         name="${data.name}"
-                        ${data.value || data.checked ? 'checked' : ''}
+                        ${data.value === true || data.value === 'true' || 
+                          data.checked === true || data.checked === 'true' ? 'checked' : ''}
                         ${data.disabled ? 'disabled' : ''}
                     />
                 </label>
             </div>
         `;
-        this.value = data.value || data.checked || false;
-        this.errorComp = this.addChild(new Component({
+        this.value = data.value === true || data.value === 'true' || 
+                     data.checked === true || data.checked === 'true' || false;
+        this.errorComp = this.addChild({
             id: this.id + '-error-msg',
             class: 'form-elem__error-msg',
-        }));
+        });
         if(data.error) data.class = 'form-elem--error';
     }
 
@@ -44,8 +46,8 @@ class Checkbox extends Component {
             type: 'click',
             fn: (e) => {
                 this.value = e.target.checked;
-                this.data.value = this.data.checked  = this.value;
-                if(this.value === false) {
+                this.data.value = this.data.checked = this.value;
+                if(this.value === false || this.value === 'false') {
                     this.elem.classList.remove('form-elem--checked');
                 } else {
                     this.elem.classList.add('form-elem--checked');
@@ -57,12 +59,17 @@ class Checkbox extends Component {
 
     paint(data) {
         const inputElem = document.getElementById(this.inputId);
-        if(data.checked === true || data.checked === false || data.value === true || data.value === false) {
-            this.value = data.value || data.checked || false;
+        if (data.checked === true || data.checked === false || 
+            data.value === true || data.value === false ||
+            data.checked === 'true' || data.checked === 'false' ||
+            data.value === 'true' || data.value === 'false')
+        {
+            this.value = data.value === true || data.value === 'true' || 
+                         data.checked === true || data.checked === 'true' || false;
             this.data.value = this.data.checked  = this.value;
         }
         inputElem.checked = this.value;
-        if(this.value === false) {
+        if(this.value === false || this.value === 'false') {
             this.elem.classList.remove('form-elem--checked');
         } else {
             this.elem.classList.add('form-elem--checked');
@@ -94,7 +101,7 @@ class Checkbox extends Component {
 
     setValue = (newValue, noChangeFn) => {
         const inputElem = document.getElementById(this.inputId);
-        if(newValue === false) {
+        if(newValue === false || newValue === 'false') {
             this.value = false;
             inputElem.checked = false;
             this.elem.classList.remove('form-elem--checked');

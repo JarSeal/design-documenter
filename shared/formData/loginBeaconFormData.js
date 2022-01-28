@@ -1,4 +1,3 @@
-const CONFIG = require('./../../CONFIG').USER;
 
 const loginBeaconFormData = {
     formId: 'beacon-main-login',
@@ -22,13 +21,14 @@ const loginBeaconFormData = {
         onErrorsMsgId: 'login_error_empty',
         formErrors: {
             error401Id: 'login_error_wrong',
+            error403NoShow: true,
         },
         showBottomMsg: false,
         submitButton: {
             id: 'submit-button',
-            labelId: 'login_button',
+            labelId: 'login',
         },
-        submitFields: ['username', 'password'],
+        submitFields: ['username', 'password', 'remember-me'],
         fieldsets: [
             {
                 id: 'main-fieldset-beacon-login',

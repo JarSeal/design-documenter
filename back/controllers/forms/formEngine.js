@@ -1,11 +1,32 @@
-const User = require('../../models/user');
+const csrf = require('csurf');
+const Form = require('../../models/form');
 const shared = require('../../shared');
 const logger = require('./../../utils/logger');
+const { checkAccess, checkIfLoggedIn } = require('../../utils/checkAccess');
+const { getSettings } = require('../../utils/settingsService');
+
+const getAndValidateForm = async (formId, method, request) => {
+    let error = null;
+    const formData = await Form.findOne({ formId });
+
+    if(method === 'GET') {
+        error = await validatePrivileges(formData, request);
+    } else if(method === 'POST' || method === 'PUT') {
+        error = await validateFormData(formData, request);
+    }
+
+    if(error) {
+        logger.log('Unauthorised, getAndValidateForm failed. (+ error, formId, session)', error, formId, request.session);
+    }
+
+    return error;
+};
 
 const validateField = (form, key, value) => {
     if(key === 'id') return null;
     
-    const fieldsets = form.fieldsets;
+    let fieldsets = form.fieldsets;
+    if(!fieldsets) return null;
     for(let i=0; i<fieldsets.length; i++) {
         const fieldset = fieldsets[i];
         for(let j=0; j<fieldset.fields.length; j++) {
@@ -48,14 +69,27 @@ const checkbox = (field, value) => {
 const dropdown = (field, value) => {
     if(field.required && String(value).trim() === '') return 'Required';
     // Validate that the value passed is one of the options
-    let valueFound = false;
-    for(let i=0; i<field.options.length; i++) {
-        if(String(field.options[i].value).trim() === String(value).trim()) {
-            valueFound = true;
-            break;
+    if(field.options) {
+        let valueFound = false;
+        for(let i=0; i<field.options.length; i++) {
+            if(String(field.options[i].value).trim() === String(value).trim()) {
+                valueFound = true;
+                break;
+            }
         }
+        if(!valueFound) {
+            logger.log('A value was presented that is not one of the options for a dropdown. (+ value, field)', value, field);
+            return 'Unknown value';
+        }
+    } else if(field.minValue && field.maxValue) {
+        if(field.minValue > value || field.maxValue < value) {
+            logger.log('Value is out of validation range for a dropdown. (+ value, field)', value, field);
+            return 'Value is out of validation range.';
+        }
+    } else {
+        logger.log('No validation provided. No options or minValue and maxValue for a dropdown. (+ value, field)', value, field);
+        return 'No validation provided. Needs to have options or minValue and maxValue defined.';
     }
-    if(!valueFound) return 'Unknown value';
     return null;
 };
 
@@ -92,7 +126,7 @@ const validateKeys = (form, keys) => {
     return keysFound === submitFields.length;
 };
 
-const validateFormData = async (formData, request, user) => {
+const validateFormData = async (formData, request) => {
     const body = request.body;
     if(!formData || !formData.form) {
         return {
@@ -101,16 +135,18 @@ const validateFormData = async (formData, request, user) => {
         };
     }
 
-    const error = await validatePrivileges(formData, request, user);
+    const error = await validatePrivileges(formData, request);
     if(error) return error;
 
     const keys = Object.keys(body);
-    const keysFound = validateKeys(formData.form, keys);
-    if(!keysFound) {
-        return {
-            code: 400,
-            obj: { msg: 'Bad request. Payload missing or incomplete.' },
-        };
+    if(!formData.form.singleEdit) {
+        const keysFound = validateKeys(formData.form, keys);
+        if(!keysFound) {
+            return {
+                code: 400,
+                obj: { msg: 'Bad request. Payload missing or incomplete.' },
+            };
+        }
     }
 
     const errors = {};
@@ -130,41 +166,47 @@ const validateFormData = async (formData, request, user) => {
     return null;
 };
 
-const validatePrivileges = async (form, request, user) => {
+const validatePrivileges = async (form, request) => {
+    const settings = await getSettings(request, true);
     if(form.useRightsLevel && form.useRightsLevel !== 0) {
-        if(!request.token || (request.decodedToken && !request.decodedToken.id)) {
-            logger.log(`Token missing, expired, or invalid. Trying to access form with id ${form.formId}. (+ token)`, request.token);
+        const sess = request.session;
+        if(!checkIfLoggedIn(sess)) {
+            logger.log(`User not authenticated or session has expired. Trying to access form with id ${form.formId}.`);
             return {
                 code: 401,
                 obj: {
-                    unauthorised: true,
-                    msg: 'Token missing, expired, or invalid.'
+                    msg: 'User not authenticated or session has expired.',
+                    _sess: false,
                 },
             };
-        } else {
-            if(!user) {
-                user = await User.findById(request.decodedToken.id);
-            }
-            const requiredLevel = form.useRightsLevel;
-            if(requiredLevel > user.userLevel) {
-                logger.log(`User not authorised. Trying to access form with id ${form.formId}. (+ token)`, request.token);
-                return {
-                    code: 401,
-                    obj: {
-                        unauthorised: true,
-                        msg: 'User not authorised.'
-                    },
-                };
-            }
-
-            // Check here for possible groups
         }
+    }
+
+    if(!checkAccess(request, form, settings)) {
+        logger.error(`User not authorised. Trying to access form with id ${form.formId}.`);
+        return {
+            code: 401,
+            obj: {
+                unauthorised: true,
+                msg: 'User not authorised.',
+            },
+        };
     }
 };
 
+const csrfProtection = csrf({ cookie: false });
+let crsfToken = null;
+const csrfNewToken = (request) => {
+    if(request.crsfToken && !crsfToken) crsfToken = request.crsfToken;
+    return crsfToken();
+};
+
 module.exports = {
+    getAndValidateForm,
     validateField,
     validateKeys,
     validateFormData,
     validatePrivileges,
+    csrfProtection,
+    csrfNewToken,
 };

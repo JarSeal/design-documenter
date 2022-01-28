@@ -2,7 +2,10 @@ import FourOFour from "./components/contentViews/FourOFour";
 import FourOOne from "./components/contentViews/FourOOne";
 import Landing from "./components/contentViews/Landing";
 import Login from "./components/contentViews/Login";
+import Logout from "./components/contentViews/Logout";
 import NewUser from "./components/contentViews/NewUser";
+import Settings from "./components/contentViews/Settings";
+import OneUser from "./components/contentViews/settingsTabs/settings_OneUser";
 import Universe from "./components/contentViews/Universe";
 import { getText } from "./helpers/lang";
 import { checkRouteAccess } from "./helpers/storage";
@@ -43,12 +46,40 @@ const _conf = {
         },
         {
             route: '/newuser',
-            id: 'new-user',
+            id: 'route-new-user',
             source: NewUser,
             titleId: 'route_title_new_user',
             beforeDraw: async (routerData) => {
                 return await checkRouteAccess(routerData);
             },
+        },
+        {
+            route: '/settings',
+            redirect: '/settings/default',
+        },
+        {
+            route: '/settings/user/:user',
+            id: 'route-one-user',
+            source: OneUser,
+            titleId: 'route_title_settings',
+            beforeDraw: async (routerData) => {
+                return await checkRouteAccess(routerData);
+            },
+        },
+        {
+            route: '/settings/:tab',
+            id: 'route-settings',
+            source: Settings,
+            titleId: 'route_title_settings',
+            beforeDraw: async (routerData) => {
+                return await checkRouteAccess(routerData);
+            },
+        },
+        {
+            route: '/logout',
+            id: 'route-logout',
+            titleId: 'route_title_login',
+            source: Logout,
         },
         {
             route: '/404/:type/:data',

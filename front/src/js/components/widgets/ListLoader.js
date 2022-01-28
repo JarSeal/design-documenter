@@ -30,7 +30,7 @@ class ListLoader extends Component {
     _loadData = async () => {
         this.loading = true;
         const url = _CONFIG.apiBaseUrl + this.api;
-        const response = await axios.get(url);
+        const response = await axios.get(url, { withCredentials: true });
         this.list = response.data;
         this.buildList();
         this.rePaint();

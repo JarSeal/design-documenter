@@ -15,7 +15,7 @@ class TextInput extends Component {
     constructor(data) {
         super(data);
         if(!data.name) data.name = data.id;
-        if(!data.label) data.label = data.id;
+        if(!data.label && data.label !== '') data.label = data.id;
         this.inputId = this.id + '-input';
         this.template = `
             <div class="form-elem form-elem--text-input">
@@ -35,17 +35,22 @@ class TextInput extends Component {
             </div>
         `;
         this.value = data.value || '';
-        this.errorComp = this.addChild(new Component({
+        this.errorComp = new Component({
             id: this.id + '-error-msg',
             class: 'form-elem__error-msg',
-        }));
+        });
         if(data.error) data.class = 'form-elem--error';
     }
 
-    addListeners(data) {
+    erase = () => {
+        this.errorComp.discard(true);
+    }
+
+    addListeners = (data) => {
+        const inputElem = this.elem.querySelector('#'+this.inputId);
         this.addListener({
             id: this.inputId + '-keyup',
-            target: document.getElementById(this.inputId),
+            target: inputElem,
             type: 'keyup',
             fn: (e) => {
                 this.value = e.target.value;
@@ -66,7 +71,7 @@ class TextInput extends Component {
             this.elem.classList.add('form-elem--error');
             if(data.error.errorMsg) {
                 this.elem.classList.add('form-elem--error-msg');
-                this.errorComp.draw({ text: data.error.errorMsg });
+                this.addChild(this.errorComp).draw({ text: data.error.errorMsg });
             }
         }
         if(data.disabled) inputElem.setAttribute('disabled', '');
@@ -78,7 +83,7 @@ class TextInput extends Component {
             this.elem.classList.add('form-elem--error');
             if(err.errorMsg && !this.data.hideMsg) {
                 this.elem.classList.add('form-elem--error-msg');
-                this.errorComp.draw({ text: err.errorMsg });
+                this.addChild(this.errorComp).draw({ text: err.errorMsg });
             }
         } else {
             this.errorComp.discard();
@@ -94,6 +99,17 @@ class TextInput extends Component {
         this.data.value = this.value;
         if(noChangeFn) return;
         if(this.data.changeFn) this.data.changeFn({ target: inputElem });
+    }
+
+    focus = (caretPos) => {
+        const inputElem = this.elem.querySelector('#'+this.inputId);
+        inputElem.focus();
+        if(caretPos) inputElem.setSelectionRange(caretPos, caretPos);
+    }
+
+    blur = () => {
+        const inputElem = this.elem.querySelector('#'+this.inputId);
+        inputElem.blur();
     }
 }
 

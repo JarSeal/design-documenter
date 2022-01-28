@@ -32,17 +32,39 @@ const userSchema = mongoose.Schema({
         maxlength: 1,
     },
     created: {
-        by: String,
+        by: {
+            type: mongoose.Schema.Types.ObjectId,
+        },
         publicForm: Boolean,
         date: Date,
     },
     edited: [
         {
-            by: String,
-            selfEdited: Boolean,
+            _id: false,
+            by: {
+                type: mongoose.Schema.Types.ObjectId,
+            },
             date: Date,
         }
     ],
+    security: {
+        loginAttempts: Number,
+        coolDown: Boolean,
+        coolDownStarted: Date,
+        lastLogins: [
+            {
+                _id: false,
+                date: Date,
+                browserId: String,
+            }
+        ],
+        lastAttempts: [
+            {
+                _id: false,
+                date: Date,
+            }
+        ],
+    },
 });
 
 userSchema.plugin(uniqueValidator);

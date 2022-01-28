@@ -1,42 +1,48 @@
 import { getText } from "../../helpers/lang";
-import { saveUser } from "../../helpers/storage";
 import { Component } from "../../LIGHTER";
 import Button from "../buttons/Button";
 import FormCreator from "../forms/FormCreator";
 import UniverseItem from "../widgets/listItems/UniverseItem";
 import ListLoader from "../widgets/ListLoader";
+import ViewTitle from "../widgets/ViewTitle";
 
 class Landing extends Component {
     constructor(data) {
         super(data);
         this.appState = data.appState;
-        this.template = `<div><h2>${data.title}</h2></div>`;
         this.mainScreenInitiated = false;
         this.mainScreenCompos = [];
+        this.viewTitle = this.addChild(new ViewTitle({
+            id: this.id+'-view-title',
+            heading: data.title,
+        }));
+    }
+
+    init = () => {
+        this.appState.get('updateMainMenu')({
+            tools: [{
+                id: 'edit-user-tool',
+                type: 'button',
+                text: 'New',
+                click: () => { this._showNewUniDialog(); }
+            }]
+        });
     }
 
     initMainScreen = () => {
+        this.viewTitle.draw();
         if(this.mainScreenInitiated) return;
         this.mainScreenCompos.push(
-            this.addChild(new Component({ id: 'universe-wrapper', class: 'list-wrapper' }))
+            this.addChild({ id: 'universe-wrapper', class: 'list-wrapper' })
         );
         this.mainScreenCompos.push(this.addChild(new Button({
             id: 'add-uni-button',
             attach: 'universe-wrapper',
-            attributes: { title: 'Add a Universe' },
+            attributes: { title: getText('create_new_universe') },
             text: '+',
             class: ['list-add-button', 'list-item'],
             click: (e) => {
-                this.appState.get('Dialog').appear({
-                    component: new FormCreator({
-                        id: 'new-universe-form',
-                        afterFormSentFn: () => {
-                            this.appState.get('Dialog').disappear();
-                            this.universesList.updateList();
-                        },
-                    }),
-                    title: getText('create_new_universe'),
-                });
+                this._showNewUniDialog();
             },
         })));
         this.universesList = this.addChild(new ListLoader({
@@ -53,6 +59,26 @@ class Landing extends Component {
         for(let i=0; i<this.mainScreenCompos.length; i++) {
             this.mainScreenCompos[i].draw();
         }
+    }
+
+    _showNewUniDialog = () => {
+        const Dialog = this.appState.get('Dialog');
+        Dialog.appear({
+            component: FormCreator,
+            componentData: {
+                id: 'new-universe-form',
+                appState: this.appState,
+                afterFormSentFn: () => {
+                    this.appState.get('Dialog').disappear();
+                    this.universesList.updateList();
+                },
+                onErrorsFn: (ex, res) => {
+                    if(res && res.status === 401) this.Router.changeRoute('/');
+                },
+                formLoadedFn: () => { this.appState.get('Dialog').onResize(); },
+            },
+            title: getText('create_new_universe'),
+        });
     }
 }
 

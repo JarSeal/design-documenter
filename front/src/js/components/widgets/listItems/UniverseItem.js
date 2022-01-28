@@ -10,11 +10,11 @@ class UniverseItem extends Component {
         this.template = `<button></button>`;
         this.item = data.item;
         this.index = data.index;
-        this.title = this.addChild(new Component({
+        this.title = this.addChild({
             id: this.id+'-title',
             tag: 'h3',
             text: data.item.title,
-        }));
+        });
     }
 
     addListeners = () => {

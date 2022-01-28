@@ -29,6 +29,7 @@ class Component {
         this.Router = RouterRef;
         this.logger = logger;
         this.firstDraw = true;
+        this.isComponent = true;
         // *****************
         // [ RESERVED KEYS ]
         // data = {
@@ -39,6 +40,7 @@ class Component {
         //     style (optional, flat object, element inline style(s))
         //     attributes (optional, flat object, element attributes as key and value as value)
         //     appendHtml (optional, string, element's appended innerHTML text/html)
+        //     prepend (optional, boolean, use prepend instead append)
         //     html (optional, string, element's replacing innerHTML text/html)
         //     text (optional, string, element innerText text)
         //     tag (optional, string, element tag name/type)
@@ -73,16 +75,20 @@ class Component {
             // Append element as parent's child
             const template = document.createElement('template');
             template.innerHTML = this.template;
-            if(this.parent) this.parent.appendChild(template.content.firstChild);
+            if(this.parent) {
+                data.prepend
+                    ? this.parent.prepend(template.content.firstChild)
+                    : this.parent.append(template.content.firstChild);
+            }
         }
         this.elem = document.getElementById(this.id);
         this._setElemData(this.elem, data);
-        this.addListeners(data);
         if(this.firstDraw) {
             this.init(data);
             this.firstDraw = false;
         }
         this.paint(data);
+        this.addListeners(data);
         this.simpletonIndex = 0;
         this.drawing = false;
     }
@@ -100,7 +106,7 @@ class Component {
     init(data) {}
     paint(data) {}
 
-    discard(fullDiscard) {
+    discard(fullDiscard, callback) {
         if(this.discarding) return;
         this.discarding = true;
         // Remove listeners
@@ -122,6 +128,7 @@ class Component {
         if(fullDiscard) delete ids[this.id];
         this.erase();
         this.discarding = false;
+        if(callback) callback();
     }
 
     erase() {} // Additional discard logic from the custom Component
@@ -129,19 +136,34 @@ class Component {
     drawHTML = (data) => {
         const id = this.id + '-simpleton-'+ this.simpletonIndex;
         const compData = Object.assign({}, { id }, data);
-        const childKeys = Object.keys(this.children);
         let compo = this.children[id];
-        if(!compo) {
-            compo = this.addChild(new Component(compData));
-        }
+        if(!compo) compo = this.addChild(compData);
         compo.draw();
         this.simpletonIndex++;
     }
 
+    drawChildren = (full) => {
+        const keys = Object.keys(this.children);
+        for(let i=0; i<keys.length; i++) {
+            this.children[keys[i]].draw();
+            if(full) this.children[keys[i]].drawChildren();
+        }
+    }
+
     addChild(component) {
+        if(!component.isComponent) component = new Component(component);
         this.children[component.id] = component;
         component.parentId = this.id;
         return component;
+    }
+
+    discardChild(id, notFull) {
+        if(!this.children[id]) return;
+        let fullDiscard = true;
+        if(notFull) fullDiscard = false;
+        this.children[id].discard(fullDiscard);
+        delete this.children[id];
+        delete ids[id];
     }
 
     addListener(listener) {

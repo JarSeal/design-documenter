@@ -49,6 +49,8 @@ class Router {
         }
         RouterRef = this;
         this.routes = [];
+        this.nextHistoryState = {};
+        this.curHistoryState = {};
         this.basePath = routesData.basePath || '';
         this.titlePrefix = routesData.titlePrefix || '';
         this.titleSuffix = routesData.titleSuffix || '';
@@ -102,6 +104,7 @@ class Router {
                     route: routes[i],
                     curRouteData: this.curRouteData,
                     curRoute: this.curRoute,
+                    commonData: this.commonData,
                     prevRouteData: null,
                     prevRoute: null,
                 });
@@ -158,33 +161,66 @@ class Router {
         }
         window.onpopstate = this.routeChangeListener;
         if(changeUrlPath) {
-            const routeState = this._createRouteState(this.curRoute);
+            const routeState = this._createRouteState();
             window.history.pushState(routeState, '', this.curRoute);
+            this.curHistoryState = routeState;
         }
         routerInitiated = true;
     }
 
     routeChangeListener = (e) => {
         this.setRoute();
-        this.changeRoute(this.curRoute, true, true);
+        this.changeRoute(this.curRoute, {
+            forceUpdate: true,
+            ignoreBasePath: true,
+            doNotSetState: true,
+        });
+        this.curHistoryState = e.state || {};
     }
 
     _createPageTitle(title) {
         return this.titlePrefix + title + this.titleSuffix;
     }
 
-    _createRouteState(route) {
-        for(let i=0; i<this.routes.length; i++) {
-            if(this._compareRoutes(this.routes[i].route, route)) {
-                return {
-                    route: this.routes[i].route,
-                    title: this._createPageTitle(this.routes[i].title),
-                };
-            }
-        }
+    _createRouteState() {
+        const newState = Object.assign({}, this.nextHistoryState);
+        this.nextHistoryState = {};
+        this.curHistoryState = {};
+        return newState;
     }
 
-    changeRoute = async (route, forceUpdate, ignoreBasePath) => {
+    replaceRoute = (route, ignoreBasePath) => {
+        let basePath = this.basePath;
+        if(ignoreBasePath) basePath = '';
+        route = basePath + route;
+        const routeState = this._createRouteState();
+        window.history.replaceState(routeState, '', route);
+    }
+
+    setNextHistoryState = (newState) => {
+        this.nextHistoryState = Object.assign(this.nextHistoryState, newState);
+    }
+
+    setCurHistoryState = (newState) => {
+        this.curHistoryState = Object.assign(this.curHistoryState, newState);
+        window.history.replaceState(this.curHistoryState, '');
+    }
+
+    getCurHistoryState = () => {
+        return this.curHistoryState;
+    }
+
+    // Options: Object
+    // - forceUpdate: Boolean
+    // - ignoreBasePath: Boolean
+    // - doNotSetState: Boolean
+    // - replaceState: Boolean (if true, doNotSetState is also true, so no need to declare it)
+    changeRoute = async (route, options) => {
+        if(!options) options = {};
+        const forceUpdate = options.forceUpdate,
+            ignoreBasePath = options.ignoreBasePath,
+            doNotSetState = options.doNotSetState,
+            replaceState = options.replaceState;
         let basePath = this.basePath;
         if(ignoreBasePath) basePath = '';
         route = basePath + route;
@@ -195,6 +231,7 @@ class Router {
                     route: this.routes[i],
                     curRouteData: this.curRouteData,
                     curRoute: this.curRoute,
+                    commonData: this.commonData,
                     prevRouteData: this.prevRouteData,
                     prevRoute: this.prevRouteData,
                 });
@@ -209,12 +246,18 @@ class Router {
             }
         }
         if(this._compareRoutes(route, this.curRoute) && !forceUpdate) return;
-        if(forceUpdate && this._compareRoutes(route, this.curRoute)) {
+        if(forceUpdate) {
             this.curRouteData.component.discard(true);
             this.curRouteData.component = null;
         }
-        const routeState = this._createRouteState(route);
-        window.history.pushState(routeState, '', route);
+
+        if(!doNotSetState && !replaceState) {
+            const routeState = this._createRouteState();
+            window.history.pushState(routeState, '', route);
+        } else if(replaceState) {
+            this.replaceRoute(route, true);
+        }
+
         this.prevRoute = this.curRoute;
         this.setRoute();
         let routeFound = false;
@@ -263,12 +306,17 @@ class Router {
         return first === second || first + '/' === second || first === second + '/';
     }
 
-    getRoute() {
+    getRoute(noBasePath) {
+        if(noBasePath) return this.curRoute.replace(this.basePath, '');
         return this.curRoute;
     }
 
     getRouteData() {
         return { ...this.curRouteData, prevRouteData: this.prevRouteData };
+    }
+
+    getRouteParams() {
+        return this.curRouteData.params;
     }
 
     isCurrent(route) {
@@ -324,9 +372,8 @@ class Router {
     }
 
     _createNewView(routeData) {
-        const commonData = this.commonData;
         routeData.component = new routeData.source({
-            ...commonData,
+            ...this.commonData,
             id: routeData.id,
             parentId: routeData.parentId,
             title: routeData.title,
@@ -338,6 +385,7 @@ class Router {
     _getRouteParams(model, route) {
         if(!model.includes(':')) return false;
         const modelParts = model.split('/');
+        route = route.split('?')[0];
         const routeParts = route.split('/');
         let length = modelParts.length;
         if(routeParts.length > modelParts.length) length = routeParts.length;

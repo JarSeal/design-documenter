@@ -14,9 +14,14 @@ const testFormData = {
     showBottomMsg: true, // Boolean (default is true)
     onErrorsMsg: { en: 'Form has errors.', fi: 'Lomakkeessa on virheitä' }, // Lang object / String
     onErrorsMsgId: 'form_has_errors', // String (transalation id for getText)
+    formErrors: {
+        error401Id: 'login_error_wrong', // String (transalation id for getText)
+        error403NoShow: true, // Boolean (use custom errors)
+    },
     afterSubmitMsg: { en: 'Form sent', fi: 'Lomake lähetetty' }, // Lang object / String
     afterSubmitMsgId: 'form_sent', // String (transalation id for getText)
     afterSubmitShowOnlyMsg: true, // Boolean
+    singleEdit: false, // Boolean
     submitButton: {
         id: 'submit-button-id', // String
         label: { en: 'Submit', fi: 'Lähetä' }, // Lang object / String
@@ -101,6 +106,9 @@ const testFormData = {
                         { value: '4', label: 'Four', disabled: true },
                         { value: '5', label: 'Five' },
                     ],
+                    getOptionsFn: '', // getOptionsFn id / String (if the options are missing, then a function can be used to retrieve the options)
+                    minValue: 1, // Number (when min and maxValue are defined, all the values have to be numbers)
+                    maxValue: 100, // Number (min and maxValue are for backend validation)
                     emptyIsAnOption: true, // Boolean
                     required: true, // Boolean
                     disabled: false, // Boolean

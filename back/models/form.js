@@ -20,6 +20,7 @@ const formSchema = mongoose.Schema({
         type: Number,
         required: true,
     },
+    admin: Boolean,
     useRightsUsers: [{ type: String }],
     useRightsGroups: [{ type: String }],
     editorRightsLevel: {
@@ -44,6 +45,7 @@ const formSchema = mongoose.Schema({
     },
     edited: [
         {
+            _id: false,
             by: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'User',

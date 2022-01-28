@@ -1,6 +1,7 @@
+@import '../../../styles/colors';
 $sidePadding: 4rem;
 
-#dialog {
+.dialog {
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0);
@@ -42,15 +43,64 @@ $sidePadding: 4rem;
             position: relative;
             left: 50%;
             transform: translate3d(-50%, 0, 0);
+            min-width: 50rem;
+            .form-elem__label {
+                width: 26rem;
+                max-width: none;
+            }
+            @media only screen and (max-width: 740px) {
+                min-width: none;
+                width: 100%;
+                .form-elem__label {
+                    width: auto;
+                    max-width: 26rem;
+                }
+            }
         }
         .form-divider {
             background-color: #999;
         }
-        .form-elem--submit {
+        .form-elem--submit,
+        .confirm-button,
+        .extra-button,
+        .cancel-button {
             background-color: #999;
             &:hover {
                 background-color: #666;
+                color: #fff;
             }
+        }
+        .save-button {
+            background-color: #666;
+            color: #fff;
+            &:hover {
+                background-color: #333;
+            }
+        }
+        .confirm-button--delete {
+            background-color: $form-button-delete-color;
+            color: #fff;
+            &:hover {
+                background-color: darken($form-button-delete-color, 10%);
+            }
+        }
+        p:first-child {
+            margin-top: 0;
+        }
+        .confirm-button,
+        .cancel-button {
+            margin-top: 2rem;
+        }
+        .confirm-button, 
+        .confirmation-dialog .spinner-icon {
+            float: right;
+        }
+        .confirmation-dialog .spinner-icon {
+            margin-top: 2.4rem;
+            margin-right: 2rem;
+        }
+        .table-compo {
+            color: $font-color;
         }
     }
     &.has-title .inner-box {
@@ -88,5 +138,21 @@ $sidePadding: 4rem;
             opacity: 1;
             margin-top: 0;
         }
+    }
+}
+
+.dialog-locked {
+    button, a, input, textarea, select, form {
+        pointer-events: none;
+    }
+    .confirm-button,
+    .cancel-button {
+        opacity: 0.7;
+    }
+}
+
+.confirmation-form {
+    .form-main-description {
+        margin-bottom: 7rem;
     }
 }

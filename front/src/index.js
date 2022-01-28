@@ -1,29 +1,15 @@
 import '@/styles/index.scss';
 import Base from '@/js/Base';
-
-// Test import of a JavaScript module
-// import { example } from '@/js/example';
-
-// Test import of an asset
-// import webpackLogo from '@/images/webpack-logo.svg';
-
-// Appending to the DOM
-// const logo = document.createElement('img');
-// logo.src = webpackLogo;
-
-// const heading = document.createElement('h1');
-// heading.textContent = example();
-// heading.textContent = txt;
-
-// Test a background image url in CSS
-// const imageBackground = document.createElement('div');
-// imageBackground.classList.add('image');
-
-// Test a public folder asset
-// const imagePublic = document.createElement('img');
-// imagePublic.src = '/assets/example.png';
+import FingerprintJS from '@fingerprintjs/fingerprintjs'
 
 document.addEventListener('DOMContentLoaded', () => {
-    const app = new Base({ id: 'base-id', parentId: 'root' });
-    app.draw();
+    const fpPromise = FingerprintJS.load();
+
+    ;(async () => {
+        const fp = await fpPromise;
+        const result = await fp.get();
+        const browserId = result.visitorId;
+        const app = new Base({ id: 'base-id', parentId: 'root', browserId });
+        app.draw();
+    })();
 });

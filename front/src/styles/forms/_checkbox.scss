@@ -2,5 +2,9 @@
     .form-elem__label {
         vertical-align: bottom;
         padding-right: 0.5rem;
+        user-select: none;
+    }
+    input {
+        margin-right: 0;
     }
 }
