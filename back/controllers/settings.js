@@ -2,7 +2,8 @@ const settingsRouter = require('express').Router();
 const adminSettingsFormData = require('./../../shared/formData/adminSettingsFormData');
 const logger = require('./../utils/logger');
 const AdminSettings = require('./../models/adminSetting');
-const { createNewEditedArray, getAndValidateForm } = require('./forms/formEngine');
+const { createNewEditedArray } = require('./../utils/helpers');
+const { getAndValidateForm } = require('./forms/formEngine');
 
 
 // Get all admin settings
