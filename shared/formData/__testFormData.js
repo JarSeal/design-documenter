@@ -14,6 +14,10 @@ const testFormData = {
     showBottomMsg: true, // Boolean (default is true)
     onErrorsMsg: { en: 'Form has errors.', fi: 'Lomakkeessa on virheitä' }, // Lang object / String
     onErrorsMsgId: 'form_has_errors', // String (transalation id for getText)
+    formErrors: {
+        error401Id: 'login_error_wrong', // String (transalation id for getText)
+        error403NoShow: true, // Boolean (use custom errors)
+    },
     afterSubmitMsg: { en: 'Form sent', fi: 'Lomake lähetetty' }, // Lang object / String
     afterSubmitMsgId: 'form_sent', // String (transalation id for getText)
     afterSubmitShowOnlyMsg: true, // Boolean
