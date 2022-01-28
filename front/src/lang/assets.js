@@ -578,4 +578,12 @@ export const assetsObj = {
         en: 'Whether or not public users have access to register themselves as new users.',
         fi: 'Pystyvätkö julkiset käyttäjät rekisteröimään itselleen tilin.',
     },
+    user_level_required_to_register: {
+        en: 'User level required to register a new user',
+        fi: 'Käyttäjärekisteröintiin vaadittu käyttäjätaso',
+    },
+    user_level_required_to_register_desc: {
+        en: 'The logged in user\'s level needed to register new users. Should be at least the same as the level for viewing/editing users.',
+        fi: 'Sisäänkirjautuneiden käyttäjien vaadittu taso uusien käyttäjien luomiseen. Tulisi olla sama vähintään sama kuin käyttäjien katseluun/muokkaamiseen vaadittu taso.',
+    },
 };

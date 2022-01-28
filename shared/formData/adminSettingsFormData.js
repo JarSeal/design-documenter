@@ -23,7 +23,7 @@ const adminSettingsFormData = {
         },
         submitFields: [
             'max-login-attempts', 'login-cooldown-time', 'session-age', 'public-user-registration',
-            'user-registration-level',
+            'user-registration-level', 'user-level-required-to-register', 
         ],
         fieldsets: [
             {
@@ -98,6 +98,18 @@ const adminSettingsFormData = {
                         descriptionId: 'public_user_registration_desc',
                         defaultValue: true,
                         settingType: 'boolean',
+                    },
+                    {
+                        // User level required to register new users
+                        type: 'dropdown',
+                        id: 'user-level-required-to-register',
+                        labelId: 'user_level_required_to_register',
+                        descriptionId: 'user_level_required_to_register_desc',
+                        defaultValue: 8,
+                        settingType: 'integer',
+                        getOptionsFn: 'userLevelsWithNine',
+                        minValue: 1,
+                        maxValue: 9,
                     },
                 ],
             },

@@ -30,23 +30,10 @@ const getSetting = async (request, id, admin, noReload) => {
             : null; // TODO: Add regular user settings here
         if(!setting) return null;
         let userLevel = 0;
-        if(checkIfLoggedIn(request)) userLevel = request.session.userLevel;
+        if(checkIfLoggedIn(request.session)) userLevel = request.session.userLevel;
         if(userLevel >= setting.settingReadRight) all[id] = getValue(setting);
     }
     return all[id];
-};
-
-const getPublicSettings = async (request, noReload) => {
-    if(!noReload) {
-        await reloadSettings(request);
-    }
-    const publicSettings = {};
-    const keys = Object.keys(publicSettingsRemapping);
-    for(let i=0; i<keys.length; i++) {
-        const newKey = publicSettingsRemapping[keys[i]].newKey;
-        publicSettings[newKey] = all[keys[i]];
-    }
-    return publicSettings;
 };
 
 const getValue = (setting) => {
@@ -60,10 +47,27 @@ const getValue = (setting) => {
     }
 };
 
+const getPublicSettings = async (request, noReload) => {
+    if(!noReload) {
+        await reloadSettings(request);
+    }
+    const publicSettings = {};
+    const keys = Object.keys(publicSettingsRemapping);
+    for(let i=0; i<keys.length; i++) {
+        const newKey = publicSettingsRemapping[keys[i]].newKey;
+        // publicSettings[newKey] = all[keys[i]];
+        publicSettings[newKey] = publicSettingsRemapping[keys[i]].createValue(all[keys[i]], request);
+    }
+    return publicSettings;
+};
+
 const publicSettingsRemapping = {
     'public-user-registration': {
         newKey: 'canCreateUser',
-        transferValue: (value) => {
+        createValue: (value, request) => {
+            if(checkIfLoggedIn(request.session)) {
+                return all['user-level-required-to-register'] <= request.session.userLevel;
+            }
             return value;
         },
     },

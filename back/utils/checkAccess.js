@@ -1,11 +1,10 @@
 const checkAccess = (request, check, settings) => {
     if(!check) return false;
     let userLevel = 0, userId;
-    const loggedIn = checkIfLoggedIn(request.session);
 
-    if(settings && !checkSettings(check, settings, loggedIn)) return false;
+    if(settings && !checkSettings(check, settings, request.session)) return false;
     
-    if(loggedIn) {
+    if(checkIfLoggedIn(request.session)) {
         userLevel = request.session.userLevel;
         userId = request.session._id;
     }
@@ -33,11 +32,15 @@ const checkIfLoggedIn = (sess) => {
     return true;
 };
 
-const checkSettings = (check, settings, loggedId) => {
+const checkSettings = (check, settings, session) => {
+    const loggedIn = checkIfLoggedIn(session);
     if(check.formId === 'route-new-user') {
-        if(loggedId) return false;
+        if(loggedIn) return false;
         return settings['public-user-registration'];
     } else if(check.formId === 'new-user-form') {
+        if(loggedIn) {
+            return settings['user-level-required-to-register'] <= session.userLevel;
+        }
         return settings['public-user-registration'];
     }
     return true;

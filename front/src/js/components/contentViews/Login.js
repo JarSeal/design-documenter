@@ -7,7 +7,6 @@ class Login extends Component {
     constructor(data) {
         super(data);
         this.appState = data.appState;
-        this.publicUserRegistration;
         this.ls = new LocalStorage('bjs_');
 
         this.viewTitle = this.addChild(new ViewTitle({
@@ -33,8 +32,8 @@ class Login extends Component {
     }
 
     init = () => {
-        this.publicUserRegistration = this.appState.get('serviceSettings')['public-user-registration'];
-        if(this.publicUserRegistration) {
+        const publicUserRegistration = this.appState.get('serviceSettings')['canCreateUser'];
+        if(publicUserRegistration) {
             const updateMainMenu = this.appState.get('updateMainMenu');
             updateMainMenu({
                 tools: [{

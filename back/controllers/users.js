@@ -8,6 +8,7 @@ const logger = require('./../utils/logger');
 const User = require('./../models/user');
 const Form = require('./../models/form');
 const { createNewEditedArray, getAndValidateForm } = require('./forms/formEngine');
+const { checkIfLoggedIn } = require('./../utils/checkAccess');
 
 
 // Get all users (for admins)
@@ -243,6 +244,9 @@ usersRouter.post('/', async (request, response) => {
         logger.log(`Created a level ${userLevel} user.`);
     }
 
+    let createdBy = null;
+    if(checkIfLoggedIn(request.session)) createdBy = request.session._id;
+
     const user = new User({
         username: body.username.trim(),
         email: body.email.trim(),
@@ -250,8 +254,8 @@ usersRouter.post('/', async (request, response) => {
         userLevel,
         passwordHash,
         created: {
-            by: null,
-            publicForm: true,
+            by: createdBy,
+            publicForm: createdBy ? false : true,
             date: new Date(),
         },
     });

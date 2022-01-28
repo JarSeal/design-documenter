@@ -301,7 +301,7 @@ class FormCreator extends Component {
         const placeholder = this._getTextData(field.placeholder, field.placeholderId);
         this.fieldErrors.set(id, false);
         if(this.data.data && this.data.data[id]) field.initValue = this.data.data[id];
-        if(this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
+        if(this.data.fieldInitValues && this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new TextArea({
             id,
@@ -346,7 +346,7 @@ class FormCreator extends Component {
         const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
         this.fieldErrors.set(id, false);
         if(this.data.data && this.data.data[id]) field.initValue = this.data.data[id];
-        if(this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
+        if(this.data.fieldInitValues && this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
         let options = [];
         if(field.options) {
             for(let i=0; i<field.options.length; i++) {
@@ -406,7 +406,7 @@ class FormCreator extends Component {
         this.fieldErrors.set(id, false);
         if(this.data.data && this.data.data[id]) field.initValue = this.data.data[id] === true || this.data.data[id] === 'true'
             ? true : false;
-        if(this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
+        if(this.data.fieldInitValues && this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new Checkbox({
             id,
@@ -447,7 +447,7 @@ class FormCreator extends Component {
         const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
         const placeholder = this._getTextData(field.placeholder, field.placeholderId);
         if(this.data.data && this.data.data[id]) field.initValue = this.data.data[id];
-        if(this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
+        if(this.data.fieldInitValues && this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
         this.fieldErrors.set(id, false);
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new TextInput({
