@@ -1,4 +1,5 @@
 const ObjectId = require('mongoose').Types.ObjectId;
+const { getSettings } = require('./settingsService');
 
 const isValidObjectId = (id) => {
     if(ObjectId.isValid(id)){
@@ -9,13 +10,16 @@ const isValidObjectId = (id) => {
     return false;
 };
 
-const createNewEditedArray = (oldEdited, editorId) => {
-    const maxEditedLogs = 10; // TODO: Make this into a setting
+const createNewEditedArray = async (oldEdited, editorId) => {
+    const settings = await getSettings(null, true);
+    const maxEditedLogs = settings['max-edited-logs'];
     const edited = oldEdited || [];
     let newEdited = [];
     if(edited.length >= maxEditedLogs) {
-        const startIndex = edited.length - maxEditedLogs + 1;
+        let startIndex = edited.length - maxEditedLogs + 1;
+        if(startIndex < 0) startIndex = 0;
         for(let i=startIndex; i<edited.length; i++) {
+            if(!edited[i] || Object.keys(edited[i]).length === 0) continue;
             newEdited.push(edited[i]);
         }
     } else {
@@ -28,13 +32,16 @@ const createNewEditedArray = (oldEdited, editorId) => {
     return newEdited;
 };
 
-const createNewLoginLogsArray = (oldLogs, newLog) => {
-    const maxDatesLogs = 10; // TODO: Make this into a setting
+const createNewLoginLogsArray = async (oldLogs, newLog) => {
+    const settings = await getSettings(null, true);
+    const maxDatesLogs = settings['max-login-logs'];
     const logs = oldLogs || [];
     let newLogs = [];
     if(logs.length >= maxDatesLogs) {
-        const startIndex = logs.length - maxDatesLogs + 1;
+        let startIndex = logs.length - maxDatesLogs + 1;
+        if(startIndex < 0) startIndex = 0;
         for(let i=startIndex; i<logs.length; i++) {
+            if(!logs[i] || Object.keys(logs[i]).length === 0) continue;
             newLogs.push(logs[i]);
         }
     } else {

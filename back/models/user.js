@@ -44,7 +44,6 @@ const userSchema = mongoose.Schema({
             by: {
                 type: mongoose.Schema.Types.ObjectId,
             },
-            selfEdited: Boolean,
             date: Date,
         }
     ],

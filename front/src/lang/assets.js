@@ -594,4 +594,24 @@ export const assetsObj = {
         en: 'The logged in user\'s level needed to register new users. Should be at least the same as the level for viewing/editing users.',
         fi: 'Sisäänkirjautuneiden käyttäjien vaadittu taso uusien käyttäjien luomiseen. Tulisi olla sama vähintään sama kuin käyttäjien katseluun/muokkaamiseen vaadittu taso.',
     },
+    logs: {
+        en: 'Logs',
+        fi: 'Logit',
+    },
+    max_login_logs: {
+        en: 'Max login logs',
+        fi: 'Max kirjautumis-logía',
+    },
+    max_login_logs_desc: {
+        en: 'The amount to store of the latest login logs per user.',
+        fi: 'Kuinka monta viimeisintä kirjautumis-logia säilytetään.',
+    },
+    max_edited_logs: {
+        en: 'Max edited logs',
+        fi: 'Max editointi-logia',
+    },
+    max_edited_logs_desc: {
+        en: 'The amount to store of the latest edited logs per document.',
+        fi: 'Kuinka monta viimeisintä editointi-logia säilytetään.',
+    },
 };

@@ -173,7 +173,7 @@ loginRouter.post('/', async (request, response) => {
     userSecurity.coolDown = false;
     userSecurity.coolDownStarted = null;
     userSecurity.lastAttempts = [];
-    userSecurity.lastLogins = createNewLoginLogsArray(userSecurity.lastLogins || [], {
+    userSecurity.lastLogins = await createNewLoginLogsArray(userSecurity.lastLogins || [], {
         date: new Date(),
         browserId: body.browserId,
     });

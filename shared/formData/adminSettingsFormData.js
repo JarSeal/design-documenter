@@ -23,7 +23,7 @@ const adminSettingsFormData = {
         },
         submitFields: [
             'max-login-attempts', 'login-cooldown-time', 'session-age', 'public-user-registration',
-            'user-registration-level', 'user-level-required-to-register', 
+            'user-registration-level', 'user-level-required-to-register', 'max-login-logs', 'max-edited-logs',
         ],
         fieldsets: [
             {
@@ -110,6 +110,35 @@ const adminSettingsFormData = {
                         getOptionsFn: 'userLevelsWithNine',
                         minValue: 1,
                         maxValue: 9,
+                    },
+                ],
+            },
+            {
+                // Logs
+                id: 'admin-settings-logs-fs',
+                fieldsetTitleId: 'logs',
+                fields: [
+                    {
+                        // Max login logs
+                        type: 'textinput',
+                        id: 'max-login-logs',
+                        labelId: 'max_login_logs',
+                        descriptionId: 'max_login_logs_desc',
+                        defaultValue: 10,
+                        required: true,
+                        settingType: 'integer',
+                        regex: '[0-9]+$',
+                    },
+                    {
+                        // Max edited logs
+                        type: 'textinput',
+                        id: 'max-edited-logs',
+                        labelId: 'max_edited_logs',
+                        descriptionId: 'max_edited_logs_desc',
+                        defaultValue: 10,
+                        required: true,
+                        settingType: 'integer',
+                        regex: '[0-9]+$',
                     },
                 ],
             },

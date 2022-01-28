@@ -115,7 +115,7 @@ usersRouter.put('/', async (request, response) => {
     }
 
     const user = await User.findById(body.userId);
-    const edited = createNewEditedArray(user.edited, request.session._id);
+    const edited = await createNewEditedArray(user.edited, request.session._id);
 
     const updatedUser = {
         email: body.email.trim(),
@@ -123,7 +123,7 @@ usersRouter.put('/', async (request, response) => {
         userLevel: parseInt(body.userLevel),
         edited,
     };
-
+    
     const savedUser = await User.findByIdAndUpdate(body.userId, updatedUser, { new: true });
     if(!savedUser) {
         logger.log('Could not update user. User was not found (id: ' + body.userId + ').');
