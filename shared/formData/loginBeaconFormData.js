@@ -21,6 +21,7 @@ const loginBeaconFormData = {
         onErrorsMsgId: 'login_error_empty',
         formErrors: {
             error401Id: 'login_error_wrong',
+            error403NoShow: true,
         },
         showBottomMsg: false,
         submitButton: {

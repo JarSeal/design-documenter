@@ -183,6 +183,14 @@ export const assetsObj = {
         en: 'Unauthorised',
         fi: 'Ei oikeuksia',
     },
+    forbidden: {
+        en: 'Forbidden',
+        fi: 'Kielletty',
+    },
+    cooldown_login_message: {
+        en: 'Too many login attempts. Your account is locked for $[0] minutes.',
+        fi: 'Liian monta kirjautumisyritystä. Tili on lukittu $[0] minuutin ajaksi.',
+    },
     back_to_start: {
         en: 'Back to start..',
         fi: 'Takaisin alkuun..',

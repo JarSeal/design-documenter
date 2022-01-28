@@ -779,13 +779,39 @@ class FormCreator extends Component {
                     this.elem.classList.add(this.cssClasses.formSent);
                     this.elem.classList.add(this.cssClasses.formError);
                     this._setFormMsg(getText(this.data.formErrors.error401Id));
+                } else if(this.data.formErrors && this.data.formErrors.error401NoShow) {
+                    if(exception.response.data && exception.response.data.errors) {
+                        this._serverSideFieldErrors(exception.response);
+                    }
+                    this.elem.classList.add(this.cssClasses.formSent);
+                    this.elem.classList.add(this.cssClasses.formError);
                 } else {
                     this._resetForm();
                     this.reDrawSelf({
                         class: [this.cssClasses.formError, this.cssClasses.formSent],
                     });
                     this._setFormMsg(getText('unauthorised'));
-                    this.logger.error('Form sending failed (Form Creator).', exception);
+                }
+            } else if(exception.response && exception.response.status === 403) {
+                if(this.data.formErrors && this.data.formErrors.error403Id) {
+                    if(exception.response.data && exception.response.data.errors) {
+                        this._serverSideFieldErrors(exception.response);
+                    }
+                    this.elem.classList.add(this.cssClasses.formSent);
+                    this.elem.classList.add(this.cssClasses.formError);
+                    this._setFormMsg(getText(this.data.formErrors.error403Id));
+                } else if(this.data.formErrors && this.data.formErrors.error403NoShow) {
+                    if(exception.response.data && exception.response.data.errors) {
+                        this._serverSideFieldErrors(exception.response);
+                    }
+                    this.elem.classList.add(this.cssClasses.formSent);
+                    this.elem.classList.add(this.cssClasses.formError);
+                } else {
+                    this._resetForm();
+                    this.reDrawSelf({
+                        class: [this.cssClasses.formError, this.cssClasses.formSent],
+                    });
+                    this._setFormMsg(getText('forbidden'));
                 }
             } else {
                 this._resetForm();
@@ -796,7 +822,7 @@ class FormCreator extends Component {
                 this.logger.error('Form sending failed (Form Creator).', exception);
             }
             // Call outside error callback if present:
-            if(this.data.onErrorsFn) this.data.onErrorsFn(exception, exception.response);
+            if(this.data.onErrorsFn) this.data.onErrorsFn(exception, exception.response, this._setFormMsg);
         }
     }
 

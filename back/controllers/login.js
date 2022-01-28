@@ -90,7 +90,30 @@ loginRouter.post('/', async (request, response) => {
             lastAttempts: [],
         };
     // Check here if the user is under cooldown period
-    
+    if(userSecurity.coolDown && userSecurity.coolDownStarted) {
+        const cooldownTime = await getSetting(request, 'login-cooldown-time', true);
+        const coolDownEnds = new Date(new Date(userSecurity.coolDownStarted).getTime() + cooldownTime * 60000);
+        const timeNow = new Date();
+        if(coolDownEnds < timeNow) {
+            // Cooldown has ended, clear attempts
+            userSecurity.loginAttempts = 0;
+            userSecurity.coolDown = false;
+            userSecurity.coolDownStarted = null;
+            userSecurity.lastAttempts = [];
+            const savedUser = await User.findByIdAndUpdate(user._id, { security: userSecurity }, { new: true });
+            if(!savedUser) {
+                logger.log('Could not clear user attempts after cooldown. User was not found (id: ' + user._id + ').');
+            }
+        } else {
+            // User is in cooldown period, no logging in allowed
+            return response.status(403).json({
+                error: 'user must wait a cooldown period before trying again',
+                cooldownTime: cooldownTime,
+                loggedIn: false,
+            });
+        }
+    }
+
     const passwordCorrect = user === null
         ? false
         : await bcrypt.compare(body.password, user.passwordHash);

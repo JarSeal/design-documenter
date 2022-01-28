@@ -25,6 +25,12 @@ class Login extends Component {
             appState: this.appState,
             fieldInitValues: rememberedUser,
             afterFormSentFn: this._afterLogin,
+            onErrorsFn: (error, response, setFormMsg) => {
+                const cooldownTime = response.data.cooldownTime;
+                if(cooldownTime) {
+                    setFormMsg(getText('cooldown_login_message', [cooldownTime]));
+                }
+            },
             addToMessage: {
                 browserId: this.appState.get('browserId'),
             },
