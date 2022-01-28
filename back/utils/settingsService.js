@@ -1,7 +1,7 @@
-let all = {};
-
 const AdminSetting = require('../models/adminSetting');
 const { checkIfLoggedIn } = require('./checkAccess');
+
+let all = {};
 
 const reloadSettings = async (request) => {
     const adminSettings = await AdminSetting.find({});
@@ -55,7 +55,6 @@ const getPublicSettings = async (request, noReload) => {
     const keys = Object.keys(publicSettingsRemapping);
     for(let i=0; i<keys.length; i++) {
         const newKey = publicSettingsRemapping[keys[i]].newKey;
-        // publicSettings[newKey] = all[keys[i]];
         publicSettings[newKey] = publicSettingsRemapping[keys[i]].createValue(all[keys[i]], request);
     }
     return publicSettings;

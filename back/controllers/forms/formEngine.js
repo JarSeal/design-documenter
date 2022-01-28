@@ -1,5 +1,4 @@
 const csrf = require('csurf');
-const mongoose = require('mongoose');
 const Form = require('../../models/form');
 const shared = require('../../shared');
 const logger = require('./../../utils/logger');
@@ -202,25 +201,6 @@ const csrfNewToken = (request) => {
     return crsfToken();
 };
 
-const createNewEditedArray = (oldEdited, editorId) => {
-    const maxEditedLogs = 10; // TODO: Make this into a setting
-    const edited = oldEdited || [];
-    let newEdited = [];
-    if(edited.length >= maxEditedLogs) {
-        const startIndex = edited.length - maxEditedLogs + 1;
-        for(let i=startIndex; i<edited.length; i++) {
-            newEdited.push(edited[i]);
-        }
-    } else {
-        newEdited = edited;
-    }
-    newEdited.push({
-        by: mongoose.Types.ObjectId(editorId),
-        date: new Date(),
-    });
-    return newEdited;
-};
-
 module.exports = {
     getAndValidateForm,
     validateField,
@@ -229,5 +209,4 @@ module.exports = {
     validatePrivileges,
     csrfProtection,
     csrfNewToken,
-    createNewEditedArray,
 };

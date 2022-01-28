@@ -32,6 +32,7 @@ const checkIfLoggedIn = (sess) => {
     return true;
 };
 
+// Maybe move to settingsService?
 const checkSettings = (check, settings, session) => {
     const loggedIn = checkIfLoggedIn(session);
     if(check.formId === 'route-new-user') {
