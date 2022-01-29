@@ -1,3 +1,4 @@
+import { getText } from "../../helpers/lang";
 import { getAdminRights } from "../../helpers/storage";
 import { Component } from "../../LIGHTER";
 import TabSystem from "../buttons/TabSystem";
@@ -58,21 +59,21 @@ class Settings extends Component {
     _defineTabs = () => {
         const define = [{
             id: 'my-settings',
-            label: 'My Settings', // TODO: Change into a getText lang asset
+            label: getText('my_settings'),
             component: Component,
         }, {
             id: 'my-profile',
-            label: 'My Profile', // TODO: Change into a getText lang asset
+            label: getText('my_profile'),
             component: Component,
         }, {
             id: 'users',
-            label: 'Users', // TODO: Change into a getText lang asset
+            label: getText('users'),
             adminUseRights: 'read-users',
             show: this.adminRights.useRights.includes('read-users'),
             component: UsersList,
         }, {
             id: 'admin-settings',
-            label: 'Admin', // TODO: Change into a getText lang asset
+            label: getText('admin_settings'),
             adminUseRights: 'read-users', // TODO change to admin settings
             show: this.adminRights.useRights.includes('read-users'), // TODO change to admin settings
             component: AdminSettings,

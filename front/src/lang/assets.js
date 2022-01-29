@@ -634,4 +634,20 @@ export const assetsObj = {
         en: 'Save for this browser',
         fi: 'Tallenna tälle selaimelle',
     },
+    my_settings: {
+        en: 'My settings',
+        fi: 'Omat asetukset',
+    },
+    my_profile: {
+        en: 'My profile',
+        fi: 'Oma profiili',
+    },
+    users: {
+        en: 'Users',
+        fi: 'Käyttäjät',
+    },
+    admin_settings: {
+        en: 'Admin settings',
+        fi: 'Admin-asetukset',
+    },
 };
