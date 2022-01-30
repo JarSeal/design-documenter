@@ -5,6 +5,7 @@ import TabSystem from "../buttons/TabSystem";
 import ViewTitle from "../widgets/ViewTitle";
 import FourOOne from "./FourOOne";
 import AdminSettings from "./settingsTabs/settings_Admin";
+import MySettings from "./settingsTabs/settings_MySettings";
 import UsersList from "./settingsTabs/settings_Users";
 
 class Settings extends Component {
@@ -60,7 +61,7 @@ class Settings extends Component {
         const define = [{
             id: 'my-settings',
             label: getText('my_settings'),
-            component: Component,
+            component: MySettings,
         }, {
             id: 'my-profile',
             label: getText('my_profile'),

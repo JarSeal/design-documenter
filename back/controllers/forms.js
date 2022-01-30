@@ -3,7 +3,10 @@ const logger = require('./../utils/logger');
 const Form = require('./../models/form');
 const User = require('./../models/user');
 const AdminSetting = require('./../models/adminSetting');
+const UserSetting = require('./../models/userSetting');
 const { validatePrivileges } = require('./forms/formEngine');
+const { getSetting } = require('../utils/settingsService');
+const { isValidObjectId } = require('mongoose');
 
 // Get all forms
 formsRouter.get('/', async (request, response) => {
@@ -40,7 +43,7 @@ formsRouter.get('/:id', async (request, response) => {
     form.method = result.method;
 
     if(splitId.length) {
-        form.data = await getAdditionalData(formId, splitId[1], request.session.userLevel);
+        form.data = await getAdditionalData(formId, splitId[1], request);
         if(form.data._error) {
             logger.log(`Error with additional form data. FormId: '${formId}'. Additional Id: '${splitId[1]}'. (+ form.data._error)`, form.data._error);
             return response.status(form.data._error.code).json(form.data._error.obj);
@@ -75,7 +78,8 @@ formsRouter.get('/:id', async (request, response) => {
     response.json(form);
 });
 
-const getAdditionalData = async (formId, dataId, userLevel) => {
+const getAdditionalData = async (formId, dataId, request) => {
+    const userLevel = request.session.userLevel;
     if(formId === 'edit-user-form') {
         const user = await User.findById(dataId);
         if(!user) {
@@ -105,6 +109,28 @@ const getAdditionalData = async (formId, dataId, userLevel) => {
                 _error: { code: 404,
                     obj: {
                         msg: 'Could not find admin setting.',
+                        settingNotFound: true,
+                    },
+                },
+            };
+        }
+        setting[setting.settingId] = setting.value;
+        const settingValue = {};
+        settingValue[setting.settingId] = setting.value;
+        return settingValue;
+    } else if(formId === 'user-settings-form') {
+        let setting;
+        if(isValidObjectId(dataId)) {
+            setting = await UserSetting.findById(dataId);
+        } else {
+            await getSetting(request, dataId, false, true); // Creates the setting
+            setting = await UserSetting.findOne({ settingId: dataId, userId: request.session._id });
+        }
+        if(!setting) {
+            return {
+                _error: { code: 404,
+                    obj: {
+                        msg: 'Could not find user setting.',
                         settingNotFound: true,
                     },
                 },

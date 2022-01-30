@@ -9,6 +9,10 @@ const userSettingSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+    },
     value: {
         type: String,
         required: true,
@@ -17,27 +21,10 @@ const userSettingSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    labelId: {
-        type: String,
-        required: true,
-    },
-    descriptionId: {
-        type: String,
-        required: true,
-    },
     type: {
         type: String,
         required: true,
     },
-    edited: [
-        {
-            _id: false,
-            by: {
-                type: mongoose.Schema.Types.ObjectId,
-            },
-            date: Date,
-        }
-    ],
 });
 
 userSettingSchema.plugin(uniqueValidator);

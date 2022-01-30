@@ -17,14 +17,6 @@ const adminSettingSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    labelId: {
-        type: String,
-        required: true,
-    },
-    descriptionId: {
-        type: String,
-        required: true,
-    },
     settingReadRight: {
         type: Number,
         required: true,

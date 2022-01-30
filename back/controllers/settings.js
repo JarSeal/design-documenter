@@ -1,12 +1,30 @@
 const settingsRouter = require('express').Router();
 const adminSettingsFormData = require('./../../shared/formData/adminSettingsFormData');
+const userSettingsFormData = require('./../../shared/formData/userSettingsFormData');
 const logger = require('./../utils/logger');
-const AdminSettings = require('./../models/adminSetting');
+const AdminSetting = require('./../models/adminSetting');
+const UserSetting = require('./../models/userSetting');
 const { createNewEditedArray } = require('./../utils/helpers');
 const { getAndValidateForm } = require('./forms/formEngine');
 
 
-// Get all admin settings
+// Get all user settings values
+settingsRouter.get('/', async (request, response) => {
+
+    const formId = userSettingsFormData.formId;
+    const error = await getAndValidateForm(formId, 'GET', request);
+    if(error) {
+        response.status(error.code).json(error.obj);
+        return;
+    }
+    
+    const result = await UserSetting.find({ userId: request.session._id });
+
+    response.json(result);
+});
+
+
+// Get all admin settings values
 settingsRouter.get('/admin', async (request, response) => {
 
     const formId = adminSettingsFormData.formId;
@@ -16,7 +34,7 @@ settingsRouter.get('/admin', async (request, response) => {
         return;
     }
     
-    const result = await AdminSettings.find({}).sort({ orderNr: -1 });
+    const result = await AdminSetting.find({});
 
     response.json(result);
 });
@@ -32,7 +50,7 @@ settingsRouter.put('/admin', async (request, response) => {
         return;
     }
 
-    const setting = await AdminSettings.findById(body.mongoId);
+    const setting = await AdminSetting.findById(body.mongoId);
     if(!setting) {
         logger.error('Could not find admin setting. Setting was not found (id: ' + body.mongoId + '). (+ body)', body);
         response.status(404).json({
@@ -55,7 +73,7 @@ settingsRouter.put('/admin', async (request, response) => {
         edited,
     };
 
-    const savedSetting = await AdminSettings.findByIdAndUpdate(body.mongoId, updatedAdminSetting, { new: true });
+    const savedSetting = await AdminSetting.findByIdAndUpdate(body.mongoId, updatedAdminSetting, { new: true });
     if(!savedSetting) {
         logger.error('Could not find admin setting. Setting was not found (id: ' + body.mongoId + '). (+ body)', body);
         response.status(404).json({
