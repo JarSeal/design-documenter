@@ -8,8 +8,8 @@ class AdminSettings extends Component {
         super(data);
         this.template = '<div class="settings-tab-view"></div>';
         this.users = [];
-        this.Dialog = this.Router.commonData.appState.state.Dialog;
         this.appState = this.Router.commonData.appState;
+        this.Dialog = this.appState.get('Dialog');
         this.settingsComponents = [];
         this.settingsData = [];
     }
