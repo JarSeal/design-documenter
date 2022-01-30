@@ -17,7 +17,6 @@ const logger = require('./utils/logger');
 const mongoose = require('mongoose');
 const createPresetForms = require('./controllers/forms/createPresetForms');
 const { createRandomString } = require('../shared/parsers');
-const { getSettings } = require('./utils/settingsService');
 
 process.env.TZ = 'Europe/London';
 
@@ -32,7 +31,6 @@ mongoose.connect(config.MONGODB_URI, {
     .then(() => {
         logger.info('connected to MongoDB');
         createPresetForms();
-        getSettings();
     })
     .catch((error) => {
         logger.error('error connection to MongoDB:', error.message);
