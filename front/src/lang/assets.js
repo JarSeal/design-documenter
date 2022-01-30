@@ -642,6 +642,10 @@ export const assetsObj = {
         en: 'My profile',
         fi: 'Oma profiili',
     },
+    tables: {
+        en: 'Tables',
+        fi: 'Taulukot',
+    },
     users: {
         en: 'Users',
         fi: 'Käyttäjät',
