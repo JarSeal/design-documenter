@@ -115,8 +115,17 @@ class SettingsGroup extends Component {
             return field.value === true || field.value === 'true'
                 ? getText('on').toUpperCase()
                 : getText('off').toUpperCase();
+        } else if(field.type === 'dropdown') {
+            let options = field.options;
+            if(options) {
+                for(let i=0; i<options.length; i++) {
+                    if(String(field.value) === String(options[i].value)) {
+                        return getText(options[i].labelId);
+                    }
+                }
+            }
         }
-        return field.value;
+        return field.value; // String or Number
     }
 }
 

@@ -2,6 +2,7 @@ import { Component, Logger } from "../../../LIGHTER";
 import axios from "axios";
 import { _CONFIG } from "../../../_CONFIG";
 import SettingsGroup from "../../widgets/SettingsGroup";
+import optionsFns from "../../forms/formData/optionsFns";
 
 class AdminSettings extends Component {
     constructor(data) {
@@ -77,6 +78,12 @@ class AdminSettings extends Component {
                     }
                 }
                 if(!value) value = fs.fields[j].defaultValue;
+                let options = fs.fields[j].options;
+                if(fs.fields[j].getOptionsFn) {
+                    options = optionsFns[fs.fields[j].getOptionsFn]({
+                        readerLevel: this.appState.get('user.userLevel'),
+                    });
+                }
                 data.fields.push({
                     id: fieldId,
                     mongoId,
@@ -85,7 +92,7 @@ class AdminSettings extends Component {
                     labelId: fs.fields[j].labelId,
                     descriptionId: fs.fields[j].descriptionId,
                     defaultValue: fs.fields[j].defaultValue,
-                    options: fs.fields[j].options,
+                    options,
                 });
             }
             this.settingsData.push(data);
