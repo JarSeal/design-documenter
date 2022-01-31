@@ -478,6 +478,10 @@ export const assetsObj = {
         en: 'Delete user',
         fi: 'Poista käyttäjä',
     },
+    delete_users: {
+        en: 'Delete users',
+        fi: 'Poista käyttäjiä',
+    },
     delete_single_user_confirmation: {
         en: 'Are you sure you want to delete user \'$[0]\'? This cannot be undone.',
         fi: 'Oletko varma, että haluat poistaa käyttäjän \'$[0]\'? Tätä toimintoa ei voi perua.',
