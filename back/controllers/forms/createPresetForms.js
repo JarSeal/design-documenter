@@ -49,8 +49,6 @@ const createPresetForms = async () => {
                         settingId: field.id,
                         value: field.defaultValue,
                         defaultValue: field.defaultValue,
-                        labelId: field.labelId,
-                        descriptionId: field.descriptionId,
                         settingReadRight: field.settingReadRight || 0,
                         type: field.settingType,
                     });
@@ -59,7 +57,7 @@ const createPresetForms = async () => {
                 }
             }
         }
-        if(settingsSaved) logger.log(`Saved ${settingsSaved} admin setting${settingsSaved === 1 ? 's' : ''}.`);
+        if(settingsSaved) logger.log(`Saved ${settingsSaved} admin setting${settingsSaved === 1 ? '' : 's'}.`);
     }
 };
 

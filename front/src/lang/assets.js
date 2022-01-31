@@ -614,4 +614,44 @@ export const assetsObj = {
         en: 'The amount to store of the latest edited logs per document.',
         fi: 'Kuinka monta viimeisintä editointi-logia säilytetään.',
     },
+    table_sorting_memory: {
+        en: 'Table sorting and filter remembering',
+        fi: 'Taulukon järjestely ja filtteröinti muistaminen',
+    },
+    table_sorting_memory_desc: {
+        en: 'Whether or not the table sorting and filtering values should be remembered for a single table, and how long they should be remembered.',
+        fi: 'Tulisiko yksittäisen taulukon muistaa järjestely- ja filtteröinti-arvot ja kuinka pitkään.',
+    },
+    none: {
+        en: 'None',
+        fi: 'Ei tallenneta',
+    },
+    save_for_this_session: {
+        en: 'Save for this session',
+        fi: 'Tallenna tälle sessiolle',
+    },
+    save_for_this_browser: {
+        en: 'Save for this browser',
+        fi: 'Tallenna tälle selaimelle',
+    },
+    my_settings: {
+        en: 'My settings',
+        fi: 'Omat asetukset',
+    },
+    my_profile: {
+        en: 'My profile',
+        fi: 'Oma profiili',
+    },
+    tables: {
+        en: 'Tables',
+        fi: 'Taulukot',
+    },
+    users: {
+        en: 'Users',
+        fi: 'Käyttäjät',
+    },
+    admin_settings: {
+        en: 'Admin settings',
+        fi: 'Admin-asetukset',
+    },
 };

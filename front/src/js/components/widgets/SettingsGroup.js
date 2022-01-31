@@ -13,6 +13,7 @@ const { Component } = require("../../LIGHTER");
 //         {id:String, type:String, value:String, defaultValue:String|Number, options:Dropdown options, labelId, descriptionId}
 //       ]
 //   }
+//  - formId: String
 //  - updateSettings: Function
 class SettingsGroup extends Component {
     constructor(data) {
@@ -33,11 +34,12 @@ class SettingsGroup extends Component {
             fn: (e) => {
                 const index = parseInt(e.target.getAttribute('i'));
                 if(isNaN(index)) return;
-                const fieldId = this.settingsData.fields[index].mongoId;
+                let fieldId = this.settingsData.fields[index].mongoId;
+                if(!fieldId) fieldId = this.settingsData.fields[index].id;
                 this.Dialog.appear({
                     component: FormCreator,
                     componentData: {
-                        id: 'admin-settings-form',
+                        id: this.data.formId,
                         appState: this.appState,
                         editDataId: fieldId,
                         addToMessage: { mongoId: fieldId },
@@ -57,7 +59,6 @@ class SettingsGroup extends Component {
                         formLoadedFn: () => { this.Dialog.onResize(); },
                         extraButton: {
                             label: getText('cancel'),
-                            class: 'some-class',
                             clickFn: (e) => {
                                 e.preventDefault();
                                 this.Dialog.disappear();
@@ -114,8 +115,17 @@ class SettingsGroup extends Component {
             return field.value === true || field.value === 'true'
                 ? getText('on').toUpperCase()
                 : getText('off').toUpperCase();
+        } else if(field.type === 'dropdown') {
+            let options = field.options;
+            if(options) {
+                for(let i=0; i<options.length; i++) {
+                    if(String(field.value) === String(options[i].value)) {
+                        return getText(options[i].labelId);
+                    }
+                }
+            }
         }
-        return field.value;
+        return field.value; // String or Number
     }
 }
 

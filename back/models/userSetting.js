@@ -4,9 +4,13 @@ const uniqueValidator = require('mongoose-unique-validator');
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
-const adminSettingSchema = mongoose.Schema({
+const userSettingSchema = mongoose.Schema({
     settingId: {
         type: String,
+        required: true,
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
     },
     value: {
@@ -17,29 +21,14 @@ const adminSettingSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    settingReadRight: {
-        type: Number,
-        required: true,
-        minlength: 1,
-        maxlength: 1,
-    },
     type: {
         type: String,
         required: true,
     },
-    edited: [
-        {
-            _id: false,
-            by: {
-                type: mongoose.Schema.Types.ObjectId,
-            },
-            date: Date,
-        }
-    ],
 });
 
-adminSettingSchema.plugin(uniqueValidator);
-adminSettingSchema.set('toJSON', {
+userSettingSchema.plugin(uniqueValidator);
+userSettingSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString();
         delete returnedObject._id;
@@ -48,6 +37,6 @@ adminSettingSchema.set('toJSON', {
     }
 });
 
-const AdminSetting = mongoose.model('AdminSetting', adminSettingSchema, 'adminsettings');
+const UserSetting = mongoose.model('UserSetting', userSettingSchema, 'usersettings');
 
-module.exports = AdminSetting;
+module.exports = UserSetting;

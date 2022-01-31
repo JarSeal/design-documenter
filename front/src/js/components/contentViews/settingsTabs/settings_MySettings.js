@@ -2,9 +2,8 @@ import { Component, Logger } from "../../../LIGHTER";
 import axios from "axios";
 import { _CONFIG } from "../../../_CONFIG";
 import SettingsGroup from "../../widgets/SettingsGroup";
-import optionsFns from "../../forms/formData/optionsFns";
 
-class AdminSettings extends Component {
+class MySettings extends Component {
     constructor(data) {
         super(data);
         this.template = '<div class="settings-tab-view"></div>';
@@ -16,7 +15,7 @@ class AdminSettings extends Component {
     }
 
     init = () => {
-        this._loadAdminSettings();
+        this._loadMySettings();
     }
 
     paint = () => {
@@ -25,7 +24,7 @@ class AdminSettings extends Component {
         }
     }
 
-    _loadAdminSettings = async () => {
+    _loadMySettings = async () => {
         // Clear old components
         for(let i=0; i<this.settingsComponents.length; i++) {
             if(this.settingsComponents[i]) this.settingsComponents[i].discard(true);
@@ -34,18 +33,18 @@ class AdminSettings extends Component {
         this.settingsData = [];
 
         // Load form data
-        let url = _CONFIG.apiBaseUrl + '/api/forms/admin-settings-form',
+        let url = _CONFIG.apiBaseUrl + '/api/forms/user-settings-form',
             formData, settingsData;
         let result = await axios.get(url, { withCredentials: true });
         if(result.data) {
             formData = result.data;
         } else {
-            Logger.log('Could not retrieve admin settings form data.');
+            Logger.log('Could not retrieve user settings (My Settings) form data.');
             return;
         }
 
         // Load current settings
-        url = _CONFIG.apiBaseUrl + '/api/settings/admin';
+        url = _CONFIG.apiBaseUrl + '/api/settings';
         result = await axios.get(url, { withCredentials: true });
         if(result.data) {
             settingsData = result.data;
@@ -78,12 +77,6 @@ class AdminSettings extends Component {
                     }
                 }
                 if(!value) value = fs.fields[j].defaultValue;
-                let options = fs.fields[j].options;
-                if(fs.fields[j].getOptionsFn) {
-                    options = optionsFns[fs.fields[j].getOptionsFn]({
-                        readerLevel: this.appState.get('user.userLevel'),
-                    });
-                }
                 data.fields.push({
                     id: fieldId,
                     mongoId,
@@ -92,15 +85,15 @@ class AdminSettings extends Component {
                     labelId: fs.fields[j].labelId,
                     descriptionId: fs.fields[j].descriptionId,
                     defaultValue: fs.fields[j].defaultValue,
-                    options,
+                    options: fs.fields[j].options,
                 });
             }
             this.settingsData.push(data);
             this.settingsComponents.push(this.addChild(new SettingsGroup({
-                id: 'admin-settings-g-' + fs.id,
+                id: 'user-settings-g-' + fs.id,
                 settingsData: data,
-                formId: 'admin-settings-form',
-                updateSettings: this._loadAdminSettings,
+                formId: 'user-settings-form',
+                updateSettings: this._loadMySettings,
             })));
         }
 
@@ -108,4 +101,4 @@ class AdminSettings extends Component {
     }
 }
 
-export default AdminSettings;
+export default MySettings;
