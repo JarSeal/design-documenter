@@ -3,13 +3,14 @@ const UserSetting = require('../models/userSetting');
 const userSettingsFormData = require('./../../shared/formData/userSettingsFormData');
 const { checkIfLoggedIn } = require('./checkAccess');
 
-let all = {};
+let all = {},
+    onceLoaded = false;
 
 const reloadSettings = async (request) => {
     const adminSettings = await AdminSetting.find({});
     all = {};
     let userLevel = 0;
-    const loggedIn = checkIfLoggedIn(request);
+    const loggedIn = checkIfLoggedIn(request.session);
     if(loggedIn) userLevel = request.session.userLevel;
     for(let i=0; i<adminSettings.length; i++) {
         if(userLevel >= adminSettings[i].settingReadRight) {
@@ -17,18 +18,28 @@ const reloadSettings = async (request) => {
         }
     }
     if(loggedIn) {
-        const userSettings = await UserSetting.find({ userId: request.session._id });
-        for(let i=0; i<userSettings.length; i++) {
-            let value = userSettings[i]
-                ? getValue(userSettings[i])
-                : await getDefaultValue(userSettings[i], request);
-            all[userSettings[i].settingId] = value;
+        const fieldSets = userSettingsFormData.form.fieldsets;
+        for(let i=0; i<fieldSets.length; i++) {
+            const fs = fieldSets[i];
+            for(let j=0; j<fs.fields.length; j++) {
+                const field = fs.fields[j];
+                const setting = await UserSetting.findOne({
+                    userId: request.session._id,
+                    settingId: field.id,
+                });
+                if(!setting) {
+                    all[field.id] = await getDefaultValue(field.id, request);
+                } else {
+                    all[field.id] = getValue(setting);
+                }
+            }
         }
     }
+    onceLoaded = true;
 };
 
 const getSettings = async (request, noReload) => {
-    if(!noReload) {
+    if(!noReload || !onceLoaded) {
         await reloadSettings(request);
     }
     return all;
@@ -50,16 +61,14 @@ const getSetting = async (request, id, admin, noReload) => {
             ? getValue(setting)
             : await getDefaultValue(setting, request);
     }
-    const value = all[id];
+    let value = all[id];
     if(value === undefined) {
         let setting = await UserSetting.findOne({ settingId: id, userId: request.session._id });
-        const value = setting
+        value = setting
             ? getValue(setting)
             : await getDefaultValue(id, request);
-        all[id] = value;
-        return value;
     }
-    return all[id];
+    return value;
 };
 
 const getDefaultValue = async (setting, request) => {
@@ -96,7 +105,7 @@ const getValue = (setting) => {
 };
 
 const getPublicSettings = async (request, noReload) => {
-    if(!noReload) {
+    if(!noReload || !onceLoaded) {
         await reloadSettings(request);
     }
     const publicSettings = {};
@@ -117,6 +126,10 @@ const publicSettingsRemapping = {
             }
             return value;
         },
+    },
+    'table-sorting-setting': {
+        newKey: 'tableSorting',
+        createValue: (value) => { return value; },
     },
 };
 
