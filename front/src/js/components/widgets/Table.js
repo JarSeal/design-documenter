@@ -939,6 +939,17 @@ class Table extends Component {
         return this.allData.filter(item => this.selected.includes(item._tableIndex));
     }
 
+    removeSelectedByTableIndex = (tableIndex) => {
+        let removeIndex = null;
+        for(let i=0; i<this.selected.length; i++) {
+            if(tableIndex === this.selected._tableIndex) {
+                removeIndex = i;
+                break;
+            }
+        }
+        this.selected.splice(removeIndex, 1);
+    }
+
     updateTable = (newData) => {
         this.data.tableData = newData;
         this.tableData = newData;
