@@ -46,7 +46,8 @@ class SettingsGroup extends Component {
                         beforeFormSendingFn: () => {
                             this.Dialog.lock();
                         },
-                        afterFormSentFn: () => {
+                        afterFormSentFn: (response) => {
+                            this.appState.set('serviceSettings', response.data);
                             this.updateSettings();
                             this.Dialog.disappear();
                         },

@@ -13,6 +13,8 @@ import './Table.scss';
 // - fullWidth: Boolean,
 // - emptyStateMsg: String,
 // - rowClickFn: Function(e, rowData)
+// - tableParams: Object { sortColumn, sortOrder, filterString, filterMatchCase, filterSelectors, showRowsAmount }
+// - afterChange: Function({ id, sortColumn, sortOrder, filterString, filterMatchCase, filterSelectors, showRowsAmount })
 // - showGroupSize: Number,
 // - showStats: Boolean,
 // - unsortable: Boolean, (makes all of the columns unsortable)
@@ -78,12 +80,20 @@ class Table extends Component {
         }
         this.groupMax = 0;
         if(data.showGroupSize) {
-            this.groupMax = data.showGroupSize;
+            this.groupMax = data.tableParams && data.tableParams.showRowsAmount
+                ? data.tableParams.showRowsAmount
+                : data.showGroupSize;
         }
         for(let i=0; i<this.tableStructure.length; i++) {
             if(this.tableStructure[i].actionFn) {
                 this.tableStructure[i].unsortable = true;
                 this.tableStructure[i].doNotFilter = true;
+            } else if(data.tableParams && data.tableParams.sortColumn && data.tableParams.sortOrder) {
+                if(this.tableStructure[i].key === data.tableParams.sortColumn) {
+                    this.tableStructure[i].sort = data.tableParams.sortOrder;
+                } else {
+                    delete this.tableStructure[i].sort;
+                }
             }
             if(data.unsortable) {
                 this.tableStructure[i].unsortable = true;
@@ -99,17 +109,31 @@ class Table extends Component {
         this.selected = [];
         this.toolsComp;
         this.tableComp;
+        this.tableParams = {
+            sortOrder: null,
+            sortColumn: null,
+            filterString: '',
+            filterMatchCase: false,
+            filterSelectors: [],
+            showRowsAmount: this.groupMax,
+        };
         this.statsComp;
         this.filterComp;
-        this.filterString = '';
+        this.filterString = data.tableParams && data.tableParams.filterString
+            ? data.tableParams.filterString
+            : '';
         this.filterCaretPos = null;
         this.filterKeys = [];
         this.filterSettingsOpen = false;
         this.filterSettingsComp;
-        this.filterMatchCase = false;
-        this.filterSelectors = this.tableStructure.filter(struct => !struct.doNotFilter).map(struct => {
+        this.filterMatchCase = data.tableParams && data.tableParams.filterMatchCase
+            ? data.tableParams.filterMatchCase
+            : false;
+        this.filterSelectors = this.tableStructure.filter(struct => !struct.doNotFilter).map((struct, index) => {
             struct.label = struct.heading;
-            struct.selected = true;
+            struct.selected = data.tableParams && data.tableParams.filterSelectors && data.tableParams.filterSelectors.length >= index+1
+                ? data.tableParams.filterSelectors[index].selected
+                : true;
             this.filterKeys.push(struct.key);
             return struct;
         });
@@ -131,6 +155,7 @@ class Table extends Component {
     }
 
     paint = (data) => {
+        this._filterData(true);
         this._drawFilter();
         this._drawStats();
         this._drawTools();
@@ -379,6 +404,7 @@ class Table extends Component {
             this.rePaint();
         }
         window.scrollTo(scrollPosX, scrollPosY);
+        this.afterChange();
     }
 
     _createTable = () => {
@@ -529,10 +555,13 @@ class Table extends Component {
                 classString += ' sort-available';
             }
             if(structure.sort) {
+                this.tableParams.sortColumn = structure.key;
                 if(structure.sort === 'asc') {
                     classString += ' sort-asc';
+                    this.tableParams.sortOrder = 'asc';
                 } else {
                     classString += ' sort-desc';
+                    this.tableParams.sortOrder = 'desc';
                 }
             }
         }
@@ -781,11 +810,11 @@ class Table extends Component {
         }
     }
 
-    _filterData = () => {
+    _filterData = (noRefresh) => {
         if(this.filterString === '') {
             this.tableData = [...this.allData];
             this.groupMax = this.data.showGroupSize || 0;
-            this._refreshView();
+            if(!noRefresh) this._refreshView();
             return;
         }
 
@@ -851,7 +880,7 @@ class Table extends Component {
 
         this.groupMax = this.data.showGroupSize || 0;
         this.tableData = newData.concat(addToNewData);
-        this._refreshView();
+        if(!noRefresh) this._refreshView();
     }
 
     keyUp = e => {
@@ -919,6 +948,16 @@ class Table extends Component {
             this.allData[i]['_tableIndex'] = i;
         }
         this._refreshView(true);
+    }
+
+    afterChange = () => {
+        if(this.data.afterChange) {
+            this.tableParams.filterString = this.filterString;
+            this.tableParams.filterMatchCase = this.filterMatchCase;
+            this.tableParams.filterSelectors = this.filterSelectors;
+            this.tableParams.showRowsAmount = this.groupMax;
+            this.data.afterChange(this.tableParams, this.data.id);
+        }
     }
 }
 

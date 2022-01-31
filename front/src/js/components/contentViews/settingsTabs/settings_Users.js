@@ -1,9 +1,10 @@
-import { Component, Logger } from "../../../LIGHTER";
+import { Component, LocalStorage, Logger, SessionStorage } from "../../../LIGHTER";
 import axios from "axios";
 import { getText } from "../../../helpers/lang";
 import { _CONFIG } from "../../../_CONFIG";
 import Table from "../../widgets/Table";
 import FormCreator from "../../forms/FormCreator";
+import { getHashCode } from "../../../helpers/storage";
 
 class UsersList extends Component {
     constructor(data) {
@@ -12,6 +13,19 @@ class UsersList extends Component {
         this.users = [];
         this.Dialog = this.Router.commonData.appState.state.Dialog;
         this.appState = this.Router.commonData.appState;
+        const tableSortingSetting = this.appState.get('serviceSettings')['tableSorting'];
+        let storage;
+        if(tableSortingSetting === 'session') {
+            storage = new SessionStorage('bjs_');
+        } else if(tableSortingSetting === 'browser') {
+            storage = new LocalStorage('bjs_');
+        }
+        let username, storageHandle, params;
+        if(storage) {
+            username = this.appState.get('user.username');
+            storageHandle = getHashCode(username + data.id);
+            params = JSON.parse(storage.getItem(storageHandle));
+        }
         this.usersTable = this.addChild(new Table({
             id: 'users-table',
             fullWidth: true,
@@ -20,6 +34,12 @@ class UsersList extends Component {
             selectable: true,
             showRowNumbers: true,
             showGroupSize: 25,
+            tableParams: params,
+            afterChange: (data) => {
+                if(!username || !storage) return;
+                const dataString  = JSON.stringify(data);
+                storage.setItem(storageHandle, dataString);
+            },
             filterHotkey: 'f',
             filter: true,
             tableStructure: this._getTableStructure(),

@@ -6,6 +6,7 @@ const AdminSetting = require('./../models/adminSetting');
 const UserSetting = require('./../models/userSetting');
 const { createNewEditedArray } = require('./../utils/helpers');
 const { getAndValidateForm } = require('./forms/formEngine');
+const { getPublicSettings } = require('../utils/settingsService');
 
 
 // Get all user settings values
@@ -64,8 +65,9 @@ settingsRouter.put('/', async (request, response) => {
         });
         return;
     }
-    logger.log(`Setting '${savedSetting.settingId}' was changed.`);
-    response.json(savedSetting);
+    logger.log(`Setting '${savedSetting.settingId}' was changed (user setting).`);
+    const publicSettings = await getPublicSettings(request);
+    response.json(publicSettings);
 });
 
 
@@ -127,8 +129,9 @@ settingsRouter.put('/admin', async (request, response) => {
         });
         return;
     }
-    logger.log(`Setting '${savedSetting.settingId}' was changed.`);
-    response.json(savedSetting);
+    logger.log(`Setting '${savedSetting.settingId}' was changed (admin setting).`);
+    const publicSettings = await getPublicSettings(request);
+    response.json(publicSettings);
 });
 
 module.exports = settingsRouter;

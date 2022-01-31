@@ -50,7 +50,7 @@ class LocalStorage {
     }
 
     _lsTest(){
-        var test = this.keyPrefix + 'testLSAvailability';
+        const test = this.keyPrefix + 'testLSAvailability';
         try {
             localStorage.setItem(test, test);
             localStorage.removeItem(test);
@@ -112,7 +112,7 @@ class SessionStorage {
     }
 
     _lsTest(){
-        var test = this.keyPrefix + 'testSSAvailability';
+        const test = this.keyPrefix + 'testSSAvailability';
         try {
             sessionStorage.setItem(test, test);
             sessionStorage.removeItem(test);
