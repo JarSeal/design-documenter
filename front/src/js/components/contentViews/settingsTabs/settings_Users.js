@@ -61,6 +61,9 @@ class UsersList extends Component {
                                 this.Dialog.lock();
                             },
                             afterFormSentFn: () => {
+                                for(let i=0; i<selected.length; i++) {
+                                    this.usersTable.removeSelectedByTableIndex(selected[i]._tableIndex);
+                                }
                                 this.Dialog.disappear();
                                 this._updateTable();
                             },
@@ -242,6 +245,7 @@ class UsersList extends Component {
                                 this.Dialog.lock();
                             },
                             afterFormSentFn: () => {
+                                this.usersTable.removeSelectedByTableIndex(rowData._tableIndex);
                                 this.Dialog.disappear();
                                 this._updateTable();
                             },

@@ -132,9 +132,9 @@ class Table extends Component {
         this.filterSelectors = this.tableStructure.filter(struct => !struct.doNotFilter).map((struct, index) => {
             struct.label = struct.heading;
             struct.selected = data.tableParams && data.tableParams.filterSelectors && data.tableParams.filterSelectors.length >= index+1
-                ? data.tableParams.filterSelectors[index].selected
+                ? data.tableParams.filterSelectors[index]
                 : true;
-            this.filterKeys.push(struct.key);
+            if(struct.selected) this.filterKeys.push(struct.key);
             return struct;
         });
         this.largeAmountLimit = 500; // If the data set is larger than this, than the filter will only start after enter key is pressed
@@ -939,6 +939,17 @@ class Table extends Component {
         return this.allData.filter(item => this.selected.includes(item._tableIndex));
     }
 
+    removeSelectedByTableIndex = (tableIndex) => {
+        let removeIndex = null;
+        for(let i=0; i<this.selected.length; i++) {
+            if(tableIndex === this.selected._tableIndex) {
+                removeIndex = i;
+                break;
+            }
+        }
+        this.selected.splice(removeIndex, 1);
+    }
+
     updateTable = (newData) => {
         this.data.tableData = newData;
         this.tableData = newData;
@@ -954,7 +965,7 @@ class Table extends Component {
         if(this.data.afterChange) {
             this.tableParams.filterString = this.filterString;
             this.tableParams.filterMatchCase = this.filterMatchCase;
-            this.tableParams.filterSelectors = this.filterSelectors;
+            this.tableParams.filterSelectors = this.filterSelectors.map(s => s.selected);
             this.tableParams.showRowsAmount = this.groupMax;
             this.data.afterChange(this.tableParams, this.data.id);
         }

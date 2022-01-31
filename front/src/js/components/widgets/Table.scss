@@ -366,10 +366,10 @@
     background-color: rgba($table-thead-background, 0.5);
     color: #fff;
     &:first-child {
-        border-radius: 0.3rem 0 0 0;
+        border-top-left-radius: 0.3rem;
     }
     &:last-child {
-        border-radius: 0 0.3rem 0 0;
+        border-top-right-radius: 0.3rem;
     }
     + .table-tools-button {
         border-left: 0.2rem solid rgba(#000, 0.4);
