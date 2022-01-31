@@ -6,6 +6,7 @@ const readUsersFormData = require('./../../shared/formData/readUsersFormData');
 const readOneUserFormData = require('./../../shared/formData/readOneUserFormData');
 const logger = require('./../utils/logger');
 const User = require('./../models/user');
+const UserSetting = require('./../models/userSetting');
 const Form = require('./../models/form');
 const { getAndValidateForm } = require('./forms/formEngine');
 const { checkIfLoggedIn } = require('./../utils/checkAccess');
@@ -123,7 +124,7 @@ usersRouter.put('/', async (request, response) => {
         userLevel: parseInt(body.userLevel),
         edited,
     };
-    
+
     const savedUser = await User.findByIdAndUpdate(body.userId, updatedUser, { new: true });
     if(!savedUser) {
         logger.log('Could not update user. User was not found (id: ' + body.userId + ').');
@@ -186,6 +187,19 @@ usersRouter.post('/delete', async (request, response) => {
                 }
             }
         });
+        const settings = await UserSetting.find({ userId: users[i] });
+        for(let j=0; j<settings.length; j++) {
+            await UserSetting.findByIdAndRemove(settings[j]._id, (err) => {
+                if(err) {
+                    logger.error('Error while trying to delete a user setting (user id: ' + users[i] + ', setting id: ' + settings[j]._id + '). (+ error)', error);
+                    errors.push({
+                        error,
+                        dbError: true,
+                        user,
+                    });
+                }
+            });
+        }
     }
 
     const responseObject = {
