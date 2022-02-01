@@ -5,13 +5,14 @@ import TabSystem from '../buttons/TabSystem';
 import ViewTitle from '../widgets/ViewTitle';
 import FourOOne from './FourOOne';
 import AdminSettings from './settingsTabs/settings_Admin';
+import MyProfile from './settingsTabs/settings_MyProfile';
 import MySettings from './settingsTabs/settings_MySettings';
 import UsersList from './settingsTabs/settings_Users';
 
 class Settings extends Component {
     constructor(data) {
         super(data);
-        const defaultTab = 'my-settings';
+        const defaultTab = 'my-profile';
         this.curTab = defaultTab;
         this.template = '<div></div>';
         this.adminRights = {};
@@ -59,13 +60,13 @@ class Settings extends Component {
 
     _defineTabs = () => {
         const define = [{
+            id: 'my-profile',
+            label: getText('my_profile'),
+            component: MyProfile,
+        }, {
             id: 'my-settings',
             label: getText('my_settings'),
             component: MySettings,
-        }, {
-            id: 'my-profile',
-            label: getText('my_profile'),
-            component: Component,
         }, {
             id: 'users',
             label: getText('users'),
