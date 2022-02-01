@@ -216,8 +216,8 @@ class Table extends Component {
                         const targetId = e.target.id;
                         const buttonId = this.id + '-actionFn-' +  this.tableStructure[i].key;
                         if(targetId !== buttonId) return;
-                        let node = e.target, counter = 0, id;
-                        while(node) {
+                        let node = e.target, counter = 0, id, whileSwitch = true;
+                        while(whileSwitch) {
                             if(node.localName.toLowerCase() === 'tr') {
                                 id = node.id;
                                 break;
@@ -243,8 +243,8 @@ class Table extends Component {
                     if(e.target.id.includes(this.id + '-actionFn-')
                         || e.target.id.includes('-inputSelectorBox-')
                         || e.target.classList.contains('selection-box')) return;
-                    let node = e.target, counter = 0, id;
-                    while(node) {
+                    let node = e.target, counter = 0, id, whileSwitch = true;
+                    while(whileSwitch) {
                         if(node.localName.toLowerCase() === 'tr') {
                             id = node.id;
                             break;
@@ -285,8 +285,8 @@ class Table extends Component {
                         this._refreshView();
                         return;
                     }
-                    let node = e.target, counter = 0, id;
-                    while(node) {
+                    let node = e.target, counter = 0, id, whileSwitch = true;
+                    while(whileSwitch) {
                         if(node.localName.toLowerCase() === 'tr') {
                             id = node.id;
                             break;
@@ -786,8 +786,8 @@ class Table extends Component {
             return;
         }
         const targetId = e.target.id;
-        let node = e.target, counter = 0;
-        while(node) {
+        let node = e.target, counter = 0, whileSwitch = true;
+        while(whileSwitch) {
             if(!node) node = document.getElementById(targetId);
             if(!node) return;
             const id = node.id;
