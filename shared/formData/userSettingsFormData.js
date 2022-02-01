@@ -5,10 +5,10 @@ const adminSettingsFormData = {
     path: '/api/settings',
     method: 'PUT',
     type: 'form',
-    useRightsLevel: 8,
+    useRightsLevel: 2,
     useRightsUsers: [],
     useRightsGroups: [],
-    editorRightsLevel: 9,
+    editorRightsLevel: 8,
     editorRightsUsers: [],
     editorRightsGroups: [],
     form: {
