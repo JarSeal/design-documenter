@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { Component } from "../../LIGHTER";
-import { _CONFIG } from "../../_CONFIG";
+import { Component } from '../../LIGHTER';
+import { _CONFIG } from '../../_CONFIG';
 
 // Attributes for data:
 // - api = API to call when the list is loaded

@@ -1,4 +1,4 @@
-import { Component } from "../../LIGHTER";
+import { Component } from '../../LIGHTER';
 
 // Attributes for data:
 // - show = show the spinner or not [boolean]
@@ -6,7 +6,7 @@ import { Component } from "../../LIGHTER";
 class Spinner extends Component {
     constructor(data) {
         super(data);
-        this.template = `<div class="spinner-icon"></div>`;
+        this.template = '<div class="spinner-icon"></div>';
         this.spinnerAnimTimer;
         this.prevShow = data.show;
         this.fadeTime = (data.fadeTime || 400) + 10;

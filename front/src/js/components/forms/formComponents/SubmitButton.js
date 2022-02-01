@@ -1,4 +1,4 @@
-import Component from "../../../LIGHTER/Component";
+import Component from '../../../LIGHTER/Component';
 
 // Attributes:
 // - text = button label/text [string]
@@ -6,7 +6,7 @@ import Component from "../../../LIGHTER/Component";
 class SubmitButton extends Component {
     constructor(data) {
         super(data);
-        this.template = `<button type="submit" class="form-elem form-elem--submit"></button>`;
+        this.template = '<button type="submit" class="form-elem form-elem--submit"></button>';
     }
 
     paint = (data) => {

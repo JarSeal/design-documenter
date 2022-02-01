@@ -1,6 +1,5 @@
 import Component from '../../LIGHTER/Component';
 import RouteLink from '../buttons/RouteLink';
-import { _CONFIG } from '../../_CONFIG';
 import Button from '../buttons/Button';
 import './MainMenu.scss';
 

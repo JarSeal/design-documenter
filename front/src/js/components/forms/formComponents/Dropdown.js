@@ -1,5 +1,5 @@
-import { getText } from "../../../helpers/lang";
-import { Component } from "../../../LIGHTER";
+import { getText } from '../../../helpers/lang';
+import { Component } from '../../../LIGHTER';
 
 // Attributes:
 // - options = array of objects with value, label, disabled [Array[Object]] [required]

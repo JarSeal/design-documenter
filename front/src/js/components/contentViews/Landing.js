@@ -1,10 +1,10 @@
-import { getText } from "../../helpers/lang";
-import { Component } from "../../LIGHTER";
-import Button from "../buttons/Button";
-import FormCreator from "../forms/FormCreator";
-import UniverseItem from "../widgets/listItems/UniverseItem";
-import ListLoader from "../widgets/ListLoader";
-import ViewTitle from "../widgets/ViewTitle";
+import { getText } from '../../helpers/lang';
+import { Component } from '../../LIGHTER';
+import Button from '../buttons/Button';
+import FormCreator from '../forms/FormCreator';
+import UniverseItem from '../widgets/listItems/UniverseItem';
+import ListLoader from '../widgets/ListLoader';
+import ViewTitle from '../widgets/ViewTitle';
 
 class Landing extends Component {
     constructor(data) {
@@ -41,7 +41,7 @@ class Landing extends Component {
             attributes: { title: getText('create_new_universe') },
             text: '+',
             class: ['list-add-button', 'list-item'],
-            click: (e) => {
+            click: () => {
                 this._showNewUniDialog();
             },
         })));

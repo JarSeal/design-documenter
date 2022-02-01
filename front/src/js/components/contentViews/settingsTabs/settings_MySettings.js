@@ -1,7 +1,7 @@
-import { Component, Logger } from "../../../LIGHTER";
-import axios from "axios";
-import { _CONFIG } from "../../../_CONFIG";
-import SettingsGroup from "../../widgets/SettingsGroup";
+import axios from 'axios';
+import { Component, Logger } from '../../../LIGHTER';
+import { _CONFIG } from '../../../_CONFIG';
+import SettingsGroup from '../../widgets/SettingsGroup';
 
 class MySettings extends Component {
     constructor(data) {

@@ -1,6 +1,6 @@
-import axios from "axios";
-import { Logger } from "../LIGHTER";
-import { _CONFIG } from "../_CONFIG";
+import axios from 'axios';
+import { Logger } from '../LIGHTER';
+import { _CONFIG } from '../_CONFIG';
 
 const checkRouteAccess = async (routeData) => {
     if(!routeData || !routeData.route) {

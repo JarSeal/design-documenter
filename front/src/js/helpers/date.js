@@ -1,5 +1,5 @@
-import { Logger } from "../LIGHTER";
-import { getText } from "./lang";
+import { Logger } from '../LIGHTER';
+import { getText } from './lang';
 
 const variables = {
     defaultFormat: {
@@ -96,8 +96,8 @@ export const createDate = (dateData, shape) => {
 };
 
 export const getMonthName = (monthIndex, long) => {
-    if(monthNumber < 1 || monthNumber > 12) {
-        new Logger('Date, getMonthName *****').log('Month number is not withing 1 and 12.', month);
+    if(monthIndex < 0 || monthIndex > 11) {
+        new Logger('Date, getMonthName *****').log('Month index is not withing 0 and 11.', monthIndex);
         return '';
     }
     let type = '_short';
@@ -107,7 +107,7 @@ export const getMonthName = (monthIndex, long) => {
 
 export const getWeekDayName = (weekDayIndex, long) => {
     if(weekDayIndex < 0 || weekDayIndex > 6) {
-        new Logger('Date, getWeekDayIndex *****').log('Month number is not withing 1 and 12.', month);
+        new Logger('Date, getWeekDayIndex *****').log('Weekday index is not withing 0 and 6.', weekDayIndex);
         return '';
     }
     let type = '_short';

@@ -1,4 +1,4 @@
-const conf = require('../../../shared').CONFIG
+const conf = require('../../../shared').CONFIG;
 
 const optionsFns = {
     userLevels: (args) => {

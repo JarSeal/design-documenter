@@ -1,7 +1,7 @@
-import { Component } from "../../../LIGHTER";
-import { getText } from "../../../helpers/lang";
-import Button from "../../buttons/Button";
-import Spinner from "../Spinner";
+import { Component } from '../../../LIGHTER';
+import { getText } from '../../../helpers/lang';
+import Button from '../../buttons/Button';
+import Spinner from '../Spinner';
 
 // Attributes:
 // - Dialog: Dialog class

@@ -1,7 +1,7 @@
-import { getText } from "../../helpers/lang";
-import { Component, LocalStorage } from "../../LIGHTER";
-import FormCreator from "../forms/FormCreator";
-import ViewTitle from "../widgets/ViewTitle";
+import { getText } from '../../helpers/lang';
+import { Component, LocalStorage } from '../../LIGHTER';
+import FormCreator from '../forms/FormCreator';
+import ViewTitle from '../widgets/ViewTitle';
 
 class Login extends Component {
     constructor(data) {

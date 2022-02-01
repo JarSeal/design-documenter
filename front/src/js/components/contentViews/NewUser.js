@@ -1,7 +1,7 @@
-import { getText } from "../../helpers/lang";
-import { Component } from "../../LIGHTER";
-import FormCreator from "../forms/FormCreator";
-import ViewTitle from "../widgets/ViewTitle";
+import { getText } from '../../helpers/lang';
+import { Component } from '../../LIGHTER';
+import FormCreator from '../forms/FormCreator';
+import ViewTitle from '../widgets/ViewTitle';
 
 class NewUser extends Component {
     constructor(data) {

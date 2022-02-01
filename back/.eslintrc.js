@@ -1,4 +1,5 @@
 module.exports = {
+    'root': true,
     'env': {
         'commonjs': true,
         'es2021': true,
@@ -11,24 +12,21 @@ module.exports = {
         'SharedArrayBuffer': 'readonly'
     },
     'parserOptions': {
-        'ecmaVersion': 2018
+        'ecmaVersion': 2020
     },
     'rules': {
         'indent': [
             'error',
-            4
+            4,
         ],
-        // 'linebreak-style': [
-        //   'error',
-        //   'unix'
-        // ],
         'quotes': [
             'error',
-            'single'
+            'single',
         ],
         'semi': [
             'error',
-            'always'
-        ]
+            'always',
+        ],
+        'no-var': 1,
     }
 };

@@ -1,16 +1,16 @@
 import axios from 'axios';
-import { getLang, getText } from "../../helpers/lang";
+import { getLang, getText } from '../../helpers/lang';
 const shared = require('../../shared/index.js');
-import { Component, Logger, State } from "../../LIGHTER";
-import { _CONFIG } from "../../_CONFIG";
+import { Component, Logger, State } from '../../LIGHTER';
+import { _CONFIG } from '../../_CONFIG';
 import validationFns from './formData/validationFns';
 import optionsFns from './formData/optionsFns';
 import Spinner from '../widgets/Spinner';
-import Checkbox from "./formComponents/Checkbox";
-import Dropdown from "./formComponents/Dropdown";
-import SubmitButton from "./formComponents/SubmitButton";
-import TextInput from "./formComponents/TextInput";
-import TextArea from "./formComponents/TextArea";
+import Checkbox from './formComponents/Checkbox';
+import Dropdown from './formComponents/Dropdown';
+import SubmitButton from './formComponents/SubmitButton';
+import TextInput from './formComponents/TextInput';
+import TextArea from './formComponents/TextArea';
 import Button from '../buttons/Button';
 
 // Attributes for data:
@@ -30,7 +30,7 @@ class FormCreator extends Component {
         this.appState = data.appState;
         this.logger = new Logger('Form Creator *****');
         this.afterFormSentFn = data.afterFormSentFn;
-        this.template = `<form class="form-creator"></form>`;
+        this.template = '<form class="form-creator"></form>';
         this.components = {};
         this.componentsOrder = [];
         this.curLang = getLang();
@@ -1003,7 +1003,7 @@ class FormCreator extends Component {
 
         this.elem.classList.remove(this.cssClasses.formSent);
         this.elem.classList.remove(this.cssClasses.formError);
-        this.elem.classList.remove(this.cssClasses.formSuccess)
+        this.elem.classList.remove(this.cssClasses.formSuccess);
     }
 }
 

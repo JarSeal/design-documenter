@@ -1,15 +1,15 @@
-import { Component, Logger } from "../../../LIGHTER";
-import axios from "axios";
-import { getText } from "../../../helpers/lang";
-import { _CONFIG } from "../../../_CONFIG";
-import { createDate } from "../../../helpers/date";
-import FormCreator from "../../forms/FormCreator";
+import { Component, Logger } from '../../../LIGHTER';
+import axios from 'axios';
+import { getText } from '../../../helpers/lang';
+import { _CONFIG } from '../../../_CONFIG';
+import { createDate } from '../../../helpers/date';
+import FormCreator from '../../forms/FormCreator';
 import './settings_OneUser.scss';
-import Table from "../../widgets/Table";
-import FourOOne from "../FourOOne";
-import FourOFour from "../FourOFour";
-import RouteLink from "../../buttons/RouteLink";
-import ViewTitle from "../../widgets/ViewTitle";
+import Table from '../../widgets/Table';
+import FourOOne from '../FourOOne';
+import FourOFour from '../FourOFour';
+import RouteLink from '../../buttons/RouteLink';
+import ViewTitle from '../../widgets/ViewTitle';
 
 class OneUser extends Component {
     constructor(data) {

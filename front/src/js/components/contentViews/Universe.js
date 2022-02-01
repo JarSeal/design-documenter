@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { Component } from "../../LIGHTER";
-import { parsers } from "../../shared";
+import { Component } from '../../LIGHTER';
+import { parsers } from '../../shared';
 import { _CONFIG } from '../../_CONFIG';
 import ViewTitle from '../widgets/ViewTitle';
 

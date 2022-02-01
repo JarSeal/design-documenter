@@ -1,5 +1,5 @@
-import { Component } from "../../LIGHTER";
-import Spinner from "./Spinner";
+import { Component } from '../../LIGHTER';
+import Spinner from './Spinner';
 import './ViewTitle.scss';
 
 // Attributes:

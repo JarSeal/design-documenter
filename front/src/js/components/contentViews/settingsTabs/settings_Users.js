@@ -1,10 +1,10 @@
-import { Component, LocalStorage, Logger, SessionStorage } from "../../../LIGHTER";
-import axios from "axios";
-import { getText } from "../../../helpers/lang";
-import { _CONFIG } from "../../../_CONFIG";
-import Table from "../../widgets/Table";
-import FormCreator from "../../forms/FormCreator";
-import { getHashCode } from "../../../helpers/storage";
+import { Component, LocalStorage, Logger, SessionStorage } from '../../../LIGHTER';
+import axios from 'axios';
+import { getText } from '../../../helpers/lang';
+import { _CONFIG } from '../../../_CONFIG';
+import Table from '../../widgets/Table';
+import FormCreator from '../../forms/FormCreator';
+import { getHashCode } from '../../../helpers/storage';
 
 class UsersList extends Component {
     constructor(data) {
