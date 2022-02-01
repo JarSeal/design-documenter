@@ -27,9 +27,6 @@ module.exports = {
             'error',
             'always',
         ],
-        'no-var': [
-            'error',
-            'always',
-        ],
+        'no-var': 1,
     }
 };
