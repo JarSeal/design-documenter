@@ -120,7 +120,7 @@ class UsersList extends Component {
                                     this._updateTable();
                                     if(res && res.status === 401) this.Router.changeRoute('/');
                                 },
-                                onFormChages: () => { this.Dialog.changeHappened(); },
+                                onFormChanges: () => { this.Dialog.changeHappened(); },
                                 formLoadedFn: () => { this.Dialog.onResize(); },
                             },
                             title: getText('new_user'),
@@ -214,7 +214,7 @@ class UsersList extends Component {
                                 this._updateTable();
                                 if(res && res.status === 401) this.Router.changeRoute('/');
                             },
-                            onFormChages: () => { this.Dialog.changeHappened(); },
+                            onFormChanges: () => { this.Dialog.changeHappened(); },
                             formLoadedFn: () => { this.Dialog.onResize(); },
                             extraButton: {
                                 label: getText('cancel'),
