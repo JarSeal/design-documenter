@@ -1,7 +1,7 @@
 
 const globalState = {};
-const globalListeners = [];
-const globalListenerCallbacks = [];
+// const globalListeners = [];
+// const globalListenerCallbacks = [];
 // TODO: ADD GLOBAL STATE LISTENER
 
 class State {
@@ -142,14 +142,13 @@ class State {
     }
 
     getKeys(from) {
-        if(from) {
-            const keys = from.split('.');
-        } else {
+        if(!from) {
             // Flat keys (one level)
             return Object.keys(this.state);
         }
 
         // Deep keys
+        const keys = from.split('.');
         let pos = this.state[keys[0]];
         for(let i=1; i<keys.length-1; i++) {
             if(pos === undefined || pos[keys[i]] === undefined) return;

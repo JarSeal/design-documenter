@@ -1,4 +1,4 @@
-import { Logger } from "./utils";
+import { Logger } from './utils';
 
 let routerInitiated = false;
 
@@ -111,7 +111,7 @@ class Router {
                 if(newRoute) {
                     this.curRoute = this.basePath + newRoute;
                     changeUrlPath = true;
-                };
+                }
             }
         }
         let routeFound = false;
@@ -126,7 +126,7 @@ class Router {
             }
             if(this.langFn) {
                 if(routes[i].titleId) {
-                    routes[i].title = this.langFn(routes[i].titleId)
+                    routes[i].title = this.langFn(routes[i].titleId);
                 } else {
                     logger.warn(`Router has a langFn defined, but route '${routes[i].id}' is missing the titleId.`);
                 }
@@ -206,9 +206,7 @@ class Router {
         window.history.replaceState(this.curHistoryState, '');
     }
 
-    getCurHistoryState = () => {
-        return this.curHistoryState;
-    }
+    getCurHistoryState = () => this.curHistoryState
 
     // Options: Object
     // - forceUpdate: Boolean
@@ -354,7 +352,7 @@ class Router {
             }
         }
         if(!template) {
-            logger.error('Could not find 404 template.')
+            logger.error('Could not find 404 template.');
             throw new Error('Call stack');
         }
         this.prevRouteData = Object.assign({}, this.curRouteData);

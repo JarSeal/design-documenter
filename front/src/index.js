@@ -1,11 +1,11 @@
 import '@/styles/index.scss';
 import Base from '@/js/Base';
-import FingerprintJS from '@fingerprintjs/fingerprintjs'
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 document.addEventListener('DOMContentLoaded', () => {
     const fpPromise = FingerprintJS.load();
 
-    ;(async () => {
+    (async () => {
         const fp = await fpPromise;
         const result = await fp.get();
         const browserId = result.visitorId;

@@ -1,5 +1,5 @@
-import { RouterRef } from "./Router";
-import { Logger } from "./utils";
+import { RouterRef } from './Router';
+import { Logger } from './utils';
 
 const ids = {};
 const logger = new Logger('LIGHTER.js COMPO *****');
@@ -103,8 +103,8 @@ class Component {
         this.paint(this.data);
     }
 
-    init(data) {}
-    paint(data) {}
+    init() {}
+    paint() {}
 
     discard(fullDiscard, callback) {
         if(this.discarding) return;

@@ -1,14 +1,14 @@
-import FourOFour from "./components/contentViews/FourOFour";
-import FourOOne from "./components/contentViews/FourOOne";
-import Landing from "./components/contentViews/Landing";
-import Login from "./components/contentViews/Login";
-import Logout from "./components/contentViews/Logout";
-import NewUser from "./components/contentViews/NewUser";
-import Settings from "./components/contentViews/Settings";
-import OneUser from "./components/contentViews/settingsTabs/settings_OneUser";
-import Universe from "./components/contentViews/Universe";
-import { getText } from "./helpers/lang";
-import { checkRouteAccess } from "./helpers/storage";
+import FourOFour from './components/contentViews/FourOFour';
+import FourOOne from './components/contentViews/FourOOne';
+import Landing from './components/contentViews/Landing';
+import Login from './components/contentViews/Login';
+import Logout from './components/contentViews/Logout';
+import NewUser from './components/contentViews/NewUser';
+import Settings from './components/contentViews/Settings';
+import OneUser from './components/contentViews/settingsTabs/settings_OneUser';
+import Universe from './components/contentViews/Universe';
+import { getText } from './helpers/lang';
+import { checkRouteAccess } from './helpers/storage';
 const conf = require('./shared').CONFIG.UI;
 
 const _conf = {
@@ -21,9 +21,7 @@ const _conf = {
             id: 'route-landing',
             source: Landing,
             titleId: 'route_title_landing',
-            beforeDraw: async (routerData) => {
-                return await checkRouteAccess(routerData);
-            },
+            beforeDraw: async (routerData) => await checkRouteAccess(routerData),
         },
         {
             route: '/login',
@@ -40,18 +38,14 @@ const _conf = {
             id: 'route-universe',
             source: Universe,
             titleId: 'route_universe',
-            beforeDraw: async (routerData) => {
-                return await checkRouteAccess(routerData);
-            },
+            beforeDraw: async (routerData) => await checkRouteAccess(routerData),
         },
         {
             route: '/newuser',
             id: 'route-new-user',
             source: NewUser,
             titleId: 'route_title_new_user',
-            beforeDraw: async (routerData) => {
-                return await checkRouteAccess(routerData);
-            },
+            beforeDraw: async (routerData) => await checkRouteAccess(routerData),
         },
         {
             route: '/settings',
@@ -62,18 +56,14 @@ const _conf = {
             id: 'route-one-user',
             source: OneUser,
             titleId: 'route_title_settings',
-            beforeDraw: async (routerData) => {
-                return await checkRouteAccess(routerData);
-            },
+            beforeDraw: async (routerData) => await checkRouteAccess(routerData),
         },
         {
             route: '/settings/:tab',
             id: 'route-settings',
             source: Settings,
             titleId: 'route_title_settings',
-            beforeDraw: async (routerData) => {
-                return await checkRouteAccess(routerData);
-            },
+            beforeDraw: async (routerData) => await checkRouteAccess(routerData),
         },
         {
             route: '/logout',
