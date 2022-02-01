@@ -8,7 +8,9 @@ import './ViewTitle.scss';
 class ViewTitle extends Component {
     constructor(data) {
         super(data);
-        this.template = `<div class="view-title"><h2 id="${this.id+'-heading'}">${data.heading}</h2></div>`;
+        let tag = 'h2';
+        if(data.tag) tag = data.tag;
+        this.template = `<div class="view-title"><${tag} id="${this.id+'-heading'}">${data.heading}</${tag}></div>`;
         this.spinner = this.addChild(new Spinner({
             id: this.id + '-spinner',
             attach: this.id+'-heading',
