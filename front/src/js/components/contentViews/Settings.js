@@ -1,19 +1,19 @@
-import { getText } from "../../helpers/lang";
-import { getAdminRights } from "../../helpers/storage";
-import { Component } from "../../LIGHTER";
-import TabSystem from "../buttons/TabSystem";
-import ViewTitle from "../widgets/ViewTitle";
-import FourOOne from "./FourOOne";
-import AdminSettings from "./settingsTabs/settings_Admin";
-import MySettings from "./settingsTabs/settings_MySettings";
-import UsersList from "./settingsTabs/settings_Users";
+import { getText } from '../../helpers/lang';
+import { getAdminRights } from '../../helpers/storage';
+import { Component } from '../../LIGHTER';
+import TabSystem from '../buttons/TabSystem';
+import ViewTitle from '../widgets/ViewTitle';
+import FourOOne from './FourOOne';
+import AdminSettings from './settingsTabs/settings_Admin';
+import MySettings from './settingsTabs/settings_MySettings';
+import UsersList from './settingsTabs/settings_Users';
 
 class Settings extends Component {
     constructor(data) {
         super(data);
         const defaultTab = 'my-settings';
         this.curTab = defaultTab;
-        this.template = `<div></div>`;
+        this.template = '<div></div>';
         this.adminRights = {};
         this.tabSystem;
         this.tabs = [];

@@ -1,4 +1,4 @@
-import { Component } from "../../../LIGHTER";
+import { Component } from '../../../LIGHTER';
 
 // Attributes for data:
 // - item = data to show
@@ -7,7 +7,7 @@ class UniverseItem extends Component {
     constructor(data) {
         super(data);
         data.class = 'list-item';
-        this.template = `<button></button>`;
+        this.template = '<button></button>';
         this.item = data.item;
         this.index = data.index;
         this.title = this.addChild({

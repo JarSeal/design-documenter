@@ -1,4 +1,4 @@
-import Component from "../../LIGHTER/Component";
+import Component from '../../LIGHTER/Component';
 
 // Attributes:
 // - link = String (Router link/path)

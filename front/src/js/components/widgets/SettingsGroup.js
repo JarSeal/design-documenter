@@ -1,8 +1,7 @@
-import { getText } from "../../helpers/lang";
-import FormCreator from "../forms/FormCreator";
+import { Component } from '../../LIGHTER';
+import { getText } from '../../helpers/lang';
+import FormCreator from '../forms/FormCreator';
 import './SettingsGroup.scss';
-
-const { Component } = require("../../LIGHTER");
 
 // Attributes
 // - settingsData: Object{
@@ -83,7 +82,7 @@ class SettingsGroup extends Component {
     _createComponents = () => {
         this.fieldset = this.addChild({
             id: this.id + '-wrapper',
-            template: `<div class="settings-group">` +
+            template: '<div class="settings-group">' +
                 `<h3>${getText(this.settingsData.fsTitleId)}</h3>` +
                 (this.settingsData.fsDescriptionId
                     ? `<p>${getText(this.settingsData.fsDescriptionId)}</p>`

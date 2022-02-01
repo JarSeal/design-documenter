@@ -1,5 +1,5 @@
-import { Component } from "../../LIGHTER";
-import RouteLink from "./RouteLink";
+import { Component } from '../../LIGHTER';
+import RouteLink from './RouteLink';
 import './TabSystem.scss';
 
 // Attributes:
@@ -17,7 +17,7 @@ class TabSystem extends Component {
     constructor(data) {
         super(data);
         this.tabs = data.tabs;
-        this.template = `<div class="tab-system"></div>`;
+        this.template = '<div class="tab-system"></div>';
 
         // Create tabs buttons
         this.buttons = [];
@@ -40,7 +40,7 @@ class TabSystem extends Component {
             if(this.tabs[i].show === false) continue;
             this.buttons[i].draw();
             if(this.buttons[i].data.setLabelInTitle && this.buttons[i].isCurrent) {
-                document.title = this.buttons[i].data.text + ' | ' + document.title
+                document.title = this.buttons[i].data.text + ' | ' + document.title;
             }
         }
     }

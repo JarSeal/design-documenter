@@ -1,4 +1,4 @@
-import { Component } from "../../../LIGHTER";
+import { Component } from '../../../LIGHTER';
 
 // Attributes:
 // - label = field label [String]

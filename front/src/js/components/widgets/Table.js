@@ -1,10 +1,10 @@
-import { createDate } from "../../helpers/date";
-import { getText } from "../../helpers/lang";
-import { Component } from "../../LIGHTER";
-import Button from "../buttons/Button";
-import Checkbox from "../forms/formComponents/Checkbox";
-import CheckboxList from "../forms/formComponents/CheckboxList";
-import TextInput from "../forms/formComponents/TextInput";
+import { createDate } from '../../helpers/date';
+import { getText } from '../../helpers/lang';
+import { Component } from '../../LIGHTER';
+import Button from '../buttons/Button';
+import Checkbox from '../forms/formComponents/Checkbox';
+import CheckboxList from '../forms/formComponents/CheckboxList';
+import TextInput from '../forms/formComponents/TextInput';
 import './Table.scss';
 
 // Attributes for data:
@@ -105,7 +105,7 @@ class Table extends Component {
             this.tableData[i]['_tableIndex'] = i;
             this.allData[i]['_tableIndex'] = i;
         }
-        this.template = `<div class="table-wrapper"></div>`;
+        this.template = '<div class="table-wrapper"></div>';
         this.selected = [];
         this.toolsComp;
         this.tableComp;
@@ -154,7 +154,7 @@ class Table extends Component {
         }
     }
 
-    paint = (data) => {
+    paint = () => {
         this._filterData(true);
         this._drawFilter();
         this._drawStats();
@@ -217,7 +217,7 @@ class Table extends Component {
                         const buttonId = this.id + '-actionFn-' +  this.tableStructure[i].key;
                         if(targetId !== buttonId) return;
                         let node = e.target, counter = 0, id;
-                        while(true) {
+                        while(node) {
                             if(node.localName.toLowerCase() === 'tr') {
                                 id = node.id;
                                 break;
@@ -244,7 +244,7 @@ class Table extends Component {
                         || e.target.id.includes('-inputSelectorBox-')
                         || e.target.classList.contains('selection-box')) return;
                     let node = e.target, counter = 0, id;
-                    while(true) {
+                    while(node) {
                         if(node.localName.toLowerCase() === 'tr') {
                             id = node.id;
                             break;
@@ -286,7 +286,7 @@ class Table extends Component {
                         return;
                     }
                     let node = e.target, counter = 0, id;
-                    while(true) {
+                    while(node) {
                         if(node.localName.toLowerCase() === 'tr') {
                             id = node.id;
                             break;
@@ -342,7 +342,7 @@ class Table extends Component {
                 id: this.id + '-show-more-click',
                 target: this.elem.querySelector('#'+this.id + '-show-more-button'),
                 type: 'click',
-                fn: e => {
+                fn: () => {
                     this.groupMax += this.data.showGroupSize;
                     if(this.groupMax > this.allData.length) this.groupMax = this.allData.length;
                     this._refreshView();
@@ -352,7 +352,7 @@ class Table extends Component {
                 id: this.id + '-show-all-click',
                 target: this.elem.querySelector('#'+this.id + '-show-all-button'),
                 type: 'click',
-                fn: e => {
+                fn: () => {
                     this.groupMax = this.allData.length;
                     this._refreshView();
                 },
@@ -407,15 +407,14 @@ class Table extends Component {
         this.afterChange();
     }
 
-    _createTable = () => {
-        return '<table class="table-compo"' +
+    _createTable = () =>
+        '<table class="table-compo"' +
             (this.data.fullWidth ? ' style="width:100%;"' : '') +
         '>' +
             this._createTableHeader() +
             this._createDataRows() +
             this._createShowMore() +
         '</table>';
-    }
 
     _createShowMore = () => {
         if(!this.groupMax || this.groupMax >= this.tableData.length) return '';
@@ -518,7 +517,7 @@ class Table extends Component {
                 : this.tableStructure[i].key;
             if(!this.tableStructure[i].unsortable) {
                 header += `<button id="${this.tableStructure[i].key}-accessibility-sort-button-${this.id}" class="table-accessibility-sort">`;
-                    header += `${getText('sort_by')} ${this.tableStructure[i].heading}`;
+                header += `${getText('sort_by')} ${this.tableStructure[i].heading}`;
                 header += '</button>';
             } else if(this.tableStructure[i].key === '_rowSelection') {
                 header += this._selectRowCheckbox(0, true);
@@ -625,12 +624,12 @@ class Table extends Component {
                 if(aVal > bVal) return -1*dir;
             }
             return 0;
-        }
+        };
     }
 
     _emptyState = () => {
         let oneRow = '<tr class="table-comp-empty-state">';
-        oneRow += `<td colspan="${this.tableStructure.length}">`
+        oneRow += `<td colspan="${this.tableStructure.length}">`;
         oneRow += this.data.emptyStateMsg
             ? this.data.emptyStateMsg
             : getText('table_no_rows_empty_state_text');
@@ -689,7 +688,7 @@ class Table extends Component {
             this.filterComp.addChild(new Button({
                 id: this.id + '-filter-clear',
                 class: 'table-filter-clear',
-                click: e => {
+                click: () => {
                     this.filterString = '';
                     this.filterCaretPos = null;
                     this._closeFilterSettings();
@@ -788,7 +787,7 @@ class Table extends Component {
         }
         const targetId = e.target.id;
         let node = e.target, counter = 0;
-        while(true) {
+        while(node) {
             if(!node) node = document.getElementById(targetId);
             if(!node) return;
             const id = node.id;
@@ -868,7 +867,7 @@ class Table extends Component {
             }
         });
         for(let i=0; i<selectedArr.length; i++) {
-            const itemFound = false;
+            let itemFound = false;
             for(let j=0; j<newData.length; j++) {
                 if(newData[j]._tableIndex === selectedArr[i]._tableIndex) {
                     itemFound = true;
@@ -932,12 +931,10 @@ class Table extends Component {
                 id="selection-${index}-inputSelectorBox-${this.id}"
                 ${checked}
             />
-        </label>`
+        </label>`;
     }
 
-    getSelected = () => {
-        return this.allData.filter(item => this.selected.includes(item._tableIndex));
-    }
+    getSelected = () => this.allData.filter(item => this.selected.includes(item._tableIndex))
 
     removeSelectedByTableIndex = (tableIndex) => {
         let removeIndex = null;

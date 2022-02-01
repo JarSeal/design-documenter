@@ -1,6 +1,6 @@
 import Component from '../../LIGHTER/Component';
 import RouteLink from '../buttons/RouteLink';
-import { getText } from "../../helpers/lang";
+import { getText } from '../../helpers/lang';
 import ViewTitle from '../widgets/ViewTitle';
 
 class FourOFour extends Component {

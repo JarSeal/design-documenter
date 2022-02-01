@@ -1,11 +1,11 @@
-import Component from "../../LIGHTER/Component";
+import Component from '../../LIGHTER/Component';
 
 // Attributes:
 // - click = clickFn
 class Button extends Component {
     constructor(data) {
         super(data);
-        this.template = `<button></button>`;
+        this.template = '<button></button>';
         this.click = data.click;
     }
 

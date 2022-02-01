@@ -1,6 +1,6 @@
-import { getText } from "../../helpers/lang";
-import { Component } from "../../LIGHTER";
-import Button from "../buttons/Button";
+import { getText } from '../../helpers/lang';
+import { Component } from '../../LIGHTER';
+import Button from '../buttons/Button';
 
 // Attributes for data:
 // 
@@ -148,7 +148,7 @@ class Dialog extends Component {
         const scrollElem = this.elem.querySelector('#'+this.id + '-inner-scroller');
         scrollElem.style.height = 'auto';
         let titleHeight = 0;
-        if(titleElem) titleHeight = titleElem.offsetHeight
+        if(titleElem) titleHeight = titleElem.offsetHeight;
         const boxElem = this.elem.querySelector('#'+this.id + '-box-wrapper');
         boxElem.style.paddingTop = (titleHeight / 10) + 'rem';
         clearTimeout(this.resizeTimer);

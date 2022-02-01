@@ -5,7 +5,7 @@ class MainLoader extends Component {
     constructor(data) {
         super(data);
         this.fadeTime = 200; // in milliseconds
-        this.template = `<div>Loading..</div>`;
+        this.template = '<div>Loading..</div>';
         data.style = { transitionDuration: this.fadeTime + 'ms' };
     }
 
