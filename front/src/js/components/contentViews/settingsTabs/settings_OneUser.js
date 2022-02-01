@@ -57,7 +57,7 @@ class OneUser extends Component {
                                 this._loadUserData();
                                 if(res && res.status === 401) this.Router.changeRoute('/');
                             },
-                            onFormChages: () => { this.Dialog.changeHappened(); },
+                            onFormChanges: () => { this.Dialog.changeHappened(); },
                             formLoadedFn: () => { this.Dialog.onResize(); },
                             extraButton: {
                                 label: getText('cancel'),
