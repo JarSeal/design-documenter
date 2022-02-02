@@ -1,7 +1,6 @@
-import axios from 'axios';
 import { getText } from '../../../helpers/lang';
-import { Component, Logger } from '../../../LIGHTER';
-import { _CONFIG } from '../../../_CONFIG';
+import { Component } from '../../../LIGHTER';
+import ReadApi from '../../forms/ReadApi';
 import ViewTitle from '../../widgets/ViewTitle';
 
 class MyProfile extends Component {
@@ -16,6 +15,8 @@ class MyProfile extends Component {
             tag: 'h3',
             spinner: true,
         }));
+        this.data;
+        this.readApi = new ReadApi({ url: '/api/forms/user-settings-form' });
     }
 
     init = () => {
@@ -28,16 +29,9 @@ class MyProfile extends Component {
 
     _loadMyData = async () => {
 
-        // Load form data
-        const url = _CONFIG.apiBaseUrl + '/api/forms/user-settings-form';
-        const result = await axios.get(url, { withCredentials: true });
-        if(result.data) {
-            console.log('DATA', result.data);
-        } else {
-            Logger.log('Could not retrieve user settings (My Settings) form data.');
-            return;
-        }
+        this.data = await this.readApi.getData();
 
+        this.rePaint();
         this.viewTitle.showSpinner(false);
     }
 }
