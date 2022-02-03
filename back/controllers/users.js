@@ -4,6 +4,7 @@ const usersRouter = require('express').Router();
 const CONFIG = require('./../shared').CONFIG;
 const readUsersFormData = require('./../../shared/formData/readUsersFormData');
 const readOneUserFormData = require('./../../shared/formData/readOneUserFormData');
+const readProfileFormData = require('./../../shared/formData/readProfileFormData');
 const logger = require('./../utils/logger');
 const User = require('./../models/user');
 const UserSetting = require('./../models/userSetting');
@@ -277,6 +278,34 @@ usersRouter.post('/', async (request, response) => {
     const savedUser = await user.save();
 
     response.json(savedUser);
+});
+
+
+// Read profile
+usersRouter.get('/own/profile', async (request, response) => {
+
+    const formId = readProfileFormData.formId;
+    const error = await getAndValidateForm(formId, 'GET', request);
+    if(error) {
+        response.status(error.code).json(error.obj);
+        return;
+    }
+
+    const userId = request.session._id;
+    let userToView = await User.findById(userId)
+        .populate('edited.by', { username: 1 })
+        .populate('created.by', { username: 1 });
+
+    if(!userToView) {
+        logger.log('Could not find user with this id: ' + userId + ' (+ session)', request.session);
+        response.status(404).json({
+            msg: 'User was not found. It has propably been deleteds.',
+            userNotFoundError: true,
+        });
+        return;
+    }
+    
+    response.json(userToView);
 });
 
 module.exports = usersRouter;

@@ -16,7 +16,7 @@ class MyProfile extends Component {
             spinner: true,
         }));
         this.data;
-        this.readApi = new ReadApi({ url: '/api/forms/user-settings-form' });
+        this.readApi = new ReadApi({ url: '/api/users/own/profile' });
     }
 
     init = () => {
