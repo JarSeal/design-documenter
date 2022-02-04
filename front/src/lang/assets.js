@@ -163,6 +163,10 @@ export const assetsObj = {
         en: 'Form data could not be retrieved due to an error. Please try again or contact support.',
         fi: 'Lomaketta ei voitu noutaa virheen takia. Kokeile uudelleen tai ota yhteyttä tukeen.',
     },
+    could_not_get_data: {
+        en: 'Error: could not get data. Try again or contact support.',
+        fi: 'Virhe, tietoa ei voitu hakea. Kokeile uudelleen tai ota yhteyttä tukeen.',
+    },
     close_dialog: {
         en: 'Close dialog',
         fi: 'Sulje ikkuna',

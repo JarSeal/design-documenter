@@ -21,8 +21,7 @@ class ReadApi {
         try {
             const result = await axios.get(this.url, { withCredentials: true });
             if(result.data) {
-                console.log('ReadApi', result.data);
-                this.afterGet(result.data);
+                if(this.afterGet) this.afterGet(result.data);
                 return result.data;
             }
         }

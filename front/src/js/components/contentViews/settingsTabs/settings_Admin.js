@@ -1,8 +1,9 @@
-import axios from 'axios';
-import { Component, Logger } from '../../../LIGHTER';
-import { _CONFIG } from '../../../_CONFIG';
+import { Component } from '../../../LIGHTER';
 import SettingsGroup from '../../widgets/SettingsGroup';
 import optionsFns from '../../forms/formData/optionsFns';
+import ViewTitle from '../../widgets/ViewTitle';
+import { getText } from '../../../helpers/lang';
+import ReadApi from '../../forms/ReadApi';
 
 class AdminSettings extends Component {
     constructor(data) {
@@ -13,6 +14,14 @@ class AdminSettings extends Component {
         this.Dialog = this.appState.get('Dialog');
         this.settingsComponents = [];
         this.settingsData = [];
+        this.viewTitle = this.addChild(new ViewTitle({
+            id: this.id+'-sub-view-title',
+            heading: getText('admin_settings'),
+            tag: 'h3',
+            spinner: true,
+        }));
+        this.formDataApi = new ReadApi({ url: '/api/forms/admin-settings-form' });
+        this.settingsDataApi = new ReadApi({ url: '/api/settings/admin' });
     }
 
     init = () => {
@@ -20,6 +29,7 @@ class AdminSettings extends Component {
     }
 
     paint = () => {
+        this.viewTitle.draw();
         for(let i=0; i<this.settingsComponents.length; i++) {
             this.settingsComponents[i].draw();
         }
@@ -33,25 +43,14 @@ class AdminSettings extends Component {
         this.settingsComponents = [];
         this.settingsData = [];
 
-        // Load form data
-        let url = _CONFIG.apiBaseUrl + '/api/forms/admin-settings-form',
-            formData, settingsData;
-        let result = await axios.get(url, { withCredentials: true });
-        if(result.data) {
-            formData = result.data;
-        } else {
-            Logger.log('Could not retrieve admin settings form data.');
-            return;
-        }
-
-        // Load current settings
-        url = _CONFIG.apiBaseUrl + '/api/settings/admin';
-        result = await axios.get(url, { withCredentials: true });
-        if(result.data) {
-            settingsData = result.data;
-        } else {
-            Logger.log('Could not retrieve admin settings data.');
-            return;
+        const formData = await this.formDataApi.getData();
+        const settingsData = await this.settingsDataApi.getData();
+        if(formData.error || settingsData.error) {
+            this.viewTitle.showSpinner(false);
+            this.addChild({
+                id: 'error-getting-my-settings',
+                template: `<div class="error-text">${getText('could_not_get_data')}</div>`,
+            }).draw();
         }
 
         this._createsettingsComponents(formData, settingsData);
@@ -105,6 +104,7 @@ class AdminSettings extends Component {
         }
 
         this.rePaint();
+        this.viewTitle.showSpinner(false);
     }
 }
 

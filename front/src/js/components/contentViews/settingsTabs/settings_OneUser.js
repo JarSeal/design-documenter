@@ -147,7 +147,9 @@ class OneUser extends Component {
             if(item.tag) tag = item.tag;
             this.discardChild('user-data-' + item.id);
             
-            if(item.id === 'created') {
+            if(this.userData[item.id] === undefined) {
+                continue;
+            } else if(item.id === 'created') {
                 value = createDate(this.userData[item.id].date);
             } else if(item.id === 'edited' && this.userData[item.id][0]) {
                 const lastIndex = this.userData[item.id].length - 1;

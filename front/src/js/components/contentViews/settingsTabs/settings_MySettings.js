@@ -1,7 +1,8 @@
-import axios from 'axios';
-import { Component, Logger } from '../../../LIGHTER';
-import { _CONFIG } from '../../../_CONFIG';
+import { getText } from '../../../helpers/lang';
+import { Component } from '../../../LIGHTER';
 import SettingsGroup from '../../widgets/SettingsGroup';
+import ViewTitle from '../../widgets/ViewTitle';
+import ReadApi from '../../forms/ReadApi';
 
 class MySettings extends Component {
     constructor(data) {
@@ -12,9 +13,18 @@ class MySettings extends Component {
         this.Dialog = this.appState.get('Dialog');
         this.settingsComponents = [];
         this.settingsData = [];
+        this.viewTitle = this.addChild(new ViewTitle({
+            id: this.id+'-sub-view-title',
+            heading: getText('my_settings'),
+            tag: 'h3',
+            spinner: true,
+        }));
+        this.formDataApi = new ReadApi({ url: '/api/forms/user-settings-form' });
+        this.settingsDataApi = new ReadApi({ url: '/api/settings' });
     }
 
     init = () => {
+        this.viewTitle.draw();
         this._loadMySettings();
     }
 
@@ -32,25 +42,14 @@ class MySettings extends Component {
         this.settingsComponents = [];
         this.settingsData = [];
 
-        // Load form data
-        let url = _CONFIG.apiBaseUrl + '/api/forms/user-settings-form',
-            formData, settingsData;
-        let result = await axios.get(url, { withCredentials: true });
-        if(result.data) {
-            formData = result.data;
-        } else {
-            Logger.log('Could not retrieve user settings (My Settings) form data.');
-            return;
-        }
-
-        // Load current settings
-        url = _CONFIG.apiBaseUrl + '/api/settings';
-        result = await axios.get(url, { withCredentials: true });
-        if(result.data) {
-            settingsData = result.data;
-        } else {
-            Logger.log('Could not retrieve admin settings data.');
-            return;
+        const formData = await this.formDataApi.getData();
+        const settingsData = await this.settingsDataApi.getData();
+        if(formData.error || settingsData.error) {
+            this.viewTitle.showSpinner(false);
+            this.addChild({
+                id: 'error-getting-my-settings',
+                template: `<div class="error-text">${getText('could_not_get_data')}</div>`,
+            }).draw();
         }
 
         this._createsettingsComponents(formData, settingsData);
@@ -98,6 +97,7 @@ class MySettings extends Component {
         }
 
         this.rePaint();
+        this.viewTitle.showSpinner(false);
     }
 }
 

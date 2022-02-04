@@ -5,6 +5,8 @@ import { _CONFIG } from '../../../_CONFIG';
 import Table from '../../widgets/Table';
 import FormCreator from '../../forms/FormCreator';
 import { getHashCode } from '../../../helpers/storage';
+import ViewTitle from '../../widgets/ViewTitle';
+import ReadApi from '../../forms/ReadApi';
 
 class UsersList extends Component {
     constructor(data) {
@@ -26,6 +28,13 @@ class UsersList extends Component {
             storageHandle = getHashCode(username + data.id);
             params = JSON.parse(storage.getItem(storageHandle));
         }
+        this.viewTitle = this.addChild(new ViewTitle({
+            id: this.id+'-sub-view-title',
+            heading: getText('users'),
+            tag: 'h3',
+            spinner: true,
+        }));
+        this.usersDataApi = new ReadApi({ url: '/api/users' });
         this.usersTable = this.addChild(new Table({
             id: 'users-table',
             fullWidth: true,
@@ -132,24 +141,24 @@ class UsersList extends Component {
     }
 
     paint = () => {
+        this.viewTitle.draw();
         if(this.users.length) {
             this.usersTable.draw({ tableData: this.users });
         }
     }
 
     _loadUsers = async (rePaint) => {
-        this.users = [];
-        const url = _CONFIG.apiBaseUrl + '/api/users';
-        try {
-            const response = await axios.get(url, { withCredentials: true });
-            this.users = response.data;
-            if(rePaint) this.rePaint();
+        this.users = await this.usersDataApi.getData();
+        if(this.users.error) {
+            this.viewTitle.showSpinner(false);
+            this.addChild({
+                id: 'error-getting-my-settings',
+                template: `<div class="error-text">${getText('could_not_get_data')}</div>`,
+            }).draw();
         }
-        catch(exception) {
-            const logger = new Logger('Get users: *****');
-            logger.error('Could not get users data', exception);
-            throw new Error('Call stack');
-        }
+
+        if(rePaint) this.rePaint();
+        this.viewTitle.showSpinner(false);
     }
 
     _deleteUsers = async (users) => {
