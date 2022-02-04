@@ -24,32 +24,19 @@ class MySettings extends Component {
     }
 
     init = () => {
+        this.viewTitle.draw();
         this._loadMySettings();
     }
 
-    paint = () => {
-        this.viewTitle.draw();
-        for(let i=0; i<this.settingsComponents.length; i++) {
-            this.settingsComponents[i].draw();
-        }
-    }
-
     _loadMySettings = async () => {
-        // Clear old components
-        for(let i=0; i<this.settingsComponents.length; i++) {
-            if(this.settingsComponents[i]) this.settingsComponents[i].discard(true);
-        }
-        this.settingsComponents = [];
-        this.settingsData = [];
-
         const formData = await this.formDataApi.getData();
         const settingsData = await this.settingsDataApi.getData();
         if(formData.error || settingsData.error) {
             this.viewTitle.showSpinner(false);
-            this.addChild({
+            this.addChildDraw({
                 id: 'error-getting-my-settings',
                 template: `<div class="error-text">${getText('could_not_get_data')}</div>`,
-            }).draw();
+            });
         }
 
         this._createsettingsComponents(formData, settingsData);
@@ -87,16 +74,14 @@ class MySettings extends Component {
                     options: fs.fields[j].options,
                 });
             }
-            this.settingsData.push(data);
-            this.settingsComponents.push(this.addChild(new SettingsGroup({
+            this.addChildDraw(new SettingsGroup({
                 id: 'user-settings-g-' + fs.id,
                 settingsData: data,
                 formId: 'user-settings-form',
                 updateSettings: this._loadMySettings,
-            })));
+            }));
         }
 
-        this.rePaint();
         this.viewTitle.showSpinner(false);
     }
 }

@@ -20,6 +20,7 @@ class OneUser extends Component {
         this.viewTitle = this.addChild(new ViewTitle({
             id: this.id+'-view-title',
             heading: getText('user'),
+            spinner: true,
         }));
         this.userId;
         this.userData;
@@ -88,11 +89,8 @@ class OneUser extends Component {
             }],
         });
         this.userId = this.Router.getRouteParams().user;
+        this.viewTitle.draw();
         this._loadUserData();
-    }
-
-    paint = () => {
-        this.viewTitle.draw({ spinner: true });
     }
 
     _loadUserData = async () => {
@@ -110,17 +108,17 @@ class OneUser extends Component {
             const status = exception.response.status;
             this.appState.get('updateMainMenu')({ tools: [] });
             if(status === 401) {
-                this.addChild(new FourOOne({id:'one-user-401'})).draw();
+                this.addChildDraw(new FourOOne({id:'one-user-401'}));
             } else if(status === 404) {
-                this.addChild(new FourOFour({
+                this.addChildDraw(new FourOFour({
                     id:'one-user-404',
                     bodyText: getText('user_not_found'),
-                })).draw();
+                }));
             } else {
-                this.addChild({
+                this.addChildDraw({
                     id: 'one-user-bigerror',
                     template: `<div><h2>${getText('error')}</h2></div>`,
-                }).draw();
+                });
                 const logger = new Logger('Get one user: *****');
                 logger.error('Could not get users data', exception.response);
                 throw new Error('Call stack');
@@ -129,7 +127,6 @@ class OneUser extends Component {
     }
 
     _createElements = () => {
-        this._clearComps();
         const contentDefinition = [
             { id: 'username', tag: 'h1', label: getText('username') },
             { id: 'name', label: getText('name') },
@@ -145,7 +142,6 @@ class OneUser extends Component {
             let value;
             let tag = 'div';
             if(item.tag) tag = item.tag;
-            this.discardChild('user-data-' + item.id);
             
             if(this.userData[item.id] === undefined) {
                 continue;
@@ -160,15 +156,13 @@ class OneUser extends Component {
                 value = this.userData[item.id];
             }
             if(!value.length) value = '&nbsp;';
-            const comp = this.addChild({
+            this.addChildDraw({
                 id: 'user-data-' + item.id,
                 template: '<div class="user-data-item">' +
                     `<span class="user-data-item__label">${item.label}</span>` +
                     `<${tag} class="user-data-item__value">${value}</${tag}>` +
                 '</div>',
             });
-            this.userDataComps.push(comp);
-            comp.draw();
         }
     }
 

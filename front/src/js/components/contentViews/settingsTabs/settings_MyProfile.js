@@ -1,8 +1,8 @@
 import { getText } from '../../../helpers/lang';
 import { Component } from '../../../LIGHTER';
-import { createDate } from '../../../helpers/date';
 import ReadApi from '../../forms/ReadApi';
 import ViewTitle from '../../widgets/ViewTitle';
+import Button from '../../buttons/Button';
 
 class MyProfile extends Component {
     constructor(data) {
@@ -22,26 +22,24 @@ class MyProfile extends Component {
     }
 
     init = () => {
+        this.viewTitle.draw();
         this._loadMyData();
     }
 
-    paint = () => {
-        this.viewTitle.draw();
-    }
-
     _loadMyData = async () => {
+        this.viewTitle.showSpinner(true);
 
         this.data = await this.readApi.getData();
         if(this.data.error) {
             this.viewTitle.showSpinner(false);
-            this.addChild({
+            this.addChildDraw({
                 id: 'error-getting-my-profile',
                 template: `<div class="error-text">${getText('could_not_get_data')}</div>`,
-            }).draw();
+            });
         }
-
-        this.rePaint();
+        
         this.viewTitle.showSpinner(false);
+        this._createDialogButtons();
         this._createElements();
     }
 
@@ -53,34 +51,25 @@ class MyProfile extends Component {
         ];
         for(let i=0; i<contentDefinition.length; i++) {
             const item = contentDefinition[i];
-            let value;
-            let tag = 'div';
-            if(item.tag) tag = item.tag;
-            this.discardChild('user-data-' + item.id);
-            
-            if(this.data[item.id] === undefined) {
-                continue;
-            } else if(item.id === 'created') {
-                value = createDate(this.data[item.id].date);
-            } else if(item.id === 'edited' && this.data[item.id][0]) {
-                const lastIndex = this.data[item.id].length - 1;
-                value = createDate(this.data[item.id][lastIndex].date);
-            } else if(item.id === 'userLevel') {
-                if(item.id === 'userLevel') value = getText('user_level_' + this.data[item.id]);
-            } else {
-                value = this.data[item.id];
-            }
-            if(!value.length) value = '&nbsp;';
-            const comp = this.addChild({
+            this.addChildDraw({
                 id: 'user-data-' + item.id,
                 template: '<div class="user-data-item">' +
                     `<span class="user-data-item__label">${item.label}</span>` +
-                    `<${tag} class="user-data-item__value">${value}</${tag}>` +
+                    `<div class="user-data-item__value">${this.data[item.id]}</div>` +
                 '</div>',
             });
-            this.dataComps.push(comp);
-            comp.draw();
         }
+    }
+
+    _createDialogButtons = () => {
+        this.addChildDraw(new Button({
+            id: 'my-profile-edit-button',
+            text: getText('edit'),
+            class: 'my-profile-button',
+            click: () => {
+                this._loadMyData(); // temp
+            },
+        }));
     }
 }
 

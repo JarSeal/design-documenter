@@ -103,6 +103,7 @@ class UsersList extends Component {
     }
 
     init = () => {
+        this.viewTitle.draw();
         const canCreateUser = this.appState.get('serviceSettings')['canCreateUser'];
         if(canCreateUser) {
             const updateMainMenu = this.appState.get('updateMainMenu');
@@ -141,20 +142,20 @@ class UsersList extends Component {
     }
 
     paint = () => {
-        this.viewTitle.draw();
         if(this.users.length) {
             this.usersTable.draw({ tableData: this.users });
         }
     }
 
     _loadUsers = async (rePaint) => {
+        this.viewTitle.showSpinner(true);
         this.users = await this.usersDataApi.getData();
         if(this.users.error) {
             this.viewTitle.showSpinner(false);
-            this.addChild({
+            this.addChildDraw({
                 id: 'error-getting-my-settings',
                 template: `<div class="error-text">${getText('could_not_get_data')}</div>`,
-            }).draw();
+            });
         }
 
         if(rePaint) this.rePaint();
