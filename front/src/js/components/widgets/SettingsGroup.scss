@@ -3,10 +3,11 @@
     border: 0.1rem solid rgba(#fff, 0.15);
     background-color: rgba(#fff, 0.05);
     border-radius: 0.4rem;
-    margin-top: 3rem;
-    &:first-child { margin-top: 0; }
     position: relative;
-    > h3 {
+    + .settings-group {
+        margin-top: 3rem;
+    }
+    .group-title {
         font-size: 1.8rem;
         margin: 0;
         padding: 1rem 3rem;

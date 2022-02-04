@@ -16,6 +16,7 @@ import './SettingsGroup.scss';
 //  - updateSettings: Function
 class SettingsGroup extends Component {
     constructor(data) {
+        data.class = 'settings-group';
         super(data);
         this.settingsData = data.settingsData;
         this.fsInnerWrapperId = this.id + '-fs-inner-wrapper';
@@ -80,10 +81,10 @@ class SettingsGroup extends Component {
     }
 
     _createComponents = () => {
-        this.fieldset = this.addChild({
+        this.addChildDraw({
             id: this.id + '-wrapper',
-            template: '<div class="settings-group">' +
-                `<h3>${getText(this.settingsData.fsTitleId)}</h3>` +
+            template: '<div class="settings-group__inner">' +
+                `<h3 class="group-title">${getText(this.settingsData.fsTitleId)}</h3>` +
                 (this.settingsData.fsDescriptionId
                     ? `<p>${getText(this.settingsData.fsDescriptionId)}</p>`
                     : '') +
@@ -93,7 +94,7 @@ class SettingsGroup extends Component {
         this.fields = [];
         for(let i=0; i<this.settingsData.fields.length; i++) {
             const field = this.settingsData.fields[i];
-            this.fields.push(this.addChild({
+            this.addChildDraw({
                 id: field.id + '-field-listing',
                 attach: this.fsInnerWrapperId,
                 template: '<div class="settings-field">' +
@@ -106,7 +107,7 @@ class SettingsGroup extends Component {
                         getText('edit') +
                     '</button>' +
                 '</div>',
-            }));
+            });
         }
     }
 
