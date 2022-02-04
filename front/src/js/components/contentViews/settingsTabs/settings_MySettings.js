@@ -24,11 +24,11 @@ class MySettings extends Component {
     }
 
     init = () => {
-        this.viewTitle.draw();
         this._loadMySettings();
     }
 
     paint = () => {
+        this.viewTitle.draw();
         for(let i=0; i<this.settingsComponents.length; i++) {
             this.settingsComponents[i].draw();
         }
