@@ -85,7 +85,42 @@ class MyProfile extends Component {
                 });
             },
         }));
-        
+        this.addChildDraw(new Button({
+            id: 'my-profile-changepass-button',
+            text: getText('change_password'),
+            class: 'my-profile-button',
+            attach: 'dialog-tools-wrapper',
+            click: () => {
+                
+            },
+        }));
+        this.addChildDraw(new Button({
+            id: 'my-profile-exposure-button',
+            text: getText('profile_exposure'),
+            class: 'my-profile-button',
+            attach: 'dialog-tools-wrapper',
+            click: () => {
+                
+            },
+        }));
+        this.addChildDraw(new Button({
+            id: 'my-profile-logs-button',
+            text: getText('logs'),
+            class: 'my-profile-button',
+            attach: 'dialog-tools-wrapper',
+            click: () => {
+                
+            },
+        }));
+        this.addChildDraw(new Button({
+            id: 'my-profile-delete-button',
+            text: getText('delete'),
+            class: 'my-profile-button',
+            attach: 'dialog-tools-wrapper',
+            click: () => {
+                
+            },
+        }));
     }
 }
 
