@@ -3,6 +3,8 @@ import { Component } from '../../../LIGHTER';
 import ReadApi from '../../forms/ReadApi';
 import ViewTitle from '../../widgets/ViewTitle';
 import Button from '../../buttons/Button';
+import './settings_MyProfile.scss';
+import DialogForms from '../../widgets/dialogs/dialog_Forms';
 
 class MyProfile extends Component {
     constructor(data) {
@@ -18,6 +20,7 @@ class MyProfile extends Component {
         }));
         this.data;
         this.readApi = new ReadApi({ url: '/api/users/own/profile' });
+        this.dialogForms = new DialogForms({ id: 'dialog-forms-my-profile' });
         this.dataComps = [];
     }
 
@@ -37,7 +40,7 @@ class MyProfile extends Component {
                 template: `<div class="error-text">${getText('could_not_get_data')}</div>`,
             });
         }
-        
+
         this.viewTitle.showSpinner(false);
         this._createDialogButtons();
         this._createElements();
@@ -62,14 +65,25 @@ class MyProfile extends Component {
     }
 
     _createDialogButtons = () => {
+        this.addChildDraw({
+            id: 'dialog-tools-wrapper',
+            class: 'dialog-tools-wrapper',
+        });
         this.addChildDraw(new Button({
             id: 'my-profile-edit-button',
             text: getText('edit'),
             class: 'my-profile-button',
+            attach: 'dialog-tools-wrapper',
             click: () => {
-                this._loadMyData(); // temp
+                this.dialogForms.createEditDialog({
+                    id: 'edit-profile-form',
+                    title: getText('edit_user'),
+                    afterFormSentFn: () => { this._loadMyData(); },
+                    onErrorFn: () => { this._loadMyData(); },
+                });
             },
         }));
+        
     }
 }
 
