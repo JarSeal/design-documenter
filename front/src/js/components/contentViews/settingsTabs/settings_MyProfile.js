@@ -39,6 +39,7 @@ class MyProfile extends Component {
                 id: 'error-getting-my-profile',
                 template: `<div class="error-text">${getText('could_not_get_data')}</div>`,
             });
+            return;
         }
 
         this.viewTitle.showSpinner(false);
@@ -58,7 +59,7 @@ class MyProfile extends Component {
                 id: 'user-data-' + item.id,
                 template: '<div class="user-data-item">' +
                     `<span class="user-data-item__label">${item.label}</span>` +
-                    `<div class="user-data-item__value">${this.data[item.id]}</div>` +
+                    `<div class="user-data-item__value">${this.data[item.id] || '&nbsp;'}</div>` +
                 '</div>',
             });
         }

@@ -283,7 +283,7 @@ usersRouter.post('/', async (request, response) => {
 
 // Read profile
 usersRouter.get('/own/profile', async (request, response) => {
-
+    
     const formId = readProfileFormData.formId;
     const error = await getAndValidateForm(formId, 'GET', request);
     if(error) {
