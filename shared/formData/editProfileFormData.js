@@ -1,8 +1,8 @@
 const CONFIG = require('./../../CONFIG').USER;
 
 const newUserFormData = {
-    formId: 'edit-propfile-form',
-    path: '/api/users/profile',
+    formId: 'edit-profile-form',
+    path: '/api/users/own/profile',
     method: 'PUT',
     type: 'form',
     useRightsLevel: 1,

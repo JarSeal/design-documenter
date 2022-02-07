@@ -88,7 +88,7 @@ usersRouter.put('/', async (request, response) => {
 
     if(CONFIG.USER.email.required) {
         const findEmail = await User.findOne({ email: body.email.trim() });
-        if(findEmail && findEmail.id !== body.userId) {
+        if(findEmail && String(findEmail.id) !== body.userId) {
             response.json({
                 msg: 'Bad request. Validation errors.',
                 errors: { email: 'email_taken' },
@@ -283,7 +283,7 @@ usersRouter.post('/', async (request, response) => {
 
 // Read profile
 usersRouter.get('/own/profile', async (request, response) => {
-    
+
     const formId = readProfileFormData.formId;
     const error = await getAndValidateForm(formId, 'GET', request);
     if(error) {
@@ -306,6 +306,56 @@ usersRouter.get('/own/profile', async (request, response) => {
     }
     
     response.json(userToView);
+});
+
+
+// Edit profile
+usersRouter.put('/own/profile', async (request, response) => {
+    
+    const body = request.body;
+    const userId = request.session._id;
+    const error = await getAndValidateForm(body.id, 'PUT', request);
+    if(error) {
+        response.status(error.code).json(error.obj);
+        return;
+    }
+
+    if(CONFIG.USER.email.required) {
+        const findEmail = await User.findOne({ email: body.email.trim() });
+        if(findEmail && String(findEmail._id) !== userId) {
+            response.json({
+                msg: 'Bad request. Validation errors.',
+                errors: { email: 'email_taken' },
+                emailTaken: true,
+            });
+            return;
+        }
+    }
+
+    const user = await User.findById(userId);
+
+    // Check if the session user is the same as target
+    if(!user || user.username !== request.session.username) {
+        logger.error('Could not update user\'s own profile. User was not found or does not match the session user (id: ' + body.userId + ').');
+    }
+
+    const edited = await createNewEditedArray(user.edited, userId);
+    const updatedUser = {
+        email: body.email.trim(),
+        name: body.name.trim(),
+        edited,
+    };
+
+    const savedUser = await User.findByIdAndUpdate(userId, updatedUser, { new: true });
+    if(!savedUser) {
+        logger.error('Could not update user\'s own profile. User was not found (id: ' + userId + ').');
+        response.status(404).json({
+            msg: 'User to update was not found. It has propably been deleted by another user.',
+            userNotFoundError: true,
+        });
+        return;
+    }
+    response.json(savedUser);
 });
 
 module.exports = usersRouter;

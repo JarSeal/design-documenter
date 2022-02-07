@@ -79,6 +79,7 @@ class MyProfile extends Component {
                 this.dialogForms.createEditDialog({
                     id: 'edit-profile-form',
                     title: getText('edit_user'),
+                    editDataId: 'own',
                     afterFormSentFn: () => { this._loadMyData(); },
                     onErrorFn: () => { this._loadMyData(); },
                 });

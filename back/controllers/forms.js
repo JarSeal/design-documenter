@@ -102,6 +102,19 @@ const getAdditionalData = async (formId, dataId, request) => {
             };
         }
         return user;
+    } else if(formId === 'edit-profile-form' && dataId === 'own') {
+        const user = await User.findById(request.session._id);
+        if(!user) {
+            return {
+                _error: { code: 404,
+                    obj: {
+                        msg: 'Could not find user.',
+                        userNotFound: true,
+                    },
+                },
+            };
+        }
+        return user;
     } else if(formId === 'admin-settings-form') {
         let setting = await AdminSetting.findById(dataId);
         if(!setting) {
