@@ -10,12 +10,13 @@ class DialogForms extends Component {
     }
 
     createEditDialog = (params) => {
-        const { id, title, addToMessage, afterFormSentFn, onErrorFn } = params;
+        const { id, title, addToMessage, editDataId, afterFormSentFn, onErrorFn } = params;
         this.Dialog.appear({
             component: FormCreator,
             componentData: {
                 id,
                 appState: this.appState,
+                editDataId,
                 beforeFormSendingFn: () => {
                     this.Dialog.lock();
                 },

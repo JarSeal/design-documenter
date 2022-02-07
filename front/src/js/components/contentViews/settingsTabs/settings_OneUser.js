@@ -3,13 +3,13 @@ import axios from 'axios';
 import { getText } from '../../../helpers/lang';
 import { _CONFIG } from '../../../_CONFIG';
 import { createDate } from '../../../helpers/date';
-import FormCreator from '../../forms/FormCreator';
 import './settings_OneUser.scss';
 import Table from '../../widgets/Table';
 import FourOOne from '../FourOOne';
 import FourOFour from '../FourOFour';
 import RouteLink from '../../buttons/RouteLink';
 import ViewTitle from '../../widgets/ViewTitle';
+import DialogForms from '../../widgets/dialogs/dialog_Forms';
 
 class OneUser extends Component {
     constructor(data) {
@@ -28,6 +28,7 @@ class OneUser extends Component {
         this.appState = this.Router.commonData.appState;
         this.updateMainMenu = this.appState.get('updateMainMenu');
         this.userDataComps = [];
+        this.dialogForms = new DialogForms({ id: 'dialog-forms-my-profile' });
     }
 
     init = () => {
@@ -39,36 +40,13 @@ class OneUser extends Component {
                 text: 'Edit',
                 click: () => {
                     if(!this.userData) return;
-                    this.Dialog.appear({
-                        component: FormCreator,
-                        componentData: {
-                            id: 'edit-user-form',
-                            appState: this.appState,
-                            editDataId: this.userData.id,
-                            beforeFormSendingFn: () => {
-                                this.Dialog.lock();
-                            },
-                            afterFormSentFn: () => {
-                                this.Dialog.disappear();
-                                this._loadUserData();
-                            },
-                            addToMessage: { userId: this.userData.id },
-                            onErrorsFn: (ex, res) => {
-                                this.Dialog.unlock();
-                                this._loadUserData();
-                                if(res && res.status === 401) this.Router.changeRoute('/');
-                            },
-                            onFormChanges: () => { this.Dialog.changeHappened(); },
-                            formLoadedFn: () => { this.Dialog.onResize(); },
-                            extraButton: {
-                                label: getText('cancel'),
-                                clickFn: (e) => {
-                                    e.preventDefault();
-                                    this.Dialog.disappear();
-                                },
-                            },
-                        },
+                    this.dialogForms.createEditDialog({
+                        id: 'edit-user-form',
                         title: getText('edit_user') + ': ' + this.userData.username,
+                        editDataId: this.userData.id,
+                        addToMessage: { userId: this.userData.id },
+                        afterFormSentFn: () => { this._loadUserData(); },
+                        onErrorFn: () => { this._loadUserData(); },
                     });
                 },
             }, {
