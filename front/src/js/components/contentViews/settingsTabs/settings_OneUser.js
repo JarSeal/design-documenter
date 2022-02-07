@@ -62,7 +62,6 @@ class OneUser extends Component {
                             formLoadedFn: () => { this.Dialog.onResize(); },
                             extraButton: {
                                 label: getText('cancel'),
-                                class: 'some-class',
                                 clickFn: (e) => {
                                     e.preventDefault();
                                     this.Dialog.disappear();
