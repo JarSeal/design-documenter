@@ -28,7 +28,7 @@ class OneUser extends Component {
         this.appState = this.Router.commonData.appState;
         this.updateMainMenu = this.appState.get('updateMainMenu');
         this.userDataComps = [];
-        this.dialogForms = new DialogForms({ id: 'dialog-forms-my-profile' });
+        this.dialogForms = new DialogForms({ id: 'dialog-forms-one-user' });
     }
 
     init = () => {

@@ -9,6 +9,67 @@ class DialogForms extends Component {
         this.Dialog = this.appState.get('Dialog');
     }
 
+    createDeleteDialog = (params) => {
+        const { id, title, addToMessage, formDesc, afterFormSentFn, onErrorFn } = params;
+        this.Dialog.appear({
+            component: FormCreator,
+            componentData: {
+                id,
+                appState: this.appState,
+                beforeFormSendingFn: () => {
+                    this.Dialog.lock();
+                },
+                formDesc,
+                afterFormSentFn: (response) => {
+                    this.Dialog.disappear();
+                    if(afterFormSentFn) afterFormSentFn(response);
+                },
+                addToMessage,
+                onErrorsFn: (ex, res) => {
+                    this.Dialog.unlock();
+                    if(onErrorFn) onErrorFn(ex, res);
+                    if(res && res.status === 401) this.Router.changeRoute('/');
+                },
+                onFormChanges: () => { this.Dialog.changeHappened(); },
+                formLoadedFn: () => { this.Dialog.onResize(); },
+                extraButton: {
+                    label: getText('cancel'),
+                    clickFn: (e) => {
+                        e.preventDefault();
+                        this.Dialog.disappear();
+                    },
+                },
+            },
+            title,
+        });
+    }
+
+    createEmptyFormDialog = (params) => {
+        const { id, title, afterFormSentFn, onErrorFn } = params;
+        this.Dialog.appear({
+            component: FormCreator,
+            componentData: {
+                id,
+                appState: this.appState,
+                beforeFormSendingFn: () => {
+                    this.Dialog.lock();
+                },
+                afterFormSentFn: (response) => {
+                    this.Dialog.disappear();
+                    if(afterFormSentFn) afterFormSentFn(response);
+                },
+                onErrorsFn: (ex, res) => {
+                    this.Dialog.unlock();
+                    if(onErrorFn) onErrorFn(ex, res);
+                    if(res && res.status === 401) this.Router.changeRoute('/');
+                },
+                onFormChanges: () => { this.Dialog.changeHappened(); },
+                formLoadedFn: () => { this.Dialog.onResize(); },
+            },
+            title,
+        });
+    }
+
     createEditDialog = (params) => {
         const { id, title, addToMessage, editDataId, afterFormSentFn, onErrorFn } = params;
         this.Dialog.appear({
@@ -20,14 +81,14 @@ class DialogForms extends Component {
                 beforeFormSendingFn: () => {
                     this.Dialog.lock();
                 },
-                afterFormSentFn: () => {
+                afterFormSentFn: (response) => {
                     this.Dialog.disappear();
-                    if(afterFormSentFn) afterFormSentFn();
+                    if(afterFormSentFn) afterFormSentFn(response);
                 },
                 addToMessage,
                 onErrorsFn: (ex, res) => {
                     this.Dialog.unlock();
-                    if(onErrorFn) onErrorFn();
+                    if(onErrorFn) onErrorFn(ex, res);
                     if(res && res.status === 401) this.Router.changeRoute('/');
                 },
                 onFormChanges: () => { this.Dialog.changeHappened(); },

@@ -1,7 +1,7 @@
 import { Component } from '../../LIGHTER';
 import { getText } from '../../helpers/lang';
-import FormCreator from '../forms/FormCreator';
 import './SettingsGroup.scss';
+import DialogForms from './dialogs/dialog_Forms';
 
 // Attributes
 // - settingsData: Object{
@@ -24,6 +24,7 @@ class SettingsGroup extends Component {
         this.fields = [];
         this.appState = this.Router.commonData.appState;
         this.Dialog = this.appState.get('Dialog');
+        this.dialogForms = new DialogForms({ id: this.id + '-dialog-forms-sg' });
         this.updateSettings = data.updateSettings;
     }
 
@@ -36,37 +37,16 @@ class SettingsGroup extends Component {
                 if(isNaN(index)) return;
                 let fieldId = this.settingsData.fields[index].mongoId;
                 if(!fieldId) fieldId = this.settingsData.fields[index].id;
-                this.Dialog.appear({
-                    component: FormCreator,
-                    componentData: {
-                        id: this.data.formId,
-                        appState: this.appState,
-                        editDataId: fieldId,
-                        addToMessage: { mongoId: fieldId },
-                        beforeFormSendingFn: () => {
-                            this.Dialog.lock();
-                        },
-                        afterFormSentFn: (response) => {
-                            this.appState.set('serviceSettings', response.data);
-                            this.updateSettings();
-                            this.Dialog.disappear();
-                        },
-                        onErrorsFn: (ex, res) => {
-                            this.Dialog.unlock();
-                            this.updateSettings();
-                            if(res && res.status === 401) this.Router.changeRoute('/');
-                        },
-                        onFormChages: () => { this.Dialog.changeHappened(); },
-                        formLoadedFn: () => { this.Dialog.onResize(); },
-                        extraButton: {
-                            label: getText('cancel'),
-                            clickFn: (e) => {
-                                e.preventDefault();
-                                this.Dialog.disappear();
-                            },
-                        },
-                    },
+                this.dialogForms.createEditDialog({
+                    id: this.data.formId,
                     title: getText('edit_setting'),
+                    editDataId: fieldId,
+                    addToMessage: { mongoId: fieldId },
+                    afterFormSentFn: (response) => {
+                        this.appState.set('serviceSettings', response.data);
+                        this.updateSettings();
+                    },
+                    onErrorFn: () => { this.updateSettings(); },
                 });
             },
         });
