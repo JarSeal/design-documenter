@@ -281,7 +281,7 @@ usersRouter.post('/', async (request, response) => {
 });
 
 
-// Read profile
+// Read own profile
 usersRouter.get('/own/profile', async (request, response) => {
 
     const formId = readProfileFormData.formId;
