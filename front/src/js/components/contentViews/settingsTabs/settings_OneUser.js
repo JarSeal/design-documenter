@@ -4,12 +4,11 @@ import { getText } from '../../../helpers/lang';
 import { _CONFIG } from '../../../_CONFIG';
 import { createDate } from '../../../helpers/date';
 import './settings_OneUser.scss';
-import Table from '../../widgets/Table';
 import FourOOne from '../FourOOne';
 import FourOFour from '../FourOFour';
-import RouteLink from '../../buttons/RouteLink';
 import ViewTitle from '../../widgets/ViewTitle';
 import DialogForms from '../../widgets/dialogs/dialog_Forms';
+import Logs from '../Logs';
 
 class OneUser extends Component {
     constructor(data) {
@@ -56,7 +55,7 @@ class OneUser extends Component {
                 click: () => {
                     if(!this.userData) return;
                     this.Dialog.appear({
-                        component: LogsDialog,
+                        component: Logs,
                         componentData: {
                             id: 'user-logs-dialog',
                             userData: this.userData,
@@ -73,7 +72,7 @@ class OneUser extends Component {
     _loadUserData = async () => {
         this.usersData = null;
         this.viewTitle.showSpinner(true);
-        const url = _CONFIG.apiBaseUrl + '/api/users' + '/' + this.userId;
+        const url = _CONFIG.apiBaseUrl + '/api/users/' + this.userId;
         try {
             const response = await axios.get(url, { withCredentials: true });
             this.userData = response.data;
@@ -153,71 +152,3 @@ class OneUser extends Component {
 }
 
 export default OneUser;
-
-class LogsDialog extends Component {
-    constructor(data) {
-        super(data);
-        this.template = '<div>' +
-            '<div class="created-wrapper" id="created-log">' +
-                `<h3>${getText('created')}</h3>` +
-            '</div>' +
-            '<div class="edited-wrapper" id="edited-logs">' +
-                `<h3>${getText('edited')}</h3>` +
-            '</div>' +
-        '</div>';
-        this.addChild({
-            id: 'created-elem',
-            attach: 'created-log',
-            template: '<div>' +
-                `<span>${createDate(this.data.userData.created.date)}</span>` +
-                (this.data.userData.created.publicForm
-                    ? ` (${getText('public_form')})`
-                    : ' by&nbsp;') +
-            '</div>',
-        });
-        if(!this.data.userData.created.publicForm) {
-            this.addChild(new RouteLink({
-                id: 'created-by-user-link',
-                link: '/settings/user/' + this.data.userData.created.by.username,
-                text: this.data.userData.created.by.username,
-                attach: 'created-elem',
-                tag: 'a',
-            }));
-        }
-        this.addChild(new Table({
-            id: 'edited-logs-table',
-            attach: 'edited-logs',
-            fullWidth: true,
-            unsortable: true,
-            tableData: this.data.userData.edited,
-            tableStructure: this._getTableStructure(),
-            rowClickFn: (e, rowData) => {
-                if(!rowData.by || !rowData.by.username) return;
-                this.Router.changeRoute(
-                    '/settings/user/' + rowData.by.username,
-                    { forceUpdate: true }
-                );
-            },
-        }));
-    }
-
-    paint = () => {
-        this.drawChildren();
-    }
-
-    _getTableStructure = () => {
-        const structure = [
-            {
-                key: 'date',
-                heading: getText('date'),
-                sort: 'asc',
-                type: 'Date',
-            },
-            {
-                key: 'by.username',
-                heading: getText('username'),
-            },
-        ];
-        return structure;
-    }
-}

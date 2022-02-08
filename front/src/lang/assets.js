@@ -662,4 +662,12 @@ export const assetsObj = {
         en: 'Admin settings',
         fi: 'Admin-asetukset',
     },
+    edited_by: {
+        en: 'Edited by',
+        fi: 'Muokkaaja',
+    },
+    last_logins: {
+        en: 'Last logins',
+        fi: 'Viimeiset kirjautumiset',
+    },
 };

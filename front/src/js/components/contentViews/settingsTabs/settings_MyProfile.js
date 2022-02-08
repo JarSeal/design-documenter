@@ -5,6 +5,7 @@ import ViewTitle from '../../widgets/ViewTitle';
 import Button from '../../buttons/Button';
 import './settings_MyProfile.scss';
 import DialogForms from '../../widgets/dialogs/dialog_Forms';
+import Logs from '../Logs';
 
 class MyProfile extends Component {
     constructor(data) {
@@ -109,7 +110,13 @@ class MyProfile extends Component {
             class: 'my-profile-button',
             attach: 'dialog-tools-wrapper',
             click: () => {
-                
+                this.Dialog.appear({
+                    component: Logs,
+                    componentData: {
+                        id: 'user-logs-dialog',
+                        userData: this.data,
+                    },
+                });
             },
         }));
         this.addChildDraw(new Button({
