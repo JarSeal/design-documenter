@@ -92,9 +92,11 @@ class FormCreator extends Component {
     paint = (data) => {
         if(this.formSubmitted) {
             if(this.components[this.id+'-title']) this.components[this.id+'-title'].draw();
-            this.components[this.id+'-msg-top'].draw({
-                text: this._getTextData(data.afterSubmitMsg, data.afterSubmitMsgId),
-            });
+            if(this.components[this.id+'-msg-top']) {
+                this.components[this.id+'-msg-top'].draw({
+                    text: this._getTextData(data.afterSubmitMsg, data.afterSubmitMsgId),
+                });
+            }
         } else {
             if(this.mainSpinner) {
                 this.mainSpinner.draw();
