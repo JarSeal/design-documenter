@@ -31,39 +31,42 @@ class OneUser extends Component {
     }
 
     init = () => {
-        this.updateMainMenu({
-            backButton: true,
-            tools: [{
-                id: 'edit-user-tool',
-                type: 'button',
-                text: 'Edit',
-                click: () => {
-                    if(!this.userData) return;
-                    this.dialogForms.createEditDialog({
-                        id: 'edit-user-form',
-                        title: getText('edit_user') + ': ' + this.userData.username,
-                        editDataId: this.userData.id,
-                        addToMessage: { userId: this.userData.id },
-                        afterFormSentFn: () => { this._loadUserData(); },
-                        onErrorFn: () => { this._loadUserData(); },
-                    });
-                },
-            }, {
-                id: 'user-logs-tool',
-                type: 'button',
-                text: 'Logs',
-                click: () => {
-                    if(!this.userData) return;
-                    this.Dialog.appear({
-                        component: Logs,
-                        componentData: {
-                            id: 'user-logs-dialog',
-                            userData: this.userData,
-                        },
-                    });
-                },
-            }],
-        });
+        const loggedIn = this.appState.get('user').loggedIn;
+        if(loggedIn) {
+            this.updateMainMenu({
+                backButton: true,
+                tools: [{
+                    id: 'edit-user-tool',
+                    type: 'button',
+                    text: 'Edit',
+                    click: () => {
+                        if(!this.userData) return;
+                        this.dialogForms.createEditDialog({
+                            id: 'edit-user-form',
+                            title: getText('edit_user') + ': ' + this.userData.username,
+                            editDataId: this.userData.id,
+                            addToMessage: { userId: this.userData.id },
+                            afterFormSentFn: () => { this._loadUserData(); },
+                            onErrorFn: () => { this._loadUserData(); },
+                        });
+                    },
+                }, {
+                    id: 'user-logs-tool',
+                    type: 'button',
+                    text: 'Logs',
+                    click: () => {
+                        if(!this.userData) return;
+                        this.Dialog.appear({
+                            component: Logs,
+                            componentData: {
+                                id: 'user-logs-dialog',
+                                userData: this.userData,
+                            },
+                        });
+                    },
+                }],
+            });
+        }
         this.userId = this.Router.getRouteParams().user;
         this.viewTitle.draw();
         this._loadUserData();

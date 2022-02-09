@@ -11,13 +11,38 @@ const readOneUserFormData = {
     editorRightsUsers: [],
     editorRightsGroups: [],
     editorOptions: {
-        fieldReadRightLevels: {
+        readRightLevels: {
             username: {
                 labelId: 'username',
                 type: 'select-user-level',
                 value: 0,
+                locked: true,
             },
-            // Continue here..
+            name: {
+                labelId: 'name',
+                type: 'select-user-level',
+                value: 2,
+            },
+            email: {
+                labelId: 'email',
+                type: 'select-user-level',
+                value: 8,
+            },
+            userLevel: {
+                labelId: 'user_level',
+                type: 'select-user-level',
+                value: 8,
+            },
+            created: {
+                labelId: 'created',
+                type: 'select-user-level',
+                value: 8,
+            },
+            edited: {
+                labelId: 'edited',
+                type: 'select-user-level',
+                value: 8,
+            },
         },
     },
 };

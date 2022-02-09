@@ -63,16 +63,36 @@ usersRouter.get('/:userId', async (request, response) => {
             userNotFoundError: true,
         });
         return;
-    } else if(userToView.userLevel >= request.session.userLevel) {
-        logger.log('Unauthorised. Not high enough userLevel to view current user. (+ session, userId)', request.session, userId);
+    }
+
+    // Check what userLevel users can view this profile
+    let readRightLevels = {};
+    if(userToView.security && userToView.security.readRightLevels) {
+        readRightLevels = userToView.security.readRightLevels;
+    } else {
+        const formData = await Form.findOne({ formId });
+        readRightLevels = formData.editorOptions && formData.editorOptions.readRightLevels
+            ? formData.editorOptions.readRightLevels
+            : {};
+    }
+    const keys = Object.keys(readRightLevels);
+    const requesterUserLevel = request.session.userLevel || 0;
+    const publishUser = {};
+    for(let i=0; i<keys.length; i++) {
+        if(requesterUserLevel >= readRightLevels[keys[i]].value) {
+            publishUser[keys[i]] = userToView[keys[i]];
+        }
+    }
+    if(Object.keys(publishUser).length === 0) {
+        logger.log('Unauthorised. Not high enough userLevel to view current user (all fields were above the requester userLevel). (+ session, userId)', request.session, userId);
         response.status(401).json({
             unauthorised: true,
-            msg: 'User not authorised.'
+            msg: 'Viewer not authorised.'
         });
         return;
     }
     
-    response.json(userToView);
+    response.json(publishUser);
 });
 
 

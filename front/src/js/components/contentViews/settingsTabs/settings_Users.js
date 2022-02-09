@@ -54,7 +54,7 @@ class UsersList extends Component {
             filter: true,
             tableStructure: this._getTableStructure(),
             rowClickFn: (e, rowData) => {
-                this.Router.changeRoute('/settings/user/' + rowData.username);
+                this.Router.changeRoute('/user/' + rowData.username);
             },
             tools: [{
                 id: 'multi-delete-tool',

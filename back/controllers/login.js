@@ -33,6 +33,7 @@ loginRouter.post('/access', async (request, response) => {
         if(checkIfLoggedIn(request.session) && browserId === request.session.browserId) {
             result.username = request.session.username;
             result.userLevel = request.session.userLevel || 0;
+            if(result.userLevel === 0) request.session.userLevel = 0;
         } else {
             request.session.browserId = browserId;
         }

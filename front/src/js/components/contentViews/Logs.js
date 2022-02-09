@@ -31,7 +31,7 @@ class Logs extends Component {
         if(this.data.userData.created && !this.data.userData.created.publicForm) {
             this.addChild(new RouteLink({
                 id: 'created-by-user-link',
-                link: '/settings/user/' + this.data.userData.created.by.username,
+                link: '/user/' + this.data.userData.created.by.username,
                 text: this.data.userData.created.by.username,
                 attach: 'created-elem',
                 tag: 'a',
@@ -48,7 +48,7 @@ class Logs extends Component {
                 rowClickFn: (e, rowData) => {
                     if(!rowData.by || !rowData.by.username) return;
                     this.Router.changeRoute(
-                        '/settings/user/' + rowData.by.username,
+                        '/user/' + rowData.by.username,
                         { forceUpdate: true }
                     );
                 },
