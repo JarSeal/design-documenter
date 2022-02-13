@@ -154,6 +154,17 @@ class MainMenu extends Component {
     // - tools: [{component data for Button}]
     updateMainMenu = (newMenuState) => {
         this.menuState.newMenuState = newMenuState;
+        if(newMenuState.backButton) {
+            this.backButton.discard(true);
+            this.backButton = this.addChild(new Button({
+                id: 'main-back-button',
+                class: 'main-back-button',
+                html: '&#x2190;',
+                attach: 'nav-menu',
+                click: this._goBack,
+            }));
+            this.backButton.draw();
+        }
     }
 }
 
