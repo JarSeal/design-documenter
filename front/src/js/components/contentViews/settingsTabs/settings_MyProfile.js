@@ -34,8 +34,8 @@ class MyProfile extends Component {
         this.viewTitle.showSpinner(true);
 
         this.data = await this.readApi.getData();
+        this.viewTitle.showSpinner(false);
         if(this.data.error) {
-            this.viewTitle.showSpinner(false);
             this.addChildDraw({
                 id: 'error-getting-my-profile',
                 template: `<div class="error-text">${getText('could_not_get_data')}</div>`,
@@ -43,7 +43,6 @@ class MyProfile extends Component {
             return;
         }
 
-        this.viewTitle.showSpinner(false);
         this._createDialogButtons();
         this._createElements();
     }
