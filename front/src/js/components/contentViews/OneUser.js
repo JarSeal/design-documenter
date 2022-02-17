@@ -1,5 +1,5 @@
 import { Component, Logger } from '../../LIGHTER';
-import axios from 'axios';
+import ReadApi from '../forms/ReadApi';
 import { getText } from '../../helpers/lang';
 import { _CONFIG } from '../../_CONFIG';
 import { createDate } from '../../helpers/date';
@@ -23,67 +23,25 @@ class OneUser extends Component {
         }));
         this.userId;
         this.userData;
-        this.Dialog = this.Router.commonData.appState.get('Dialog');
         this.appState = this.Router.commonData.appState;
-        this.updateMainMenu = this.appState.get('updateMainMenu') || (() => {});
-        this.userDataComps = [];
-        this.dialogForms = new DialogForms({ id: 'dialog-forms-one-user' });
+        this.readApi;
     }
 
     init = () => {
-        const loggedIn = this.appState.get('user').loggedIn;
-        if(loggedIn) {
-            this.updateMainMenu({
-                backButton: true,
-                tools: [{
-                    id: 'edit-user-tool',
-                    type: 'button',
-                    text: 'Edit',
-                    click: () => {
-                        if(!this.userData) return;
-                        this.dialogForms.createEditDialog({
-                            id: 'edit-user-form',
-                            title: getText('edit_user') + ': ' + this.userData.username,
-                            editDataId: this.userData.id,
-                            addToMessage: { userId: this.userData.id },
-                            afterFormSentFn: () => { this._loadUserData(); },
-                            onErrorFn: () => { this._loadUserData(); },
-                        });
-                    },
-                }, {
-                    id: 'user-logs-tool',
-                    type: 'button',
-                    text: 'Logs',
-                    click: () => {
-                        if(!this.userData) return;
-                        this.Dialog.appear({
-                            component: Logs,
-                            componentData: {
-                                id: 'user-logs-dialog',
-                                userData: this.userData,
-                            },
-                        });
-                    },
-                }],
-            });
-        }
         this.userId = this.Router.getRouteParams().user;
+        this.readApi = new ReadApi({ url: '/api/users/' + this.userId });
         this.viewTitle.draw();
         this._loadUserData();
     }
 
     _loadUserData = async () => {
-        this.usersData = null;
+        this.userData = null;
         this.viewTitle.showSpinner(true);
-        const url = _CONFIG.apiBaseUrl + '/api/users/' + this.userId;
-        try {
-            const response = await axios.get(url, { withCredentials: true });
-            this.userData = response.data;
-            this.viewTitle.showSpinner(false);
-            this._createElements();
-        }
-        catch(exception) {
-            this.viewTitle.showSpinner(false);
+        
+        this.userData = await this.readApi.getData();
+        this.viewTitle.showSpinner(false);
+        if(this.userData.error && this.userData.exception) {
+            const exception = this.userData.exception;
             const status = exception.response.status;
             this.appState.get('updateMainMenu')({ tools: [] });
             if(status === 401) {
@@ -103,6 +61,9 @@ class OneUser extends Component {
                 throw new Error('Call stack');
             }
         }
+
+        this._createTools();
+        this._createElements();
     }
 
     _createElements = () => {
@@ -145,12 +106,47 @@ class OneUser extends Component {
         }
     }
 
-    _clearComps = () => {
-        const comps = this.userDataComps;
-        for(let i=0; i<comps.length; i++) {
-            this.discardChild(comps[i].id);
+    _createTools = () => {
+        let tools = null;
+        const loggedIn = this.appState.get('user').loggedIn;
+        const updateMainMenu = this.appState.get('updateMainMenu');
+        if(loggedIn && this.userData.id) {
+            const Dialog = this.Router.commonData.appState.get('Dialog');
+            tools = [{
+                id: 'edit-user-tool',
+                type: 'button',
+                text: 'Edit',
+                click: () => {
+                    if(!this.userData) return;
+                    new DialogForms({ id: 'dialog-forms-one-user' }).createEditDialog({
+                        id: 'edit-user-form',
+                        title: getText('edit_user') + ': ' + this.userData.username,
+                        editDataId: this.userData.id,
+                        addToMessage: { userId: this.userData.id },
+                        afterFormSentFn: () => { this._loadUserData(); },
+                        onErrorFn: () => { this._loadUserData(); },
+                    });
+                },
+            }, {
+                id: 'user-logs-tool',
+                type: 'button',
+                text: 'Logs',
+                click: () => {
+                    if(!this.userData) return;
+                    Dialog.appear({
+                        component: Logs,
+                        componentData: {
+                            id: 'user-logs-dialog',
+                            userData: this.userData,
+                        },
+                    });
+                },
+            }];
         }
-        this.userDataComps = [];
+        updateMainMenu({
+            backButton: true,
+            tools,
+        });
     }
 }
 

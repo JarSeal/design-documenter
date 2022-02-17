@@ -43,6 +43,11 @@ const readOneUserFormData = {
                 type: 'select-user-level',
                 value: 8,
             },
+            security: {
+                labelId: 'security',
+                type: 'select-user-level',
+                value: 8,
+            },
         },
     },
 };

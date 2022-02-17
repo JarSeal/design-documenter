@@ -5,6 +5,7 @@ const CONFIG = require('./../shared').CONFIG;
 const readUsersFormData = require('./../../shared/formData/readUsersFormData');
 const readOneUserFormData = require('./../../shared/formData/readOneUserFormData');
 const readProfileFormData = require('./../../shared/formData/readProfileFormData');
+const editUserFormData = require('./../../shared/formData/editUserFormData');
 const logger = require('./../utils/logger');
 const User = require('./../models/user');
 const UserSetting = require('./../models/userSetting');
@@ -84,12 +85,19 @@ usersRouter.get('/:userId', async (request, response) => {
         }
     }
     if(Object.keys(publishUser).length === 0) {
-        logger.log('Unauthorised. Not high enough userLevel to view current user (all fields were above the requester userLevel). (+ session, userId)', request.session, userId);
-        response.status(401).json({
-            unauthorised: true,
-            msg: 'Viewer not authorised.'
+        logger.log('Unauthorised. Not high enough userLevel to view current user (all fields were above the requester userLevel). Returning 404 for security reasons. (+ session, userId)', request.session, userId);
+        response.status(404).json({
+            msg: 'User was not found. It has propably been deleted.',
+            userNotFoundError: true,
         });
         return;
+    }
+
+    // Check if current user can edit this user
+    const editUserFormId = editUserFormData.formId;
+    const editUFormData = await Form.findOne({ formId: editUserFormId });
+    if(requesterUserLevel >= editUFormData.useRightsLevel) {
+        publishUser.id = userToView._id;
     }
     
     response.json(publishUser);
