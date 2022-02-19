@@ -9,6 +9,7 @@ import FourOFour from './FourOFour';
 import ViewTitle from './../widgets/ViewTitle';
 import DialogForms from './../widgets/dialogs/dialog_Forms';
 import Logs from './Logs';
+import { CONFIG } from '../../shared';
 
 class OneUser extends Component {
     constructor(data) {
@@ -40,6 +41,13 @@ class OneUser extends Component {
         
         this.userData = await this.readApi.getData();
         this.viewTitle.showSpinner(false);
+
+        // Check if the viewer and the user to view are the same, if yes, redirect to my profile
+        if(this.userData.username === this.appState.get('user.username')) {
+            this.Router.changeRoute('/settings/my-profile', { replaceState: true });
+            return;
+        }
+
         if(this.userData.error && this.userData.exception) {
             const exception = this.userData.exception;
             const status = exception.response.status;
@@ -60,6 +68,7 @@ class OneUser extends Component {
                 logger.error('Could not get users data', exception.response);
                 throw new Error('Call stack');
             }
+            return;
         }
 
         this._createTools();

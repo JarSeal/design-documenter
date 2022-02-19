@@ -50,9 +50,9 @@ const ROUTE_ACCESS = [
         editorRightsLevel: 8,
     },
     {
-        path: '/settings/user/:user',
+        path: '/user/:user',
         formId: 'route-one-user',
-        useRightsLevel: 2,
+        useRightsLevel: 0,
         editorRightsLevel: 8,
     },
     {

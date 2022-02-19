@@ -55,7 +55,7 @@ const _conf = {
             route: '/user/:user',
             id: 'route-one-user',
             source: OneUser,
-            titleId: 'route_title_settings',
+            titleId: 'route_title_user',
             // beforeDraw: async (routerData) => await checkRouteAccess(routerData),
         },
         {
