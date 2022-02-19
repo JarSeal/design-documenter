@@ -1,6 +1,6 @@
 const CONFIG = require('./../../CONFIG').USER;
 
-const newUserFormData = {
+const editProfileFormData = {
     formId: 'edit-profile-form',
     path: '/api/users/own/profile',
     method: 'PUT',
@@ -62,4 +62,4 @@ const newUserFormData = {
     },
 };
 
-module.exports = newUserFormData;
+module.exports = editProfileFormData;

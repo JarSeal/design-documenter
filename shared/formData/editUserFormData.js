@@ -1,6 +1,6 @@
 const CONFIG = require('./../../CONFIG').USER;
 
-const newUserFormData = {
+const editUserFormData = {
     formId: 'edit-user-form',
     path: '/api/users',
     method: 'PUT',
@@ -73,4 +73,4 @@ const newUserFormData = {
     },
 };
 
-module.exports = newUserFormData;
+module.exports = editUserFormData;
