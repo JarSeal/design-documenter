@@ -126,7 +126,6 @@ const _createPublicRouteAccesses = async (request) => {
     for(let i=0; i<routes.length; i++) {
         const routeUseLevel = routes[i].useRightsLevel;
         const formId = routes[i].formId;
-        console.log('TGJKDFJK', formId, curUserLevel, routeUseLevel);
         accesses[formId] = curUserLevel >= routeUseLevel;
     }
     return accesses;
