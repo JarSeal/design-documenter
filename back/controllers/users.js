@@ -60,7 +60,7 @@ usersRouter.get('/:userId', async (request, response) => {
     if(!userToView) {
         logger.log('Could not find user with this id: ' + userId + ' (+ session)', request.session);
         response.status(404).json({
-            msg: 'User was not found. It has propably been deleted.',
+            msg: 'User was not found.',
             userNotFoundError: true,
         });
         return;
@@ -84,10 +84,12 @@ usersRouter.get('/:userId', async (request, response) => {
             publishUser[keys[i]] = userToView[keys[i]];
         }
     }
+
+    // For security reasons, show 404 even if the user exists
     if(Object.keys(publishUser).length === 0) {
         logger.log('Unauthorised. Not high enough userLevel to view current user (all fields were above the requester userLevel). Returning 404 for security reasons. (+ session, userId)', request.session, userId);
         response.status(404).json({
-            msg: 'User was not found. It has propably been deleted.',
+            msg: 'User was not found.',
             userNotFoundError: true,
         });
         return;

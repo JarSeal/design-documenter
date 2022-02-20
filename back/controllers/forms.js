@@ -43,7 +43,7 @@ formsRouter.get('/:id', async (request, response) => {
     form.method = result.method;
 
     if(splitId.length) {
-        form.data = await getAdditionalData(formId, splitId[1], request);
+        form.data = await getAdditionalData(formId, splitId[1], request, result);
         if(form.data._error) {
             logger.log(`Error with additional form data. FormId: '${formId}'. Additional Id: '${splitId[1]}'. (+ form.data._error)`, form.data._error);
             return response.status(form.data._error.code).json(form.data._error.obj);
@@ -78,7 +78,7 @@ formsRouter.get('/:id', async (request, response) => {
     response.json(form);
 });
 
-const getAdditionalData = async (formId, dataId, request) => {
+const getAdditionalData = async (formId, dataId, request, formData) => {
     const userLevel = request.session.userLevel;
     if(formId === 'edit-user-form') {
         const user = await User.findById(dataId);
@@ -115,6 +115,32 @@ const getAdditionalData = async (formId, dataId, request) => {
             };
         }
         return user;
+    } else if(formId === 'edit-expose-profile-form' && dataId === 'own') {
+        // TODO: Check here if the edit-expose-profile is possible by users (admin setting), if not, show error
+        const user = await User.findById(request.session._id);
+        if(!user || !formData || !formData.form || !formData.form.fieldsets) {
+            return {
+                _error: { code: 404,
+                    obj: {
+                        msg: 'Could not find user/form.',
+                        userNotFound: true,
+                    },
+                },
+            };
+        }
+        const fieldsets = formData.form.fieldsets;
+        for(let j=0; j<fieldsets.length; j++) {
+            const fields = fieldsets[j].fields;
+            for(let k=0; k<fields.length; k++) {
+                // TODO: Check if current field is editable by user (from formData.editorOptions)
+                if(user[fields[k].id] !== undefined) {
+                    if(!user.exposure) user.exposure = {};
+                    user.exposure[fields[k].id] = fields[k].defaultValue;
+                }
+            }
+        }
+        console.log('TEST', user, 'FORMDATA', formData);
+        return user.exposure;
     } else if(formId === 'admin-settings-form') {
         let setting = await AdminSetting.findById(dataId);
         if(!setting) {

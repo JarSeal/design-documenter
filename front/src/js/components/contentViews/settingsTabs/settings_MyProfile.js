@@ -6,6 +6,7 @@ import Button from '../../buttons/Button';
 import './settings_MyProfile.scss';
 import DialogForms from '../../widgets/dialogs/dialog_Forms';
 import Logs from '../Logs';
+import FormCreator from '../../forms/FormCreator';
 
 class MyProfile extends Component {
     constructor(data) {
@@ -100,7 +101,13 @@ class MyProfile extends Component {
             class: 'my-profile-button',
             attach: 'dialog-tools-wrapper',
             click: () => {
-                
+                this.dialogForms.createEditDialog({
+                    id: 'edit-expose-profile-form',
+                    title: getText('profile_exposure'),
+                    editDataId: 'own',
+                    afterFormSentFn: () => { this._loadMyData(); },
+                    onErrorFn: () => { this._loadMyData(); },
+                });
             },
         }));
         this.addChildDraw(new Button({

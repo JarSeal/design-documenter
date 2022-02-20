@@ -65,6 +65,13 @@ const userSchema = mongoose.Schema({
             }
         ],
     },
+    exposure: {
+        username: Number,
+        name: Number,
+        email: Number,
+        userLevel: Number,
+        createdDate: Number,
+    },
 });
 
 userSchema.plugin(uniqueValidator);

@@ -10,6 +10,8 @@ const readOneUserFormData = {
     editorRightsLevel: 8,
     editorRightsUsers: [],
     editorRightsGroups: [],
+
+    // TODO: Remove this
     editorOptions: {
         readRightLevels: {
             username: {

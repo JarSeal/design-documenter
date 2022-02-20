@@ -674,4 +674,20 @@ export const assetsObj = {
         en: 'Last logins',
         fi: 'Viimeiset kirjautumiset',
     },
+    profile_exposure: {
+        en: 'Profile data exposure',
+        fi: 'Profiilin tietojen julkisuus',
+    },
+    view_right_public_can_see: {
+        en: 'Public can see this',
+        fi: 'Julkinen tieto',
+    },
+    view_right_authenticated_can_see: {
+        en: 'Authenticated can see this',
+        fi: 'Kirjautuneet näkevät tiedon',
+    },
+    View_right_hidden: {
+        en: 'Hidden',
+        fi: 'Piilotettu tieto',
+    },
 };
