@@ -678,16 +678,20 @@ export const assetsObj = {
         en: 'Profile data exposure',
         fi: 'Profiilin tietojen julkisuus',
     },
-    view_right_public_can_see: {
+    view_right_0: {
         en: 'Public can see this',
         fi: 'Julkinen tieto',
     },
-    view_right_authenticated_can_see: {
+    view_right_1: {
         en: 'Authenticated can see this',
         fi: 'Kirjautuneet näkevät tiedon',
     },
-    View_right_hidden: {
+    View_right_2: {
         en: 'Hidden',
         fi: 'Piilotettu tieto',
+    },
+    edit_expose_profile_form_desc: {
+        en: 'Set your profile fields\' exposure levels. Be careful what you set public.',
+        fi: 'Aseta profiilisi kenttien julkisuus-taso. Ole varovainen, mitä asetat julkiseksi.',
     },
 };

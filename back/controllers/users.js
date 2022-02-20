@@ -12,6 +12,7 @@ const UserSetting = require('./../models/userSetting');
 const Form = require('./../models/form');
 const { getAndValidateForm } = require('./forms/formEngine');
 const { checkIfLoggedIn } = require('./../utils/checkAccess');
+const editExposeProfileFormData = require('../../shared/formData/editExposeProfileFormData');
 
 
 // Get all users (for admins)
@@ -333,6 +334,21 @@ usersRouter.get('/own/profile', async (request, response) => {
             userNotFoundError: true,
         });
         return;
+    }
+    
+    // Get exposure data for fields
+    const exposureFormId = editExposeProfileFormData.formId;
+    const defaultExposures = await Form.find({ formId: exposureFormId });
+    const fieldsets = defaultExposures[0].form.fieldsets;
+    for(let i=0; i<fieldsets.length; i++) {
+        const fields = fieldsets[i].fields;
+        for(let j=0; j<fields.length; j++) {
+            if(fields[j].type === 'divider') continue;
+            const fieldId = fields[j].id;
+            if(!userToView.exposure || !userToView.exposure[fieldId]) {
+                userToView.exposure[fieldId] = fields[j].defaultValue;
+            }
+        }
     }
     
     response.json(userToView);

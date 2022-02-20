@@ -1,14 +1,14 @@
 const CONFIG = require('./../../CONFIG').USER;
 
 const options = [
-    { value: 0, labelId: 'view_right_public_can_see' },
-    { value: 1, labelId: 'view_right_authenticated_can_see' },
-    { value: 2, labelId: 'View_right_hidden' },
+    { value: 0, labelId: 'view_right_0' },
+    { value: 1, labelId: 'view_right_1' },
+    { value: 2, labelId: 'View_right_2' },
 ];
 
 const editExposeProfileFormData = {
     formId: 'edit-expose-profile-form',
-    path: '/api/users/own/profile',
+    path: '/api/users/own/expose',
     method: 'PUT',
     type: 'form',
     useRightsLevel: 1,
@@ -40,11 +40,11 @@ const editExposeProfileFormData = {
                 type: 'checkbox',
                 value: true,
             },
-            createDate: {
+            created_date: {
                 labelId: 'created',
                 type: 'checkbox',
                 value: true,
-            }
+            },
         },
     },
     form: {
@@ -103,7 +103,7 @@ const editExposeProfileFormData = {
                     {
                         // CREATED.DATE
                         type: 'dropdown',
-                        id: 'created',
+                        id: 'created_date',
                         labelId: 'created',
                         defaultValue: 1,
                         options,

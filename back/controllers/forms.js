@@ -132,14 +132,20 @@ const getAdditionalData = async (formId, dataId, request, formData) => {
         for(let j=0; j<fieldsets.length; j++) {
             const fields = fieldsets[j].fields;
             for(let k=0; k<fields.length; k++) {
-                // TODO: Check if current field is editable by user (from formData.editorOptions)
-                if(user[fields[k].id] !== undefined) {
+                if(fields[k].type === 'divider') continue;
+                let showToUsers;
+                if(formData.editorOptions && formData.editorOptions.showToUsers) {
+                    showToUsers = formData.editorOptions.showToUsers;
+                }
+                if(showToUsers[fields[k].id] && showToUsers[fields[k].id].value) {
                     if(!user.exposure) user.exposure = {};
                     user.exposure[fields[k].id] = fields[k].defaultValue;
+                } else if(showToUsers[fields[k].id] && !showToUsers[fields[k].id].value) {
+                    delete user.exposure[fields[k].id];
+                    fieldsets[j].fields.splice(k, 1);
                 }
             }
         }
-        console.log('TEST', user, 'FORMDATA', formData);
         return user.exposure;
     } else if(formId === 'admin-settings-form') {
         let setting = await AdminSetting.findById(dataId);

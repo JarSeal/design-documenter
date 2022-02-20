@@ -70,7 +70,7 @@ const userSchema = mongoose.Schema({
         name: Number,
         email: Number,
         userLevel: Number,
-        createdDate: Number,
+        created_date: Number,
     },
 });
 
