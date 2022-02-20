@@ -137,6 +137,7 @@ const getAdditionalData = async (formId, dataId, request, formData) => {
                 if(formData.editorOptions && formData.editorOptions.showToUsers) {
                     showToUsers = formData.editorOptions.showToUsers;
                 }
+                // Maybe this needs to check if user has already pre-saved values
                 if(showToUsers[fields[k].id] && showToUsers[fields[k].id].value) {
                     if(!user.exposure) user.exposure = {};
                     user.exposure[fields[k].id] = fields[k].defaultValue;
