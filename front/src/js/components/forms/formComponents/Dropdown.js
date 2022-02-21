@@ -22,7 +22,13 @@ class Dropdown extends Component {
         if(!data.label) data.label = data.id;
         this.selectId = this.id + '-select';
         this.options = [];
-        this.value = data.value || data.selected || '';
+        if(data.value === undefined) {
+            this.value = data.selected !== undefined
+                ? data.selected
+                : '';
+        } else {
+            this.value = data.value;
+        }
         this.template = `
             <div class="form-elem form-elem--dropdown">
                 <label for="${this.selectId}">
