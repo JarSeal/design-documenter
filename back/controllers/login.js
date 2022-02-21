@@ -81,17 +81,20 @@ loginRouter.post('/', async (request, response) => {
 
     // Check user
     const user = await User.findOne({ username: body.username });
-    const userSecurity = user.security
-        ? user.security
-        : {
-            loginAttempts: 0,
-            coolDown: false,
-            coolDownStarted: null,
-            lastLogins: [],
-            lastAttempts: [],
-        };
+    let userSecurity;
+    if(user) {
+        userSecurity = user.security
+            ? user.security
+            : {
+                loginAttempts: 0,
+                coolDown: false,
+                coolDownStarted: null,
+                lastLogins: [],
+                lastAttempts: [],
+            };
+    }
     // Check here if the user is under cooldown period
-    if(userSecurity.coolDown && userSecurity.coolDownStarted) {
+    if(userSecurity && userSecurity.coolDown && userSecurity.coolDownStarted) {
         const cooldownTime = await getSetting(request, 'login-cooldown-time', true);
         const coolDownEnds = new Date(new Date(userSecurity.coolDownStarted).getTime() + cooldownTime * 60000);
         const timeNow = new Date();
