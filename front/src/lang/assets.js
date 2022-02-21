@@ -730,4 +730,8 @@ export const assetsObj = {
         en: 'This user cannot be deleted',
         fi: 'Tätä käyttäjää ei voi poistaa',
     },
+    change_password: {
+        en: 'Change password',
+        fi: 'Vaihda salasana',
+    },
 };
