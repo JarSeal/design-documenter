@@ -152,7 +152,34 @@ class MyProfile extends Component {
             class: 'my-profile-button',
             attach: 'dialog-tools-wrapper',
             click: () => {
-                
+                this.Dialog.appear({
+                    component: FormCreator,
+                    componentData: {
+                        id: 'delete-profile-form',
+                        appState: this.appState,
+                        beforeFormSendingFn: () => {
+                            const conf = window.confirm(getText('delete_profile_warning_text'));
+                            if(conf) this.Dialog.lock();
+                            return conf;
+                        },
+                        afterFormSentFn: () => {
+                            this.Dialog.disappear();
+                            this.Router.changeRoute('/logout');
+                        },
+                        onErrorsFn: (ex, res) => {
+                            this.Dialog.unlock();
+                        },
+                        formLoadedFn: () => { this.Dialog.onResize(); },
+                        extraButton: {
+                            label: getText('cancel'),
+                            clickFn: (e) => {
+                                e.preventDefault();
+                                this.Dialog.disappear();
+                            },
+                        },
+                    },
+                    title: getText('delete'),
+                });
             },
         }));
     }

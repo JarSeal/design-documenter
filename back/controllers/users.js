@@ -510,4 +510,39 @@ usersRouter.put('/user/exposure', async (request, response) => {
     return response.json(savedUser);
 });
 
+usersRouter.post('/own/delete', async (request, response) => {
+    const body = request.body;
+    const userId = request.session._id;
+    const user = await User.findById(userId);
+    const passwordCorrect = user === null
+        ? false
+        : await bcrypt.compare(body.password, user.passwordHash);
+    if(!passwordCorrect) {
+        return response.status(401).json({
+            error: 'invalid password',
+            loggedIn: true,
+        });
+    }
+
+    // Superadmin cannot be self-deleted
+    if(request.session.userLevel === 9) {
+        return response.status(403).json({
+            error: 'unauthorised',
+            loggedIn: true,
+        });
+    }
+
+    // Delete the user
+    User.findByIdAndRemove(userId, (err) => {
+        if(err) {
+            logger.error('Could not self delete profile. (+ userId, err)', userId, err);
+            return response.status(500).json({
+                error: 'db error',
+                dbError: true,
+            });
+        }
+        return response.json({ userDeleted: true });
+    });
+});
+
 module.exports = usersRouter;

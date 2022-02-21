@@ -718,4 +718,16 @@ export const assetsObj = {
         en: 'Exposure',
         fi: 'Julkisuus',
     },
+    delete_profile_warning_text: {
+        en: 'Are you absolutely sure you want to delete your account? This cannot be undone!',
+        fi: 'Oletko aivan varma, että haluat poistaa tilisi? Tätä toimintoa ei voi perua!',
+    },
+    wrong_password: {
+        en: 'Wrong password',
+        fi: 'Väärä salasana',
+    },
+    this_user_cannot_be_deleted: {
+        en: 'This user cannot be deleted',
+        fi: 'Tätä käyttäjää ei voi poistaa',
+    },
 };
