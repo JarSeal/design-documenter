@@ -9,7 +9,6 @@ import FourOFour from './FourOFour';
 import ViewTitle from './../widgets/ViewTitle';
 import DialogForms from './../widgets/dialogs/dialog_Forms';
 import Logs from './Logs';
-import { CONFIG } from '../../shared';
 
 class OneUser extends Component {
     constructor(data) {
@@ -26,6 +25,7 @@ class OneUser extends Component {
         this.userData;
         this.appState = this.Router.commonData.appState;
         this.readApi;
+        this.dialogForms = new DialogForms({ id: 'dialog-forms-one-user' });
     }
 
     init = () => {
@@ -119,15 +119,15 @@ class OneUser extends Component {
         let tools = null;
         const loggedIn = this.appState.get('user').loggedIn;
         const updateMainMenu = this.appState.get('updateMainMenu');
-        if(loggedIn && this.userData.id) {
+        if(loggedIn && this.userData.id) { // If the userData.id is present, then the current user has admin rights
             const Dialog = this.Router.commonData.appState.get('Dialog');
             tools = [{
                 id: 'edit-user-tool',
                 type: 'button',
-                text: 'Edit',
+                text: getText('edit'),
                 click: () => {
                     if(!this.userData) return;
-                    new DialogForms({ id: 'dialog-forms-one-user' }).createEditDialog({
+                    this.dialogForms.createEditDialog({
                         id: 'edit-user-form',
                         title: getText('edit_user') + ': ' + this.userData.username,
                         editDataId: this.userData.id,
@@ -137,9 +137,24 @@ class OneUser extends Component {
                     });
                 },
             }, {
+                id: 'user-exposure-tool',
+                type: 'button',
+                text: getText('exposure'),
+                click: () => {
+                    if(!this.userData) return;
+                    this.dialogForms.createEditDialog({
+                        id: 'edit-expose-profile-form',
+                        title: getText('profile_exposure') + ': ' + this.userData.username,
+                        editDataId: this.userData.id,
+                        addToMessage: { userId: this.userData.id },
+                        afterFormSentFn: () => { this._loadUserData(); },
+                        onErrorFn: () => { this._loadUserData(); },
+                    });
+                },
+            }, {
                 id: 'user-logs-tool',
                 type: 'button',
-                text: 'Logs',
+                text: getText('logs'),
                 click: () => {
                     if(!this.userData) return;
                     Dialog.appear({

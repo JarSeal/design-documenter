@@ -146,6 +146,10 @@ const publicSettingsRemapping = {
         newKey: 'tableSorting',
         createValue: (value) => { return value; },
     },
+    'users-can-set-exposure-levels': {
+        newKey: 'canSetExposure',
+        createValue: (value) => { return value; }
+    },
 };
 
 module.exports = {

@@ -11,6 +11,7 @@ class DialogForms extends Component {
 
     createDeleteDialog = (params) => {
         const { id, title, addToMessage, formDesc, afterFormSentFn, onErrorFn } = params;
+        if(!this.Dialog) this.Dialog = this.appState.get('Dialog');
         this.Dialog.appear({
             component: FormCreator,
             componentData: {
@@ -46,6 +47,7 @@ class DialogForms extends Component {
 
     createEmptyFormDialog = (params) => {
         const { id, title, afterFormSentFn, onErrorFn } = params;
+        if(!this.Dialog) this.Dialog = this.appState.get('Dialog');
         this.Dialog.appear({
             component: FormCreator,
             componentData: {
@@ -72,6 +74,7 @@ class DialogForms extends Component {
 
     createEditDialog = (params) => {
         const { id, title, addToMessage, editDataId, afterFormSentFn, onErrorFn } = params;
+        if(!this.Dialog) this.Dialog = this.appState.get('Dialog');
         this.Dialog.appear({
             component: FormCreator,
             componentData: {

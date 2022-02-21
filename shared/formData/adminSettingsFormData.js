@@ -24,7 +24,7 @@ const adminSettingsFormData = {
         submitFields: [
             'max-login-attempts', 'login-cooldown-time', 'session-age', 'public-user-registration',
             'user-registration-level', 'user-level-required-to-register', 'max-login-logs', 'max-edited-logs',
-            'users-can-set-exposure-levels',
+            'users-can-set-exposure-levels', 'use-users-exposure-levels',
         ],
         fieldsets: [
             {
@@ -154,6 +154,15 @@ const adminSettingsFormData = {
                         id: 'users-can-set-exposure-levels',
                         labelId: 'users_can_set_exposure_levels',
                         descriptionId: 'users_can_set_exposure_levels_desc',
+                        defaultValue: true,
+                        settingType: 'boolean',
+                    },
+                    {
+                        // Use users' own expose data
+                        type: 'checkbox',
+                        id: 'use-users-exposure-levels',
+                        labelId: 'use_users_exposure_levels',
+                        descriptionId: 'use_users_exposure_levels_desc',
                         defaultValue: true,
                         settingType: 'boolean',
                     },

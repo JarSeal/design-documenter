@@ -7,6 +7,7 @@ import './settings_MyProfile.scss';
 import DialogForms from '../../widgets/dialogs/dialog_Forms';
 import Logs from '../Logs';
 import FormCreator from '../../forms/FormCreator';
+import { createDate } from '../../../helpers/date';
 
 class MyProfile extends Component {
     constructor(data) {
@@ -53,17 +54,35 @@ class MyProfile extends Component {
             { id: 'username', tag: 'h1', label: getText('username') },
             { id: 'name', label: getText('name') },
             { id: 'email', label: getText('email') },
+            { id: 'id', label: 'ID' },
+            { id: 'created', label: getText('created') },
+            { id: 'edited', label: getText('last_edited') },
         ];
         for(let i=0; i<contentDefinition.length; i++) {
             const item = contentDefinition[i];
+            let value = null;
+            if(item.id === 'created') {
+                value = createDate(this.data[item.id].date);
+            } else if(item.id === 'edited' && this.data[item.id][0]) {
+                const lastIndex = this.data[item.id].length - 1;
+                value = createDate(this.data[item.id][lastIndex].date);
+            } else {
+                value = this.data[item.id];
+            }
             this.addChildDraw({
                 id: 'user-data-' + item.id,
                 template: '<div class="user-data-item">' +
-                    `<span class="user-data-item__label">${item.label}</span>` +
-                    `<div class="user-data-item__value">${this.data[item.id] || '&nbsp;'}</div>` +
+                    `<span class="user-data-item__label">${item.label} <span class="user-data-item__label--exposure">${this._showExposure(item.id)}</span></span>` +
+                    `<div class="user-data-item__value">${value || '&nbsp;'}</div>` +
                 '</div>',
             });
         }
+    }
+
+    _showExposure = (id) => {
+        if(this.data.exposure[id] === undefined || this.data.exposure[id] === 2) return `(${getText('view_right_2')})`;
+        if(this.data.exposure[id] === 1) return `(${getText('view_right_1')})`;
+        if(this.data.exposure[id] === 0) return `(${getText('view_right_0')})`;
     }
 
     _createDialogButtons = () => {
@@ -95,21 +114,23 @@ class MyProfile extends Component {
                 
             },
         }));
-        this.addChildDraw(new Button({
-            id: 'my-profile-exposure-button',
-            text: getText('profile_exposure'),
-            class: 'my-profile-button',
-            attach: 'dialog-tools-wrapper',
-            click: () => {
-                this.dialogForms.createEditDialog({
-                    id: 'edit-expose-profile-form',
-                    title: getText('profile_exposure'),
-                    editDataId: 'own',
-                    afterFormSentFn: () => { this._loadMyData(); },
-                    onErrorFn: () => { this._loadMyData(); },
-                });
-            },
-        }));
+        if(this.appState.get('serviceSettings.canSetExposure')) {
+            this.addChildDraw(new Button({
+                id: 'my-profile-exposure-button',
+                text: getText('profile_exposure'),
+                class: 'my-profile-button',
+                attach: 'dialog-tools-wrapper',
+                click: () => {
+                    this.dialogForms.createEditDialog({
+                        id: 'edit-expose-profile-form',
+                        title: getText('profile_exposure'),
+                        editDataId: 'own',
+                        afterFormSentFn: () => { this._loadMyData(); },
+                        onErrorFn: () => { this._loadMyData(); },
+                    });
+                },
+            }));
+        }
         this.addChildDraw(new Button({
             id: 'my-profile-logs-button',
             text: getText('logs'),

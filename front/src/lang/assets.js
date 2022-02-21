@@ -686,12 +686,36 @@ export const assetsObj = {
         en: 'Authenticated can see this',
         fi: 'Kirjautuneet näkevät tiedon',
     },
-    View_right_2: {
+    view_right_2: {
         en: 'Hidden',
         fi: 'Piilotettu tieto',
     },
     edit_expose_profile_form_desc: {
-        en: 'Set your profile fields\' exposure levels. Be careful what you set public.',
-        fi: 'Aseta profiilisi kenttien julkisuus-taso. Ole varovainen, mitä asetat julkiseksi.',
+        en: 'Set the profile fields\' exposure levels. Be careful what you set public.',
+        fi: 'Aseta profiilin kenttien julkisuus-taso. Ole varovainen, mitä asetat julkiseksi.',
+    },
+    user_profiles: {
+        en: 'User profiles',
+        fi: 'Käyttäjäprofiilit',
+    },
+    users_can_set_exposure_levels: {
+        en: 'Users can set exposure levels',
+        fi: 'Käyttäjät voivat asettaa kenttiensä julkisuustason',
+    },
+    users_can_set_exposure_levels_desc: {
+        en: 'Whether users can themselves set the desired field exposure levels for their fields (fields are defined in the exposure form, admins can change).',
+        fi: 'Pystyvätkö käyttäjät itse vaihtamaan kenttiensä julkisuustason (kentät määritellään julkisuus-lomakkeessa, adminit voivat säätää).',
+    },
+    use_users_exposure_levels: {
+        en: 'Use users\' own exposure levels',
+        fi: 'Käytä käyttäjien omia julkisuustasoja',
+    },
+    use_users_exposure_levels_desc: {
+        en: 'If users cannot set their own exposure levels, the users\' own exposure levels can still be used if this setting is on. Admins can set these. Does not have any affect is users can set their own exposure levels.',
+        fi: 'Jos käyttäjät eivät saa asettaa omia julkisuustasojaan, käyttäjien omia julkisuustasoja voidaan kuitenkin käyttää, jos tämä asetus on päällä. Adminit voivat asettaa näitä. Tällä asetuksella ei ole mitään vaikutusta, jos käyttäjät voivat asettaa omat julkisuustasonsa.',
+    },
+    exposure: {
+        en: 'Exposure',
+        fi: 'Julkisuus',
     },
 };

@@ -115,9 +115,21 @@ const getAdditionalData = async (formId, dataId, request, formData) => {
             };
         }
         return user;
-    } else if(formId === 'edit-expose-profile-form' && dataId === 'own') {
-        // TODO: Check here if the edit-expose-profile is possible by users (admin setting), if not, show error
-        const user = await User.findById(request.session._id);
+    } else if(formId === 'edit-expose-profile-form' && dataId !== undefined) {
+        const usersCanEditSetting = await AdminSetting.findOne({ settingId: 'users-can-set-exposure-levels' });
+        if(dataId === 'own' && usersCanEditSetting.value !== 'true') {
+            return {
+                _error: { code: 401,
+                    obj: {
+                        msg: 'Users are not authorised to set exposure levels.',
+                        unauthorised: true,
+                    },
+                },
+            };
+        }
+        let userId = request.session._id;
+        if(dataId !== 'own') userId = dataId;
+        const user = await User.findById(userId);
         if(!user || !formData || !formData.form || !formData.form.fieldsets) {
             return {
                 _error: { code: 404,
@@ -137,8 +149,10 @@ const getAdditionalData = async (formId, dataId, request, formData) => {
                 if(formData.editorOptions && formData.editorOptions.showToUsers) {
                     showToUsers = formData.editorOptions.showToUsers;
                 }
-                // Maybe this needs to check if user has already pre-saved values
-                if(showToUsers[fields[k].id] && showToUsers[fields[k].id].value) {
+                
+                if((!user.exposure || user.exposure[fields[k].id] === undefined) &&
+                    showToUsers[fields[k].id] && showToUsers[fields[k].id].value)
+                {
                     if(!user.exposure) user.exposure = {};
                     user.exposure[fields[k].id] = fields[k].defaultValue;
                 } else if(showToUsers[fields[k].id] && !showToUsers[fields[k].id].value) {

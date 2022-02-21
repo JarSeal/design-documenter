@@ -3,12 +3,12 @@ const CONFIG = require('./../../CONFIG').USER;
 const options = [
     { value: 0, labelId: 'view_right_0' },
     { value: 1, labelId: 'view_right_1' },
-    { value: 2, labelId: 'View_right_2' },
+    { value: 2, labelId: 'view_right_2' },
 ];
 
 const editExposeProfileFormData = {
     formId: 'edit-expose-profile-form',
-    path: '/api/users/own/expose',
+    path: '/api/users/user/exposure',
     method: 'PUT',
     type: 'form',
     useRightsLevel: 1,
@@ -35,11 +35,6 @@ const editExposeProfileFormData = {
                 type: 'checkbox',
                 value: true,
             },
-            userLevel: {
-                labelId: 'user_level',
-                type: 'checkbox',
-                value: true,
-            },
             created_date: {
                 labelId: 'created',
                 type: 'checkbox',
@@ -57,7 +52,7 @@ const editExposeProfileFormData = {
             labelId: 'save',
             class: 'save-button',
         },
-        submitFields: [ 'name', 'userLevel', 'created' ],
+        submitFields: [ 'username', 'name', 'email', 'created_date' ],
         fieldsets: [
             {
                 // FIELDSET
@@ -93,19 +88,11 @@ const editExposeProfileFormData = {
                     },
                     { type: 'divider' },
                     {
-                        // USERLEVEL
-                        type: 'dropdown',
-                        id: 'userLevel',
-                        labelId: 'user_level',
-                        defaultValue: 2,
-                        options,
-                    },
-                    {
                         // CREATED.DATE
                         type: 'dropdown',
                         id: 'created_date',
                         labelId: 'created',
-                        defaultValue: 1,
+                        defaultValue: 2,
                         options,
                     },
                 ],
