@@ -700,7 +700,10 @@ class FormCreator extends Component {
         let formHasErrors = this._checkAllFieldErrors();
 
         if(!formHasErrors) {
-            if(this.data.beforeFormSendingFn) this.data.beforeFormSendingFn();
+            if(this.data.beforeFormSendingFn) {
+                const continues = this.data.beforeFormSendingFn();
+                if(continues === false) return;
+            }
             const fields = this.data.submitFields;
             const payload = {};
             for(let i=0; i<fields.length; i++) {
