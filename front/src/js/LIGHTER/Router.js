@@ -104,6 +104,7 @@ class Router {
                     route: routes[i],
                     curRouteData: this.curRouteData,
                     curRoute: this.curRoute,
+                    basePath: this.basePath,
                     commonData: this.commonData,
                     prevRouteData: null,
                     prevRoute: null,
@@ -229,6 +230,7 @@ class Router {
                     route: this.routes[i],
                     curRouteData: this.curRouteData,
                     curRoute: this.curRoute,
+                    basePath: this.basePath,
                     commonData: this.commonData,
                     prevRouteData: this.prevRouteData,
                     prevRoute: this.prevRouteData,
@@ -286,6 +288,8 @@ class Router {
     }
 
     _compareRoutes(first, second, checkWithParams) {
+        first = first.split('?')[0];
+        second = second.split('?')[0];
         if(checkWithParams && (first.includes(':') || second.includes(':'))) {
             const firstParts = first.split('/');
             const secondParts = second.split('/');
