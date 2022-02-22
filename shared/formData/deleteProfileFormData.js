@@ -28,7 +28,7 @@ const deleteProfileFormData = {
         fieldsets: [
             {
                 // FIELDSET
-                id: 'edit-user-main-fs',
+                id: 'delete-profile-main-fs',
                 fields: [
                     { type: 'divider' },
                     {

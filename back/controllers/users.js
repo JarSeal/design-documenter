@@ -510,6 +510,7 @@ usersRouter.put('/user/exposure', async (request, response) => {
     return response.json(savedUser);
 });
 
+// Delete own profile
 usersRouter.post('/own/delete', async (request, response) => {
     const body = request.body;
     const userId = request.session._id;
@@ -543,6 +544,43 @@ usersRouter.post('/own/delete', async (request, response) => {
         }
         return response.json({ userDeleted: true });
     });
+});
+
+// Change password
+usersRouter.post('/own/changepass', async (request, response) => {
+    const body = request.body;
+    const userId = request.session._id;
+    const user = await User.findById(userId);
+    const passwordCorrect = user === null
+        ? false
+        : await bcrypt.compare(body.curPassword, user.passwordHash);
+    if(!passwordCorrect) {
+        return response.status(401).json({
+            error: 'invalid password',
+            loggedIn: true,
+        });
+    }
+
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(body.password, saltRounds);
+
+    const edited = await createNewEditedArray(user.edited, request.session._id);
+    const updatedUser = {
+        passwordHash,
+        edited,
+    };
+
+    const savedUser = await User.findByIdAndUpdate(userId, updatedUser, { new: true });
+    if(!savedUser) {
+        logger.error('Could not update user\'s password. User was not found (id: ' + userId + ').');
+        response.status(404).json({
+            msg: 'User to update was not found.',
+            userNotFoundError: true,
+        });
+        return;
+    }
+
+    return response.json(savedUser);
 });
 
 module.exports = usersRouter;

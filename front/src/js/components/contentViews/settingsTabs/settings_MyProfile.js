@@ -37,6 +37,10 @@ class MyProfile extends Component {
 
         this.data = await this.readApi.getData();
         this.viewTitle.showSpinner(false);
+        if(this.data.redirectToLogin) {
+            this.Router.changeRoute('/logout');
+            return;
+        };
         if(this.data.error) {
             this.addChildDraw({
                 id: 'error-getting-my-profile',
@@ -111,7 +115,21 @@ class MyProfile extends Component {
             class: 'my-profile-button',
             attach: 'dialog-tools-wrapper',
             click: () => {
-                
+                this.Dialog.appear({
+                    component: FormCreator,
+                    componentData: {
+                        id: 'change-password-form',
+                        appState: this.appState,
+                        beforeFormSendingFn: () => { this.Dialog.lock(); },
+                        afterFormSentFn: () => {
+                            this.Dialog.disappear();
+                            this._loadMyData();
+                        },
+                        onErrorsFn: () => { this.Dialog.unlock(); },
+                        formLoadedFn: () => { this.Dialog.onResize(); },
+                    },
+                    title: getText('change_password'),
+                });
             },
         }));
         if(this.appState.get('serviceSettings.canSetExposure')) {

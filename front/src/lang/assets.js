@@ -734,4 +734,16 @@ export const assetsObj = {
         en: 'Change password',
         fi: 'Vaihda salasana',
     },
+    current_password: {
+        en: 'Current password',
+        fi: 'Nykyinen salasana',
+    },
+    new_password: {
+        en: 'New password',
+        fi: 'Uusi salasana',
+    },
+    new_password_again: {
+        en: 'New password again',
+        fi: 'Uusi salasana uudestaan',
+    },
 };

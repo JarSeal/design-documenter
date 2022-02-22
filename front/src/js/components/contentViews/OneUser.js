@@ -41,6 +41,16 @@ class OneUser extends Component {
         
         this.userData = await this.readApi.getData();
         this.viewTitle.showSpinner(false);
+        if(this.userData.redirectToLogin) {
+            this.Router.changeRoute('/logout');
+            return;
+        };
+        if(this.userData.error) {
+            this.addChildDraw({
+                id: 'error-getting-one-user',
+                template: `<div class="error-text">${getText('could_not_get_data')}</div>`,
+            });
+        }
 
         // Check if the viewer and the user to view are the same, if yes, redirect to my profile
         if(this.userData.username === this.appState.get('user.username')) {
