@@ -34,7 +34,7 @@ class AdminSettings extends Component {
         const settingsData = await this.settingsDataApi.getData();
         if(formData.redirectToLogin || settingsData.redirectToLogin) {
             this.viewTitle.showSpinner(false);
-            this.Router.changeRoute('/logout');
+            this.Router.changeRoute('/logout?r=' + this.Router.getRoute(true));
             return;
         };
         if(formData.error || settingsData.error) {

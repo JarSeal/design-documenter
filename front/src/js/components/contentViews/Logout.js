@@ -27,7 +27,11 @@ class Logout extends Component {
         const response = await axios.post(url, payload, { withCredentials: true });
         appState.set('serviceSettings', response.data.serviceSettings);
 
-        this.Router.changeRoute('/login');
+        let nextRoute = '/login';
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirect = urlParams.get('r');
+        if(redirect && redirect.length) nextRoute += '?r=' + redirect;
+        this.Router.changeRoute(nextRoute);
     }
 }
 

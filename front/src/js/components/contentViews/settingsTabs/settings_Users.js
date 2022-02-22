@@ -109,7 +109,7 @@ class UsersList extends Component {
         this.users = await this.usersDataApi.getData();
         if(this.users.redirectToLogin) {
             this.viewTitle.showSpinner(false);
-            this.Router.changeRoute('/logout');
+            this.Router.changeRoute('/logout?r=' + this.Router.getRoute(true));
             return;
         };
         if(this.users.error) {

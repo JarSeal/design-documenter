@@ -36,7 +36,7 @@ class Settings extends Component {
 
         this.adminRights = await getAdminRights();
         if(this.adminRights.loggedIn === false) {
-            this.Router.changeRoute('/logout');
+            this.Router.changeRoute('/logout?r=' + this.Router.getRoute(true));
             return;
         };
 
