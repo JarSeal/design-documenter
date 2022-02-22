@@ -38,7 +38,7 @@ class MyProfile extends Component {
         this.data = await this.readApi.getData();
         this.viewTitle.showSpinner(false);
         if(this.data.redirectToLogin) {
-            this.Router.changeRoute('/logout');
+            this.Router.changeRoute('/logout?r=' + this.Router.getRoute(true));
             return;
         };
         if(this.data.error) {

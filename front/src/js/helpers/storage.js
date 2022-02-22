@@ -20,12 +20,15 @@ const checkRouteAccess = async (routeData) => {
         const payload = { ids: [{
             from: 'form',
             id
-        }] };
+        }]};
         try {
             const response = await axios.post(url, payload, { withCredentials: true });
             const access = response.data[id];
             if(!access) {
-                if(!response.data.loggedIn) return '/logout';
+                if(!response.data.loggedIn) {
+                    const redirectRoute = '?r=' + routeData.curRoute.replace(routeData.basePath, '');
+                    return '/logout' + redirectRoute;
+                }
                 return '/login';
             }
         }

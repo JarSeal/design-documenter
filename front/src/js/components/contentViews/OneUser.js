@@ -42,7 +42,7 @@ class OneUser extends Component {
         this.userData = await this.readApi.getData();
         this.viewTitle.showSpinner(false);
         if(this.userData.redirectToLogin) {
-            this.Router.changeRoute('/logout');
+            this.Router.changeRoute('/logout?r=' + this.Router.getRoute(true));
             return;
         };
         if(this.userData.error) {

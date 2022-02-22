@@ -74,7 +74,12 @@ class Login extends Component {
             } else {
                 this.ls.removeItem('u');
             }
-            this.Router.changeRoute('/');
+
+            let nextRoute = '/';
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirect = urlParams.get('r');
+            if(redirect && redirect.length) nextRoute = redirect;
+            this.Router.changeRoute(nextRoute);
         }
     }
 }

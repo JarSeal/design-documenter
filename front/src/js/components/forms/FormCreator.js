@@ -861,7 +861,7 @@ class FormCreator extends Component {
             if(this.data.onErrorsFn) this.data.onErrorsFn(exception, exception.response);
             if(toLogout) {
                 setTimeout(() => {
-                    this.Router.changeRoute('/logout');
+                    this.Router.changeRoute('/logout?r=' + this.Router.getRoute(true));
                 }, 500);
             } else {
                 this.reDrawSelf();
