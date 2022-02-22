@@ -43,7 +43,7 @@ formsRouter.get('/:id', async (request, response) => {
     form.method = result.method;
 
     if(splitId.length) {
-        form.data = await getAdditionalData(formId, splitId[1], request);
+        form.data = await getAdditionalData(formId, splitId[1], request, result);
         if(form.data._error) {
             logger.log(`Error with additional form data. FormId: '${formId}'. Additional Id: '${splitId[1]}'. (+ form.data._error)`, form.data._error);
             return response.status(form.data._error.code).json(form.data._error.obj);
@@ -78,7 +78,7 @@ formsRouter.get('/:id', async (request, response) => {
     response.json(form);
 });
 
-const getAdditionalData = async (formId, dataId, request) => {
+const getAdditionalData = async (formId, dataId, request, formData) => {
     const userLevel = request.session.userLevel;
     if(formId === 'edit-user-form') {
         const user = await User.findById(dataId);
@@ -102,6 +102,66 @@ const getAdditionalData = async (formId, dataId, request) => {
             };
         }
         return user;
+    } else if(formId === 'edit-profile-form' && dataId === 'own') {
+        const user = await User.findById(request.session._id);
+        if(!user) {
+            return {
+                _error: { code: 404,
+                    obj: {
+                        msg: 'Could not find user.',
+                        userNotFound: true,
+                    },
+                },
+            };
+        }
+        return user;
+    } else if(formId === 'edit-expose-profile-form' && dataId !== undefined) {
+        const usersCanEditSetting = await AdminSetting.findOne({ settingId: 'users-can-set-exposure-levels' });
+        if(dataId === 'own' && usersCanEditSetting.value !== 'true') {
+            return {
+                _error: { code: 401,
+                    obj: {
+                        msg: 'Users are not authorised to set exposure levels.',
+                        unauthorised: true,
+                    },
+                },
+            };
+        }
+        let userId = request.session._id;
+        if(dataId !== 'own') userId = dataId;
+        const user = await User.findById(userId);
+        if(!user || !formData || !formData.form || !formData.form.fieldsets) {
+            return {
+                _error: { code: 404,
+                    obj: {
+                        msg: 'Could not find user/form.',
+                        userNotFound: true,
+                    },
+                },
+            };
+        }
+        const fieldsets = formData.form.fieldsets;
+        for(let j=0; j<fieldsets.length; j++) {
+            const fields = fieldsets[j].fields;
+            for(let k=0; k<fields.length; k++) {
+                if(fields[k].type === 'divider') continue;
+                let showToUsers;
+                if(formData.editorOptions && formData.editorOptions.showToUsers) {
+                    showToUsers = formData.editorOptions.showToUsers;
+                }
+                
+                if((!user.exposure || user.exposure[fields[k].id] === undefined) &&
+                    showToUsers[fields[k].id] && showToUsers[fields[k].id].value)
+                {
+                    if(!user.exposure) user.exposure = {};
+                    user.exposure[fields[k].id] = fields[k].defaultValue;
+                } else if(showToUsers[fields[k].id] && !showToUsers[fields[k].id].value) {
+                    delete user.exposure[fields[k].id];
+                    fieldsets[j].fields.splice(k, 1);
+                }
+            }
+        }
+        return user.exposure;
     } else if(formId === 'admin-settings-form') {
         let setting = await AdminSetting.findById(dataId);
         if(!setting) {

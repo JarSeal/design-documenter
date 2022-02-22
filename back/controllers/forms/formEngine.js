@@ -4,6 +4,8 @@ const shared = require('../../shared');
 const logger = require('./../../utils/logger');
 const { checkAccess, checkIfLoggedIn } = require('../../utils/checkAccess');
 const { getSettings } = require('../../utils/settingsService');
+const editExposeProfileFormData = require('../../../shared/formData/editExposeProfileFormData');
+const AdminSetting = require('../../models/adminSetting');
 
 const getAndValidateForm = async (formId, method, request) => {
     let error = null;
@@ -177,6 +179,7 @@ const validatePrivileges = async (form, request) => {
                 obj: {
                     msg: 'User not authenticated or session has expired.',
                     _sess: false,
+                    loggedIn: false,
                 },
             };
         }
@@ -201,6 +204,27 @@ const csrfNewToken = (request) => {
     return crsfToken();
 };
 
+const getUserExposure = async (user) => {
+    const exposeDefaultsFormId = editExposeProfileFormData.formId;
+    const defaultValues = await Form.findOne({ formId: exposeDefaultsFormId });
+    const usersCanEditSetting = await AdminSetting.findOne({ settingId: 'users-can-set-exposure-levels' });
+    const userUsersExposesSetting = await AdminSetting.findOne({ settingId: 'use-users-exposure-levels' });
+    const exposures = {};
+    const fieldsets = defaultValues.form.fieldsets;
+    for(let i=0; i<fieldsets.length; i++) {
+        const fs = fieldsets[i];
+        for(let j=0; j<fs.fields.length; j++) {
+            const field = fs.fields[j];
+            if(field.type === 'divider') continue;
+            exposures[field.id] = field.defaultValue;
+            if((usersCanEditSetting.value === 'true' || userUsersExposesSetting.value === 'true') && user.exposure[field.id] !== undefined) {
+                exposures[field.id] = user.exposure[field.id];
+            }
+        }
+    }
+    return exposures;
+};
+
 module.exports = {
     getAndValidateForm,
     validateField,
@@ -209,4 +233,5 @@ module.exports = {
     validatePrivileges,
     csrfProtection,
     csrfNewToken,
+    getUserExposure,
 };

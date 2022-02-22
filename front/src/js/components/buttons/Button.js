@@ -9,7 +9,7 @@ class Button extends Component {
         this.click = data.click;
     }
 
-    paint = () => {
+    init = () => {
         this.addListener({
             id: this.id + '-listener',
             type: 'click',

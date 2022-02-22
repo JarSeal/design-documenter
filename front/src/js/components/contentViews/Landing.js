@@ -1,7 +1,7 @@
 import { getText } from '../../helpers/lang';
 import { Component } from '../../LIGHTER';
 import Button from '../buttons/Button';
-import FormCreator from '../forms/FormCreator';
+import DialogForms from '../widgets/dialogs/dialog_Forms';
 import UniverseItem from '../widgets/listItems/UniverseItem';
 import ListLoader from '../widgets/ListLoader';
 import ViewTitle from '../widgets/ViewTitle';
@@ -16,6 +16,7 @@ class Landing extends Component {
             id: this.id+'-view-title',
             heading: data.title,
         }));
+        this.dialogForms = new DialogForms({ id: 'landing-dialog-forms' });
     }
 
     init = () => {
@@ -62,22 +63,11 @@ class Landing extends Component {
     }
 
     _showNewUniDialog = () => {
-        const Dialog = this.appState.get('Dialog');
-        Dialog.appear({
-            component: FormCreator,
-            componentData: {
-                id: 'new-universe-form',
-                appState: this.appState,
-                afterFormSentFn: () => {
-                    this.appState.get('Dialog').disappear();
-                    this.universesList.updateList();
-                },
-                onErrorsFn: (ex, res) => {
-                    if(res && res.status === 401) this.Router.changeRoute('/');
-                },
-                formLoadedFn: () => { this.appState.get('Dialog').onResize(); },
-            },
+        this.dialogForms.createEmptyFormDialog({
+            id: 'new-universe-form',
             title: getText('create_new_universe'),
+            afterFormSentFn: () => { this.universesList.updateList(); },
+            onErrorsFn: () => { this.universesList.updateList(); },
         });
     }
 }

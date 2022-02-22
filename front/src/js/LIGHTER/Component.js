@@ -11,10 +11,15 @@ class Component {
             throw new Error('Call stack');
         }
         if(ids[data.id]) {
-            logger.error('ID is already in use.', data);
-            throw new Error('Call stack');
+            if(data.autoDiscard === undefined) data.autoDiscard = true; // Default is true
+            if(data.autoDiscard) {
+                ids[data.id].discard(true);
+            } else {
+                logger.error('ID is already in use.', data);
+                throw new Error('Call stack');
+            }
         }
-        ids[data.id] = true;
+        ids[data.id] = this;
         this.id = data.id;
         this.data = data;
         this.parent;
@@ -47,6 +52,7 @@ class Component {
         //     attach (optional, string, an alternate element id to add the component)
         //     template (optional, string, default=<div id="${data.id}"></div>, element HTML)
         //     noRedraws (optional, boolean, whether the element shouldn't be redrawn after the first draw)
+        //     autoDiscard (optional, boolean, whether the component should self discard on initiation)
         // }
     }
 
@@ -156,6 +162,8 @@ class Component {
         component.parentId = this.id;
         return component;
     }
+
+    addChildDraw = (component) => this.addChild(component).draw();
 
     discardChild(id, notFull) {
         if(!this.children[id]) return;

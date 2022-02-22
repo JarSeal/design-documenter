@@ -1,4 +1,5 @@
 const AdminSetting = require('../models/adminSetting');
+const Form = require('../models/form');
 const UserSetting = require('../models/userSetting');
 const userSettingsFormData = require('./../../shared/formData/userSettingsFormData');
 const { checkIfLoggedIn } = require('./checkAccess');
@@ -114,9 +115,23 @@ const getPublicSettings = async (request, noReload) => {
         const newKey = publicSettingsRemapping[keys[i]].newKey;
         publicSettings[newKey] = publicSettingsRemapping[keys[i]].createValue(all[keys[i]], request);
     }
+    publicSettings['_routeAccess'] = await _createPublicRouteAccesses(request);
     return publicSettings;
 };
 
+const _createPublicRouteAccesses = async (request) => {
+    const routes = await Form.find({ type: 'view' });
+    const accesses = {};
+    const curUserLevel = request.session.userLevel || 0;
+    for(let i=0; i<routes.length; i++) {
+        const routeUseLevel = routes[i].useRightsLevel;
+        const formId = routes[i].formId;
+        accesses[formId] = curUserLevel >= routeUseLevel;
+    }
+    return accesses;
+};
+
+// Change settings keys and values before making them public
 const publicSettingsRemapping = {
     'public-user-registration': {
         newKey: 'canCreateUser',
@@ -130,6 +145,10 @@ const publicSettingsRemapping = {
     'table-sorting-setting': {
         newKey: 'tableSorting',
         createValue: (value) => { return value; },
+    },
+    'users-can-set-exposure-levels': {
+        newKey: 'canSetExposure',
+        createValue: (value) => { return value; }
     },
 };
 

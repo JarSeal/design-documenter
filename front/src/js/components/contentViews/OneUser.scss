@@ -1,10 +1,16 @@
-@import '../../../../styles/colors';
+@import '../../../styles/colors';
 
 .user-data-item {
     border-top: 0.1rem solid rgba(#fff, 0.1);
     &__label {
         color: $user-data-label-color;
         font-size: 1.4rem;
+        &--exposure {
+            display: inline-block;
+            margin-left: 1rem;
+            font-size: 1.1rem;
+            color: lighten($user-data-label-color, 15%);
+        }
     }
     &__value {
         font-size: 2rem;

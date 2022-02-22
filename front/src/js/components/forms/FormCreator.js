@@ -92,9 +92,11 @@ class FormCreator extends Component {
     paint = (data) => {
         if(this.formSubmitted) {
             if(this.components[this.id+'-title']) this.components[this.id+'-title'].draw();
-            this.components[this.id+'-msg-top'].draw({
-                text: this._getTextData(data.afterSubmitMsg, data.afterSubmitMsgId),
-            });
+            if(this.components[this.id+'-msg-top']) {
+                this.components[this.id+'-msg-top'].draw({
+                    text: this._getTextData(data.afterSubmitMsg, data.afterSubmitMsgId),
+                });
+            }
         } else {
             if(this.mainSpinner) {
                 this.mainSpinner.draw();
@@ -300,8 +302,8 @@ class FormCreator extends Component {
         const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
         const placeholder = this._getTextData(field.placeholder, field.placeholderId);
         this.fieldErrors.set(id, false);
-        if(this.data.data && this.data.data[id]) field.initValue = this.data.data[id];
-        if(this.data.fieldInitValues && this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
+        if(this.data.data !== undefined && this.data.data[id] !== undefined) field.initValue = this.data.data[id];
+        if(this.data.fieldInitValues !== undefined && this.data.fieldInitValues[id] !== undefined) field.initValue = this.data.fieldInitValues[id];
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new TextArea({
             id,
@@ -345,8 +347,8 @@ class FormCreator extends Component {
         if(!id) id = fieldIdPrefix+'-dropdown';
         const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
         this.fieldErrors.set(id, false);
-        if(this.data.data && this.data.data[id]) field.initValue = this.data.data[id];
-        if(this.data.fieldInitValues && this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
+        if(this.data.data !== undefined && this.data.data[id] !== undefined) field.initValue = this.data.data[id];
+        if(this.data.fieldInitValues !== undefined && this.data.fieldInitValues[id] !== undefined) field.initValue = this.data.fieldInitValues[id];
         let options = [];
         if(field.options) {
             for(let i=0; i<field.options.length; i++) {
@@ -404,9 +406,9 @@ class FormCreator extends Component {
         if(!id) id = fieldIdPrefix+'-checkbox';
         const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
         this.fieldErrors.set(id, false);
-        if(this.data.data && this.data.data[id]) field.initValue = this.data.data[id] === true || this.data.data[id] === 'true'
+        if(this.data.data !== undefined && this.data.data[id] !== undefined) field.initValue = this.data.data[id] === true || this.data.data[id] === 'true'
             ? true : false;
-        if(this.data.fieldInitValues && this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
+        if(this.data.fieldInitValues !== undefined && this.data.fieldInitValues[id] !== undefined) field.initValue = this.data.fieldInitValues[id];
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new Checkbox({
             id,
@@ -446,8 +448,8 @@ class FormCreator extends Component {
         if(!id) id = fieldIdPrefix+'-textinput';
         const label = (field.required ? '* ' : '') + this._getTextData(field.label, field.labelId);
         const placeholder = this._getTextData(field.placeholder, field.placeholderId);
-        if(this.data.data && this.data.data[id]) field.initValue = this.data.data[id];
-        if(this.data.fieldInitValues && this.data.fieldInitValues[id]) field.initValue = this.data.fieldInitValues[id];
+        if(this.data.data !== undefined && this.data.data[id] !== undefined) field.initValue = this.data.data[id];
+        if(this.data.fieldInitValues !== undefined && this.data.fieldInitValues[id] !== undefined) field.initValue = this.data.fieldInitValues[id];
         this.fieldErrors.set(id, false);
         this.componentsOrder.push(id);
         this.components[id] = this.addChild(new TextInput({
@@ -698,7 +700,10 @@ class FormCreator extends Component {
         let formHasErrors = this._checkAllFieldErrors();
 
         if(!formHasErrors) {
-            if(this.data.beforeFormSendingFn) this.data.beforeFormSendingFn();
+            if(this.data.beforeFormSendingFn) {
+                const continues = this.data.beforeFormSendingFn();
+                if(continues === false) return;
+            }
             const fields = this.data.submitFields;
             const payload = {};
             for(let i=0; i<fields.length; i++) {

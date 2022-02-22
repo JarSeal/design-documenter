@@ -1,0 +1,70 @@
+const CONFIG = require('./../../CONFIG').USER;
+
+const changePasswordFormData = {
+    formId: 'change-password-form',
+    path: '/api/users/own/changepass',
+    method: 'POST',
+    type: 'form',
+    useRightsLevel: 1,
+    useRightsUsers: [],
+    useRightsGroups: [],
+    editorRightsLevel: 8,
+    editorRightsUsers: [],
+    editorRightsGroups: [],
+    form: {
+        onErrorsMsgId: 'form_has_errors',
+        formErrors: {
+            error401Id: 'wrong_password',
+        },
+        showBottomMsg: false,
+        submitButton: {
+            id: 'submit-delete-profile-button-id',
+            labelId: 'save',
+            class: 'save-button',
+        },
+        submitFields: [ 'curPassword', 'password' ],
+        fieldsets: [
+            {
+                // FIELDSET
+                id: 'change-password-main-fs',
+                fields: [
+                    { type: 'divider' },
+                    {
+                        // CURRENT PASSWORD
+                        type: 'textinput',
+                        id: 'curPassword',
+                        labelId: 'current_password',
+                        required: true,
+                        maxLength: 50,
+                        password: true,
+                    },
+                    { type: 'divider' },
+                    {
+                        // NEW PASSWORD
+                        type: 'textinput',
+                        id: 'password',
+                        labelId: 'new_password',
+                        required: true,
+                        minLength: CONFIG.password.minLength,
+                        maxLength: 50,
+                        password: true,
+                        validationFn: 'validatePass1',
+                    },
+                    {
+                        // NEW PASSWORD AGAIN
+                        type: 'textinput',
+                        id: 'password-again',
+                        labelId: 'new_password_again',
+                        required: true,
+                        minLength: 0,
+                        maxLength: 50,
+                        password: true,
+                        validationFn: 'validatePass2',
+                    },
+                ],
+            },
+        ],
+    },
+};
+
+module.exports = changePasswordFormData;

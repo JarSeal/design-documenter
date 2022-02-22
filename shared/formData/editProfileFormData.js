@@ -1,11 +1,11 @@
 const CONFIG = require('./../../CONFIG').USER;
 
-const editUserFormData = {
-    formId: 'edit-user-form',
-    path: '/api/users',
+const editProfileFormData = {
+    formId: 'edit-profile-form',
+    path: '/api/users/own/profile',
     method: 'PUT',
     type: 'form',
-    useRightsLevel: 8,
+    useRightsLevel: 1,
     useRightsUsers: [],
     useRightsGroups: [],
     editorRightsLevel: 8,
@@ -16,11 +16,11 @@ const editUserFormData = {
         afterSubmitMsg: '',
         afterSubmitShowOnlyMsg: true,
         submitButton: {
-            id: 'submit-edit-user-button-id',
+            id: 'submit-edit-profile-button-id',
             labelId: 'save',
             class: 'save-button',
         },
-        submitFields: [ 'userId', 'name', 'email', 'userLevel' ],
+        submitFields: [ 'name', 'email' ],
         fieldsets: [
             {
                 // FIELDSET
@@ -56,21 +56,10 @@ const editUserFormData = {
                         email: true,
                     },
                     { type: 'divider' },
-                    {
-                        // USERLEVEL
-                        type: 'dropdown',
-                        id: 'userLevel',
-                        labelId: 'user_level',
-                        required: true,
-                        getOptionsFn: 'userLevels',
-                        minValue: 1,
-                        maxValue: 8,
-                    },
-                    { type: 'divider' },
                 ],
             },
         ],
     },
 };
 
-module.exports = editUserFormData;
+module.exports = editProfileFormData;

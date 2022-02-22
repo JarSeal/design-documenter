@@ -1,8 +1,9 @@
-import axios from 'axios';
-import { Component, Logger } from '../../../LIGHTER';
-import { _CONFIG } from '../../../_CONFIG';
+import { Component } from '../../../LIGHTER';
 import SettingsGroup from '../../widgets/SettingsGroup';
 import optionsFns from '../../forms/formData/optionsFns';
+import ViewTitle from '../../widgets/ViewTitle';
+import { getText } from '../../../helpers/lang';
+import ReadApi from '../../forms/ReadApi';
 
 class AdminSettings extends Component {
     constructor(data) {
@@ -13,45 +14,35 @@ class AdminSettings extends Component {
         this.Dialog = this.appState.get('Dialog');
         this.settingsComponents = [];
         this.settingsData = [];
+        this.viewTitle = this.addChild(new ViewTitle({
+            id: this.id+'-sub-view-title',
+            heading: getText('admin_settings'),
+            tag: 'h3',
+            spinner: true,
+        }));
+        this.formDataApi = new ReadApi({ url: '/api/forms/admin-settings-form' });
+        this.settingsDataApi = new ReadApi({ url: '/api/settings/admin' });
     }
 
     init = () => {
+        this.viewTitle.draw();
         this._loadAdminSettings();
     }
 
-    paint = () => {
-        for(let i=0; i<this.settingsComponents.length; i++) {
-            this.settingsComponents[i].draw();
-        }
-    }
-
     _loadAdminSettings = async () => {
-        // Clear old components
-        for(let i=0; i<this.settingsComponents.length; i++) {
-            if(this.settingsComponents[i]) this.settingsComponents[i].discard(true);
-        }
-        this.settingsComponents = [];
-        this.settingsData = [];
-
-        // Load form data
-        let url = _CONFIG.apiBaseUrl + '/api/forms/admin-settings-form',
-            formData, settingsData;
-        let result = await axios.get(url, { withCredentials: true });
-        if(result.data) {
-            formData = result.data;
-        } else {
-            Logger.log('Could not retrieve admin settings form data.');
+        const formData = await this.formDataApi.getData();
+        const settingsData = await this.settingsDataApi.getData();
+        if(formData.redirectToLogin || settingsData.redirectToLogin) {
+            this.viewTitle.showSpinner(false);
+            this.Router.changeRoute('/logout');
             return;
-        }
-
-        // Load current settings
-        url = _CONFIG.apiBaseUrl + '/api/settings/admin';
-        result = await axios.get(url, { withCredentials: true });
-        if(result.data) {
-            settingsData = result.data;
-        } else {
-            Logger.log('Could not retrieve admin settings data.');
-            return;
+        };
+        if(formData.error || settingsData.error) {
+            this.viewTitle.showSpinner(false);
+            this.addChildDraw({
+                id: 'error-getting-admin-settings',
+                template: `<div class="error-text">${getText('could_not_get_data')}</div>`,
+            });
         }
 
         this._createsettingsComponents(formData, settingsData);
@@ -95,16 +86,15 @@ class AdminSettings extends Component {
                     options,
                 });
             }
-            this.settingsData.push(data);
-            this.settingsComponents.push(this.addChild(new SettingsGroup({
+            this.addChildDraw(new SettingsGroup({
                 id: 'admin-settings-g-' + fs.id,
                 settingsData: data,
                 formId: 'admin-settings-form',
                 updateSettings: this._loadAdminSettings,
-            })));
+            }));
         }
 
-        this.rePaint();
+        this.viewTitle.showSpinner(false);
     }
 }
 

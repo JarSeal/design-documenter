@@ -6,6 +6,9 @@
     position: relative;
     margin: 2rem 0;
 }
+.view-title + .table-wrapper {
+    margin-top: 0;
+}
 .table-filter-wrapper {
     position: relative;
     right: 0;

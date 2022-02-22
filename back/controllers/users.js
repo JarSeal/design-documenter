@@ -4,11 +4,14 @@ const usersRouter = require('express').Router();
 const CONFIG = require('./../shared').CONFIG;
 const readUsersFormData = require('./../../shared/formData/readUsersFormData');
 const readOneUserFormData = require('./../../shared/formData/readOneUserFormData');
+const readProfileFormData = require('./../../shared/formData/readProfileFormData');
+const editExposeProfileFormData = require('./../../shared/formData/editExposeProfileFormData');
 const logger = require('./../utils/logger');
 const User = require('./../models/user');
 const UserSetting = require('./../models/userSetting');
+const AdminSetting = require('./../models/adminSetting');
 const Form = require('./../models/form');
-const { getAndValidateForm } = require('./forms/formEngine');
+const { getAndValidateForm, getUserExposure } = require('./forms/formEngine');
 const { checkIfLoggedIn } = require('./../utils/checkAccess');
 
 
@@ -58,20 +61,81 @@ usersRouter.get('/:userId', async (request, response) => {
     if(!userToView) {
         logger.log('Could not find user with this id: ' + userId + ' (+ session)', request.session);
         response.status(404).json({
-            msg: 'User was not found. It has propably been deleted.',
+            msg: 'User was not found.',
             userNotFoundError: true,
         });
         return;
-    } else if(userToView.userLevel >= request.session.userLevel) {
-        logger.log('Unauthorised. Not high enough userLevel to view current user. (+ session, userId)', request.session, userId);
-        response.status(401).json({
-            unauthorised: true,
-            msg: 'User not authorised.'
+    }
+
+    // Exposure check
+    const requesterUserLevel = request.session.userLevel || 0;
+    let publishUser = {};
+    const exposures = await getUserExposure(userToView);
+    const formData = await Form.findOne({ formId });
+    if(requesterUserLevel >= formData.editorRightsLevel) {
+        // Viewer is an admin show all info
+        publishUser = userToView;
+        publishUser.exposure = exposures;
+    } else {
+        const exposureKeys = Object.keys(exposures);
+        for(let i=0; i<exposureKeys.length; i++) {
+            const key = exposureKeys[i];
+            if(exposures[key] === 0 || (exposures[key] === 1 && requesterUserLevel > 0)) {
+                if(key.includes('_')) {
+                    // Deep object
+                    const parts = key.split('_');
+                    let value = userToView[parts[0]];
+                    let path = {};
+                    path[parts[0]] = {};
+                    for(let p=1; p<parts.length; p++) {
+                        value = value[parts[p]];
+                        // This is sort of hard coded and should be improved (supports now x levels of nesting in the object)
+                        const isTheEnd = p === parts.length - 1;
+                        if(p === 1 && isTheEnd) {
+                            publishUser[parts[0]] = {};
+                            publishUser[parts[0]][parts[1]] = value;
+                            break;
+                        }
+                        if(p === 2 && isTheEnd) {
+                            publishUser[parts[0]] = {}; publishUser[parts[0]][parts[1]] = {};
+                            publishUser[parts[0]][parts[1]][parts[2]] = value;
+                            break;
+                        }
+                        if(p === 3 && isTheEnd) {
+                            publishUser[parts[0]] = {}; publishUser[parts[0]][parts[1]] = {}; publishUser[parts[0]][parts[1]][parts[2]] = {};
+                            publishUser[parts[0]][parts[1]][parts[2]][parts[3]] = value;
+                            break;
+                        }
+                        if(p === 4 && isTheEnd) {
+                            publishUser[parts[0]] = {}; publishUser[parts[0]][parts[1]] = {}; publishUser[parts[0]][parts[1]][parts[2]] = {}; publishUser[parts[0]][parts[1]][parts[2]][parts[3]] = {};
+                            publishUser[parts[0]][parts[1]][parts[2]][parts[3]][parts[4]] = value;
+                            break;
+                        }
+                        if(p === 5 && isTheEnd) {
+                            publishUser[parts[0]] = {}; publishUser[parts[0]][parts[1]] = {}; publishUser[parts[0]][parts[1]][parts[2]] = {}; publishUser[parts[0]][parts[1]][parts[2]][parts[3]] = {}; publishUser[parts[0]][parts[1]][parts[2]][parts[3]][parts[4]] = {};
+                            publishUser[parts[0]][parts[1]][parts[2]][parts[3]][parts[4]][parts[5]] = value;
+                            break;
+                        }
+                    }
+                    continue;
+                }
+                // First level object
+                publishUser[key] = userToView[key];
+            }
+        }
+    }
+
+    // For security reasons, show 404 even if the user exists
+    if(Object.keys(publishUser).length === 0) {
+        logger.log('Unauthorised. Not high enough userLevel to view current user (all fields were above the requester userLevel). Returning 404 for security reasons. (+ session, userId)', request.session, userId);
+        response.status(404).json({
+            msg: 'User was not found.',
+            userNotFoundError: true,
         });
         return;
     }
     
-    response.json(userToView);
+    response.json(publishUser);
 });
 
 
@@ -87,7 +151,7 @@ usersRouter.put('/', async (request, response) => {
 
     if(CONFIG.USER.email.required) {
         const findEmail = await User.findOne({ email: body.email.trim() });
-        if(findEmail && findEmail.id !== body.userId) {
+        if(findEmail && String(findEmail.id) !== body.userId) {
             response.json({
                 msg: 'Bad request. Validation errors.',
                 errors: { email: 'email_taken' },
@@ -103,14 +167,14 @@ usersRouter.put('/', async (request, response) => {
         logger.log('Unauthorised. Not high enough userLevel. (+ user to update level, session)', body.userLevel, request.session);
         response.status(401).json({
             unauthorised: true,
-            msg: 'User not authorised.'
+            msg: 'User not authorised.',
         });
         return;
     } else if(body.userLevel < 1) {
         logger.log('Trying to save userLevel lower than 1. (+ user to update level, session)', body.userLevel, request.session);
         response.status(400).json({
             badRequest: true,
-            msg: 'Bad request.'
+            msg: 'Bad request.',
         });
         return;
     }
@@ -277,6 +341,246 @@ usersRouter.post('/', async (request, response) => {
     const savedUser = await user.save();
 
     response.json(savedUser);
+});
+
+
+// Read own profile
+usersRouter.get('/own/profile', async (request, response) => {
+
+    const formId = readProfileFormData.formId;
+    const error = await getAndValidateForm(formId, 'GET', request);
+    if(error) {
+        response.status(error.code).json(error.obj);
+        return;
+    }
+
+    const userId = request.session._id;
+    let userToView = await User.findById(userId)
+        .populate('edited.by', { username: 1 })
+        .populate('created.by', { username: 1 });
+
+    if(!userToView) {
+        logger.log('Could not find user with this id: ' + userId + ' (+ session)', request.session);
+        response.status(404).json({
+            msg: 'User was not found. It has propably been deleteds.',
+            userNotFoundError: true,
+        });
+        return;
+    }
+
+    const exposures = await getUserExposure(userToView);
+    userToView.exposure = exposures;
+    
+    response.json(userToView);
+});
+
+
+// Edit own profile
+usersRouter.put('/own/profile', async (request, response) => {
+    
+    const body = request.body;
+    const userId = request.session._id;
+    const error = await getAndValidateForm(body.id, 'PUT', request);
+    if(error) {
+        response.status(error.code).json(error.obj);
+        return;
+    }
+
+    if(CONFIG.USER.email.required) {
+        const findEmail = await User.findOne({ email: body.email.trim() });
+        if(findEmail && String(findEmail._id) !== userId) {
+            response.json({
+                msg: 'Bad request. Validation errors.',
+                errors: { email: 'email_taken' },
+                emailTaken: true,
+            });
+            return;
+        }
+    }
+
+    const user = await User.findById(userId);
+
+    // Check if the session user is the same as target
+    if(!user || user.username !== request.session.username) {
+        logger.error('Could not update user\'s own profile. User was not found or does not match the session user (id: ' + body.userId + ').');
+        response.json({
+            msg: 'Bad request.',
+            badRequest: true,
+        });
+        return;
+    }
+
+    const edited = await createNewEditedArray(user.edited, userId);
+    const updatedUser = {
+        email: body.email.trim(),
+        name: body.name.trim(),
+        edited,
+    };
+
+    const savedUser = await User.findByIdAndUpdate(userId, updatedUser, { new: true });
+    if(!savedUser) {
+        logger.error('Could not update user\'s own profile. User was not found (id: ' + userId + ').');
+        response.status(404).json({
+            msg: 'User to update was not found. It has propably been deleted by another user.',
+            userNotFoundError: true,
+        });
+        return;
+    }
+    response.json(savedUser);
+});
+
+// Edit exposure values
+usersRouter.put('/user/exposure', async (request, response) => {
+    
+    const body = request.body;
+    let userId = request.session._id;
+    let editingOwnProfile = true;
+    if(body.userId && body.userId !== userId) {
+        userId = body.userId;
+        editingOwnProfile = false;
+        delete body.userId;
+    }
+    const user = await User.findById(userId);
+    
+    if(editingOwnProfile) {
+        const userCanExpose = await AdminSetting.findOne({ settingId: 'users-can-set-exposure-levels' });
+        if(userCanExpose.value !== 'true') {
+            response.status(401).json({
+                msg: 'Unauthorised. Users cannot set exposure levels.',
+                unauthorised: true,
+            });
+            return;
+        }
+    }
+
+    const error = await getAndValidateForm(body.id, 'PUT', request);
+    if(error) {
+        response.status(error.code).json(error.obj);
+        return;
+    }
+
+    const exposure = {};
+    const exposureFormId = editExposeProfileFormData.formId;
+    const exposureFormData = await Form.findOne({ formId: exposureFormId });
+    if(!editingOwnProfile && exposureFormData.editorRightsLevel > request.session.userLevel) {
+        logger.error('Could not update user\'s own profile exposure. Editor\'s user level is too low. (+ editorId, required level)', request.session._id, exposureFormData.editorRightsLevel);
+        response.status(401).json({
+            msg: 'Unauthorised.',
+            unauthorised: true,
+        });
+        return;
+    }
+    const showToUsers = exposureFormData.editorOptions.showToUsers;
+    const fieldsets = exposureFormData.form.fieldsets;
+    for(let i=0; i<fieldsets.length; i++) {
+        const fs = fieldsets[i];
+        for(let j=0; j<fs.fields.length; j++) {
+            const field = fs.fields[j];
+            if(body[field.id] !== undefined && !field.disabled && showToUsers[field.id].value) {
+                exposure[field.id] = body[field.id];
+            }
+        }
+    }
+
+    let updatedUser = {};
+    if(Object.keys(exposure).length) {
+        const edited = await createNewEditedArray(user.edited, request.session._id);
+        updatedUser = {
+            exposure,
+            edited,
+        };
+    } else {
+        response.status(400).json({
+            msg: 'Bad request. No valid fields to update were found.',
+            noFieldsFound: true,
+        });
+        return;
+    }
+
+    const savedUser = await User.findByIdAndUpdate(userId, updatedUser, { new: true });
+    if(!savedUser) {
+        logger.error('Could not update user\'s own profile exposure. User was not found (id: ' + userId + ').');
+        response.status(404).json({
+            msg: 'User to update was not found.',
+            userNotFoundError: true,
+        });
+        return;
+    }
+
+    return response.json(savedUser);
+});
+
+// Delete own profile
+usersRouter.post('/own/delete', async (request, response) => {
+    const body = request.body;
+    const userId = request.session._id;
+    const user = await User.findById(userId);
+    const passwordCorrect = user === null
+        ? false
+        : await bcrypt.compare(body.password, user.passwordHash);
+    if(!passwordCorrect) {
+        return response.status(401).json({
+            error: 'invalid password',
+            loggedIn: true,
+        });
+    }
+
+    // Superadmin cannot be self-deleted
+    if(request.session.userLevel === 9) {
+        return response.status(403).json({
+            error: 'unauthorised',
+            loggedIn: true,
+        });
+    }
+
+    // Delete the user
+    User.findByIdAndRemove(userId, (err) => {
+        if(err) {
+            logger.error('Could not self delete profile. (+ userId, err)', userId, err);
+            return response.status(500).json({
+                error: 'db error',
+                dbError: true,
+            });
+        }
+        return response.json({ userDeleted: true });
+    });
+});
+
+// Change password
+usersRouter.post('/own/changepass', async (request, response) => {
+    const body = request.body;
+    const userId = request.session._id;
+    const user = await User.findById(userId);
+    const passwordCorrect = user === null
+        ? false
+        : await bcrypt.compare(body.curPassword, user.passwordHash);
+    if(!passwordCorrect) {
+        return response.status(401).json({
+            error: 'invalid password',
+            loggedIn: true,
+        });
+    }
+
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(body.password, saltRounds);
+
+    const edited = await createNewEditedArray(user.edited, request.session._id);
+    const updatedUser = {
+        passwordHash,
+        edited,
+    };
+
+    const savedUser = await User.findByIdAndUpdate(userId, updatedUser, { new: true });
+    if(!savedUser) {
+        logger.error('Could not update user\'s password. User was not found (id: ' + userId + ').');
+        response.status(404).json({
+            msg: 'User to update was not found.',
+            userNotFoundError: true,
+        });
+        return;
+    }
+
+    return response.json(savedUser);
 });
 
 module.exports = usersRouter;

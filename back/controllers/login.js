@@ -33,6 +33,7 @@ loginRouter.post('/access', async (request, response) => {
         if(checkIfLoggedIn(request.session) && browserId === request.session.browserId) {
             result.username = request.session.username;
             result.userLevel = request.session.userLevel || 0;
+            if(result.userLevel === 0) request.session.userLevel = 0;
         } else {
             request.session.browserId = browserId;
         }
@@ -80,17 +81,20 @@ loginRouter.post('/', async (request, response) => {
 
     // Check user
     const user = await User.findOne({ username: body.username });
-    const userSecurity = user.security
-        ? user.security
-        : {
-            loginAttempts: 0,
-            coolDown: false,
-            coolDownStarted: null,
-            lastLogins: [],
-            lastAttempts: [],
-        };
+    let userSecurity;
+    if(user) {
+        userSecurity = user.security
+            ? user.security
+            : {
+                loginAttempts: 0,
+                coolDown: false,
+                coolDownStarted: null,
+                lastLogins: [],
+                lastAttempts: [],
+            };
+    }
     // Check here if the user is under cooldown period
-    if(userSecurity.coolDown && userSecurity.coolDownStarted) {
+    if(userSecurity && userSecurity.coolDown && userSecurity.coolDownStarted) {
         const cooldownTime = await getSetting(request, 'login-cooldown-time', true);
         const coolDownEnds = new Date(new Date(userSecurity.coolDownStarted).getTime() + cooldownTime * 60000);
         const timeNow = new Date();

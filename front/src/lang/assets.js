@@ -135,6 +135,10 @@ export const assetsObj = {
         en: 'Settings',
         fi: 'Asetukset',
     },
+    route_title_user: {
+        en: 'User',
+        fi: 'Käyttäjä',
+    },
     route_test_form_data: {
         en: 'All form data examples',
         fi: 'Kaikki lomake-datan esimerkit',
@@ -162,6 +166,10 @@ export const assetsObj = {
     could_not_get_form_data: {
         en: 'Form data could not be retrieved due to an error. Please try again or contact support.',
         fi: 'Lomaketta ei voitu noutaa virheen takia. Kokeile uudelleen tai ota yhteyttä tukeen.',
+    },
+    could_not_get_data: {
+        en: 'Error: could not get data. Try again or contact support.',
+        fi: 'Virhe, tietoa ei voitu hakea. Kokeile uudelleen tai ota yhteyttä tukeen.',
     },
     close_dialog: {
         en: 'Close dialog',
@@ -657,5 +665,85 @@ export const assetsObj = {
     admin_settings: {
         en: 'Admin settings',
         fi: 'Admin-asetukset',
+    },
+    edited_by: {
+        en: 'Edited by',
+        fi: 'Muokkaaja',
+    },
+    last_logins: {
+        en: 'Last logins',
+        fi: 'Viimeiset kirjautumiset',
+    },
+    profile_exposure: {
+        en: 'Profile data exposure',
+        fi: 'Profiilin tietojen julkisuus',
+    },
+    view_right_0: {
+        en: 'Public can see this',
+        fi: 'Julkinen tieto',
+    },
+    view_right_1: {
+        en: 'Authenticated can see this',
+        fi: 'Kirjautuneet näkevät tiedon',
+    },
+    view_right_2: {
+        en: 'Hidden',
+        fi: 'Piilotettu tieto',
+    },
+    edit_expose_profile_form_desc: {
+        en: 'Set the profile fields\' exposure levels. Be careful what you set public.',
+        fi: 'Aseta profiilin kenttien julkisuus-taso. Ole varovainen, mitä asetat julkiseksi.',
+    },
+    user_profiles: {
+        en: 'User profiles',
+        fi: 'Käyttäjäprofiilit',
+    },
+    users_can_set_exposure_levels: {
+        en: 'Users can set exposure levels',
+        fi: 'Käyttäjät voivat asettaa kenttiensä julkisuustason',
+    },
+    users_can_set_exposure_levels_desc: {
+        en: 'Whether users can themselves set the desired field exposure levels for their fields (fields are defined in the exposure form, admins can change).',
+        fi: 'Pystyvätkö käyttäjät itse vaihtamaan kenttiensä julkisuustason (kentät määritellään julkisuus-lomakkeessa, adminit voivat säätää).',
+    },
+    use_users_exposure_levels: {
+        en: 'Use users\' own exposure levels',
+        fi: 'Käytä käyttäjien omia julkisuustasoja',
+    },
+    use_users_exposure_levels_desc: {
+        en: 'If users cannot set their own exposure levels, the users\' own exposure levels can still be used if this setting is on. Admins can set these. Does not have any affect is users can set their own exposure levels.',
+        fi: 'Jos käyttäjät eivät saa asettaa omia julkisuustasojaan, käyttäjien omia julkisuustasoja voidaan kuitenkin käyttää, jos tämä asetus on päällä. Adminit voivat asettaa näitä. Tällä asetuksella ei ole mitään vaikutusta, jos käyttäjät voivat asettaa omat julkisuustasonsa.',
+    },
+    exposure: {
+        en: 'Exposure',
+        fi: 'Julkisuus',
+    },
+    delete_profile_warning_text: {
+        en: 'Are you absolutely sure you want to delete your account? This cannot be undone!',
+        fi: 'Oletko aivan varma, että haluat poistaa tilisi? Tätä toimintoa ei voi perua!',
+    },
+    wrong_password: {
+        en: 'Wrong password',
+        fi: 'Väärä salasana',
+    },
+    this_user_cannot_be_deleted: {
+        en: 'This user cannot be deleted',
+        fi: 'Tätä käyttäjää ei voi poistaa',
+    },
+    change_password: {
+        en: 'Change password',
+        fi: 'Vaihda salasana',
+    },
+    current_password: {
+        en: 'Current password',
+        fi: 'Nykyinen salasana',
+    },
+    new_password: {
+        en: 'New password',
+        fi: 'Uusi salasana',
+    },
+    new_password_again: {
+        en: 'New password again',
+        fi: 'Uusi salasana uudestaan',
     },
 };

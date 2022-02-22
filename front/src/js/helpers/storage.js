@@ -9,25 +9,32 @@ const checkRouteAccess = async (routeData) => {
         throw new Error('Call stack');
     }
     const id = routeData.route.id;
-    const url = _CONFIG.apiBaseUrl + '/api/login/access';
-    const payload = { ids: [{
-        from: 'form',
-        id
-    }] };
-    try {
-        const response = await axios.post(url, payload, { withCredentials: true });
-        const access = response.data[id];
-        if(!access) {
-            if(!response.data.loggedIn) return '/logout';
+    const appState = routeData.commonData.appState;
+    const routeAccess = appState.get('serviceSettings._routeAccess');
+    if(routeAccess) {
+        if(routeAccess[id] === false) {
             return '/login';
         }
+    } else {
+        const url = _CONFIG.apiBaseUrl + '/api/login/access';
+        const payload = { ids: [{
+            from: 'form',
+            id
+        }] };
+        try {
+            const response = await axios.post(url, payload, { withCredentials: true });
+            const access = response.data[id];
+            if(!access) {
+                if(!response.data.loggedIn) return '/logout';
+                return '/login';
+            }
+        }
+        catch(exception) {
+            const logger = new Logger('checkRouteAccess: *****');
+            logger.error('Could not check route access', exception);
+            throw new Error('Call stack');
+        }
     }
-    catch(exception) {
-        const logger = new Logger('checkRouteAccess: *****');
-        logger.error('Could not check route access', exception);
-        throw new Error('Call stack');
-    }
-    return null;
 };
 
 const getAdminRights = async () => {
