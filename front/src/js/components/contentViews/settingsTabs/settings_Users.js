@@ -107,6 +107,11 @@ class UsersList extends Component {
     _loadUsers = async (rePaint) => {
         this.viewTitle.showSpinner(true);
         this.users = await this.usersDataApi.getData();
+        if(this.users.redirectToLogin) {
+            this.viewTitle.showSpinner(false);
+            this.Router.changeRoute('/logout');
+            return;
+        };
         if(this.users.error) {
             this.viewTitle.showSpinner(false);
             this.addChildDraw({

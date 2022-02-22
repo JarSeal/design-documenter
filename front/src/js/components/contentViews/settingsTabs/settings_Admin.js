@@ -32,10 +32,15 @@ class AdminSettings extends Component {
     _loadAdminSettings = async () => {
         const formData = await this.formDataApi.getData();
         const settingsData = await this.settingsDataApi.getData();
+        if(formData.redirectToLogin || settingsData.redirectToLogin) {
+            this.viewTitle.showSpinner(false);
+            this.Router.changeRoute('/logout');
+            return;
+        };
         if(formData.error || settingsData.error) {
             this.viewTitle.showSpinner(false);
             this.addChildDraw({
-                id: 'error-getting-my-settings',
+                id: 'error-getting-admin-settings',
                 template: `<div class="error-text">${getText('could_not_get_data')}</div>`,
             });
         }

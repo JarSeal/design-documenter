@@ -35,6 +35,10 @@ class Settings extends Component {
         }
 
         this.adminRights = await getAdminRights();
+        if(this.adminRights.loggedIn === false) {
+            this.Router.changeRoute('/logout');
+            return;
+        };
 
         this._defineTabs();
         this.tabSystem = this.addChild(new TabSystem({

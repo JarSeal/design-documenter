@@ -31,6 +31,11 @@ class MySettings extends Component {
     _loadMySettings = async () => {
         const formData = await this.formDataApi.getData();
         const settingsData = await this.settingsDataApi.getData();
+        if(formData.redirectToLogin || settingsData.redirectToLogin) {
+            this.viewTitle.showSpinner(false);
+            this.Router.changeRoute('/logout');
+            return;
+        };
         if(formData.error || settingsData.error) {
             this.viewTitle.showSpinner(false);
             this.addChildDraw({

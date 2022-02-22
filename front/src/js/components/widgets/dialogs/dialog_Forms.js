@@ -29,7 +29,9 @@ class DialogForms extends Component {
                 onErrorsFn: (ex, res) => {
                     this.Dialog.unlock();
                     if(onErrorFn) onErrorFn(ex, res);
-                    if(res && res.status === 401) this.Router.changeRoute('/');
+                    if(res && res.status === 401 && res.data.loggedIn !== false) {
+                        this.Router.changeRoute('/');
+                    }
                 },
                 onFormChanges: () => { this.Dialog.changeHappened(); },
                 formLoadedFn: () => { this.Dialog.onResize(); },
@@ -63,7 +65,9 @@ class DialogForms extends Component {
                 onErrorsFn: (ex, res) => {
                     this.Dialog.unlock();
                     if(onErrorFn) onErrorFn(ex, res);
-                    if(res && res.status === 401) this.Router.changeRoute('/');
+                    if(res && res.status === 401 && res.data.loggedIn !== false) {
+                        this.Router.changeRoute('/');
+                    }
                 },
                 onFormChanges: () => { this.Dialog.changeHappened(); },
                 formLoadedFn: () => { this.Dialog.onResize(); },
@@ -92,7 +96,9 @@ class DialogForms extends Component {
                 onErrorsFn: (ex, res) => {
                     this.Dialog.unlock();
                     if(onErrorFn) onErrorFn(ex, res);
-                    if(res && res.status === 401) this.Router.changeRoute('/');
+                    if(res && res.status === 401 && res.data.loggedIn !== false) {
+                        this.Router.changeRoute('/');
+                    }
                 },
                 onFormChanges: () => { this.Dialog.changeHappened(); },
                 formLoadedFn: () => { this.Dialog.onResize(); },

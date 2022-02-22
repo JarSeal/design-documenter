@@ -27,9 +27,12 @@ class ReadApi {
         }
         catch(e) {
             if(this.onError) this.onError(e);
+            let redirectToLogin = false;
+            if(e.response && e.response.data && e.response.data.loggedIn === false) redirectToLogin = true;
             return {
                 error: true,
                 exception: e,
+                redirectToLogin,
             };
         }
     }
