@@ -13,6 +13,7 @@ const AdminSetting = require('./../models/adminSetting');
 const Form = require('./../models/form');
 const { getAndValidateForm, getUserExposure } = require('./forms/formEngine');
 const { checkIfLoggedIn } = require('./../utils/checkAccess');
+const { sendEmailById } = require('../utils/emailService');
 
 
 // Get all users (for admins)
@@ -312,18 +313,19 @@ usersRouter.post('/', async (request, response) => {
 
     const userCount = await User.find({}).limit(1);
     const formData = await Form.findOne({ formId: body.id });
-    let userLevel = formData.form.server && formData.form.server.newUserLevel
-        ? formData.form.server.newUserLevel
+    let userLevel = formData.editorOptions && formData.editorOptions.newUserLevel
+        ? formData.editorOptions.newUserLevel.value || 1
         : 1;
-    if(userCount.length === 0) { // First registration is always for a super admin (level 9)
-        userLevel = 9; // Create admin user
-        logger.log(`Created a super user (level: ${userLevel}).`);
-    } else {
-        logger.log(`Created a level ${userLevel} user.`);
-    }
-
+    
     let createdBy = null;
     if(checkIfLoggedIn(request.session)) createdBy = request.session._id;
+    
+    if(userCount.length === 0) { // First registration is always for a super admin (level 9)
+        userLevel = 9; // Create admin user
+        logger.log(`Created a super user (level: ${userLevel}) (public form).`);
+    } else {
+        logger.log(`Created a level ${userLevel} user. (${createdBy ? 'creator: '+createdBy : 'public form'})`);
+    }
 
     const user = new User({
         username: body.username.trim(),
@@ -339,6 +341,25 @@ usersRouter.post('/', async (request, response) => {
     });
 
     const savedUser = await user.save();
+
+    if(!savedUser) {
+        logger.error('Could not save new user.');
+        response.status(500).json({
+            msg: 'Internal error. Server Could not save new user.',
+            internalError: true,
+        });
+        return;
+    }
+
+    if(savedUser.email) {
+        const mail = await sendEmailById('new-user-email', {
+            to: savedUser.email,
+            username: savedUser.username,
+        }, request);
+        if(!mail.emailSent) {
+            logger.error(`Could not send email for userId: ${savedUser._id}.`);
+        }
+    }
 
     response.json(savedUser);
 });

@@ -15,6 +15,7 @@ const healthRouter = require('./controllers/health');
 const middleware = require('./utils/middleware');
 const logger = require('./utils/logger');
 const mongoose = require('mongoose');
+const nodemailer = require('nodemailer');
 const createPresetForms = require('./controllers/forms/createPresetForms');
 const { createRandomString } = require('../shared/parsers');
 
@@ -38,7 +39,7 @@ mongoose.connect(config.MONGODB_URI, {
 
 app.use(cookieParser());
 app.use(session({
-    secret: process.env.SECRET,
+    secret: config.SECRET,
     cookie: {
         maxAge: 3600000, // 1000 = 1 second
         secure: false,
@@ -67,6 +68,29 @@ app.use(middleware.requestLogger);
 if(process.env.SERVE_STATIC === 'production') {
     app.use(express.static('front'));
 }
+
+// Setup nodemailer
+app.use((req, res, next) => {
+    if(!config.EMAIL_HOST || !config.EMAIL_USER || !config.EMAIL_PASS) {
+        logger.log('Email env variables missing (EMAIL_HOST, EMAIL_USER, and EMAIL_PASS).');
+        throw new Error;
+    }
+    const transporter = nodemailer.createTransport({
+        host: config.EMAIL_HOST,
+        auth: {
+            user: config.EMAIL_USER,
+            pass: config.EMAIL_PASS,
+        },
+        secureConnection: false, // TLS requires secureConnection to be false
+        port: 587, // port for secure SMTP
+        tls: {
+            ciphers:'SSLv3',
+            rejectUnauthorized: false,
+        },
+    });
+    req.transporter = transporter;
+    next();
+});
 
 app.use((req, res, next) => {
     const c = csrf({ cookie: false });

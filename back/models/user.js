@@ -12,17 +12,20 @@ const userSchema = mongoose.Schema({
         required: true,
         unique: true,
         minlength: CONFIG.username.minLength,
+        index: true,
     },
     name: {
         type: String,
         required: CONFIG.name.required,
         minlength: CONFIG.name.minLength,
+        index: true,
     },
     email: {
         type: String,
         required: CONFIG.email.required,
         unique: CONFIG.email.required, // If required, has to be also unique
         minlength: 5,
+        index: true,
     },
     passwordHash: String,
     userLevel: {

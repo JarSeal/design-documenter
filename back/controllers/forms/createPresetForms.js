@@ -1,7 +1,9 @@
 const logger = require('./../../utils/logger');
 const Form = require('./../../models/form');
 const AdminSetting = require('./../../models/adminSetting');
+const Email = require('./../../models/email');
 const formData = require('./../../shared').formData;
+const emailData = require('./../../shared').emailData;
 const routeAccess = require('./../../shared').CONFIG.ROUTE_ACCESS;
 
 const createPresetForms = async () => {
@@ -58,6 +60,22 @@ const createPresetForms = async () => {
             }
         }
         if(settingsSaved) logger.log(`Saved ${settingsSaved} admin setting${settingsSaved === 1 ? '' : 's'}.`);
+    }
+
+    // Create emails
+    const emailKeys = Object.keys(emailData);
+    for(let i=0; i<emailKeys.length; i++) {
+        const email = emailData[emailKeys[i]];
+        const id = email.emailId;
+        const savedEmail = await Email.findOne({ emailId: id });
+        if(!savedEmail) {
+            email.created = {};
+            email.created.by = null;
+            email.created.date = new Date();
+            const newEmail = new Email(email);
+            await newEmail.save();
+            logger.log(`Preset email template '${email.emailId}' created.`);
+        }
     }
 };
 

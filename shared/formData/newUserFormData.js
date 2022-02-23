@@ -12,15 +12,10 @@ const newUserFormData = {
     editorRightsUsers: [],
     editorRightsGroups: [],
     editorOptions: {
-        loginAccessLevel: {
+        newUserLevel: {
             labelId: 'new_user_level',
             type: 'select-user-level',
-            value: 1,
-        },
-        loginAccessGroup: {
-            labelId: 'new_user_groups',
-            type: 'select-user-group',
-            value: [],
+            value: 2,
         },
     },
     form: {
