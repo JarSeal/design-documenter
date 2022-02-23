@@ -32,6 +32,7 @@ class Logs extends Component {
             this.addChild(new RouteLink({
                 id: 'created-by-user-link',
                 link: '/user/' + this.data.userData.created.by.username,
+                class: 'link',
                 text: this.data.userData.created.by.username,
                 attach: 'created-elem',
                 tag: 'a',

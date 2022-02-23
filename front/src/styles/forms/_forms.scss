@@ -42,6 +42,10 @@ fieldset {
     .form--success & {
         color: $font-color;
         opacity: 1;
+        .dialog-box & {
+            color: $font-color-invert;
+            text-align: left;
+        }
     }
     .form--sent & {
         opacity: 1;

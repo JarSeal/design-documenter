@@ -160,16 +160,16 @@ export const assetsObj = {
         fi: 'Uusi käyttäjä rekisteröity.',
     },
     form_submit_error: {
-        en: 'Form could not been sent due to an error. Please try again or contact support.',
-        fi: 'Lomakkeen lähetys epäonnistui virheen takia. Kokeile uudelleen tai ota yhteyttä tukeen.',
+        en: 'Form could not been sent due to an error. Please reload the app or contact support.',
+        fi: 'Lomakkeen lähetys epäonnistui virheen takia. Lataa applikaatio uudelleen tai ota yhteyttä tukeen.',
     },
     could_not_get_form_data: {
-        en: 'Form data could not be retrieved due to an error. Please try again or contact support.',
-        fi: 'Lomaketta ei voitu noutaa virheen takia. Kokeile uudelleen tai ota yhteyttä tukeen.',
+        en: 'Form data could not be retrieved due to an error. Please reload the app or contact support.',
+        fi: 'Lomaketta ei voitu noutaa virheen takia. Lataa applikaatio uudelleen tai ota yhteyttä tukeen.',
     },
     could_not_get_data: {
-        en: 'Error: could not get data. Try again or contact support.',
-        fi: 'Virhe, tietoa ei voitu hakea. Kokeile uudelleen tai ota yhteyttä tukeen.',
+        en: 'Error: could not get data. Try again (reload the app) or contact support.',
+        fi: 'Virhe, tietoa ei voitu hakea. Kokeile uudelleen (lataa applikaatio uudelleen) tai ota yhteyttä tukeen.',
     },
     close_dialog: {
         en: 'Close dialog',
@@ -745,5 +745,21 @@ export const assetsObj = {
     new_password_again: {
         en: 'New password again',
         fi: 'Uusi salasana uudestaan',
+    },
+    request: {
+        en: 'Request',
+        fi: 'Pyydä',
+    },
+    request_new_password_link: {
+        en: 'Request a "new password" link',
+        fi: 'Pyydä "uusi salasana" linkkiä',
+    },
+    forgot_password: {
+        en: 'Forgot password',
+        fi: 'Unohdin salasanan',
+    },
+    request_new_password_link_processed_msg: {
+        en: 'Your request has been sent. Check your E-mail. If the E-mail matches one of our accounts, you will receive the link to update your password. \n\n If you do not receive a link, it could also be because you have just requested one and you have to wait awhile before asking for a new one.',
+        fi: 'Pyyntösi on lähetetty. Tarkista sähköpostisi. Jos tämä sähköposti löytyy järjestelmästämme, saat viestin, josta pääset päivittämään salasanasi. \n\n Jos et saa linkkiä, se voi myös johtua siitä, että olet juuri pyytänyt sitä ja joudut odottaamaan hetken ennenkuin voit tilata uuden linkin.',
     },
 };

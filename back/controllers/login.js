@@ -47,6 +47,11 @@ loginRouter.post('/access', async (request, response) => {
             result.csrfToken = request.csrfToken();
         } else {
             logger.log('Trying to getCSRF at /login/access but browserId is either invalid or missing. (+ sess, body)', request.session, request.body);
+            return response.status('409').json({
+                conflictError: true,
+                errorMsg: 'browserId conflict',
+                loggedIn: checkIfLoggedIn(request.session),
+            });
         }
     } else if(request.body.from === 'logout') {
         if(request.session.username) {

@@ -161,6 +161,7 @@ class MyProfile extends Component {
                         id: 'user-logs-dialog',
                         userData: this.data,
                     },
+                    title: getText('logs'),
                 });
             },
         }));

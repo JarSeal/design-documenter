@@ -14,6 +14,7 @@ const Form = require('./../models/form');
 const { getAndValidateForm, getUserExposure } = require('./forms/formEngine');
 const { checkIfLoggedIn } = require('./../utils/checkAccess');
 const { sendEmailById } = require('../utils/emailService');
+const { createRandomString } = require('../../shared/parsers');
 
 
 // Get all users (for admins)
@@ -383,7 +384,7 @@ usersRouter.get('/own/profile', async (request, response) => {
     if(!userToView) {
         logger.log('Could not find user with this id: ' + userId + ' (+ session)', request.session);
         response.status(404).json({
-            msg: 'User was not found. It has propably been deleteds.',
+            msg: 'User was not found. It has propably been deleted.',
             userNotFoundError: true,
         });
         return;
@@ -602,6 +603,36 @@ usersRouter.post('/own/changepass', async (request, response) => {
     }
 
     return response.json(savedUser);
+});
+
+// Request a new password link
+usersRouter.post('/newpassrequest', async (request, response) => {
+    
+    // Check the admin setting for toggling forgot password feature here
+
+    const body = request.body;
+    const email = body.email;
+
+    const user = await User.findOne({ email: email.trim() });
+    if(user) {
+        // Check if email has been already sent
+        const coolDownTime = 1000 * 30; // in ms
+        const timeNow = new Date();
+        if(user.security && user.security.newPassLink && user.security.newPassLink.sent) {
+            const lastSent = new Date(user.security.newPassLink.sent);
+            if(timeNow.getTime() > lastSent.getTime() + coolDownTime) {
+                return response.json({ tryingToSend: true });
+            }
+        }
+
+        const newToken = createRandomString(64, true);
+        console.log('newToken2', newToken);
+
+        // Send email here
+
+    }
+
+    return response.json({ tryingToSend: true });
 });
 
 module.exports = usersRouter;

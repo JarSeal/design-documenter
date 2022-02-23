@@ -67,6 +67,15 @@ const userSchema = mongoose.Schema({
                 date: Date,
             }
         ],
+        newPassLink: {
+            token: {
+                type: String,
+                index: true,
+            },
+            sent: {
+                type: Date,
+            },
+        },
     },
     exposure: {
         username: Number,
