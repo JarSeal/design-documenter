@@ -86,6 +86,7 @@ loginRouter.post('/', async (request, response) => {
 
     // Check user
     const user = await User.findOne({ username: body.username });
+    const timeNow = new Date();
     let userSecurity;
     if(user) {
         userSecurity = user.security
@@ -102,7 +103,6 @@ loginRouter.post('/', async (request, response) => {
     if(userSecurity && userSecurity.coolDown && userSecurity.coolDownStarted) {
         const cooldownTime = await getSetting(request, 'login-cooldown-time', true);
         const coolDownEnds = new Date(new Date(userSecurity.coolDownStarted).getTime() + cooldownTime * 60000);
-        const timeNow = new Date();
         if(coolDownEnds < timeNow) {
             // Cooldown has ended, clear attempts
             userSecurity.loginAttempts = 0;
@@ -174,6 +174,15 @@ loginRouter.post('/', async (request, response) => {
                 error: 'invalid username and/or password',
                 loggedIn: false,
             });
+        }
+    }
+
+    // Clear expired newPassLink token and date
+    if(userSecurity.newPassLink && userSecurity.newPassLink.token && userSecurity.newPassLink.sent) {
+        const newPassLinkTokenLife = 3600000; // 3600000 = 1 hour (THIS IS TEMP)
+        if(timeNow > new Date(userSecurity.newPassLink.sent).getTime() + newPassLinkTokenLife) {
+            userSecurity.newPassLink.token = null;
+            userSecurity.newPassLink.sent = null;
         }
     }
 

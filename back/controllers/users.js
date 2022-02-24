@@ -613,26 +613,43 @@ usersRouter.post('/newpassrequest', async (request, response) => {
     const body = request.body;
     const email = body.email;
 
+    const monoResponse = () => { // For security reasons
+        return response.json({ tryingToSend: true });
+    };
+
     const user = await User.findOne({ email: email.trim() });
     if(user) {
         // Check if email has been already sent
-        const coolDownTime = 1000 * 30; // in ms
+        const coolDownTime = 6000; // 10 minutes in ms
         const timeNow = new Date();
         if(user.security && user.security.newPassLink && user.security.newPassLink.sent) {
             const lastSent = new Date(user.security.newPassLink.sent);
-            if(timeNow.getTime() > lastSent.getTime() + coolDownTime) {
-                return response.json({ tryingToSend: true });
+            if(timeNow.getTime() < lastSent.getTime() + coolDownTime) {
+                return monoResponse();
             }
         }
 
-        const newToken = createRandomString(64, true);
+        const newToken = createRandomString(64, true); // Maybe improve this by checking for token collision
         console.log('newToken2', newToken);
+        const newPassLinkAndDate = {
+            token: newToken,
+            sent: timeNow,
+        };
+        const savedUser = await User.findByIdAndUpdate(
+            user._id,
+            { $set: { 'security.newPassLink': newPassLinkAndDate }},
+            { new: true },
+        );
+        if(!savedUser) {
+            logger.error('Could not update user\'s newPassLink and date. User was not found (id: ' + user._id + ').');
+            return monoResponse();
+        }
 
         // Send email here
 
     }
 
-    return response.json({ tryingToSend: true });
+    return monoResponse();
 });
 
 module.exports = usersRouter;
