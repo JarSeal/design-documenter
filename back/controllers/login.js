@@ -179,7 +179,8 @@ loginRouter.post('/', async (request, response) => {
 
     // Clear expired newPassLink token and date
     if(userSecurity.newPassLink && userSecurity.newPassLink.token && userSecurity.newPassLink.sent) {
-        const newPassLinkTokenLife = 3600000; // 3600000 = 1 hour (THIS IS TEMP)
+        const lifeTimeInMinutes = getSetting(request, 'new-pass-link-lifetime', true);
+        const newPassLinkTokenLife = lifeTimeInMinutes * 60000; // in milliseconds (60 * 1000 = one minute)
         if(timeNow > new Date(userSecurity.newPassLink.sent).getTime() + newPassLinkTokenLife) {
             userSecurity.newPassLink.token = null;
             userSecurity.newPassLink.sent = null;

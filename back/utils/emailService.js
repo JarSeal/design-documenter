@@ -8,7 +8,7 @@ const sendEmailById = async (id, emailParams, request) => {
     const transporter = request.transporter;
     const mainUrl = confUI.baseUrl + confUI.basePath;
     emailParams.mainBeaconUrl = mainUrl;
-    emailParams.newPassUrl = mainUrl + '/u/newpass';
+    emailParams.newPassRequestUrl = mainUrl + '/u/newpassrequest';
 
     if(!emailParams.to) {
         logger.error('Email cannot be sent without a "to" address. (+ emailId)', id);
@@ -24,9 +24,9 @@ const sendEmailById = async (id, emailParams, request) => {
     // Get the email from mongo here
     const template = await Email.findOne({ emailId: id });
 
-    // Do placeholder replacing here (placeholder: $[variableName] )
+    // Placeholder replacing happens here (placeholder: $[variableName] ):
     // The variables that match the emailParams will be replaced with the value
-    let subjectAndText = template.defaultEmail; // Do different languages here
+    let subjectAndText = template.defaultEmail; // TODO: Do different languages here
     let subject = subjectAndText.subject;
     let text = subjectAndText.text;
     const variables = extractVariables(text).concat(extractVariables(subject));

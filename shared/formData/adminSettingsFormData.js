@@ -24,7 +24,7 @@ const adminSettingsFormData = {
         submitFields: [
             'max-login-attempts', 'login-cooldown-time', 'session-age', 'public-user-registration',
             'user-registration-level', 'user-level-required-to-register', 'max-login-logs', 'max-edited-logs',
-            'users-can-set-exposure-levels', 'use-users-exposure-levels',
+            'users-can-set-exposure-levels', 'use-users-exposure-levels', 'forgot-password-feature', 'new-pass-link-lifetime',
         ],
         fieldsets: [
             {
@@ -165,6 +165,26 @@ const adminSettingsFormData = {
                         descriptionId: 'use_users_exposure_levels_desc',
                         defaultValue: true,
                         settingType: 'boolean',
+                    },
+                    {
+                        // "Forgot password" feature
+                        type: 'checkbox',
+                        id: 'forgot-password-feature',
+                        labelId: 'forgot_password_feature',
+                        descriptionId: 'forgot_password_feature_desc',
+                        defaultValue: true,
+                        settingType: 'boolean',
+                    },
+                    {
+                        // Password link lifetime in minutes
+                        type: 'textinput',
+                        id: 'new-pass-link-lifetime',
+                        labelId: 'new_pass_link_lifetime',
+                        descriptionId: 'new_pass_link_lifetime_desc',
+                        defaultValue: 20,
+                        required: true,
+                        settingType: 'integer',
+                        regex: '[0-9]+$',
                     },
                 ],
             },

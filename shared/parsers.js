@@ -25,9 +25,16 @@ const createRandomString = (length, simple) => {
     return result;
 };
 
+const thisLine = () => {
+    const e = new Error();
+    const curCallerFileAndPos = e.stack.split('\n')[2].replace('at ');
+    return curCallerFileAndPos;
+};
+
 module.exports = {
     validateEmail,
     validateSimpleId,
     urlParamRoute,
     createRandomString,
+    thisLine,
 };

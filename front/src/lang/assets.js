@@ -575,7 +575,7 @@ export const assetsObj = {
         fi: 'Session ikä',
     },
     session_age_desc: {
-        en: 'User session age in minutes. This means that when the user has been idle for this amount, he is then logged out.',
+        en: 'User session age in minutes. This means that when the user has been idle for this amount, the user is then logged out.',
         fi: 'Käyttäjän session ikä minuutteina. Tämä tarkoittaa sitä, että jos käyttäjä on ollut tekemättä mitään näin kauan, hänet kirjataan ulos.',
     },
     remember_me_session_age: {
@@ -751,8 +751,8 @@ export const assetsObj = {
         fi: 'Pyydä',
     },
     request_new_password_link: {
-        en: 'Request a "new password" link',
-        fi: 'Pyydä "uusi salasana" linkkiä',
+        en: 'Request a "reset password" link',
+        fi: 'Pyydä "vaihda salasana" linkkiä',
     },
     forgot_password: {
         en: 'Forgot password',
@@ -761,5 +761,21 @@ export const assetsObj = {
     request_new_password_link_processed_msg: {
         en: 'Your request has been sent. Check your E-mail. If the E-mail matches one of our accounts, you will receive the link to update your password. \n\n If you do not receive a link, it could also be because you have just requested one and you have to wait awhile before asking for a new one.',
         fi: 'Pyyntösi on lähetetty. Tarkista sähköpostisi. Jos tämä sähköposti löytyy järjestelmästämme, saat viestin, josta pääset päivittämään salasanasi. \n\n Jos et saa linkkiä, se voi myös johtua siitä, että olet juuri pyytänyt sitä ja joudut odottaamaan hetken ennenkuin voit tilata uuden linkin.',
+    },
+    new_pass_link_lifetime: {
+        en: '"Reset password" link lifetime',
+        fi: '"Vaihda salasana" -linkin elinaika',
+    },
+    forgot_password_feature: {
+        en: '"Forgot password" feature',
+        fi: '"Unohdin salasanan" -ominaisuus',
+    },
+    forgot_password_feature_desc: {
+        en: 'Whether the "Forgot password" feature can be used or not.',
+        fi: 'Pystyvätkö käyttäjät käyttämään "Unohdin salasanan" -ominaisuutta vai eivät?',
+    },
+    new_pass_link_lifetime_desc: {
+        en: 'The lifetime / expiration time of a "reset password" link in minutes.',
+        fi: '"Vaihda salasana" -linkin elinaika minuuteissa.',
     },
 };

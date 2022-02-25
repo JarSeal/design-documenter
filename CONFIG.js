@@ -51,6 +51,12 @@ const ROUTE_ACCESS = [
         editorRightsLevel: 8,
     },
     {
+        path: '/u/newpassrequest',
+        formId: 'route-new-pass-request',
+        useRightsLevel: 0,
+        editorRightsLevel: 8,
+    },
+    {
         path: '/user/:user',
         formId: 'route-one-user',
         useRightsLevel: 0,

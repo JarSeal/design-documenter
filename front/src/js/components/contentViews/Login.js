@@ -62,7 +62,7 @@ class Login extends Component {
     paint = () => {
         this.viewTitle.draw();
         if(this.appState.get('user.loggedIn')) {
-            this.Router.changeRoute('/'); // TODO: make this redirect not save history state
+            this.Router.changeRoute('/', { replaceState: true }); // TODO: make this redirect not save history state
         } else {
             this.loginFormWrapper.draw();
             this.loginForm.draw();
@@ -70,34 +70,34 @@ class Login extends Component {
                 id: 'extra-links-wrapper',
                 class: 'login-extra-links',
             });
-            // TODO: Check here if the admin setting for forgot password feature is possible
-            this.addChildDraw(new Button({
-                id: 'forgot-password-button',
-                text: getText('forgot_password')+'?',
-                attach: 'extra-links-wrapper',
-                class: ['login-extra-link', 'link'],
-                click: () => {
-                    this.Dialog.appear({
-                        component: FormCreator,
-                        componentData: {
-                            id: 'new-pass-request-form',
-                            appState: this.appState,
-                            beforeFormSendingFn: () => {
-                                this.Dialog.lock();
+            if(this.appState.get('serviceSettings.forgotPass')) {
+                this.addChildDraw(new Button({
+                    id: 'forgot-password-button',
+                    text: getText('forgot_password')+'?',
+                    attach: 'extra-links-wrapper',
+                    class: ['login-extra-link', 'link'],
+                    click: () => {
+                        this.Dialog.appear({
+                            component: FormCreator,
+                            componentData: {
+                                id: 'new-pass-request-form',
+                                appState: this.appState,
+                                beforeFormSendingFn: () => {
+                                    this.Dialog.lock();
+                                },
+                                afterFormSentFn: () => {
+                                    this.Dialog.unlock();
+                                },
+                                onErrorsFn: (ex, res) => {
+                                    this.Dialog.unlock();
+                                },
+                                formLoadedFn: () => { this.Dialog.onResize(); },
                             },
-                            afterFormSentFn: (response) => {
-                                console.log('RESP', response);
-                                this.Dialog.unlock();
-                            },
-                            onErrorsFn: (ex, res) => {
-                                this.Dialog.unlock();
-                            },
-                            formLoadedFn: () => { this.Dialog.onResize(); },
-                        },
-                        title: getText('forgot_password'),
-                    });
-                },
-            }));
+                            title: getText('forgot_password'),
+                        });
+                    },
+                }));
+            }
         }
     }
 

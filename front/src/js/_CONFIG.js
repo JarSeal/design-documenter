@@ -4,6 +4,7 @@ import Landing from './components/contentViews/Landing';
 import Login from './components/contentViews/Login';
 import Logout from './components/contentViews/Logout';
 import NewUser from './components/contentViews/NewUser';
+import NewPassRequest from './components/contentViews/NewPassRequest';
 import Settings from './components/contentViews/Settings';
 import OneUser from './components/contentViews/OneUser';
 import Universe from './components/contentViews/Universe';
@@ -48,6 +49,12 @@ const _conf = {
             beforeDraw: async (routerData) => await checkRouteAccess(routerData),
         },
         {
+            route: '/u/newpassrequest',
+            id: 'route-new-pass-request',
+            source: NewPassRequest,
+            titleId: 'new_password',
+        },
+        {
             route: '/settings',
             redirect: '/settings/default',
         },
@@ -56,7 +63,6 @@ const _conf = {
             id: 'route-one-user',
             source: OneUser,
             titleId: 'route_title_user',
-            // beforeDraw: async (routerData) => await checkRouteAccess(routerData),
         },
         {
             route: '/settings/:tab',

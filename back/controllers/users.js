@@ -15,6 +15,7 @@ const { getAndValidateForm, getUserExposure } = require('./forms/formEngine');
 const { checkIfLoggedIn } = require('./../utils/checkAccess');
 const { sendEmailById } = require('../utils/emailService');
 const { createRandomString } = require('../../shared/parsers');
+const { getSetting } = require('../utils/settingsService');
 
 
 // Get all users (for admins)
@@ -353,13 +354,10 @@ usersRouter.post('/', async (request, response) => {
     }
 
     if(savedUser.email) {
-        const mail = await sendEmailById('new-user-email', {
+        await sendEmailById('new-user-email', {
             to: savedUser.email,
             username: savedUser.username,
         }, request);
-        if(!mail.emailSent) {
-            logger.error(`Could not send email for userId: ${savedUser._id}.`);
-        }
     }
 
     response.json(savedUser);
@@ -608,14 +606,18 @@ usersRouter.post('/own/changepass', async (request, response) => {
 // Request a new password link
 usersRouter.post('/newpassrequest', async (request, response) => {
     
-    // Check the admin setting for toggling forgot password feature here
-
-    const body = request.body;
-    const email = body.email;
-
     const monoResponse = () => { // For security reasons
         return response.json({ tryingToSend: true });
     };
+    
+    const isTheFeatureOn = getSetting(request, 'forgot-password-feature', true);
+    if(!isTheFeatureOn) {
+        logger.error('Could not create a "reset password" link because the feature is turned off.');
+        return monoResponse();
+    }
+
+    const body = request.body;
+    const email = body.email;
 
     const user = await User.findOne({ email: email.trim() });
     if(user) {
@@ -630,7 +632,6 @@ usersRouter.post('/newpassrequest', async (request, response) => {
         }
 
         const newToken = createRandomString(64, true); // Maybe improve this by checking for token collision
-        console.log('newToken2', newToken);
         const newPassLinkAndDate = {
             token: newToken,
             sent: timeNow,
@@ -646,7 +647,11 @@ usersRouter.post('/newpassrequest', async (request, response) => {
         }
 
         // Send email here
-
+        sendEmailById('new-pass-link-email', {
+            to: savedUser.email,
+            username: savedUser.username,
+            linkLife: getSetting(request, 'new-pass-link-lifetime', true), // TODO: Change this to the admin setting value
+        }, request);
     }
 
     return monoResponse();
