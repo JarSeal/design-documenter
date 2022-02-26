@@ -72,6 +72,9 @@ const userSchema = mongoose.Schema({
                 type: String,
                 index: true,
             },
+            expires: {
+                type: Date,
+            },
             sent: {
                 type: Date,
             },

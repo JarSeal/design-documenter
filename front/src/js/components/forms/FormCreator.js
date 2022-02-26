@@ -845,6 +845,9 @@ class FormCreator extends Component {
             this.formState.removeListener('getting');
             this.formState.set('getting', false);
             this.formSubmitted = true;
+            if(exception.response && exception.response.data && exception.response.data.customErrorTextId) {
+                text = getText(exception.response.data.customErrorTextId);
+            }
             this.template = `<div class="error-msg">${text}</div>`;
             this.logger.error('Form data retrieving failed (Form Creator).', exception, this);
             if(this.data.onErrorsFn) this.data.onErrorsFn(exception, exception.response);

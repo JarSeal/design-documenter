@@ -14,6 +14,8 @@ const newPassWTokenFormData = {
     form: {
         onErrorsMsgId: 'form_has_errors',
         showBottomMsg: false,
+        afterSubmitMsgId: 'password_has_been_changed',
+        afterSubmitShowOnlyMsg: true,
         submitButton: {
             id: 'submit-new-pass-w-token-button-id',
             labelId: 'save',

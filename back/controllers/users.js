@@ -17,7 +17,6 @@ const { sendEmailById } = require('../utils/emailService');
 const { createRandomString } = require('../../shared/parsers');
 const { getSetting } = require('../utils/settingsService');
 
-
 // Get all users (for admins)
 usersRouter.get('/', async (request, response) => {
 
@@ -25,8 +24,7 @@ usersRouter.get('/', async (request, response) => {
     const formId = readUsersFormData.formId;
     const error = await getAndValidateForm(formId, 'GET', request);
     if(error) {
-        response.status(error.code).json(error.obj);
-        return;
+        return response.status(error.code).json(error.obj);
     }
     
     // Get the users that have smaller user level than the current user
@@ -38,15 +36,13 @@ usersRouter.get('/', async (request, response) => {
     response.json(result);
 });
 
-
 // Get one user
 usersRouter.get('/:userId', async (request, response) => {
 
     const formId = readOneUserFormData.formId;
     const error = await getAndValidateForm(formId, 'GET', request);
     if(error) {
-        response.status(error.code).json(error.obj);
-        return;
+        return response.status(error.code).json(error.obj);
     }
 
     const userId = request.params.userId;
@@ -63,11 +59,10 @@ usersRouter.get('/:userId', async (request, response) => {
 
     if(!userToView) {
         logger.log('Could not find user with this id: ' + userId + ' (+ session)', request.session);
-        response.status(404).json({
+        return response.status(404).json({
             msg: 'User was not found.',
             userNotFoundError: true,
         });
-        return;
     }
 
     // Exposure check
@@ -131,16 +126,14 @@ usersRouter.get('/:userId', async (request, response) => {
     // For security reasons, show 404 even if the user exists
     if(Object.keys(publishUser).length === 0) {
         logger.log('Unauthorised. Not high enough userLevel to view current user (all fields were above the requester userLevel). Returning 404 for security reasons. (+ session, userId)', request.session, userId);
-        response.status(404).json({
+        return response.status(404).json({
             msg: 'User was not found.',
             userNotFoundError: true,
         });
-        return;
     }
     
     response.json(publishUser);
 });
-
 
 // Edit user
 usersRouter.put('/', async (request, response) => {
@@ -148,19 +141,17 @@ usersRouter.put('/', async (request, response) => {
     const body = request.body;
     const error = await getAndValidateForm(body.id, 'PUT', request);
     if(error) {
-        response.status(error.code).json(error.obj);
-        return;
+        return response.status(error.code).json(error.obj);
     }
 
     if(CONFIG.USER.email.required) {
         const findEmail = await User.findOne({ email: body.email.trim() });
         if(findEmail && String(findEmail.id) !== body.userId) {
-            response.json({
+            return response.json({
                 msg: 'Bad request. Validation errors.',
                 errors: { email: 'email_taken' },
                 emailTaken: true,
             });
-            return;
         }
     }
 
@@ -168,18 +159,16 @@ usersRouter.put('/', async (request, response) => {
     const curLevel = request.session.userLevel;
     if(body.userLevel >= curLevel) {
         logger.log('Unauthorised. Not high enough userLevel. (+ user to update level, session)', body.userLevel, request.session);
-        response.status(401).json({
+        return response.status(401).json({
             unauthorised: true,
             msg: 'User not authorised.',
         });
-        return;
     } else if(body.userLevel < 1) {
         logger.log('Trying to save userLevel lower than 1. (+ user to update level, session)', body.userLevel, request.session);
-        response.status(400).json({
+        return response.status(400).json({
             badRequest: true,
             msg: 'Bad request.',
         });
-        return;
     }
 
     const user = await User.findById(body.userId);
@@ -195,15 +184,13 @@ usersRouter.put('/', async (request, response) => {
     const savedUser = await User.findByIdAndUpdate(body.userId, updatedUser, { new: true });
     if(!savedUser) {
         logger.log('Could not update user. User was not found (id: ' + body.userId + ').');
-        response.status(404).json({
+        return response.status(404).json({
             msg: 'User to update was not found. It has propably been deleted by another user.',
             userNotFoundError: true,
         });
-        return;
     }
     response.json(savedUser);
 });
-
 
 // Delete users
 usersRouter.post('/delete', async (request, response) => {
@@ -211,8 +198,7 @@ usersRouter.post('/delete', async (request, response) => {
     const body = request.body;
     const error = await getAndValidateForm(body.id, 'POST', request);
     if(error) {
-        response.status(error.code).json(error.obj);
-        return;
+        return response.status(error.code).json(error.obj);
     }
 
     // Check if the user being deleted exists and
@@ -278,40 +264,35 @@ usersRouter.post('/delete', async (request, response) => {
     response.json(responseObject);
 });
 
-
 // Register user
 usersRouter.post('/', async (request, response) => {
 
     const body = request.body;
     const error = await getAndValidateForm(body.id, 'POST', request);
     if(error) {
-        response.status(error.code).json(error.obj);
-        return;
+        return response.status(error.code).json(error.obj);
     }
 
     const findUsername = await User.findOne({ username: body.username.trim() });
     if(findUsername) {
-        response.json({
+        return response.json({
             msg: 'Bad request. Validation errors.',
             errors: { username: 'username_taken' },
             usernameTaken: true,
         });
-        return;
     }
     if(CONFIG.USER.email.required) {
         const findEmail = await User.findOne({ email: body.email.trim() });
         if(findEmail) {
-            response.json({
+            return response.json({
                 msg: 'Bad request. Validation errors.',
                 errors: { email: 'email_taken' },
                 emailTaken: true,
             });
-            return;
         }
     }
 
-    const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(body.password, saltRounds);
+    const passwordHash = await bcrypt.hash(body.password, CONFIG.USER.password.saltRounds);
 
     const userCount = await User.find({}).limit(1);
     const formData = await Form.findOne({ formId: body.id });
@@ -346,11 +327,10 @@ usersRouter.post('/', async (request, response) => {
 
     if(!savedUser) {
         logger.error('Could not save new user.');
-        response.status(500).json({
+        return response.status(500).json({
             msg: 'Internal error. Server Could not save new user.',
             internalError: true,
         });
-        return;
     }
 
     if(savedUser.email) {
@@ -363,15 +343,13 @@ usersRouter.post('/', async (request, response) => {
     response.json(savedUser);
 });
 
-
 // Read own profile
 usersRouter.get('/own/profile', async (request, response) => {
 
     const formId = readProfileFormData.formId;
     const error = await getAndValidateForm(formId, 'GET', request);
     if(error) {
-        response.status(error.code).json(error.obj);
-        return;
+        return response.status(error.code).json(error.obj);
     }
 
     const userId = request.session._id;
@@ -381,11 +359,10 @@ usersRouter.get('/own/profile', async (request, response) => {
 
     if(!userToView) {
         logger.log('Could not find user with this id: ' + userId + ' (+ session)', request.session);
-        response.status(404).json({
+        return response.status(404).json({
             msg: 'User was not found. It has propably been deleted.',
             userNotFoundError: true,
         });
-        return;
     }
 
     const exposures = await getUserExposure(userToView);
@@ -394,7 +371,6 @@ usersRouter.get('/own/profile', async (request, response) => {
     response.json(userToView);
 });
 
-
 // Edit own profile
 usersRouter.put('/own/profile', async (request, response) => {
     
@@ -402,19 +378,17 @@ usersRouter.put('/own/profile', async (request, response) => {
     const userId = request.session._id;
     const error = await getAndValidateForm(body.id, 'PUT', request);
     if(error) {
-        response.status(error.code).json(error.obj);
-        return;
+        return response.status(error.code).json(error.obj);
     }
 
     if(CONFIG.USER.email.required) {
         const findEmail = await User.findOne({ email: body.email.trim() });
         if(findEmail && String(findEmail._id) !== userId) {
-            response.json({
+            return response.json({
                 msg: 'Bad request. Validation errors.',
                 errors: { email: 'email_taken' },
                 emailTaken: true,
             });
-            return;
         }
     }
 
@@ -423,11 +397,10 @@ usersRouter.put('/own/profile', async (request, response) => {
     // Check if the session user is the same as target
     if(!user || user.username !== request.session.username) {
         logger.error('Could not update user\'s own profile. User was not found or does not match the session user (id: ' + body.userId + ').');
-        response.json({
+        return response.json({
             msg: 'Bad request.',
             badRequest: true,
         });
-        return;
     }
 
     const edited = await createNewEditedArray(user.edited, userId);
@@ -440,11 +413,10 @@ usersRouter.put('/own/profile', async (request, response) => {
     const savedUser = await User.findByIdAndUpdate(userId, updatedUser, { new: true });
     if(!savedUser) {
         logger.error('Could not update user\'s own profile. User was not found (id: ' + userId + ').');
-        response.status(404).json({
+        return response.status(404).json({
             msg: 'User to update was not found. It has propably been deleted by another user.',
             userNotFoundError: true,
         });
-        return;
     }
     response.json(savedUser);
 });
@@ -465,18 +437,16 @@ usersRouter.put('/user/exposure', async (request, response) => {
     if(editingOwnProfile) {
         const userCanExpose = await AdminSetting.findOne({ settingId: 'users-can-set-exposure-levels' });
         if(userCanExpose.value !== 'true') {
-            response.status(401).json({
+            return response.status(401).json({
                 msg: 'Unauthorised. Users cannot set exposure levels.',
                 unauthorised: true,
             });
-            return;
         }
     }
 
     const error = await getAndValidateForm(body.id, 'PUT', request);
     if(error) {
-        response.status(error.code).json(error.obj);
-        return;
+        return response.status(error.code).json(error.obj);
     }
 
     const exposure = {};
@@ -484,11 +454,10 @@ usersRouter.put('/user/exposure', async (request, response) => {
     const exposureFormData = await Form.findOne({ formId: exposureFormId });
     if(!editingOwnProfile && exposureFormData.editorRightsLevel > request.session.userLevel) {
         logger.error('Could not update user\'s own profile exposure. Editor\'s user level is too low. (+ editorId, required level)', request.session._id, exposureFormData.editorRightsLevel);
-        response.status(401).json({
+        return response.status(401).json({
             msg: 'Unauthorised.',
             unauthorised: true,
         });
-        return;
     }
     const showToUsers = exposureFormData.editorOptions.showToUsers;
     const fieldsets = exposureFormData.form.fieldsets;
@@ -510,21 +479,19 @@ usersRouter.put('/user/exposure', async (request, response) => {
             edited,
         };
     } else {
-        response.status(400).json({
+        return response.status(400).json({
             msg: 'Bad request. No valid fields to update were found.',
             noFieldsFound: true,
         });
-        return;
     }
 
     const savedUser = await User.findByIdAndUpdate(userId, updatedUser, { new: true });
     if(!savedUser) {
         logger.error('Could not update user\'s own profile exposure. User was not found (id: ' + userId + ').');
-        response.status(404).json({
+        return response.status(404).json({
             msg: 'User to update was not found.',
             userNotFoundError: true,
         });
-        return;
     }
 
     return response.json(savedUser);
@@ -581,8 +548,7 @@ usersRouter.post('/own/changepass', async (request, response) => {
         });
     }
 
-    const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(body.password, saltRounds);
+    const passwordHash = await bcrypt.hash(body.password, CONFIG.USER.password.saltRounds);
 
     const edited = await createNewEditedArray(user.edited, request.session._id);
     const updatedUser = {
@@ -593,14 +559,13 @@ usersRouter.post('/own/changepass', async (request, response) => {
     const savedUser = await User.findByIdAndUpdate(userId, updatedUser, { new: true });
     if(!savedUser) {
         logger.error('Could not update user\'s password. User was not found (id: ' + userId + ').');
-        response.status(404).json({
+        return response.status(404).json({
             msg: 'User to update was not found.',
             userNotFoundError: true,
         });
-        return;
     }
 
-    return response.json(savedUser);
+    response.json(savedUser);
 });
 
 // Request a new password link
@@ -632,9 +597,11 @@ usersRouter.post('/newpassrequest', async (request, response) => {
         }
 
         const newToken = createRandomString(64, true); // Maybe improve this by checking for token collision
+        const linkLife = await getSetting(request, 'new-pass-link-lifetime', true);
         const newPassLinkAndDate = {
             token: newToken,
             sent: timeNow,
+            expires: new Date(timeNow.getTime() + (linkLife * 60000)),
         };
         const savedUser = await User.findByIdAndUpdate(
             user._id,
@@ -650,11 +617,68 @@ usersRouter.post('/newpassrequest', async (request, response) => {
         sendEmailById('new-pass-link-email', {
             to: savedUser.email,
             username: savedUser.username,
-            linkLife: getSetting(request, 'new-pass-link-lifetime', true), // TODO: Change this to the admin setting value
+            newPassWTokenUrl: CONFIG.UI.baseUrl + CONFIG.UI.basePath + '/u/newpass/' + newToken,
+            linkLife,
         }, request);
     }
 
     return monoResponse();
+});
+
+// Save new password with token
+usersRouter.post('/newpass', async (request, response) => {
+    const isTheFeatureOn = getSetting(request, 'forgot-password-feature', true);
+    if(!isTheFeatureOn) {
+        logger.error('Could not create a "reset password" link because the feature is turned off.');
+        return response.status(404).json({ error: 'unknown endpoint' });
+    }
+
+    const body = request.body;
+    const error = await getAndValidateForm(body.id, 'POST', request);
+    if(error) {
+        return response.status(error.code).json(error.obj);
+    }
+
+    // Check token
+    const timeNow = (new Date()).getTime();
+    let user = await User.findOne({ 'security.newPassLink.token': body.token });
+    let expires = 0;
+    if(!user.security.newPassLink || !user.security.newPassLink.expires) {
+        user =  null;
+    } else {
+        expires = new Date(user.security.newPassLink.expires).getTime();
+    }
+    if(!user || expires < timeNow) {
+        return response.status(401).json({
+            msg: 'Token invalid or expired.',
+            tokenError: true,
+        });
+    }
+
+    // Create a new password, destroy the token, create new edited item
+    const passwordHash = await bcrypt.hash(body.password, CONFIG.USER.password.saltRounds);
+
+    const edited = await createNewEditedArray(user.edited, request.session._id);
+    const updatedUser = {
+        passwordHash,
+        edited,
+        $set: { 'security.newPassLink': {
+            token: null,
+            sent: null,
+            expires: null,
+        }}
+    };
+
+    const savedUser = await User.findByIdAndUpdate(user._id, updatedUser, { new: true });
+    if(!savedUser) {
+        logger.error('Could not update user\'s password. User was not found (id: ' + user._id + ').');
+        return response.status(404).json({
+            msg: 'User to update was not found.',
+            userNotFoundError: true,
+        });
+    }
+
+    return response.json({ passwordUpdated: true });
 });
 
 module.exports = usersRouter;

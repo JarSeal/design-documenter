@@ -12,6 +12,7 @@ const USER = {
     },
     password: {
         minLength: 6,
+        saltRounds: 10,
     }
 };
 

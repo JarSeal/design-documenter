@@ -13,24 +13,17 @@ class NewPassWToken extends Component {
             spinner: true,
         }));
         this.form;
-        this.done = false;
     }
 
     init = () => {
         this.viewTitle.showSpinner(true);
         const token = this.Router.getRouteParams().token;
-        console.log('TOKEN', token);
 
         this.form = this.addChild(new FormCreator({
             id: 'reset-password-w-token-form',
             appState: this.appState,
-            afterFormSentFn: () => {
-                this.done = true;
-                this.rePaint();
-            },
-            // TODO: Add a onGetFormErrorFn
-            editDataId: 'checkToken',
-            addToMessage: { token },
+            editDataId: token,
+            addToMessage: { token: token },
         }));
 
         const updateMainMenu = this.appState.get('updateMainMenu');
@@ -52,14 +45,7 @@ class NewPassWToken extends Component {
             return;
         }
         this.viewTitle.draw();
-        if(!this.done) {
-            this.form.draw();
-        } else {
-            this.addChildDraw({
-                id: 'password-reset-done-msg',
-                text: getText('password_has_been_reset'),
-            });
-        }
+        this.form.draw();
     }
 }
 

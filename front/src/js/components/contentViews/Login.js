@@ -62,7 +62,7 @@ class Login extends Component {
     paint = () => {
         this.viewTitle.draw();
         if(this.appState.get('user.loggedIn')) {
-            this.Router.changeRoute('/', { replaceState: true }); // TODO: make this redirect not save history state
+            this.Router.changeRoute('/', { replaceState: true });
         } else {
             this.loginFormWrapper.draw();
             this.loginForm.draw();

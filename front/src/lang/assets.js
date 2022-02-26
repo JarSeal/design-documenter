@@ -779,7 +779,11 @@ export const assetsObj = {
         fi: '"Vaihda salasana" -linkin elinaika minuuteissa.',
     },
     invalid_or_expired_token: {
-        en: 'The link token provided was either invalid or expired.',
+        en: 'The link token provided is either invalid or expired.',
         fi: 'Linkki on joko vanhentunut tai väärä.',
+    },
+    password_has_been_changed: {
+        en: 'Password has been changed.',
+        fi: 'Salasana on vaihdettu.',
     },
 };
