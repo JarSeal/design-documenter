@@ -200,6 +200,16 @@ const getAdditionalData = async (formId, dataId, request, formData) => {
         const settingValue = {};
         settingValue[setting.settingId] = setting.value;
         return settingValue;
+    } else if(formId === 'reset-password-w-token-form') {
+        // TODO: Do token checking here
+        return {
+            _error: { code: 401, 
+                obj: {
+                    msg: 'Token invalid or expired.',
+                    tokenError: true,
+                },
+            },
+        };
     } else {
         return {
             _error: { code: 400,

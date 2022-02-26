@@ -5,6 +5,7 @@ import Login from './components/contentViews/Login';
 import Logout from './components/contentViews/Logout';
 import NewUser from './components/contentViews/NewUser';
 import NewPassRequest from './components/contentViews/NewPassRequest';
+import NewPassWToken from './components/contentViews/NewPassWToken';
 import Settings from './components/contentViews/Settings';
 import OneUser from './components/contentViews/OneUser';
 import Universe from './components/contentViews/Universe';
@@ -52,6 +53,12 @@ const _conf = {
             route: '/u/newpassrequest',
             id: 'route-new-pass-request',
             source: NewPassRequest,
+            titleId: 'new_password',
+        },
+        {
+            route: '/u/newpass/:token',
+            id: 'route-new-pass',
+            source: NewPassWToken,
             titleId: 'new_password',
         },
         {
