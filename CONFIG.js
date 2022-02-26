@@ -12,12 +12,14 @@ const USER = {
     },
     password: {
         minLength: 6,
+        saltRounds: 10,
     }
 };
 
 const UI = {
     langs: ['en'],
     apiBaseUrl: 'http://localhost:3001',
+    baseUrl: 'http://localhost:8080',
     basePath: '/beacon',
     titlePrefix: '',
     titleSuffix: ' | Beacon',
@@ -46,6 +48,12 @@ const ROUTE_ACCESS = [
     {
         path: '/newuser',
         formId: 'route-new-user',
+        useRightsLevel: 0,
+        editorRightsLevel: 8,
+    },
+    {
+        path: '/u/newpassrequest',
+        formId: 'route-new-pass-request',
         useRightsLevel: 0,
         editorRightsLevel: 8,
     },

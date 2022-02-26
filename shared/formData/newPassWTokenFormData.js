@@ -1,11 +1,11 @@
 const CONFIG = require('./../../CONFIG').USER;
 
-const changePasswordFormData = {
-    formId: 'change-password-form',
-    path: '/api/users/own/changepass',
+const newPassWTokenFormData = {
+    formId: 'reset-password-w-token-form',
+    path: '/api/users/newpass',
     method: 'POST',
     type: 'form',
-    useRightsLevel: 1,
+    useRightsLevel: 0,
     useRightsUsers: [],
     useRightsGroups: [],
     editorRightsLevel: 8,
@@ -13,31 +13,20 @@ const changePasswordFormData = {
     editorRightsGroups: [],
     form: {
         onErrorsMsgId: 'form_has_errors',
-        formErrors: {
-            error401Id: 'wrong_password',
-        },
         showBottomMsg: false,
+        afterSubmitMsgId: 'password_has_been_changed',
+        afterSubmitShowOnlyMsg: true,
         submitButton: {
-            id: 'submit-change-pass-button-id',
+            id: 'submit-new-pass-w-token-button-id',
             labelId: 'save',
             class: 'save-button',
         },
-        submitFields: [ 'curPassword', 'password' ],
+        submitFields: [ 'password' ],
         fieldsets: [
             {
                 // FIELDSET
-                id: 'change-password-main-fs',
+                id: 'new-password-w-token-main-fs',
                 fields: [
-                    { type: 'divider' },
-                    {
-                        // CURRENT PASSWORD
-                        type: 'textinput',
-                        id: 'curPassword',
-                        labelId: 'current_password',
-                        required: true,
-                        maxLength: 50,
-                        password: true,
-                    },
                     { type: 'divider' },
                     {
                         // NEW PASSWORD
@@ -67,4 +56,4 @@ const changePasswordFormData = {
     },
 };
 
-module.exports = changePasswordFormData;
+module.exports = newPassWTokenFormData;

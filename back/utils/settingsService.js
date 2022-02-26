@@ -144,11 +144,15 @@ const publicSettingsRemapping = {
     },
     'table-sorting-setting': {
         newKey: 'tableSorting',
-        createValue: (value) => { return value; },
+        createValue: value => value,
     },
     'users-can-set-exposure-levels': {
         newKey: 'canSetExposure',
-        createValue: (value) => { return value; }
+        createValue: value => value,
+    },
+    'forgot-password-feature': {
+        newKey: 'forgotPass',
+        createValue: value => value,
     },
 };
 

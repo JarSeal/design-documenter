@@ -153,7 +153,7 @@ class Dialog extends Component {
         boxElem.style.paddingTop = (titleHeight / 10) + 'rem';
         clearTimeout(this.resizeTimer);
         this.resizeTimer = setTimeout(() => {
-            scrollElem.style.height = ((boxElem.offsetHeight - titleHeight) / 10) + 'rem';
+            scrollElem.style.height = ((boxElem.offsetHeight - titleHeight) / 10 + 0.1) + 'rem';
         }, 100);
     }
 

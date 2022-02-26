@@ -21,7 +21,7 @@ $sidePadding: 4rem;
         top: 50%;
         margin-top: -5rem;
         transform: translate3d(-50%, -50%, 0);
-        background-color: rgba(#cbcbcb, 1);
+        background-color: #cbcbcb;
         opacity: 0;
         transition-property: opacity, margin-top;
         transition-timing-function: ease-in-out;
@@ -33,6 +33,7 @@ $sidePadding: 4rem;
         width: 100%;
         overflow-y: auto;
         overflow-x: hidden;
+        transform: translateY(-0.2rem);
     }
 
     .inner-box {
@@ -113,6 +114,7 @@ $sidePadding: 4rem;
         position: absolute;
         left: 0;
         top: 0;
+        z-index: 10;
         padding: 2rem ($sidePadding+2rem) 2rem $sidePadding;
     }
 

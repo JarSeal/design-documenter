@@ -47,6 +47,11 @@ loginRouter.post('/access', async (request, response) => {
             result.csrfToken = request.csrfToken();
         } else {
             logger.log('Trying to getCSRF at /login/access but browserId is either invalid or missing. (+ sess, body)', request.session, request.body);
+            return response.status('409').json({
+                conflictError: true,
+                errorMsg: 'browserId conflict',
+                loggedIn: checkIfLoggedIn(request.session),
+            });
         }
     } else if(request.body.from === 'logout') {
         if(request.session.username) {
@@ -81,6 +86,7 @@ loginRouter.post('/', async (request, response) => {
 
     // Check user
     const user = await User.findOne({ username: body.username });
+    const timeNow = new Date();
     let userSecurity;
     if(user) {
         userSecurity = user.security
@@ -97,7 +103,6 @@ loginRouter.post('/', async (request, response) => {
     if(userSecurity && userSecurity.coolDown && userSecurity.coolDownStarted) {
         const cooldownTime = await getSetting(request, 'login-cooldown-time', true);
         const coolDownEnds = new Date(new Date(userSecurity.coolDownStarted).getTime() + cooldownTime * 60000);
-        const timeNow = new Date();
         if(coolDownEnds < timeNow) {
             // Cooldown has ended, clear attempts
             userSecurity.loginAttempts = 0;
@@ -169,6 +174,17 @@ loginRouter.post('/', async (request, response) => {
                 error: 'invalid username and/or password',
                 loggedIn: false,
             });
+        }
+    }
+
+    // Clear expired newPassLink token and date
+    if(userSecurity.newPassLink && userSecurity.newPassLink.token && userSecurity.newPassLink.expires) {
+        const timeNow = (new Date()).getTime();
+        let expires = userSecurity.newPassLink.expires;
+        if(expires < timeNow) {
+            userSecurity.newPassLink.token = null;
+            userSecurity.newPassLink.expires = null;
+            userSecurity.newPassLink.sent = null;
         }
     }
 

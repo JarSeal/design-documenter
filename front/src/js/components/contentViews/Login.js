@@ -1,12 +1,14 @@
 import { getText } from '../../helpers/lang';
 import { Component, LocalStorage } from '../../LIGHTER';
+import Button from '../buttons/Button';
 import FormCreator from '../forms/FormCreator';
 import ViewTitle from '../widgets/ViewTitle';
+import './Login.scss';
 
 class Login extends Component {
     constructor(data) {
         super(data);
-        this.appState = data.appState;
+        this.appState = this.Router.commonData.appState;
         this.ls = new LocalStorage('bjs_');
 
         this.viewTitle = this.addChild(new ViewTitle({
@@ -20,9 +22,11 @@ class Login extends Component {
             rememberedUser.username = rememberUser;
             rememberedUser['remember-me'] = true;
         }
+        this.loginFormWrapper = this.addChild({ id: 'login-form-wrapper' });
         this.loginForm = this.addChild(new FormCreator({
             id: 'beacon-main-login',
             appState: this.appState,
+            attach: 'login-form-wrapper',
             fieldInitValues: rememberedUser,
             afterFormSentFn: this._afterLogin,
             onErrorsFn: (error, response, setFormMsg) => {
@@ -38,6 +42,7 @@ class Login extends Component {
     }
 
     init = () => {
+        this.Dialog = this.appState.get('Dialog');
         const publicUserRegistration = this.appState.get('serviceSettings')['canCreateUser'];
         if(publicUserRegistration) {
             const updateMainMenu = this.appState.get('updateMainMenu');
@@ -57,9 +62,42 @@ class Login extends Component {
     paint = () => {
         this.viewTitle.draw();
         if(this.appState.get('user.loggedIn')) {
-            this.Router.changeRoute('/');
+            this.Router.changeRoute('/', { replaceState: true });
         } else {
+            this.loginFormWrapper.draw();
             this.loginForm.draw();
+            this.addChildDraw({
+                id: 'extra-links-wrapper',
+                class: 'login-extra-links',
+            });
+            if(this.appState.get('serviceSettings.forgotPass')) {
+                this.addChildDraw(new Button({
+                    id: 'forgot-password-button',
+                    text: getText('forgot_password')+'?',
+                    attach: 'extra-links-wrapper',
+                    class: ['login-extra-link', 'link'],
+                    click: () => {
+                        this.Dialog.appear({
+                            component: FormCreator,
+                            componentData: {
+                                id: 'new-pass-request-form',
+                                appState: this.appState,
+                                beforeFormSendingFn: () => {
+                                    this.Dialog.lock();
+                                },
+                                afterFormSentFn: () => {
+                                    this.Dialog.unlock();
+                                },
+                                onErrorsFn: (ex, res) => {
+                                    this.Dialog.unlock();
+                                },
+                                formLoadedFn: () => { this.Dialog.onResize(); },
+                            },
+                            title: getText('forgot_password'),
+                        });
+                    },
+                }));
+            }
         }
     }
 
@@ -71,8 +109,10 @@ class Login extends Component {
             this.appState.set('serviceSettings', response.data.serviceSettings);
             if(response.data.rememberMe) {
                 this.ls.setItem('u', response.data.username);
+                this.ls.setItem('ut', (new Date()).getTime());
             } else {
                 this.ls.removeItem('u');
+                this.ls.removeItem('ut');
             }
 
             let nextRoute = '/';

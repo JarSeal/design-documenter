@@ -12,17 +12,20 @@ const userSchema = mongoose.Schema({
         required: true,
         unique: true,
         minlength: CONFIG.username.minLength,
+        index: true,
     },
     name: {
         type: String,
         required: CONFIG.name.required,
         minlength: CONFIG.name.minLength,
+        index: true,
     },
     email: {
         type: String,
         required: CONFIG.email.required,
         unique: CONFIG.email.required, // If required, has to be also unique
         minlength: 5,
+        index: true,
     },
     passwordHash: String,
     userLevel: {
@@ -64,6 +67,18 @@ const userSchema = mongoose.Schema({
                 date: Date,
             }
         ],
+        newPassLink: {
+            token: {
+                type: String,
+                index: true,
+            },
+            expires: {
+                type: Date,
+            },
+            sent: {
+                type: Date,
+            },
+        },
     },
     exposure: {
         username: Number,

@@ -200,12 +200,47 @@ const getAdditionalData = async (formId, dataId, request, formData) => {
         const settingValue = {};
         settingValue[setting.settingId] = setting.value;
         return settingValue;
+    } else if(formId === 'reset-password-w-token-form') {
+        const isTheFeatureOn = getSetting(request, 'forgot-password-feature', true);
+        if(!isTheFeatureOn) {
+            logger.error(`Could not get reset password form (id: ${formId}) because the feature is turned off.`);
+            return {
+                _error: { code: 401,
+                    obj: {
+                        msg: 'Unauthorised.',
+                        unauthorised: true,
+                    },
+                },
+            };
+        }
+        const invalidResponse = () => {
+            return {
+                _error: { code: 401,
+                    obj: {
+                        msg: 'Token invalid or expired.',
+                        tokenError: true,
+                        customErrorTextId: 'invalid_or_expired_token',
+                    },
+                },
+            };
+        };
+        if(!dataId || dataId.length !== 64) return invalidResponse();
+        const timeNow = (new Date()).getTime();
+        let user = await User.findOne({ 'security.newPassLink.token': dataId });
+        let expires = 0;
+        if(!user || !user.security.newPassLink || !user.security.newPassLink.expires) {
+            user =  null;
+        } else {
+            expires = new Date(user.security.newPassLink.expires).getTime();
+        }
+        if(!user || expires < timeNow) return invalidResponse();
+        return { tokenOk: true };
     } else {
         return {
             _error: { code: 400,
                 obj: {
-                    msg: 'This is still WIP / TODO.',
-                    wipError: true,
+                    msg: 'Not implemented.',
+                    notImplementedError: true,
                 },
             },
         };

@@ -12,6 +12,8 @@ const editProfileFormData = require('./editProfileFormData');
 const editExposeProfileFormData = require('./editExposeProfileFormData');
 const deleteProfileFormData = require('./deleteProfileFormData');
 const changePasswordFormData = require('./changePasswordFormData');
+const newPassRequestFormData = require('./newPassRequestFormData');
+const newPassWTokenFormData = require('./newPassWTokenFormData');
 
 const formData = [
     loginBeaconFormData,
@@ -28,6 +30,8 @@ const formData = [
     editExposeProfileFormData,
     deleteProfileFormData,
     changePasswordFormData,
+    newPassRequestFormData,
+    newPassWTokenFormData,
 ];
 
 module.exports = formData;

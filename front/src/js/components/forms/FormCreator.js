@@ -45,6 +45,7 @@ class FormCreator extends Component {
         this.formErrorClassSetterTimer;
         this.submitButtonId;
         this.fieldsetIds = [];
+        this.exceptionError = false;
         this.cssClasses = {
             formSent: 'form--sent',
             formError: 'form--errors',
@@ -92,8 +93,9 @@ class FormCreator extends Component {
     paint = (data) => {
         if(this.formSubmitted) {
             if(this.components[this.id+'-title']) this.components[this.id+'-title'].draw();
-            if(this.components[this.id+'-msg-top']) {
-                this.components[this.id+'-msg-top'].draw({
+            const msgTopComp = this.components[this.id+'-msg-top'];
+            if(msgTopComp) {
+                msgTopComp.draw({
                     text: this._getTextData(data.afterSubmitMsg, data.afterSubmitMsgId),
                 });
             }
@@ -739,6 +741,7 @@ class FormCreator extends Component {
             }
             payload._csrf = response.data.csrfToken;
 
+            this.formSubmitted = true;
             if(this.data.method && this.data.method === 'PUT') {
                 response = await axios.put(url, payload, { withCredentials: true });
             } else if(this.data.method && this.data.method === 'POST') {
@@ -747,6 +750,7 @@ class FormCreator extends Component {
                 this.formState.set('sending', false);
                 this._setFormMsg(getText('form_submit_error'));
                 this.logger.error('Form sending failed (Form Creator). Method was unknown: ' + this.data.method);
+                throw new Error('Call stack');
             }
             
             this.formState.set('sending', false);
@@ -774,27 +778,20 @@ class FormCreator extends Component {
                 }
             }
         } catch(exception) {
+            this.exceptionError = true;
             this.formState.set('sending', false);
-            this.formSubmitted = true;
             if(exception.response && exception.response.status === 401) {
                 if(this.data.formErrors && this.data.formErrors.error401Id) {
                     if(exception.response.data && exception.response.data.errors) {
                         this._serverSideFieldErrors(exception.response);
                     }
-                    this.elem.classList.add(this.cssClasses.formSent);
-                    this.elem.classList.add(this.cssClasses.formError);
                     this._setFormMsg(getText(this.data.formErrors.error401Id));
                 } else if(this.data.formErrors && this.data.formErrors.error401NoShow) {
                     if(exception.response.data && exception.response.data.errors) {
                         this._serverSideFieldErrors(exception.response);
                     }
-                    this.elem.classList.add(this.cssClasses.formSent);
-                    this.elem.classList.add(this.cssClasses.formError);
                 } else {
                     this._resetForm();
-                    this.reDrawSelf({
-                        class: [this.cssClasses.formError, this.cssClasses.formSent],
-                    });
                     this._setFormMsg(getText('unauthorised'));
                 }
             } else if(exception.response && exception.response.status === 403) {
@@ -802,30 +799,22 @@ class FormCreator extends Component {
                     if(exception.response.data && exception.response.data.errors) {
                         this._serverSideFieldErrors(exception.response);
                     }
-                    this.elem.classList.add(this.cssClasses.formSent);
-                    this.elem.classList.add(this.cssClasses.formError);
                     this._setFormMsg(getText(this.data.formErrors.error403Id));
                 } else if(this.data.formErrors && this.data.formErrors.error403NoShow) {
                     if(exception.response.data && exception.response.data.errors) {
                         this._serverSideFieldErrors(exception.response);
                     }
-                    this.elem.classList.add(this.cssClasses.formSent);
-                    this.elem.classList.add(this.cssClasses.formError);
                 } else {
                     this._resetForm();
-                    this.reDrawSelf({
-                        class: [this.cssClasses.formError, this.cssClasses.formSent],
-                    });
                     this._setFormMsg(getText('forbidden'));
                 }
             } else {
                 this._resetForm();
-                this.reDrawSelf({
-                    class: [this.cssClasses.formError, this.cssClasses.formSent],
-                });
                 this._setFormMsg(getText('form_submit_error'));
                 this.logger.error('Form sending failed (Form Creator).', exception);
             }
+            this.elem.classList.add(this.cssClasses.formSent);
+            this.elem.classList.add(this.cssClasses.formError);
             // Call outside error callback if present:
             if(this.data.onErrorsFn) this.data.onErrorsFn(exception, exception.response, this._setFormMsg);
         }
@@ -856,6 +845,9 @@ class FormCreator extends Component {
             this.formState.removeListener('getting');
             this.formState.set('getting', false);
             this.formSubmitted = true;
+            if(exception.response && exception.response.data && exception.response.data.customErrorTextId) {
+                text = getText(exception.response.data.customErrorTextId);
+            }
             this.template = `<div class="error-msg">${text}</div>`;
             this.logger.error('Form data retrieving failed (Form Creator).', exception, this);
             if(this.data.onErrorsFn) this.data.onErrorsFn(exception, exception.response);

@@ -5,7 +5,11 @@ import Component from '../../LIGHTER/Component';
 class Button extends Component {
     constructor(data) {
         super(data);
-        this.template = '<button type="button"></button>';
+        if(!data.template) {
+            this.template = '<button type="button"></button>';
+        } else {
+            this.template = data.template;
+        }
         this.click = data.click;
     }
 
