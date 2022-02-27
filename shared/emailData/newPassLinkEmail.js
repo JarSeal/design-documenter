@@ -15,7 +15,7 @@ You requested a link to reset your password. Here you go:
 
 Link: $[newPassWTokenUrl]
 
-If you did not request this, you can ignore this message (only you have this message). This link will expire in $[linkLife] minutes.
+If you did not request this, you can ignore this (only you have this message). This link will expire in $[linkLife] minutes.
 
 Do not reply to this email, thank you.
 

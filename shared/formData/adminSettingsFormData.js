@@ -25,6 +25,7 @@ const adminSettingsFormData = {
             'max-login-attempts', 'login-cooldown-time', 'session-age', 'public-user-registration',
             'user-registration-level', 'user-level-required-to-register', 'max-login-logs', 'max-edited-logs',
             'users-can-set-exposure-levels', 'use-users-exposure-levels', 'forgot-password-feature', 'new-pass-link-lifetime',
+            'email-sending', 'email-host', 'email-username',
         ],
         fieldsets: [
             {
@@ -185,6 +186,49 @@ const adminSettingsFormData = {
                         required: true,
                         settingType: 'integer',
                         regex: '[0-9]+$',
+                    },
+                ],
+            },
+            {
+                // Email
+                id: 'admin-settings-email-fs',
+                fieldsetTitleId: 'email',
+                fields: [
+                    {
+                        // Email sending
+                        type: 'checkbox',
+                        id: 'email-sending',
+                        labelId: 'email_sending',
+                        descriptionId: 'email_sending_desc',
+                        defaultValue: true,
+                        settingType: 'boolean',
+                    },
+                    {
+                        // Email host
+                        type: 'textinput',
+                        id: 'email-host',
+                        labelId: 'email_host',
+                        descriptionId: 'email_host_desc',
+                        settingType: 'string',
+                        defaultValue: '',
+                    },
+                    {
+                        // Email username
+                        type: 'textinput',
+                        id: 'email-username',
+                        labelId: 'email_username',
+                        descriptionId: 'email_username_desc',
+                        settingType: 'string',
+                        defaultValue: '',
+                    },
+                    {
+                        // Email password
+                        type: 'textinput',
+                        id: 'email-password',
+                        labelId: 'email_password',
+                        descriptionId: 'email_password_desc',
+                        settingType: 'string',
+                        defaultValue: '',
                     },
                 ],
             },

@@ -786,4 +786,36 @@ export const assetsObj = {
         en: 'Password has been changed.',
         fi: 'Salasana on vaihdettu.',
     },
+    email_sending: {
+        en: 'E-mail sending',
+        fi: 'Sähköpostin lähetys',
+    },
+    email_sending_desc: {
+        en: 'Whether the system can send E-mails for new users, password renewals, etc. The system will still act as if the E-mail had been sent, so no warning / error will be displayed when this is turned off.',
+        fi: 'Lähettääkö järjestelmä ollenkaan sähköposteja uusille käyttäjille, salasanan uusimiseen jne. Järjestelmä käyttäytyy kuin se lähettäisi sähköpostia, joten mitään varoitusta / virheviestiä ei näytetä jos tämä asetus on pois päältä.',
+    },
+    email_host: {
+        en: 'E-mail host',
+        fi: 'Sähköpostin host',
+    },
+    email_host_desc: {
+        en: 'The E-mail service\'s host address. For example: \'smtp-mail.domain.com\'. If no host is provided, Beacon will try to use the EMAIL_HOST environment variable.',
+        fi: 'Sähköpostipalvelun host-osoite. Esimerkiksi: \'smtp-mail.domain.com\'. Jos host-osoitetta ei määritellä, Beacon yrittää käyttää EMAIL_HOST -nimistä ympäristö-muuttujaa.',
+    },
+    email_username: {
+        en: 'E-mail username',
+        fi: 'Sähköpostin käyttäjänimi',
+    },
+    email_username_desc: {
+        en: 'The E-mail service\'s username. If no username is provided, Beacon will try to use the EMAIL_USER environment variable.',
+        fi: 'Sähköpostipalvelun käyttäjänimi. Jos käyttäjänimeä ei määritellä, Beacon yrittää käyttää EMAIL_USER -nimistä ympäristö-muuttujaa.',
+    },
+    email_password: {
+        en: 'E-mail password',
+        fi: 'Sähköpostin salasana',
+    },
+    email_password_desc: {
+        en: 'The E-mail service\'s password. If no password is provided, Beacon will try to use the EMAIL_PASS environment variable.',
+        fi: 'Sähköpostipalvelun salasana. Jos salasanaa ei määritellä, Beacon yrittää käyttää EMAIL_PASS -nimistä ympäristö-muuttujaa.',
+    },
 };

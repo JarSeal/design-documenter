@@ -11,11 +11,9 @@ const adminSettingSchema = mongoose.Schema({
     },
     value: {
         type: String,
-        required: true,
     },
     defaultValue: {
         type: String,
-        required: true,
     },
     settingReadRight: {
         type: Number,

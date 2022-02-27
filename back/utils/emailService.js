@@ -1,11 +1,45 @@
+const nodemailer = require('nodemailer');
 const config = require('./config');
 const logger = require('./logger');
 const Email = require('../models/email');
 const marked = require('marked');
+const { getSettings } = require('./settingsService');
 const confUI = require('../shared/').CONFIG.UI;
 
 const sendEmailById = async (id, emailParams, request) => {
-    const transporter = request.transporter;
+    const settings = await getSettings(request);
+    if(!settings['email-sending']) return;
+
+    let host, user, pass, from;
+    if((!config.EMAIL_HOST && !settings['email-host']) || (!config.EMAIL_USER && !settings['email-username']) || (!config.EMAIL_PASS && !settings['email-password'])) {
+        logger.error('Could not setup Nodemailer transporter, because host, email, and/or pass is not set in the env variable nor in the admin settings.');
+        return;
+    } else {
+        host = settings['email-host'] && settings['email-host'].length
+            ? settings['email-host']
+            : config.EMAIL_HOST;
+        user = settings['email-username'] && settings['email-username'].length
+            ? settings['email-username']
+            : config.EMAIL_USER;
+        pass = settings['email-password'] && settings['email-password'].length
+            ? settings['email-password']
+            : config.EMAIL_PASS;
+        from = user;
+    }
+    const transporter = nodemailer.createTransport({
+        host,
+        auth: {
+            user,
+            pass,
+        },
+        secureConnection: false, // TLS requires secureConnection to be false
+        port: 587, // port for secure SMTP
+        tls: {
+            ciphers:'SSLv3',
+            rejectUnauthorized: false,
+        },
+    });
+
     const mainUrl = confUI.baseUrl + confUI.basePath;
     emailParams.mainBeaconUrl = mainUrl;
     emailParams.newPassRequestUrl = mainUrl + '/u/newpassrequest';
@@ -43,7 +77,7 @@ const sendEmailById = async (id, emailParams, request) => {
     }
 
     const mailOptions = {
-        from: config.EMAIL_USER,
+        from,
         to: emailParams.to,
         subject,
         text,
