@@ -92,6 +92,7 @@ class SettingsGroup extends Component {
     }
 
     _displayValue = (field) => {
+        console.log('FIELD', field);
         if(field.type === 'checkbox') {
             return field.value === true || field.value === 'true'
                 ? getText('on').toUpperCase()
@@ -105,6 +106,8 @@ class SettingsGroup extends Component {
                     }
                 }
             }
+        } else if(field.password && field.value.length) {
+            return '&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;';
         }
         return field.value; // String or Number
     }

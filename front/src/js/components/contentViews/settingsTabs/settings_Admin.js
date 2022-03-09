@@ -84,6 +84,7 @@ class AdminSettings extends Component {
                     descriptionId: fs.fields[j].descriptionId,
                     defaultValue: fs.fields[j].defaultValue,
                     options,
+                    password: fs.fields[j].password,
                 });
             }
             this.addChildDraw(new SettingsGroup({

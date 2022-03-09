@@ -1,3 +1,4 @@
+const CryptoJS = require('crypto-js');
 const formsRouter = require('express').Router();
 const logger = require('./../utils/logger');
 const Form = require('./../models/form');
@@ -174,9 +175,17 @@ const getAdditionalData = async (formId, dataId, request, formData) => {
                 },
             };
         }
-        setting[setting.settingId] = setting.value;
         const settingValue = {};
-        settingValue[setting.settingId] = setting.value;
+        if(setting.password) {
+            const bytes = CryptoJS.AES.decrypt(setting.value, process.env.SECRET);
+            const originalText = bytes.toString(CryptoJS.enc.Utf8);
+            setting.value = originalText;
+            setting[setting.settingId] = setting.value;
+            settingValue[setting.settingId] = setting.value;
+        } else {
+            setting[setting.settingId] = setting.value;
+            settingValue[setting.settingId] = setting.value;
+        }
         return settingValue;
     } else if(formId === 'user-settings-form') {
         let setting;

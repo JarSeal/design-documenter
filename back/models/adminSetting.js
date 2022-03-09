@@ -34,6 +34,9 @@ const adminSettingSchema = mongoose.Schema({
             date: Date,
         }
     ],
+    password: {
+        type: Boolean
+    },
 });
 
 adminSettingSchema.plugin(uniqueValidator);
