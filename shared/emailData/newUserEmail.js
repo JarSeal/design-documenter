@@ -40,7 +40,7 @@ voit luoda [uuden salasanan]($[newPassRequestUrl]) itsellesi.
 
 Älkää vastatko tähän sähköpostiin, kiitos.
 
-/BeaconJs`,
+/Beacon JS`,
         },
     },
 };

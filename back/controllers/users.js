@@ -521,7 +521,7 @@ usersRouter.post('/own/delete', async (request, response) => {
     }
 
     // Delete the user
-    User.findByIdAndRemove(userId, (err) => {
+    User.findByIdAndRemove(userId, (err, user) => {
         if(err) {
             logger.error('Could not self delete profile. (+ userId, err)', userId, err);
             return response.status(500).json({
@@ -529,6 +529,12 @@ usersRouter.post('/own/delete', async (request, response) => {
                 dbError: true,
             });
         }
+
+        sendEmailById('delete-own-account-email', {
+            to: user.email,
+            username: user.username,
+        }, request);
+        
         return response.json({ userDeleted: true });
     });
 });
