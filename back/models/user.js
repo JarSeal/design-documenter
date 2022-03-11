@@ -6,6 +6,14 @@ const UserGroup = require('./userGroup'); UserGroup;
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
+const emailType = {
+    type: String,
+    required: CONFIG.email.required,
+    unique: CONFIG.email.required, // If required, has to be also unique
+    minlength: 5,
+    index: true,
+};
+
 const userSchema = mongoose.Schema({
     username: {
         type: String,
@@ -20,13 +28,7 @@ const userSchema = mongoose.Schema({
         minlength: CONFIG.name.minLength,
         index: true,
     },
-    email: {
-        type: String,
-        required: CONFIG.email.required,
-        unique: CONFIG.email.required, // If required, has to be also unique
-        minlength: 5,
-        index: true,
-    },
+    email: emailType,
     passwordHash: String,
     userLevel: {
         type: Number,
@@ -78,6 +80,14 @@ const userSchema = mongoose.Schema({
             sent: {
                 type: Date,
             },
+        },
+        verifyEmail: {
+            token: {
+                type: String,
+                index: true,
+            },
+            oldEmail: emailType,
+            verified: Boolean,
         },
     },
     exposure: {
