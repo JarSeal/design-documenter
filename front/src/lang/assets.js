@@ -738,6 +738,10 @@ export const assetsObj = {
         en: 'Current password',
         fi: 'Nykyinen salasana',
     },
+    current_password_again: {
+        en: 'Current password again',
+        fi: 'Nykyinen salasana uudestaan',
+    },
     new_password: {
         en: 'New password',
         fi: 'Uusi salasana',
@@ -817,5 +821,13 @@ export const assetsObj = {
     email_password_desc: {
         en: 'The E-mail service\'s password. If no password is provided (save as empty), Beacon will try to use the EMAIL_PASS environment variable.',
         fi: 'Sähköpostipalvelun salasana. Jos salasanaa ei määritellä (tallenna tyhjänä), Beacon yrittää käyttää EMAIL_PASS -nimistä ympäristö-muuttujaa.',
+    },
+    use_email_verification: {
+        en: 'Use E-mail verification',
+        fi: 'Käytä sähköposti-vahvistusta',
+    },
+    use_email_verification_desc: {
+        en: 'Whether the users should verify their new E-mail addresses or not. If turned on, a verification E-mail is sent to the user when the account is registered and when the E-mail is changed.',
+        fi: 'Täytyykö käyttäjien vahvistaa sähköpostiosoitteensa? Jos asetus on päällä, käyttäjälle lähetetään vahvistus-sähköpostiviesti kun tili luodaan ja kun sähköpostiosoite vaihdetaan.',
     },
 };

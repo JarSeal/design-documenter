@@ -381,6 +381,19 @@ usersRouter.put('/own/profile', async (request, response) => {
         return response.status(error.code).json(error.obj);
     }
 
+    const user = await User.findById(userId);
+    const passwordCorrect = user === null
+        ? false
+        : await bcrypt.compare(body.curPassword, user.passwordHash);
+    if(!passwordCorrect) {
+        return response.status(401).json({
+            error: 'invalid password',
+            loggedIn: true,
+            noRedirect: true,
+            errors: { curPassword: 'wrong_password' },
+        });
+    }
+
     if(CONFIG.USER.email.required) {
         const findEmail = await User.findOne({ email: body.email.trim() });
         if(findEmail && String(findEmail._id) !== userId) {
@@ -391,8 +404,6 @@ usersRouter.put('/own/profile', async (request, response) => {
             });
         }
     }
-
-    const user = await User.findById(userId);
 
     // Check if the session user is the same as target
     if(!user || user.username !== request.session.username) {
@@ -442,6 +453,18 @@ usersRouter.put('/user/exposure', async (request, response) => {
                 unauthorised: true,
             });
         }
+
+        const passwordCorrect = user === null
+            ? false
+            : await bcrypt.compare(body.curPassword, user.passwordHash);
+        if(!passwordCorrect) {
+            return response.status(401).json({
+                error: 'invalid password',
+                loggedIn: true,
+                noRedirect: true,
+                errors: { curPassword: 'wrong_password' },
+            });
+        }
     }
 
     const error = await getAndValidateForm(body.id, 'PUT', request);
@@ -465,7 +488,7 @@ usersRouter.put('/user/exposure', async (request, response) => {
         const fs = fieldsets[i];
         for(let j=0; j<fs.fields.length; j++) {
             const field = fs.fields[j];
-            if(body[field.id] !== undefined && !field.disabled && showToUsers[field.id].value) {
+            if(field.id !== 'curPassword' && body[field.id] !== undefined && !field.disabled && showToUsers[field.id].value) {
                 exposure[field.id] = body[field.id];
             }
         }
@@ -551,6 +574,8 @@ usersRouter.post('/own/changepass', async (request, response) => {
         return response.status(401).json({
             error: 'invalid password',
             loggedIn: true,
+            noRedirect: true,
+            errors: { curPassword: 'wrong_password' },
         });
     }
 
@@ -570,6 +595,11 @@ usersRouter.post('/own/changepass', async (request, response) => {
             userNotFoundError: true,
         });
     }
+
+    sendEmailById('password-changed-email', {
+        to: user.email,
+        username: user.username,
+    }, request);
 
     response.json(savedUser);
 });
@@ -649,7 +679,7 @@ usersRouter.post('/newpass', async (request, response) => {
     const timeNow = (new Date()).getTime();
     let user = await User.findOne({ 'security.newPassLink.token': body.token });
     let expires = 0;
-    if(!user.security.newPassLink || !user.security.newPassLink.expires) {
+    if(!user || !user.security.newPassLink || !user.security.newPassLink.expires) {
         user =  null;
     } else {
         expires = new Date(user.security.newPassLink.expires).getTime();
@@ -683,6 +713,11 @@ usersRouter.post('/newpass', async (request, response) => {
             userNotFoundError: true,
         });
     }
+
+    sendEmailById('password-changed-email', {
+        to: user.email,
+        username: user.username,
+    }, request);
 
     return response.json({ passwordUpdated: true });
 });

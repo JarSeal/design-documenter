@@ -22,22 +22,12 @@ const changePasswordFormData = {
             labelId: 'save',
             class: 'save-button',
         },
-        submitFields: [ 'curPassword', 'password' ],
+        submitFields: [ 'password', 'curPassword' ],
         fieldsets: [
             {
                 // FIELDSET
                 id: 'change-password-main-fs',
                 fields: [
-                    { type: 'divider' },
-                    {
-                        // CURRENT PASSWORD
-                        type: 'textinput',
-                        id: 'curPassword',
-                        labelId: 'current_password',
-                        required: true,
-                        maxLength: 50,
-                        password: true,
-                    },
                     { type: 'divider' },
                     {
                         // NEW PASSWORD
@@ -61,6 +51,17 @@ const changePasswordFormData = {
                         password: true,
                         validationFn: 'validatePass2',
                     },
+                    { type: 'divider' },
+                    {
+                        // CURRENT PASSWORD
+                        type: 'textinput',
+                        id: 'curPassword',
+                        labelId: 'current_password',
+                        required: true,
+                        maxLength: 50,
+                        password: true,
+                    },
+                    { type: 'divider' },
                 ],
             },
         ],

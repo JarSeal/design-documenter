@@ -187,6 +187,15 @@ const adminSettingsFormData = {
                         settingType: 'integer',
                         regex: '[0-9]+$',
                     },
+                    {
+                        // Email verification
+                        type: 'checkbox',
+                        id: 'use-email-verification',
+                        labelId: 'use_email_verification',
+                        descriptionId: 'use_email_verification_desc',
+                        defaultValue: true,
+                        settingType: 'boolean',
+                    },
                 ],
             },
             {

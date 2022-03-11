@@ -45,14 +45,16 @@ const editExposeProfileFormData = {
     form: {
         formDescId: 'edit_expose_profile_form_desc',
         onErrorsMsgId: 'form_has_errors',
-        afterSubmitMsg: '',
-        afterSubmitShowOnlyMsg: true,
+        formErrors: {
+            error401Id: 'wrong_password',
+        },
+        showBottomMsg: false,
         submitButton: {
             id: 'submit-edit-profile-button-id',
             labelId: 'save',
             class: 'save-button',
         },
-        submitFields: [ 'username', 'name', 'email', 'created_date' ],
+        submitFields: [ 'username', 'name', 'email', 'created_date', 'curPassword' ],
         fieldsets: [
             {
                 // FIELDSET
@@ -95,6 +97,17 @@ const editExposeProfileFormData = {
                         defaultValue: 2,
                         options,
                     },
+                    { type: 'divider' },
+                    {
+                        // CURRENT PASSWORD
+                        type: 'textinput',
+                        id: 'curPassword',
+                        labelId: 'current_password',
+                        required: true,
+                        maxLength: 50,
+                        password: true,
+                    },
+                    { type: 'divider' },
                 ],
             },
         ],

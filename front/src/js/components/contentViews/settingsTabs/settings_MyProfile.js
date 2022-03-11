@@ -127,6 +127,13 @@ class MyProfile extends Component {
                         },
                         onErrorsFn: () => { this.Dialog.unlock(); },
                         formLoadedFn: () => { this.Dialog.onResize(); },
+                        extraButton: {
+                            label: getText('cancel'),
+                            clickFn: (e) => {
+                                e.preventDefault();
+                                this.Dialog.disappear();
+                            },
+                        },
                     },
                     title: getText('change_password'),
                 });

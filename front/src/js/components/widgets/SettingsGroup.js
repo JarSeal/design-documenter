@@ -92,7 +92,6 @@ class SettingsGroup extends Component {
     }
 
     _displayValue = (field) => {
-        console.log('FIELD', field);
         if(field.type === 'checkbox') {
             return field.value === true || field.value === 'true'
                 ? getText('on').toUpperCase()

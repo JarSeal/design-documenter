@@ -35,10 +35,21 @@ const deleteProfileFormData = {
                         // PASSWORD
                         type: 'textinput',
                         id: 'password',
-                        labelId: 'password',
+                        labelId: 'current_password',
                         required: true,
                         maxLength: 50,
                         password: true,
+                        validationFn: 'validatePass1',
+                    },
+                    {
+                        // PASSWORD AGAIN
+                        type: 'textinput',
+                        id: 'password-again',
+                        labelId: 'current_password_again',
+                        required: true,
+                        maxLength: 50,
+                        password: true,
+                        validationFn: 'validatePass2',
                     },
                     { type: 'divider' },
                 ],
