@@ -64,9 +64,10 @@ class MyProfile extends Component {
         ];
         for(let i=0; i<contentDefinition.length; i++) {
             const item = contentDefinition[i];
-            let value = null, verificationStatus = '', afterValue = null;
+            let value = null, exposureKey = item.id, verificationStatus = '', afterValue = null;
             if(item.id === 'created') {
                 value = createDate(this.data[item.id].date);
+                exposureKey = 'created_date';
             } else if(item.id === 'edited' && this.data[item.id][0]) {
                 const lastIndex = this.data[item.id].length - 1;
                 value = createDate(this.data[item.id][lastIndex].date);
@@ -90,8 +91,9 @@ class MyProfile extends Component {
                     <span class="user-data-item__label">
                         ${item.label}
                         <span class="user-data-item__label--exposure">
-                            ${this._showExposure(item.id)}${verificationStatus}</span>
+                            ${this._showExposure(exposureKey)}${verificationStatus}
                         </span>
+                    </span>
                     <div class="user-data-item__value">${value || '&nbsp;'}</div>
                     ${afterValue ? afterValue : ''}
                 </div>`,
