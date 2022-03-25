@@ -185,6 +185,10 @@ class Component {
             listener.id = id;
         }
         if(!target) {
+            if(target === null) {
+                logger.error('Could not add listener, target elem was given but is null.');
+                throw new Error('Call stack');
+            }
             target = this.elem;
             listener.target = target;
         }
