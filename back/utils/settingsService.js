@@ -154,6 +154,10 @@ const publicSettingsRemapping = {
         newKey: 'forgotPass',
         createValue: value => value,
     },
+    'use-email-verification': {
+        newKey: 'useEmailVerification',
+        createValue: value => value, // Also check here if Email sending is turned on/off
+    },
 };
 
 module.exports = {

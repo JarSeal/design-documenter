@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { isValidObjectId, createNewEditedArray } = require('./../utils/helpers');
+const { isValidObjectId, createNewEditedArray, checkIfEmailTaken } = require('./../utils/helpers');
 const usersRouter = require('express').Router();
 const CONFIG = require('./../shared').CONFIG;
 const readUsersFormData = require('./../../shared/formData/readUsersFormData');
@@ -9,7 +9,6 @@ const editExposeProfileFormData = require('./../../shared/formData/editExposePro
 const logger = require('./../utils/logger');
 const User = require('./../models/user');
 const UserSetting = require('./../models/userSetting');
-const AdminSetting = require('./../models/adminSetting');
 const Form = require('./../models/form');
 const { getAndValidateForm, getUserExposure } = require('./forms/formEngine');
 const { checkIfLoggedIn } = require('./../utils/checkAccess');
@@ -145,8 +144,8 @@ usersRouter.put('/', async (request, response) => {
     }
 
     if(CONFIG.USER.email.required) {
-        const findEmail = await User.findOne({ email: body.email.trim() });
-        if(findEmail && String(findEmail.id) !== body.userId) {
+        const emailTaken = await checkIfEmailTaken(body.email, body.userId);
+        if(emailTaken) {
             return response.json({
                 msg: 'Bad request. Validation errors.',
                 errors: { email: 'email_taken' },
@@ -282,8 +281,8 @@ usersRouter.post('/', async (request, response) => {
         });
     }
     if(CONFIG.USER.email.required) {
-        const findEmail = await User.findOne({ email: body.email.trim() });
-        if(findEmail) {
+        const emailTaken = await checkIfEmailTaken(body.email);
+        if(emailTaken) {
             return response.json({
                 msg: 'Bad request. Validation errors.',
                 errors: { email: 'email_taken' },
@@ -395,8 +394,8 @@ usersRouter.put('/own/profile', async (request, response) => {
     }
 
     if(CONFIG.USER.email.required) {
-        const findEmail = await User.findOne({ email: body.email.trim() });
-        if(findEmail && String(findEmail._id) !== userId) {
+        const emailTaken = await checkIfEmailTaken(body.email, userId);
+        if(emailTaken) {
             return response.json({
                 msg: 'Bad request. Validation errors.',
                 errors: { email: 'email_taken' },
@@ -414,12 +413,29 @@ usersRouter.put('/own/profile', async (request, response) => {
         });
     }
 
+    let verifyEmail = {}, newEmailToken;
+    const useVerification = await getSetting(request, 'use-email-verification', true);
+    const emailSending = await getSetting(request, 'email-sending', true, true);
+    if(emailSending && useVerification && body.email.trim() !== user.email) {
+        newEmailToken = createRandomString(64, true); // Maybe improve this by checking for token collision
+        const oldEmail = user.security.verifyEmail && user.security.verifyEmail.verified
+            ? user.email
+            : null;
+        verifyEmail = { 'security.verifyEmail': {
+            token: newEmailToken,
+            oldEmail,
+            verified: false,
+        }};
+    } else if(!emailSending || !useVerification) {
+        verifyEmail = { 'security.verifyEmail': {}};
+    }
+
     const edited = await createNewEditedArray(user.edited, userId);
-    const updatedUser = {
+    const updatedUser = Object.assign({}, {
         email: body.email.trim(),
         name: body.name.trim(),
         edited,
-    };
+    }, verifyEmail);
 
     const savedUser = await User.findByIdAndUpdate(userId, updatedUser, { new: true });
     if(!savedUser) {
@@ -428,6 +444,13 @@ usersRouter.put('/own/profile', async (request, response) => {
             msg: 'User to update was not found. It has propably been deleted by another user.',
             userNotFoundError: true,
         });
+    }
+    if(newEmailToken) {
+        sendEmailById('verify-account-email', {
+            to: body.email.trim(),
+            username: user.username,
+            verifyEmailTokenUrl: CONFIG.UI.baseUrl + CONFIG.UI.basePath + '/u/verify/' + newEmailToken,
+        }, request);
     }
     response.json(savedUser);
 });
@@ -446,8 +469,8 @@ usersRouter.put('/user/exposure', async (request, response) => {
     const user = await User.findById(userId);
     
     if(editingOwnProfile) {
-        const userCanExpose = await AdminSetting.findOne({ settingId: 'users-can-set-exposure-levels' });
-        if(userCanExpose.value !== 'true') {
+        const userCanExpose = await getSetting(request, 'users-can-set-exposure-levels', true);
+        if(!userCanExpose) {
             return response.status(401).json({
                 msg: 'Unauthorised. Users cannot set exposure levels.',
                 unauthorised: true,

@@ -64,21 +64,53 @@ class MyProfile extends Component {
         ];
         for(let i=0; i<contentDefinition.length; i++) {
             const item = contentDefinition[i];
-            let value = null;
+            let value = null, verificationStatus = '', afterValue = null;
             if(item.id === 'created') {
                 value = createDate(this.data[item.id].date);
             } else if(item.id === 'edited' && this.data[item.id][0]) {
                 const lastIndex = this.data[item.id].length - 1;
                 value = createDate(this.data[item.id][lastIndex].date);
+            } else if(item.id === 'email' && this.appState.get('serviceSettings.useEmailVerification')) {
+                verificationStatus = this.data.security && this.data.security.verifyEmail && this.data.security.verifyEmail.verified
+                    ? `&nbsp;&nbsp;&nbsp;&nbsp;(${getText('verified')})`
+                    : `&nbsp;&nbsp;&nbsp;&nbsp;(${getText('unverified')}:
+                        <a id="newVerificationLink" class="link">
+                            ${getText('new_verification_link').toLowerCase()}
+                        </a>)`;
+                value = this.data.email;
+                afterValue = this.data.security && this.data.security.verifyEmail && this.data.security.verifyEmail.oldEmail
+                    ? `(${getText('current_email_in_use_until_new_verified')}: ${this.data.security.verifyEmail.oldEmail})`
+                    : null
             } else {
                 value = this.data[item.id];
             }
             this.addChildDraw({
                 id: 'user-data-' + item.id,
-                template: '<div class="user-data-item">' +
-                    `<span class="user-data-item__label">${item.label} <span class="user-data-item__label--exposure">${this._showExposure(item.id)}</span></span>` +
-                    `<div class="user-data-item__value">${value || '&nbsp;'}</div>` +
-                '</div>',
+                template: `<div class="user-data-item">
+                    <span class="user-data-item__label">
+                        ${item.label}
+                        <span class="user-data-item__label--exposure">
+                            ${this._showExposure(item.id)}${verificationStatus}</span>
+                        </span>
+                    <div class="user-data-item__value">${value || '&nbsp;'}</div>
+                    ${afterValue ? afterValue : ''}
+                </div>`,
+            });
+        }
+
+        if(this.appState.get('serviceSettings.useEmailVerification')) {
+            this.addListener({
+                id: 'new-email-veri-link-id',
+                type: 'click',
+                target: document.getElementById('newVerificationLink'),
+                fn: (e) => {
+                    this.dialogForms.createEmptyFormDialog({
+                        id: 'new-email-verification',
+                        title: getText('send_new_email_verification_link'),
+                        onErrorFn: () => {},
+                        cancelButton: true,
+                    });
+                },
             });
         }
     }

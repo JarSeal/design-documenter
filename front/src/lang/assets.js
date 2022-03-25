@@ -711,7 +711,7 @@ export const assetsObj = {
         fi: 'Käytä käyttäjien omia julkisuustasoja',
     },
     use_users_exposure_levels_desc: {
-        en: 'If users cannot set their own exposure levels, the users\' own exposure levels can still be used if this setting is on. Admins can set these. Does not have any affect is users can set their own exposure levels.',
+        en: 'If users cannot set their own exposure levels, the users\' own exposure levels can still be used if this setting is on. Admins can set these. This setting does not have any affect if users can set their own exposure levels.',
         fi: 'Jos käyttäjät eivät saa asettaa omia julkisuustasojaan, käyttäjien omia julkisuustasoja voidaan kuitenkin käyttää, jos tämä asetus on päällä. Adminit voivat asettaa näitä. Tällä asetuksella ei ole mitään vaikutusta, jos käyttäjät voivat asettaa omat julkisuustasonsa.',
     },
     exposure: {
@@ -827,7 +827,35 @@ export const assetsObj = {
         fi: 'Käytä sähköposti-vahvistusta',
     },
     use_email_verification_desc: {
-        en: 'Whether the users should verify their new E-mail addresses or not. If turned on, a verification E-mail is sent to the user when the account is registered and when the E-mail is changed.',
-        fi: 'Täytyykö käyttäjien vahvistaa sähköpostiosoitteensa? Jos asetus on päällä, käyttäjälle lähetetään vahvistus-sähköpostiviesti kun tili luodaan ja kun sähköpostiosoite vaihdetaan.',
+        en: 'Whether the users should verify their new E-mail addresses or not. If turned on, a verification E-mail is sent to the user when the account is registered and when the E-mail is changed. Also, users can request a new verification E-mail (if unverified) from verification notifications (profile view and after login).',
+        fi: 'Täytyykö käyttäjien vahvistaa sähköpostiosoitteensa? Jos asetus on päällä, käyttäjälle lähetetään vahvistus-sähköpostiviesti kun tili luodaan ja kun sähköpostiosoite vaihdetaan. Käyttäjät voivat myös tilata uuden vahvistus-sähköpostin (jos vahvistamaton) vahvistus-notifikaatioista (profiili-näkymä ja kirjautumisen jälkeen).',
+    },
+    verified: {
+        en: 'Verified',
+        fi: 'Vahvistettu',
+    },
+    unverified: {
+        en: 'Unverified',
+        fi: 'Vahvistamaton',
+    },
+    new_verification_link: {
+        en: 'New verification link',
+        fi: 'Uusi vahvistusviesti',
+    },
+    send_new_email_verification_link: {
+        en: 'Send a new E-mail verification link',
+        fi: 'Lähetä uusi sähköpostin vahvistuslinkki',
+    },
+    send: {
+        en: 'Send',
+        fi: 'Lähetä',
+    },
+    verify_account: {
+        en: 'Verify account',
+        fi: 'Vahvista tili',
+    },
+    current_email_in_use_until_new_verified: {
+        en: 'Current E-mail is use until new one is verified',
+        fi: 'Nykyinen sähköposti, joka on käytössä kunnes uusi on vahvistettu',
     },
 };

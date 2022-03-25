@@ -25,7 +25,7 @@ const adminSettingsFormData = {
             'max-login-attempts', 'login-cooldown-time', 'session-age', 'public-user-registration',
             'user-registration-level', 'user-level-required-to-register', 'max-login-logs', 'max-edited-logs',
             'users-can-set-exposure-levels', 'use-users-exposure-levels', 'forgot-password-feature', 'new-pass-link-lifetime',
-            'email-sending', 'email-host', 'email-username', 'email-password',
+            'email-sending', 'email-host', 'email-username', 'email-password', 'use-email-verification',
         ],
         fieldsets: [
             {

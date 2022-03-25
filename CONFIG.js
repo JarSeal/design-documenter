@@ -64,6 +64,12 @@ const ROUTE_ACCESS = [
         editorRightsLevel: 8,
     },
     {
+        path: '/u/verify/:token',
+        formId: 'route-verify',
+        useRightsLevel: 0,
+        editorRightsLevel: 8,
+    },
+    {
         path: '/user/:user',
         formId: 'route-one-user',
         useRightsLevel: 0,

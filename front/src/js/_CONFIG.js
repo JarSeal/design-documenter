@@ -6,6 +6,7 @@ import Logout from './components/contentViews/Logout';
 import NewUser from './components/contentViews/NewUser';
 import NewPassRequest from './components/contentViews/NewPassRequest';
 import NewPassWToken from './components/contentViews/NewPassWToken';
+import VerifyWToken from './components/contentViews/VerifyWToken';
 import Settings from './components/contentViews/Settings';
 import OneUser from './components/contentViews/OneUser';
 import Universe from './components/contentViews/Universe';
@@ -60,6 +61,12 @@ const _conf = {
             id: 'route-new-pass',
             source: NewPassWToken,
             titleId: 'new_password',
+        },
+        {
+            route: '/u/verify/:token',
+            id: 'route-verify',
+            source: VerifyWToken,
+            titleId: 'verify_account',
         },
         {
             route: '/settings',
