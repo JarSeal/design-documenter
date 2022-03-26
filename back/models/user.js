@@ -86,7 +86,11 @@ const userSchema = mongoose.Schema({
                 type: String,
                 index: true,
             },
-            oldEmail: emailType,
+            oldEmail: {
+                type: String,
+                minlength: 5,
+                index: true,
+            },
             verified: Boolean,
         },
     },
