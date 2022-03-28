@@ -40,7 +40,7 @@ class MyProfile extends Component {
         if(this.data.redirectToLogin) {
             this.Router.changeRoute('/logout?r=' + this.Router.getRoute(true));
             return;
-        };
+        }
         if(this.data.error) {
             this.addChildDraw({
                 id: 'error-getting-my-profile',
@@ -81,7 +81,7 @@ class MyProfile extends Component {
                 value = this.data.email;
                 afterValue = this.data.security && this.data.security.verifyEmail && this.data.security.verifyEmail.oldEmail
                     ? `(${getText('current_email_in_use_until_new_verified')}: ${this.data.security.verifyEmail.oldEmail})`
-                    : null
+                    : null;
             } else {
                 value = this.data[item.id];
             }
@@ -96,8 +96,8 @@ class MyProfile extends Component {
                     </span>
                     <div class="user-data-item__value">${value || '&nbsp;'}</div>
                     ${afterValue
-                        ? `<span class="user-data-item__label--smaller">${afterValue}</span>`
-                        : ''
+                    ? `<span class="user-data-item__label--smaller">${afterValue}</span>`
+                    : ''
                     }
                 </div>`,
             });
@@ -108,7 +108,7 @@ class MyProfile extends Component {
                 id: 'new-email-veri-link-id',
                 type: 'click',
                 target: document.getElementById('newVerificationLink'),
-                fn: (e) => {
+                fn: () => {
                     this.dialogForms.createEmptyFormDialog({
                         id: 'new-email-verification',
                         title: getText('send_new_email_verification_link'),
@@ -229,7 +229,7 @@ class MyProfile extends Component {
                             this.Dialog.disappear();
                             this.Router.changeRoute('/logout');
                         },
-                        onErrorsFn: (ex, res) => {
+                        onErrorsFn: () => {
                             this.Dialog.unlock();
                         },
                         formLoadedFn: () => { this.Dialog.onResize(); },
