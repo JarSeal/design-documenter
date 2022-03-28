@@ -1,8 +1,8 @@
 
-const readUsersFormData = {
+const emailVerificationFormData = {
     formId: 'new-email-verification',
     path: '/api/users/newemailverification',
-    method: 'GET',
+    method: 'POST',
     type: 'form',
     useRightsLevel: 1,
     useRightsUsers: [],
@@ -11,13 +11,15 @@ const readUsersFormData = {
     editorRightsUsers: [],
     editorRightsGroups: [],
     form: {
+        formDescId: 'new_verification_form_description',
         class: 'confirmation-form',
         afterSubmitShowOnlyMsg: true,
         submitButton: {
             id: 'new-email-verification-button',
             labelId: 'send',
         },
+        submitFields: [],
     },
 };
 
-module.exports = readUsersFormData;
+module.exports = emailVerificationFormData;

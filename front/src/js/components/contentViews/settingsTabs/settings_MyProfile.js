@@ -62,9 +62,12 @@ class MyProfile extends Component {
             { id: 'created', label: getText('created') },
             { id: 'edited', label: getText('last_edited') },
         ];
+        let createVerificationLink = false;
         for(let i=0; i<contentDefinition.length; i++) {
             const item = contentDefinition[i];
-            let value = null, exposureKey = item.id, verificationStatus = '', afterValue = null;
+            let value = null, exposureKey = item.id, verificationStatus = '', afterValue = null,
+                oldEmailFound = this.data.security && this.data.security.verifyEmail && this.data.security.verifyEmail.oldEmail,
+                isVerified = this.data.security && this.data.security.verifyEmail && this.data.security.verifyEmail.verified;
             if(item.id === 'created') {
                 value = createDate(this.data[item.id].date);
                 exposureKey = 'created_date';
@@ -72,16 +75,17 @@ class MyProfile extends Component {
                 const lastIndex = this.data[item.id].length - 1;
                 value = createDate(this.data[item.id][lastIndex].date);
             } else if(item.id === 'email' && this.appState.get('serviceSettings.useEmailVerification')) {
-                verificationStatus = this.data.security && this.data.security.verifyEmail && this.data.security.verifyEmail.verified
+                verificationStatus = isVerified
                     ? `&nbsp;&nbsp;&nbsp;&nbsp;(${getText('verified')})`
                     : `&nbsp;&nbsp;&nbsp;&nbsp;(${getText('unverified')}:
                         <a id="newVerificationLink" class="link">
                             ${getText('new_verification_link').toLowerCase()}
                         </a>)`;
                 value = this.data.email;
-                afterValue = this.data.security && this.data.security.verifyEmail && this.data.security.verifyEmail.oldEmail
+                afterValue = oldEmailFound
                     ? `(${getText('current_email_in_use_until_new_verified')}: ${this.data.security.verifyEmail.oldEmail})`
                     : null;
+                if(!isVerified) createVerificationLink = true;
             } else {
                 value = this.data[item.id];
             }
@@ -103,7 +107,7 @@ class MyProfile extends Component {
             });
         }
 
-        if(this.appState.get('serviceSettings.useEmailVerification')) {
+        if(this.appState.get('serviceSettings.useEmailVerification') && createVerificationLink) {
             this.addListener({
                 id: 'new-email-veri-link-id',
                 type: 'click',

@@ -7,6 +7,7 @@ const readOneUserFormData = require('./../../shared/formData/readOneUserFormData
 const readProfileFormData = require('./../../shared/formData/readProfileFormData');
 const editExposeProfileFormData = require('./../../shared/formData/editExposeProfileFormData');
 const verifyAccountWToken = require('./../../shared/formData/verifyAccountWToken');
+const emailVerificationFormData = require('./../../shared/formData/emailVerificationFormData');
 const logger = require('./../utils/logger');
 const User = require('./../models/user');
 const UserSetting = require('./../models/userSetting');
@@ -784,6 +785,56 @@ usersRouter.get('/verify/:token', async (request, response) => { // TODO: update
         verified: true,
         username: user.username,
     });
+});
+
+// Send a new E-mail verification link
+usersRouter.post('/newemailverification', async (request, response) => { // TODO: update api documentation
+    const formId = emailVerificationFormData.formId;
+    const error = await getAndValidateForm(formId, 'GET', request);
+    if(error) {
+        return response.status(error.code).json(error.obj);
+    }
+
+    const user = await User.findById(request.session._id);
+    if(!user) {
+        logger.error(`Could not find a user by id to send verification to (user id: ${request.session._id}).`);
+        return response.status(404).json({
+            msg: 'User not found',
+            userNotFoundError: true,
+        });
+    }
+
+    const useVerification = await getSetting(request, 'use-email-verification', true);
+    const emailSending = await getSetting(request, 'email-sending', true, true);
+    if(useVerification && emailSending && user.security && user.security.verifyEmail && !user.security.verifyEmail.verified) {
+        const newEmailToken = createRandomString(64, true); // Maybe improve this by checking for token collision
+        const verifyEmail = { 'security.verifyEmail': {
+            token: newEmailToken,
+            oldEmail: user.security.verifyEmail.oldEmail,
+            verified: false,
+        }};
+        const savedUser = await User.findByIdAndUpdate(user._id, verifyEmail, { new: true });
+        if(!savedUser) {
+            logger.error('Could not update user\'s own profile. User was not found (id: ' + user._id + ').');
+            return response.status(404).json({
+                msg: 'User to update was not found. It has propably been deleted by another user.',
+                userNotFoundError: true,
+            });
+        }
+        sendEmailById('verify-account-email', {
+            to: user.email,
+            username: user.username,
+            verifyEmailTokenUrl: CONFIG.UI.baseUrl + CONFIG.UI.basePath + '/u/verify/' + newEmailToken,
+        }, request);
+    } else {
+        logger.error(`Trying to send a new verification, but it is prohibited (user id: ${request.session._id}, useVerification: ${useVerification}, emailSending: ${emailSending}).`);
+        return response.status(401).json({
+            msg: 'Unauthorised',
+            unauthorised: true,
+        });
+    }
+
+    return response.json({ newVerificationSent: true });
 });
 
 module.exports = usersRouter;

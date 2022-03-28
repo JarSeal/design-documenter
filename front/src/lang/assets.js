@@ -870,4 +870,8 @@ export const assetsObj = {
         en: 'Your E-mail and account has been verified.',
         fi: 'Sähköpostiosoitteesi ja tilisi on nyt vahvistettu.'
     },
+    new_verification_form_description: {
+        en: 'By clicking Send, you will be E-mailed a new verification link for your E-mail and account.',
+        fi: 'Painamalla Lähetä, saat uuden sähköpostin ja tilin vahvistus-linkin sähköpostiisi.',
+    },
 };
