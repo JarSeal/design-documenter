@@ -79,7 +79,7 @@ class DialogForms extends Component {
                             this.Dialog.disappear();
                         },
                     }
-                    : {}
+                    : null
                 ),
             },
             title,
