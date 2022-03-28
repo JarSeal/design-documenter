@@ -6,6 +6,7 @@ const readUsersFormData = require('./../../shared/formData/readUsersFormData');
 const readOneUserFormData = require('./../../shared/formData/readOneUserFormData');
 const readProfileFormData = require('./../../shared/formData/readProfileFormData');
 const editExposeProfileFormData = require('./../../shared/formData/editExposeProfileFormData');
+const verifyAccountWToken = require('./../../shared/formData/verifyAccountWToken');
 const logger = require('./../utils/logger');
 const User = require('./../models/user');
 const UserSetting = require('./../models/userSetting');
@@ -743,6 +744,46 @@ usersRouter.post('/newpass', async (request, response) => {
     }, request);
 
     return response.json({ passwordUpdated: true });
+});
+
+// Verify user account with token
+usersRouter.get('/verify/:token', async (request, response) => { // TODO: update api documentation
+    const formId = verifyAccountWToken.formId;
+    const error = await getAndValidateForm(formId, 'GET', request);
+    if(error) {
+        return response.status(error.code).json(error.obj);
+    }
+
+    const token = request.params.token;
+    const user = await User.findOne({ 'security.verifyEmail.token': token });
+    if(!user) {
+        return response.status(401).json({
+            msg: 'Token invalid or expired.',
+            tokenError: true,
+        });
+    }
+    
+    const verifyEmail = {
+        token: null,
+        oldEmail: null,
+        verified: true,
+    };
+    const updatedUser = {
+        $set: { 'security.verifyEmail': verifyEmail }
+    };
+    const savedUser = await User.findByIdAndUpdate(user._id, updatedUser, { new: true });
+    if(!savedUser) {
+        logger.error('Could not update user\'s account verification status. User was not found (id: ' + user._id + ').');
+        return response.status(404).json({
+            msg: 'User to update was not found.',
+            userNotFoundError: true,
+        });
+    }
+
+    return response.json({
+        verified: true,
+        username: user.username,
+    });
 });
 
 module.exports = usersRouter;

@@ -90,12 +90,15 @@ class MyProfile extends Component {
                 template: `<div class="user-data-item">
                     <span class="user-data-item__label">
                         ${item.label}
-                        <span class="user-data-item__label--exposure">
+                        <span class="user-data-item__label--smaller">
                             ${this._showExposure(exposureKey)}${verificationStatus}
                         </span>
                     </span>
                     <div class="user-data-item__value">${value || '&nbsp;'}</div>
-                    ${afterValue ? afterValue : ''}
+                    ${afterValue
+                        ? `<span class="user-data-item__label--smaller">${afterValue}</span>`
+                        : ''
+                    }
                 </div>`,
             });
         }

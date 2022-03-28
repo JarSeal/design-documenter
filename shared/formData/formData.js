@@ -15,6 +15,7 @@ const changePasswordFormData = require('./changePasswordFormData');
 const newPassRequestFormData = require('./newPassRequestFormData');
 const newPassWTokenFormData = require('./newPassWTokenFormData');
 const emailVerificationFormData = require('./emailVerificationFormData');
+const verifyAccountWToken = require('./verifyAccountWToken');
 
 const formData = [
     loginBeaconFormData,
@@ -34,6 +35,7 @@ const formData = [
     newPassRequestFormData,
     newPassWTokenFormData,
     emailVerificationFormData,
+    verifyAccountWToken,
 ];
 
 module.exports = formData;

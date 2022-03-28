@@ -855,7 +855,19 @@ export const assetsObj = {
         fi: 'Vahvista tili',
     },
     current_email_in_use_until_new_verified: {
-        en: 'Current E-mail is use until new one is verified',
+        en: 'Current E-mail in use until the new one has been verified',
         fi: 'Nykyinen sähköposti, joka on käytössä kunnes uusi on vahvistettu',
+    },
+    token_not_valid_or_outdated: {
+        en: 'The token is not valid or it is outdated.',
+        fi: 'Linkki ei ole validi tai se on vanhentunut.',
+    },
+    thank_you_username: {
+        en: 'Thank you, $[0]',
+        fi: 'Kiitos, $[0]',
+    },
+    email_and_account_verified: {
+        en: 'Your E-mail and account has been verified.',
+        fi: 'Sähköpostiosoitteesi ja tilisi on nyt vahvistettu.'
     },
 };
