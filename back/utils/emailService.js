@@ -15,29 +15,30 @@ const sendEmailById = async (id, emailParams, request) => {
         logger.error('Could not setup Nodemailer transporter, because host, email, and/or pass is not set in the env variable nor in the admin settings.');
         return;
     } else {
-        host = settings['email-host'] && settings['email-host'].length
+        host = settings['email-host'] && settings['email-host'].trim().length
             ? settings['email-host']
             : config.EMAIL_HOST;
-        user = settings['email-username'] && settings['email-username'].length
+        user = settings['email-username'] && settings['email-username'].trim().length
             ? settings['email-username']
             : config.EMAIL_USER;
-        pass = settings['email-password'] && settings['email-password'].length
+        pass = settings['email-password'] && settings['email-password'].trim().length
             ? settings['email-password']
             : config.EMAIL_PASS;
         from = user;
     }
+    console.log('STUFF', host, user, pass);
     const transporter = nodemailer.createTransport({
         host,
         auth: {
             user,
             pass,
         },
-        secureConnection: false, // TLS requires secureConnection to be false
         port: 587, // port for secure SMTP
-        tls: {
-            ciphers:'SSLv3',
-            rejectUnauthorized: false,
-        },
+        // secureConnection: false, // TLS requires secureConnection to be false
+        // tls: {
+        //     ciphers:'SSLv3',
+        //     rejectUnauthorized: false,
+        // },
     });
 
     const mainUrl = confUI.baseUrl + confUI.basePath;

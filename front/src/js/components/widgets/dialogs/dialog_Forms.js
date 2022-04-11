@@ -17,6 +17,7 @@ class DialogForms extends Component {
             componentData: {
                 id,
                 appState: this.appState,
+                dialog: this.Dialog,
                 beforeFormSendingFn: () => {
                     this.Dialog.lock();
                 },
@@ -55,6 +56,7 @@ class DialogForms extends Component {
             componentData: {
                 id,
                 appState: this.appState,
+                dialog: this.Dialog,
                 beforeFormSendingFn: () => {
                     this.Dialog.lock();
                 },
@@ -95,6 +97,7 @@ class DialogForms extends Component {
                 id,
                 appState: this.appState,
                 editDataId,
+                dialog: this.Dialog,
                 beforeFormSendingFn: () => {
                     this.Dialog.lock();
                 },
