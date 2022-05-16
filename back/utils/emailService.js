@@ -1,3 +1,4 @@
+const CryptoJS = require('crypto-js');
 const nodemailer = require('nodemailer');
 const config = require('./config');
 const logger = require('./logger');
@@ -24,6 +25,10 @@ const sendEmailById = async (id, emailParams, request) => {
         pass = settings['email-password'] && settings['email-password'].trim().length
             ? settings['email-password']
             : config.EMAIL_PASS;
+        if(settings['email-password'] && settings['email-password'].trim().length) {
+            const bytes = CryptoJS.AES.decrypt(pass, process.env.SECRET);
+            pass = bytes.toString(CryptoJS.enc.Utf8);
+        }
         from = user;
     }
     console.log('STUFF', host, user, pass);
