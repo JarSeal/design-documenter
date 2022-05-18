@@ -643,9 +643,10 @@ usersRouter.post('/newpassrequest', async (request, response) => {
     }
 
     const body = request.body;
-    const email = body.email;
+    const email = body.email.trim();
 
-    const user = await User.findOne({ email: email.trim() });
+    let user = await User.findOne({ email: email });
+    if(!user) user = await User.findOne({ 'security.verifyEmail.oldEmail': email });
     if(user) {
         // Check if email has been already sent
         const coolDownTime = 6000; // 10 minutes in ms
@@ -676,7 +677,7 @@ usersRouter.post('/newpassrequest', async (request, response) => {
 
         // Send email here
         sendEmailById('new-pass-link-email', {
-            to: savedUser.email,
+            to: email,
             username: savedUser.username,
             newPassWTokenUrl: CONFIG.UI.baseUrl + CONFIG.UI.basePath + '/u/newpass/' + newToken,
             linkLife,

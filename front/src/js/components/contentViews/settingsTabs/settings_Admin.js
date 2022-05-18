@@ -36,7 +36,7 @@ class AdminSettings extends Component {
             this.viewTitle.showSpinner(false);
             this.Router.changeRoute('/logout?r=' + this.Router.getRoute(true));
             return;
-        };
+        }
         if(formData.error || settingsData.error) {
             this.viewTitle.showSpinner(false);
             this.addChildDraw({

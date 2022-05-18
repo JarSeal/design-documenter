@@ -7,9 +7,12 @@
     "setupBack": "cd back && npm install && cd mongo && docker-compose up --no-start",
     "startMongo": "cd back/mongo && docker-compose up -d",
     "stopMongo": "cd back/mongo && docker-compose down",
+    "dev": "concurrently --kill-others --names \"BACK,FRONT\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run devBack\" \"npm run devFront\"",
     "devFront": "cd front && npm start",
     "devBack": "cd back/mongo && docker-compose up -d && cd .. && npm run dev",
-    "devMongo": "docker exec -it beacondb bash"
+    "devMongo": "docker exec -it beacondb mongo beacondb",
+
+    "lint": "cd front && npm run lint && cd ../back && npm run lint"
   },
   "repository": {
     "type": "git",
@@ -20,5 +23,10 @@
   "bugs": {
     "url": "https://github.com/JarSeal/design-documenter/issues"
   },
-  "homepage": "https://github.com/JarSeal/design-documenter#readme"
+  "homepage": "https://github.com/JarSeal/design-documenter#readme",
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "concurrently": "^7.2.0",
+    "eslint": "^8.15.0"
+  }
 }

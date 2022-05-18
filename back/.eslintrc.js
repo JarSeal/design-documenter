@@ -15,10 +15,7 @@ module.exports = {
         'ecmaVersion': 2020
     },
     'rules': {
-        'indent': [
-            'error',
-            4,
-        ],
+        'indent': ['error', 4],
         'quotes': [
             'error',
             'single',

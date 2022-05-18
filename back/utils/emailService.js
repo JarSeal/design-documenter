@@ -31,7 +31,7 @@ const sendEmailById = async (id, emailParams, request) => {
         }
         from = user;
     }
-    console.log('STUFF', host, user, pass);
+
     const transporter = nodemailer.createTransport({
         host,
         auth: {

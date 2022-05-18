@@ -30,14 +30,30 @@ loginRouter.post('/access', async (request, response) => {
         // Done at the beginning of a page refresh
         // Check if logged in and if the saved browserId is the same as the one saved in the session
         browserId = request.body.browserId;
+        const settings = await getPublicSettings(request);
         if(checkIfLoggedIn(request.session) && browserId === request.session.browserId) {
-            result.username = request.session.username;
-            result.userLevel = request.session.userLevel || 0;
-            if(result.userLevel === 0) request.session.userLevel = 0;
+            const user = await User.findOne({ username: request.session.username });
+            if(user) {
+                result.username = request.session.username;
+                result.userLevel = request.session.userLevel || 0;
+                if(result.userLevel === 0) request.session.userLevel = 0;
+                // Check email and account verification
+                result.accountVerified = null;
+                request.session.verified = null;
+                if(settings.useEmailVerification && !user.security.verifyEmail.verified) {
+                    result.accountVerified = false;
+                    request.session.verified = false;
+                } else if(settings.useEmailVerification && user.security.verifyEmail.verified) {
+                    result.accountVerified = true;
+                    request.session.verified = true;
+                }
+            } else {
+                request.session.browserId = browserId;
+            }
         } else {
             request.session.browserId = browserId;
         }
-        result.serviceSettings = await getPublicSettings(request);
+        result.serviceSettings = settings;
     } else if(request.body.from === 'getCSRF') {
         if(!request.session) {
             result.sessionExpired = true;
@@ -97,6 +113,16 @@ loginRouter.post('/', async (request, response) => {
                 coolDownStarted: null,
                 lastLogins: [],
                 lastAttempts: [],
+                newPassLink: {
+                    token: null,
+                    sent: null,
+                    expires: null,
+                },
+                verifyEmail: {
+                    token: null,
+                    oldEmail: null,
+                    verified: null,
+                }
             };
     }
     // Check here if the user is under cooldown period
@@ -128,7 +154,7 @@ loginRouter.post('/', async (request, response) => {
         : await bcrypt.compare(body.password, user.passwordHash);
     const browserId = body.browserId;
 
-    if(!(user && passwordCorrect && browserId && browserId.length == 32)) {
+    if(!(user && passwordCorrect && browserId && browserId.length === 32)) {
         if(user) {
             const maxLoginAttempts = await getSetting(request, 'max-login-attempts', true);
             userSecurity.loginAttempts = userSecurity.loginAttempts + 1 || 1;
@@ -219,6 +245,17 @@ loginRouter.post('/', async (request, response) => {
         request.session.cookie.maxAge = sessionAge * 60 * 1000; // Milliseconds
     }
 
+    // Check email and account verification
+    let accountVerified = null;
+    request.session.verified = null;
+    if(settings.useEmailVerification && !userSecurity.verifyEmail.verified) {
+        accountVerified = false;
+        request.session.verified = false;
+    } else if(settings.useEmailVerification && userSecurity.verifyEmail.verified) {
+        accountVerified = true;
+        request.session.verified = true;
+    }
+
     response
         .status(200)
         .send({
@@ -227,6 +264,7 @@ loginRouter.post('/', async (request, response) => {
             userLevel: user.userLevel,
             rememberMe: body['remember-me'],
             serviceSettings: settings,
+            accountVerified,
         });
 });
 

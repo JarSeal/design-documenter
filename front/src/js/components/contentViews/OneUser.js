@@ -1,7 +1,6 @@
 import { Component, Logger } from '../../LIGHTER';
 import ReadApi from '../forms/ReadApi';
 import { getText } from '../../helpers/lang';
-import { _CONFIG } from '../../_CONFIG';
 import { createDate } from '../../helpers/date';
 import './OneUser.scss';
 import FourOOne from './FourOOne';
@@ -44,7 +43,7 @@ class OneUser extends Component {
         if(this.userData.redirectToLogin) {
             this.Router.changeRoute('/logout?r=' + this.Router.getRoute(true));
             return;
-        };
+        }
         if(this.userData.error) {
             this.addChildDraw({
                 id: 'error-getting-one-user',
@@ -98,27 +97,37 @@ class OneUser extends Component {
         ];
         for(let i=0; i<contentDefinition.length; i++) {
             const item = contentDefinition[i];
-            let value;
+            const id = item.id;
+            let value, verificationStatus = '';
             let tag = 'div';
             if(item.tag) tag = item.tag;
             
-            if(this.userData[item.id] === undefined) {
+            if(this.userData[id] === undefined) {
                 continue;
-            } else if(item.id === 'created') {
-                value = createDate(this.userData[item.id].date);
-            } else if(item.id === 'edited' && this.userData[item.id][0]) {
-                const lastIndex = this.userData[item.id].length - 1;
-                value = createDate(this.userData[item.id][lastIndex].date);
-            } else if(item.id === 'userLevel') {
-                if(item.id === 'userLevel') value = getText('user_level_' + this.userData[item.id]);
+            } else if(id === 'created') {
+                value = createDate(this.userData[id].date);
+            } else if(id === 'edited' && this.userData[id][0]) {
+                const lastIndex = this.userData[id].length - 1;
+                value = createDate(this.userData[id][lastIndex].date);
+            } else if(id === 'userLevel') {
+                if(id === 'userLevel') value = getText('user_level_' + this.userData[id]);
+            } else if(id === 'email' && this.appState.get('serviceSettings.useEmailVerification')) {
+                value = this.userData[id];
+                const isVerified = this.userData.security && this.userData.security.verifyEmail && this.userData.security.verifyEmail.verified;
+                verificationStatus = isVerified
+                    ? `&nbsp;&nbsp;&nbsp;&nbsp;(${getText('verified')})`
+                    : `&nbsp;&nbsp;&nbsp;&nbsp;(${getText('unverified')})`;
             } else {
-                value = this.userData[item.id];
+                value = this.userData[id];
             }
             if(!value.length) value = '&nbsp;';
             this.addChildDraw({
-                id: 'user-data-' + item.id,
+                id: 'user-data-' + id,
                 template: '<div class="user-data-item">' +
-                    `<span class="user-data-item__label">${item.label}</span>` +
+                    `<span class="user-data-item__label">
+                        ${item.label}
+                        <span class="user-data-item__label--smaller">${verificationStatus}</span>
+                    </span>` +
                     `<${tag} class="user-data-item__value">${value}</${tag}>` +
                 '</div>',
             });

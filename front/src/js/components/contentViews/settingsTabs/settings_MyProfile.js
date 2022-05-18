@@ -63,6 +63,7 @@ class MyProfile extends Component {
             { id: 'edited', label: getText('last_edited') },
         ];
         let createVerificationLink = false;
+        const useEmailVerification = this.appState.get('serviceSettings.useEmailVerification');
         for(let i=0; i<contentDefinition.length; i++) {
             const item = contentDefinition[i];
             let value = null, exposureKey = item.id, verificationStatus = '', afterValue = null,
@@ -74,7 +75,7 @@ class MyProfile extends Component {
             } else if(item.id === 'edited' && this.data[item.id][0]) {
                 const lastIndex = this.data[item.id].length - 1;
                 value = createDate(this.data[item.id][lastIndex].date);
-            } else if(item.id === 'email' && this.appState.get('serviceSettings.useEmailVerification')) {
+            } else if(item.id === 'email' && useEmailVerification) {
                 verificationStatus = isVerified
                     ? `&nbsp;&nbsp;&nbsp;&nbsp;(${getText('verified')})`
                     : `&nbsp;&nbsp;&nbsp;&nbsp;(${getText('unverified')}:
@@ -107,7 +108,7 @@ class MyProfile extends Component {
             });
         }
 
-        if(this.appState.get('serviceSettings.useEmailVerification') && createVerificationLink) {
+        if(useEmailVerification && createVerificationLink) {
             this.addListener({
                 id: 'new-email-veri-link-id',
                 type: 'click',
