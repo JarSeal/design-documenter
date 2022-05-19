@@ -70,6 +70,12 @@ const ROUTE_ACCESS = [
         editorRightsLevel: 8,
     },
     {
+        path: '/u/verificationneeded',
+        formId: 'route-verifyneeded',
+        useRightsLevel: 2,
+        editorRightsLevel: 8,
+    },
+    {
         path: '/user/:user',
         formId: 'route-one-user',
         useRightsLevel: 0,

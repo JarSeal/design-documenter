@@ -66,8 +66,17 @@ const getHashCode = (str) => {
     return hash;
 };
 
+const checkAccountVerification = (routeData) => {
+    const appState = routeData.commonData.appState;
+    const isVerified = appState.get('user.verified');
+    if(isVerified === false) {
+        return '/u/verificationneeded';
+    }
+};
+
 export {
     checkRouteAccess,
     getAdminRights,
     getHashCode,
+    checkAccountVerification,
 };

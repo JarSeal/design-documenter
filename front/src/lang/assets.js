@@ -868,10 +868,18 @@ export const assetsObj = {
     },
     email_and_account_verified: {
         en: 'Your E-mail and account has been verified.',
-        fi: 'Sähköpostiosoitteesi ja tilisi on nyt vahvistettu.'
+        fi: 'Sähköpostiosoitteesi ja tilisi on nyt vahvistettu.',
     },
     new_verification_form_description: {
         en: 'By clicking Send, you will be E-mailed a new verification link for your E-mail and account.',
         fi: 'Painamalla Lähetä, saat uuden sähköpostin ja tilin vahvistus-linkin sähköpostiisi.',
+    },
+    verification_needed: {
+        en: 'Verification needed',
+        fi: 'Tilin vahvistus vaaditaan',
+    },
+    verification_needed_body: {
+        en: 'Your account needs to be verified before it can be used. Check your E-mail. You have received a verification E-mail. You can also request a new verification E-mail or change your E-mail address.',
+        fi: 'Vahvista tilisi ennen kuin voit käyttää sitä. Tarkista sähköpostisi. Olet saanut vahvistus-sähköpostiviestin. Voit myös pyytää uuden vahvistusviestin tai vaihtaa sähköpostiosoitteesi.',
     },
 };

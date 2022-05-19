@@ -173,14 +173,14 @@ usersRouter.put('/', async (request, response) => {
     }
 
     const user = await User.findById(body.userId);
+    const verifyEmail = _createOldEmail(request, user, body.email);
     const edited = await createNewEditedArray(user.edited, request.session._id);
-
-    const updatedUser = {
+    const updatedUser = Object.assign({}, {
         email: body.email.trim(),
         name: body.name.trim(),
         userLevel: parseInt(body.userLevel),
         edited,
-    };
+    }, verifyEmail);
 
     const savedUser = await User.findByIdAndUpdate(body.userId, updatedUser, { new: true });
     if(!savedUser) {
@@ -339,6 +339,11 @@ usersRouter.post('/', async (request, response) => {
             to: savedUser.email,
             username: savedUser.username,
         }, request);
+        const useVerification = await getSetting(request, 'use-email-verification', true);
+        if(useVerification) {
+            const verificationSent = await _sendVerificationEmail(request, response, savedUser);
+            if(!verificationSent) return;
+        }
     }
 
     response.json(savedUser);
@@ -415,23 +420,7 @@ usersRouter.put('/own/profile', async (request, response) => {
         });
     }
 
-    let verifyEmail = {}, newEmailToken;
-    const useVerification = await getSetting(request, 'use-email-verification', true);
-    const emailSending = await getSetting(request, 'email-sending', true, true);
-    if(emailSending && useVerification && body.email.trim() !== user.email) {
-        newEmailToken = createRandomString(64, true); // Maybe improve this by checking for token collision
-        const oldEmail = user.security.verifyEmail && user.security.verifyEmail.verified
-            ? user.email
-            : null;
-        verifyEmail = { 'security.verifyEmail': {
-            token: newEmailToken,
-            oldEmail,
-            verified: false,
-        }};
-    } else if(!emailSending || !useVerification) {
-        verifyEmail = { 'security.verifyEmail': {}};
-    }
-
+    const verifyEmail = _createOldEmail(request, user, body.email);
     const edited = await createNewEditedArray(user.edited, userId);
     const updatedUser = Object.assign({}, {
         email: body.email.trim(),
@@ -447,6 +436,7 @@ usersRouter.put('/own/profile', async (request, response) => {
             userNotFoundError: true,
         });
     }
+    const newEmailToken = verifyEmail['security.verifyEmail'].token;
     if(newEmailToken) {
         sendEmailById('verify-account-email', {
             to: body.email.trim(),
@@ -806,29 +796,11 @@ usersRouter.post('/newemailverification', async (request, response) => { // TODO
     }
 
     const useVerification = await getSetting(request, 'use-email-verification', true);
-    const emailSending = await getSetting(request, 'email-sending', true, true);
-    if(useVerification && emailSending && user.security && user.security.verifyEmail && !user.security.verifyEmail.verified) {
-        const newEmailToken = createRandomString(64, true); // Maybe improve this by checking for token collision
-        const verifyEmail = { 'security.verifyEmail': {
-            token: newEmailToken,
-            oldEmail: user.security.verifyEmail.oldEmail,
-            verified: false,
-        }};
-        const savedUser = await User.findByIdAndUpdate(user._id, verifyEmail, { new: true });
-        if(!savedUser) {
-            logger.error('Could not update user\'s own profile. User was not found (id: ' + user._id + ').');
-            return response.status(404).json({
-                msg: 'User to update was not found. It has propably been deleted by another user.',
-                userNotFoundError: true,
-            });
-        }
-        sendEmailById('verify-account-email', {
-            to: user.email,
-            username: user.username,
-            verifyEmailTokenUrl: CONFIG.UI.baseUrl + CONFIG.UI.basePath + '/u/verify/' + newEmailToken,
-        }, request);
+    if(useVerification && user.security && user.security.verifyEmail && !user.security.verifyEmail.verified) {
+        const verificationSent = await _sendVerificationEmail(request, response, user);
+        if(!verificationSent) return;
     } else {
-        logger.error(`Trying to send a new verification, but it is prohibited (user id: ${request.session._id}, useVerification: ${useVerification}, emailSending: ${emailSending}).`);
+        logger.error(`Trying to send a new verification, but it is prohibited (user id: ${request.session._id}, useVerification: ${useVerification})`);
         return response.status(401).json({
             msg: 'Unauthorised',
             unauthorised: true,
@@ -837,5 +809,54 @@ usersRouter.post('/newemailverification', async (request, response) => { // TODO
 
     return response.json({ newVerificationSent: true });
 });
+
+const _sendVerificationEmail = async (request, response, user) => {
+    const newEmailToken = createRandomString(64, true); // Maybe improve this by checking for token collision
+    const verifyEmail = { 'security.verifyEmail': {
+        token: newEmailToken,
+        oldEmail: user.security.verifyEmail.oldEmail,
+        verified: false,
+    }};
+    const savedUser = await User.findByIdAndUpdate(user._id, verifyEmail, { new: true });
+    if(!savedUser) {
+        logger.error('Could not update user\'s own profile. User was not found (id: ' + user._id + ').');
+        response.status(404).json({
+            msg: 'User to update was not found. It has propably been deleted by another user.',
+            userNotFoundError: true,
+        });
+        return false;
+    }
+    sendEmailById('verify-account-email', {
+        to: user.email,
+        username: user.username,
+        verifyEmailTokenUrl: CONFIG.UI.baseUrl + CONFIG.UI.basePath + '/u/verify/' + newEmailToken,
+    }, request);
+    return true;
+};
+
+const _createOldEmail = async (request, user, newEmail) => {
+    let verifyEmail = {}, newEmailToken;
+    const useVerification = await getSetting(request, 'use-email-verification', true);
+    const emailSending = await getSetting(request, 'email-sending', true, true);
+    if(emailSending && useVerification && newEmail.trim() !== user.email) {
+        newEmailToken = createRandomString(64, true); // Maybe improve this by checking for token collision
+        let oldEmail = user.security.verifyEmail && user.security.verifyEmail.verified
+            ? user.email
+            : null;
+        if(!oldEmail) {
+            oldEmail = user.security.verifyEmail && user.security.verifyEmail.oldEmail
+                ? user.security.verifyEmail.oldEmail
+                : null;
+        }
+        verifyEmail = { 'security.verifyEmail': {
+            token: newEmailToken,
+            oldEmail,
+            verified: false,
+        }};
+    } else if(!emailSending || !useVerification) {
+        verifyEmail = { 'security.verifyEmail': {} };
+    }
+    return verifyEmail;
+};
 
 module.exports = usersRouter;

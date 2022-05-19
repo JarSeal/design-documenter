@@ -42,8 +42,10 @@ const isUserUnverified = (sess, formId) => {
         'change-password-form',
         'edit-expose-profile-form',
         'delete-profile-form',
+        'new-email-verification',
+        'verify-w-token',
+        'read-one-user',
     ];
-    console.log('CHECK', formId);
     if(sess.verified === false && !whiteListedFormIds.includes(formId)) {
         return true;
     }
