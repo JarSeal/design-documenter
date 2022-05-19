@@ -1,3 +1,4 @@
+const CryptoJS = require('crypto-js');
 const settingsRouter = require('express').Router();
 const adminSettingsFormData = require('./../../shared/formData/adminSettingsFormData');
 const userSettingsFormData = require('./../../shared/formData/userSettingsFormData');
@@ -83,6 +84,16 @@ settingsRouter.get('/admin', async (request, response) => {
     
     const result = await AdminSetting.find({});
 
+    // Decrypt passwords
+    for(let i=0; i<result.length; i++) {
+        const setting = result[i];
+        if(setting.password) {
+            const bytes = CryptoJS.AES.decrypt(setting.value, process.env.SECRET);
+            const originalText = bytes.toString(CryptoJS.enc.Utf8);
+            result[i].value = originalText;
+        }
+    }
+    
     response.json(result);
 });
 
@@ -113,10 +124,16 @@ settingsRouter.put('/admin', async (request, response) => {
         });
         return;
     }
-    const edited = await createNewEditedArray(setting.edited, request.session._id);
 
+    const edited = await createNewEditedArray(setting.edited, request.session._id);
+    let value = body[setting.settingId];
+    
+    if(setting.password && value !== '') {
+        value = CryptoJS.AES.encrypt(value, process.env.SECRET).toString();
+    }
+    
     const updatedAdminSetting = {
-        value: body[setting.settingId],
+        value,
         edited,
     };
 

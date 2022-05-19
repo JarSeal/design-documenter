@@ -22,6 +22,7 @@ class Settings extends Component {
             id: this.id+'-view-title',
             heading: data.title,
         }));
+        this.appState = this.Router.commonData.appState;
     }
 
     init = async () => {
@@ -38,7 +39,7 @@ class Settings extends Component {
         if(this.adminRights.loggedIn === false) {
             this.Router.changeRoute('/logout?r=' + this.Router.getRoute(true));
             return;
-        };
+        }
 
         this._defineTabs();
         this.tabSystem = this.addChild(new TabSystem({
@@ -63,6 +64,7 @@ class Settings extends Component {
     }
 
     _defineTabs = () => {
+        const isVerified = this.appState.get('user.verified') !== false;
         const define = [{
             id: 'my-profile',
             label: getText('my_profile'),
@@ -70,18 +72,19 @@ class Settings extends Component {
         }, {
             id: 'my-settings',
             label: getText('my_settings'),
+            show: isVerified,
             component: MySettings,
         }, {
             id: 'users',
             label: getText('users'),
             adminUseRights: 'read-users',
-            show: this.adminRights.useRights.includes('read-users'),
+            show: isVerified && this.adminRights.useRights.includes('read-users'),
             component: UsersList,
         }, {
             id: 'admin-settings',
             label: getText('admin_settings'),
             adminUseRights: 'read-users', // TODO change to admin settings
-            show: this.adminRights.useRights.includes('read-users'), // TODO change to admin settings
+            show: isVerified && this.adminRights.useRights.includes('read-users'), // TODO change to admin settings
             component: AdminSettings,
         }];
 

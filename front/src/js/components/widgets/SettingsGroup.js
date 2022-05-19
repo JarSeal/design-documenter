@@ -105,6 +105,8 @@ class SettingsGroup extends Component {
                     }
                 }
             }
+        } else if(field.password && field.value.length) {
+            return '&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;';
         }
         return field.value; // String or Number
     }

@@ -1,3 +1,4 @@
+const CryptoJS = require('crypto-js');
 const logger = require('./../../utils/logger');
 const Form = require('./../../models/form');
 const AdminSetting = require('./../../models/adminSetting');
@@ -47,6 +48,7 @@ const createPresetForms = async () => {
                 const field = fs.fields[j];
                 const checkField = await AdminSetting.findOne({ settingId: field.id });
                 if(!checkField) {
+                    if(field.password) field.defaultValue = _enCryptPass(field.defaultValue);
                     const setting = new AdminSetting({
                         settingId: field.id,
                         value: field.defaultValue,
@@ -54,6 +56,7 @@ const createPresetForms = async () => {
                         settingReadRight: field.settingReadRight || 0,
                         type: field.settingType,
                     });
+                    if(field.password) setting.password = true;
                     await setting.save();
                     settingsSaved++;
                 }
@@ -77,6 +80,12 @@ const createPresetForms = async () => {
             logger.log(`Preset email template '${email.emailId}' created.`);
         }
     }
+};
+
+const _enCryptPass = (value) => {
+    if(value === '') return value;
+    const ciphertext = CryptoJS.AES.encrypt(value, process.env.SECRET).toString();
+    return ciphertext;
 };
 
 module.exports = createPresetForms;

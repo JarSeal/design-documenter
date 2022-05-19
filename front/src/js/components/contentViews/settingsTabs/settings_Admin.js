@@ -36,7 +36,7 @@ class AdminSettings extends Component {
             this.viewTitle.showSpinner(false);
             this.Router.changeRoute('/logout?r=' + this.Router.getRoute(true));
             return;
-        };
+        }
         if(formData.error || settingsData.error) {
             this.viewTitle.showSpinner(false);
             this.addChildDraw({
@@ -84,6 +84,7 @@ class AdminSettings extends Component {
                     descriptionId: fs.fields[j].descriptionId,
                     defaultValue: fs.fields[j].defaultValue,
                     options,
+                    password: fs.fields[j].password,
                 });
             }
             this.addChildDraw(new SettingsGroup({

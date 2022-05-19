@@ -113,7 +113,7 @@ const getPublicSettings = async (request, noReload) => {
     const keys = Object.keys(publicSettingsRemapping);
     for(let i=0; i<keys.length; i++) {
         const newKey = publicSettingsRemapping[keys[i]].newKey;
-        publicSettings[newKey] = publicSettingsRemapping[keys[i]].createValue(all[keys[i]], request);
+        publicSettings[newKey] = await publicSettingsRemapping[keys[i]].createValue(all[keys[i]], request);
     }
     publicSettings['_routeAccess'] = await _createPublicRouteAccesses(request);
     return publicSettings;
@@ -153,6 +153,14 @@ const publicSettingsRemapping = {
     'forgot-password-feature': {
         newKey: 'forgotPass',
         createValue: value => value,
+    },
+    'use-email-verification': {
+        newKey: 'useEmailVerification',
+        createValue: async (value, request) => {
+            const sendEmails = await getSetting(request, 'email-sending', true, true);
+            if(sendEmails) return value;
+            return false;
+        },
     },
 };
 

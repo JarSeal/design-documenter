@@ -31,6 +31,7 @@ class FormCreator extends Component {
         this.logger = new Logger('Form Creator *****');
         this.afterFormSentFn = data.afterFormSentFn;
         this.template = '<form class="form-creator"></form>';
+        this.Dialog = data.dialog;
         this.components = {};
         this.componentsOrder = [];
         this.curLang = getLang();
@@ -889,6 +890,7 @@ class FormCreator extends Component {
             this._displayFieldError(keys[i]);
             this.fieldsetErrorCheck(fieldsetId);
         }
+        if(this.Dialog) this.Dialog.unlock();
     }
 
     _serverSideDeletionErrors = (response) => {
@@ -911,6 +913,7 @@ class FormCreator extends Component {
         });
         this._setFormMsg(errorMsg);
         if(this.data.onErrorsFn) this.data.onErrorsFn(new Error('Server side deletion error'), response);
+        if(this.Dialog) this.Dialog.unlock();
     }
 
     _checkAllFieldErrors = () => {

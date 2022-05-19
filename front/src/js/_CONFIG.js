@@ -6,11 +6,13 @@ import Logout from './components/contentViews/Logout';
 import NewUser from './components/contentViews/NewUser';
 import NewPassRequest from './components/contentViews/NewPassRequest';
 import NewPassWToken from './components/contentViews/NewPassWToken';
+import VerifyWToken from './components/contentViews/VerifyWToken';
+import VerificationNeeded from './components/contentViews/VerificationNeeded';
 import Settings from './components/contentViews/Settings';
 import OneUser from './components/contentViews/OneUser';
 import Universe from './components/contentViews/Universe';
 import { getText } from './helpers/lang';
-import { checkRouteAccess } from './helpers/storage';
+import { checkRouteAccess, checkAccountVerification } from './helpers/storage';
 const conf = require('./shared').CONFIG.UI;
 
 const _conf = {
@@ -23,7 +25,11 @@ const _conf = {
             id: 'route-landing',
             source: Landing,
             titleId: 'route_title_landing',
-            beforeDraw: async (routerData) => await checkRouteAccess(routerData),
+            beforeDraw: async (routerData) => {
+                const routeAccess = await checkRouteAccess(routerData);
+                const accountVerification = checkAccountVerification(routerData);
+                return routeAccess || accountVerification;
+            },
         },
         {
             route: '/login',
@@ -40,7 +46,11 @@ const _conf = {
             id: 'route-universe',
             source: Universe,
             titleId: 'route_universe',
-            beforeDraw: async (routerData) => await checkRouteAccess(routerData),
+            beforeDraw: async (routerData) => {
+                const routeAccess = await checkRouteAccess(routerData);
+                const accountVerification = checkAccountVerification(routerData);
+                return routeAccess || accountVerification;
+            },
         },
         {
             route: '/newuser',
@@ -60,6 +70,19 @@ const _conf = {
             id: 'route-new-pass',
             source: NewPassWToken,
             titleId: 'new_password',
+        },
+        {
+            route: '/u/verify/:token',
+            id: 'route-verify',
+            source: VerifyWToken,
+            titleId: 'verify_account',
+        },
+        {
+            route: '/u/verificationneeded',
+            id: 'route-verifyneeded',
+            source: VerificationNeeded,
+            titleId: 'verification_needed',
+            beforeDraw: async (routerData) => await checkRouteAccess(routerData),
         },
         {
             route: '/settings',

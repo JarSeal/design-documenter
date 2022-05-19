@@ -9,10 +9,13 @@ const checkAccess = (request, check, settings) => {
         userId = request.session._id;
     }
     
-    // Check user level
+    // Check user level and verification
     if(userLevel >= check.useRightsLevel) {
+        if(isUserUnverified(request.session, check.formId)) return false;
         return true;
     }
+
+    
 
     // Check user list
     if(check.useRightsUsers && check.useRightsUsers.length) {
@@ -30,6 +33,23 @@ const checkAccess = (request, check, settings) => {
 const checkIfLoggedIn = (sess) => {
     if(!sess || !sess.loggedIn) return false;
     return true;
+};
+
+const isUserUnverified = (sess, formId) => {
+    const whiteListedFormIds = [
+        'read-profile',
+        'edit-profile-form',
+        'change-password-form',
+        'edit-expose-profile-form',
+        'delete-profile-form',
+        'new-email-verification',
+        'verify-w-token',
+        'read-one-user',
+    ];
+    if(sess.verified === false && !whiteListedFormIds.includes(formId)) {
+        return true;
+    }
+    return false;
 };
 
 // Maybe move to settingsService?

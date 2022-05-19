@@ -70,6 +70,7 @@ class Base extends Component {
             this.appState.set('user.username', response.data.username);
             this.appState.set('user.loggedIn', response.data.loggedIn);
             this.appState.set('user.userLevel', response.data.userLevel || 0);
+            this.appState.set('user.verified', response.data.accountVerified);
         }
         this.appState.set('serviceSettings', response.data.serviceSettings);
 

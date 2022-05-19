@@ -17,6 +17,7 @@ class DialogForms extends Component {
             componentData: {
                 id,
                 appState: this.appState,
+                dialog: this.Dialog,
                 beforeFormSendingFn: () => {
                     this.Dialog.lock();
                 },
@@ -48,13 +49,14 @@ class DialogForms extends Component {
     }
 
     createEmptyFormDialog = (params) => {
-        const { id, title, afterFormSentFn, onErrorFn } = params;
+        const { id, title, afterFormSentFn, onErrorFn, cancelButton } = params;
         if(!this.Dialog) this.Dialog = this.appState.get('Dialog');
         this.Dialog.appear({
             component: FormCreator,
             componentData: {
                 id,
                 appState: this.appState,
+                dialog: this.Dialog,
                 beforeFormSendingFn: () => {
                     this.Dialog.lock();
                 },
@@ -71,6 +73,16 @@ class DialogForms extends Component {
                 },
                 onFormChanges: () => { this.Dialog.changeHappened(); },
                 formLoadedFn: () => { this.Dialog.onResize(); },
+                extraButton: (cancelButton
+                    ? {
+                        label: getText('cancel'),
+                        clickFn: (e) => {
+                            e.preventDefault();
+                            this.Dialog.disappear();
+                        },
+                    }
+                    : null
+                ),
             },
             title,
         });
@@ -85,6 +97,7 @@ class DialogForms extends Component {
                 id,
                 appState: this.appState,
                 editDataId,
+                dialog: this.Dialog,
                 beforeFormSendingFn: () => {
                     this.Dialog.lock();
                 },
@@ -96,7 +109,7 @@ class DialogForms extends Component {
                 onErrorsFn: (ex, res) => {
                     this.Dialog.unlock();
                     if(onErrorFn) onErrorFn(ex, res);
-                    if(res && res.status === 401 && res.data.loggedIn !== false) {
+                    if(res && res.status === 401 && res.data && res.data.loggedIn && !res.data.noRedirect) {
                         this.Router.changeRoute('/');
                     }
                 },

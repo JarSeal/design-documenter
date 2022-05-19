@@ -1,3 +1,5 @@
+const linkButton = require('./emailComponents/linkButton');
+
 const newUserEmail = {
     emailId: 'new-user-email',
     fromName: 'Beacon JS',
@@ -13,9 +15,7 @@ Your new account has been registered.
 You can either [login]($[mainBeaconUrl]) or if you don't have a password,  
 you can [create a new password]($[newPassRequestUrl]) for you.
 
-<a href="$[mainBeaconUrl]" target="_blank" style="padding: 8px 32px 7px; border: 1px solid #555;border-radius: 8px;font-family: Helvetica, Arial, sans-serif;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block;background: #333;">
-    Login
-</a>
+${linkButton('Login', '$[mainBeaconUrl]')}
 
 Do not reply to this email, thank you.
 
@@ -40,7 +40,7 @@ voit luoda [uuden salasanan]($[newPassRequestUrl]) itsellesi.
 
 Älkää vastatko tähän sähköpostiin, kiitos.
 
-/BeaconJs`,
+/Beacon JS`,
         },
     },
 };

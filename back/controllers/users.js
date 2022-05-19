@@ -1,15 +1,16 @@
 const bcrypt = require('bcrypt');
-const { isValidObjectId, createNewEditedArray } = require('./../utils/helpers');
+const { isValidObjectId, createNewEditedArray, checkIfEmailTaken } = require('./../utils/helpers');
 const usersRouter = require('express').Router();
 const CONFIG = require('./../shared').CONFIG;
 const readUsersFormData = require('./../../shared/formData/readUsersFormData');
 const readOneUserFormData = require('./../../shared/formData/readOneUserFormData');
 const readProfileFormData = require('./../../shared/formData/readProfileFormData');
 const editExposeProfileFormData = require('./../../shared/formData/editExposeProfileFormData');
+const verifyAccountWToken = require('./../../shared/formData/verifyAccountWToken');
+const emailVerificationFormData = require('./../../shared/formData/emailVerificationFormData');
 const logger = require('./../utils/logger');
 const User = require('./../models/user');
 const UserSetting = require('./../models/userSetting');
-const AdminSetting = require('./../models/adminSetting');
 const Form = require('./../models/form');
 const { getAndValidateForm, getUserExposure } = require('./forms/formEngine');
 const { checkIfLoggedIn } = require('./../utils/checkAccess');
@@ -145,8 +146,8 @@ usersRouter.put('/', async (request, response) => {
     }
 
     if(CONFIG.USER.email.required) {
-        const findEmail = await User.findOne({ email: body.email.trim() });
-        if(findEmail && String(findEmail.id) !== body.userId) {
+        const emailTaken = await checkIfEmailTaken(body.email, body.userId);
+        if(emailTaken) {
             return response.json({
                 msg: 'Bad request. Validation errors.',
                 errors: { email: 'email_taken' },
@@ -172,14 +173,14 @@ usersRouter.put('/', async (request, response) => {
     }
 
     const user = await User.findById(body.userId);
+    const verifyEmail = _createOldEmail(request, user, body.email);
     const edited = await createNewEditedArray(user.edited, request.session._id);
-
-    const updatedUser = {
+    const updatedUser = Object.assign({}, {
         email: body.email.trim(),
         name: body.name.trim(),
         userLevel: parseInt(body.userLevel),
         edited,
-    };
+    }, verifyEmail);
 
     const savedUser = await User.findByIdAndUpdate(body.userId, updatedUser, { new: true });
     if(!savedUser) {
@@ -282,8 +283,8 @@ usersRouter.post('/', async (request, response) => {
         });
     }
     if(CONFIG.USER.email.required) {
-        const findEmail = await User.findOne({ email: body.email.trim() });
-        if(findEmail) {
+        const emailTaken = await checkIfEmailTaken(body.email);
+        if(emailTaken) {
             return response.json({
                 msg: 'Bad request. Validation errors.',
                 errors: { email: 'email_taken' },
@@ -338,6 +339,11 @@ usersRouter.post('/', async (request, response) => {
             to: savedUser.email,
             username: savedUser.username,
         }, request);
+        const useVerification = await getSetting(request, 'use-email-verification', true);
+        if(useVerification) {
+            const verificationSent = await _sendVerificationEmail(request, response, savedUser);
+            if(!verificationSent) return;
+        }
     }
 
     response.json(savedUser);
@@ -381,9 +387,22 @@ usersRouter.put('/own/profile', async (request, response) => {
         return response.status(error.code).json(error.obj);
     }
 
+    const user = await User.findById(userId);
+    const passwordCorrect = user === null
+        ? false
+        : await bcrypt.compare(body.curPassword, user.passwordHash);
+    if(!passwordCorrect) {
+        return response.status(401).json({
+            error: 'invalid password',
+            loggedIn: true,
+            noRedirect: true,
+            errors: { curPassword: 'wrong_password' },
+        });
+    }
+
     if(CONFIG.USER.email.required) {
-        const findEmail = await User.findOne({ email: body.email.trim() });
-        if(findEmail && String(findEmail._id) !== userId) {
+        const emailTaken = await checkIfEmailTaken(body.email, userId);
+        if(emailTaken) {
             return response.json({
                 msg: 'Bad request. Validation errors.',
                 errors: { email: 'email_taken' },
@@ -391,8 +410,6 @@ usersRouter.put('/own/profile', async (request, response) => {
             });
         }
     }
-
-    const user = await User.findById(userId);
 
     // Check if the session user is the same as target
     if(!user || user.username !== request.session.username) {
@@ -403,12 +420,13 @@ usersRouter.put('/own/profile', async (request, response) => {
         });
     }
 
+    const verifyEmail = _createOldEmail(request, user, body.email);
     const edited = await createNewEditedArray(user.edited, userId);
-    const updatedUser = {
+    const updatedUser = Object.assign({}, {
         email: body.email.trim(),
         name: body.name.trim(),
         edited,
-    };
+    }, verifyEmail);
 
     const savedUser = await User.findByIdAndUpdate(userId, updatedUser, { new: true });
     if(!savedUser) {
@@ -417,6 +435,14 @@ usersRouter.put('/own/profile', async (request, response) => {
             msg: 'User to update was not found. It has propably been deleted by another user.',
             userNotFoundError: true,
         });
+    }
+    const newEmailToken = verifyEmail['security.verifyEmail'].token;
+    if(newEmailToken) {
+        sendEmailById('verify-account-email', {
+            to: body.email.trim(),
+            username: user.username,
+            verifyEmailTokenUrl: CONFIG.UI.baseUrl + CONFIG.UI.basePath + '/u/verify/' + newEmailToken,
+        }, request);
     }
     response.json(savedUser);
 });
@@ -435,11 +461,23 @@ usersRouter.put('/user/exposure', async (request, response) => {
     const user = await User.findById(userId);
     
     if(editingOwnProfile) {
-        const userCanExpose = await AdminSetting.findOne({ settingId: 'users-can-set-exposure-levels' });
-        if(userCanExpose.value !== 'true') {
+        const userCanExpose = await getSetting(request, 'users-can-set-exposure-levels', true);
+        if(!userCanExpose) {
             return response.status(401).json({
                 msg: 'Unauthorised. Users cannot set exposure levels.',
                 unauthorised: true,
+            });
+        }
+
+        const passwordCorrect = user === null
+            ? false
+            : await bcrypt.compare(body.curPassword, user.passwordHash);
+        if(!passwordCorrect) {
+            return response.status(401).json({
+                error: 'invalid password',
+                loggedIn: true,
+                noRedirect: true,
+                errors: { curPassword: 'wrong_password' },
             });
         }
     }
@@ -465,7 +503,7 @@ usersRouter.put('/user/exposure', async (request, response) => {
         const fs = fieldsets[i];
         for(let j=0; j<fs.fields.length; j++) {
             const field = fs.fields[j];
-            if(body[field.id] !== undefined && !field.disabled && showToUsers[field.id].value) {
+            if(field.id !== 'curPassword' && body[field.id] !== undefined && !field.disabled && showToUsers[field.id].value) {
                 exposure[field.id] = body[field.id];
             }
         }
@@ -521,7 +559,7 @@ usersRouter.post('/own/delete', async (request, response) => {
     }
 
     // Delete the user
-    User.findByIdAndRemove(userId, (err) => {
+    User.findByIdAndRemove(userId, (err, user) => {
         if(err) {
             logger.error('Could not self delete profile. (+ userId, err)', userId, err);
             return response.status(500).json({
@@ -529,6 +567,12 @@ usersRouter.post('/own/delete', async (request, response) => {
                 dbError: true,
             });
         }
+
+        sendEmailById('delete-own-account-email', {
+            to: user.email,
+            username: user.username,
+        }, request);
+        
         return response.json({ userDeleted: true });
     });
 });
@@ -545,6 +589,8 @@ usersRouter.post('/own/changepass', async (request, response) => {
         return response.status(401).json({
             error: 'invalid password',
             loggedIn: true,
+            noRedirect: true,
+            errors: { curPassword: 'wrong_password' },
         });
     }
 
@@ -565,6 +611,11 @@ usersRouter.post('/own/changepass', async (request, response) => {
         });
     }
 
+    sendEmailById('password-changed-email', {
+        to: user.email,
+        username: user.username,
+    }, request);
+
     response.json(savedUser);
 });
 
@@ -582,9 +633,10 @@ usersRouter.post('/newpassrequest', async (request, response) => {
     }
 
     const body = request.body;
-    const email = body.email;
+    const email = body.email.trim();
 
-    const user = await User.findOne({ email: email.trim() });
+    let user = await User.findOne({ email: email });
+    if(!user) user = await User.findOne({ 'security.verifyEmail.oldEmail': email });
     if(user) {
         // Check if email has been already sent
         const coolDownTime = 6000; // 10 minutes in ms
@@ -615,7 +667,7 @@ usersRouter.post('/newpassrequest', async (request, response) => {
 
         // Send email here
         sendEmailById('new-pass-link-email', {
-            to: savedUser.email,
+            to: email,
             username: savedUser.username,
             newPassWTokenUrl: CONFIG.UI.baseUrl + CONFIG.UI.basePath + '/u/newpass/' + newToken,
             linkLife,
@@ -643,7 +695,7 @@ usersRouter.post('/newpass', async (request, response) => {
     const timeNow = (new Date()).getTime();
     let user = await User.findOne({ 'security.newPassLink.token': body.token });
     let expires = 0;
-    if(!user.security.newPassLink || !user.security.newPassLink.expires) {
+    if(!user || !user.security.newPassLink || !user.security.newPassLink.expires) {
         user =  null;
     } else {
         expires = new Date(user.security.newPassLink.expires).getTime();
@@ -678,7 +730,133 @@ usersRouter.post('/newpass', async (request, response) => {
         });
     }
 
+    sendEmailById('password-changed-email', {
+        to: user.email,
+        username: user.username,
+    }, request);
+
     return response.json({ passwordUpdated: true });
 });
+
+// Verify user account with token
+usersRouter.get('/verify/:token', async (request, response) => { // TODO: update api documentation
+    const formId = verifyAccountWToken.formId;
+    const error = await getAndValidateForm(formId, 'GET', request);
+    if(error) {
+        return response.status(error.code).json(error.obj);
+    }
+
+    const token = request.params.token;
+    const user = await User.findOne({ 'security.verifyEmail.token': token });
+    if(!user) {
+        return response.status(401).json({
+            msg: 'Token invalid or expired.',
+            tokenError: true,
+        });
+    }
+    
+    const verifyEmail = {
+        token: null,
+        oldEmail: null,
+        verified: true,
+    };
+    const updatedUser = {
+        $set: { 'security.verifyEmail': verifyEmail }
+    };
+    const savedUser = await User.findByIdAndUpdate(user._id, updatedUser, { new: true });
+    if(!savedUser) {
+        logger.error('Could not update user\'s account verification status. User was not found (id: ' + user._id + ').');
+        return response.status(404).json({
+            msg: 'User to update was not found.',
+            userNotFoundError: true,
+        });
+    }
+
+    return response.json({
+        verified: true,
+        username: user.username,
+    });
+});
+
+// Send a new E-mail verification link
+usersRouter.post('/newemailverification', async (request, response) => { // TODO: update api documentation
+    const formId = emailVerificationFormData.formId;
+    const error = await getAndValidateForm(formId, 'GET', request);
+    if(error) {
+        return response.status(error.code).json(error.obj);
+    }
+
+    const user = await User.findById(request.session._id);
+    if(!user) {
+        logger.error(`Could not find a user by id to send verification to (user id: ${request.session._id}).`);
+        return response.status(404).json({
+            msg: 'User not found',
+            userNotFoundError: true,
+        });
+    }
+
+    const useVerification = await getSetting(request, 'use-email-verification', true);
+    if(useVerification && user.security && user.security.verifyEmail && !user.security.verifyEmail.verified) {
+        const verificationSent = await _sendVerificationEmail(request, response, user);
+        if(!verificationSent) return;
+    } else {
+        logger.error(`Trying to send a new verification, but it is prohibited (user id: ${request.session._id}, useVerification: ${useVerification})`);
+        return response.status(401).json({
+            msg: 'Unauthorised',
+            unauthorised: true,
+        });
+    }
+
+    return response.json({ newVerificationSent: true });
+});
+
+const _sendVerificationEmail = async (request, response, user) => {
+    const newEmailToken = createRandomString(64, true); // Maybe improve this by checking for token collision
+    const verifyEmail = { 'security.verifyEmail': {
+        token: newEmailToken,
+        oldEmail: user.security.verifyEmail.oldEmail,
+        verified: false,
+    }};
+    const savedUser = await User.findByIdAndUpdate(user._id, verifyEmail, { new: true });
+    if(!savedUser) {
+        logger.error('Could not update user\'s own profile. User was not found (id: ' + user._id + ').');
+        response.status(404).json({
+            msg: 'User to update was not found. It has propably been deleted by another user.',
+            userNotFoundError: true,
+        });
+        return false;
+    }
+    sendEmailById('verify-account-email', {
+        to: user.email,
+        username: user.username,
+        verifyEmailTokenUrl: CONFIG.UI.baseUrl + CONFIG.UI.basePath + '/u/verify/' + newEmailToken,
+    }, request);
+    return true;
+};
+
+const _createOldEmail = async (request, user, newEmail) => {
+    let verifyEmail = {}, newEmailToken;
+    const useVerification = await getSetting(request, 'use-email-verification', true);
+    const emailSending = await getSetting(request, 'email-sending', true, true);
+    if(emailSending && useVerification && newEmail.trim() !== user.email) {
+        newEmailToken = createRandomString(64, true); // Maybe improve this by checking for token collision
+        let oldEmail = user.security.verifyEmail && user.security.verifyEmail.verified
+            ? user.email
+            : null;
+        if(!oldEmail) {
+            oldEmail = user.security.verifyEmail && user.security.verifyEmail.oldEmail
+                ? user.security.verifyEmail.oldEmail
+                : null;
+        }
+        verifyEmail = { 'security.verifyEmail': {
+            token: newEmailToken,
+            oldEmail,
+            verified: false,
+        }};
+    } else if(!emailSending || !useVerification) {
+        verifyEmail = { 'security.verifyEmail': {} };
+    }
+    return verifyEmail;
+};
 
 module.exports = usersRouter;

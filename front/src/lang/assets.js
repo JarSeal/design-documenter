@@ -711,7 +711,7 @@ export const assetsObj = {
         fi: 'Käytä käyttäjien omia julkisuustasoja',
     },
     use_users_exposure_levels_desc: {
-        en: 'If users cannot set their own exposure levels, the users\' own exposure levels can still be used if this setting is on. Admins can set these. Does not have any affect is users can set their own exposure levels.',
+        en: 'If users cannot set their own exposure levels, the users\' own exposure levels can still be used if this setting is on. Admins can set these. This setting does not have any affect if users can set their own exposure levels.',
         fi: 'Jos käyttäjät eivät saa asettaa omia julkisuustasojaan, käyttäjien omia julkisuustasoja voidaan kuitenkin käyttää, jos tämä asetus on päällä. Adminit voivat asettaa näitä. Tällä asetuksella ei ole mitään vaikutusta, jos käyttäjät voivat asettaa omat julkisuustasonsa.',
     },
     exposure: {
@@ -737,6 +737,10 @@ export const assetsObj = {
     current_password: {
         en: 'Current password',
         fi: 'Nykyinen salasana',
+    },
+    current_password_again: {
+        en: 'Current password again',
+        fi: 'Nykyinen salasana uudestaan',
     },
     new_password: {
         en: 'New password',
@@ -785,5 +789,97 @@ export const assetsObj = {
     password_has_been_changed: {
         en: 'Password has been changed.',
         fi: 'Salasana on vaihdettu.',
+    },
+    email_sending: {
+        en: 'E-mail sending',
+        fi: 'Sähköpostin lähetys',
+    },
+    email_sending_desc: {
+        en: 'Whether the system can send E-mails for new users, password renewals, etc. The system will still act as if the E-mail had been sent, so no warning / error will be displayed when this is turned off.',
+        fi: 'Lähettääkö järjestelmä ollenkaan sähköposteja uusille käyttäjille, salasanan uusimiseen jne. Järjestelmä käyttäytyy kuin se lähettäisi sähköpostia, joten mitään varoitusta / virheviestiä ei näytetä jos tämä asetus on pois päältä.',
+    },
+    email_host: {
+        en: 'E-mail host',
+        fi: 'Sähköpostin host',
+    },
+    email_host_desc: {
+        en: 'The E-mail service\'s host address. For example: \'smtp-mail.domain.com\'. If no host is provided (save as empty), Beacon will try to use the EMAIL_HOST environment variable.',
+        fi: 'Sähköpostipalvelun host-osoite. Esimerkiksi: \'smtp-mail.domain.com\'. Jos host-osoitetta ei määritellä (tallenna tyhjänä), Beacon yrittää käyttää EMAIL_HOST -nimistä ympäristö-muuttujaa.',
+    },
+    email_username: {
+        en: 'E-mail username',
+        fi: 'Sähköpostin käyttäjänimi',
+    },
+    email_username_desc: {
+        en: 'The E-mail service\'s username. If no username is provided (save as empty), Beacon will try to use the EMAIL_USER environment variable.',
+        fi: 'Sähköpostipalvelun käyttäjänimi. Jos käyttäjänimeä ei määritellä (tallenna tyhjänä), Beacon yrittää käyttää EMAIL_USER -nimistä ympäristö-muuttujaa.',
+    },
+    email_password: {
+        en: 'E-mail password',
+        fi: 'Sähköpostin salasana',
+    },
+    email_password_desc: {
+        en: 'The E-mail service\'s password. If no password is provided (save as empty), Beacon will try to use the EMAIL_PASS environment variable.',
+        fi: 'Sähköpostipalvelun salasana. Jos salasanaa ei määritellä (tallenna tyhjänä), Beacon yrittää käyttää EMAIL_PASS -nimistä ympäristö-muuttujaa.',
+    },
+    use_email_verification: {
+        en: 'Use E-mail verification',
+        fi: 'Käytä sähköposti-vahvistusta',
+    },
+    use_email_verification_desc: {
+        en: 'Whether the users should verify their new E-mail addresses or not. If turned on, a verification E-mail is sent to the user when the account is registered and when the E-mail is changed. Also, users can request a new verification E-mail (if unverified) from verification notifications (profile view and after login).',
+        fi: 'Täytyykö käyttäjien vahvistaa sähköpostiosoitteensa? Jos asetus on päällä, käyttäjälle lähetetään vahvistus-sähköpostiviesti kun tili luodaan ja kun sähköpostiosoite vaihdetaan. Käyttäjät voivat myös tilata uuden vahvistus-sähköpostin (jos vahvistamaton) vahvistus-notifikaatioista (profiili-näkymä ja kirjautumisen jälkeen).',
+    },
+    verified: {
+        en: 'Verified',
+        fi: 'Vahvistettu',
+    },
+    unverified: {
+        en: 'Unverified',
+        fi: 'Vahvistamaton',
+    },
+    new_verification_link: {
+        en: 'New verification link',
+        fi: 'Uusi vahvistusviesti',
+    },
+    send_new_email_verification_link: {
+        en: 'Send a new E-mail verification link',
+        fi: 'Lähetä uusi sähköpostin vahvistuslinkki',
+    },
+    send: {
+        en: 'Send',
+        fi: 'Lähetä',
+    },
+    verify_account: {
+        en: 'Verify account',
+        fi: 'Vahvista tili',
+    },
+    current_email_in_use_until_new_verified: {
+        en: 'Current E-mail in use until the new one has been verified',
+        fi: 'Nykyinen sähköposti, joka on käytössä kunnes uusi on vahvistettu',
+    },
+    token_not_valid_or_outdated: {
+        en: 'The token is not valid or it is outdated.',
+        fi: 'Linkki ei ole validi tai se on vanhentunut.',
+    },
+    thank_you_username: {
+        en: 'Thank you, $[0]',
+        fi: 'Kiitos, $[0]',
+    },
+    email_and_account_verified: {
+        en: 'Your E-mail and account has been verified.',
+        fi: 'Sähköpostiosoitteesi ja tilisi on nyt vahvistettu.',
+    },
+    new_verification_form_description: {
+        en: 'By clicking Send, you will be E-mailed a new verification link for your E-mail and account.',
+        fi: 'Painamalla Lähetä, saat uuden sähköpostin ja tilin vahvistus-linkin sähköpostiisi.',
+    },
+    verification_needed: {
+        en: 'Verification needed',
+        fi: 'Tilin vahvistus vaaditaan',
+    },
+    verification_needed_body: {
+        en: 'Your account needs to be verified before it can be used. Check your E-mail. You have received a verification E-mail. You can also request a new verification E-mail or change your E-mail address.',
+        fi: 'Vahvista tilisi ennen kuin voit käyttää sitä. Tarkista sähköpostisi. Olet saanut vahvistus-sähköpostiviestin. Voit myös pyytää uuden vahvistusviestin tai vaihtaa sähköpostiosoitteesi.',
     },
 };

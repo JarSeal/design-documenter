@@ -88,7 +88,7 @@ class Login extends Component {
                                 afterFormSentFn: () => {
                                     this.Dialog.unlock();
                                 },
-                                onErrorsFn: (ex, res) => {
+                                onErrorsFn: () => {
                                     this.Dialog.unlock();
                                 },
                                 formLoadedFn: () => { this.Dialog.onResize(); },
@@ -106,6 +106,7 @@ class Login extends Component {
             this.appState.set('user.username', response.data.username);
             this.appState.set('user.loggedIn', true);
             this.appState.set('user.userLevel', response.data.userLevel);
+            this.appState.set('user.verified', response.data.accountVerified);
             this.appState.set('serviceSettings', response.data.serviceSettings);
             if(response.data.rememberMe) {
                 this.ls.setItem('u', response.data.username);

@@ -15,6 +15,11 @@ npm run setup
 
 ## Development
 
+Full stack:
+```bash
+npm run dev
+```
+
 Frontend:
 ```bash
 npm run devFront

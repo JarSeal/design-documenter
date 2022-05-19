@@ -11,11 +11,9 @@ const adminSettingSchema = mongoose.Schema({
     },
     value: {
         type: String,
-        required: true,
     },
     defaultValue: {
         type: String,
-        required: true,
     },
     settingReadRight: {
         type: Number,
@@ -36,6 +34,9 @@ const adminSettingSchema = mongoose.Schema({
             date: Date,
         }
     ],
+    password: {
+        type: Boolean
+    },
 });
 
 adminSettingSchema.plugin(uniqueValidator);

@@ -1,3 +1,4 @@
+const User = require('../models/user');
 const ObjectId = require('mongoose').Types.ObjectId;
 const { getSettings } = require('./settingsService');
 
@@ -51,8 +52,16 @@ const createNewLoginLogsArray = async (oldLogs, newLog) => {
     return newLogs;
 };
 
+const checkIfEmailTaken = async (emailToCheck, userId) => {
+    const findEmail = await User.findOne({ email: emailToCheck.trim() });
+    const findOldEmail = await User.findOne({ 'security.verifyEmail.oldEmail': emailToCheck.trim() });
+    return (findEmail !== null && String(findEmail._id) !== userId) ||
+        (findOldEmail !== null && String(findOldEmail._id) !== userId);
+};
+
 module.exports = {
     isValidObjectId,
     createNewEditedArray,
     createNewLoginLogsArray,
+    checkIfEmailTaken,
 };

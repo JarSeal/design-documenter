@@ -40,7 +40,7 @@ class MyProfile extends Component {
         if(this.data.redirectToLogin) {
             this.Router.changeRoute('/logout?r=' + this.Router.getRoute(true));
             return;
-        };
+        }
         if(this.data.error) {
             this.addChildDraw({
                 id: 'error-getting-my-profile',
@@ -62,23 +62,65 @@ class MyProfile extends Component {
             { id: 'created', label: getText('created') },
             { id: 'edited', label: getText('last_edited') },
         ];
+        let createVerificationLink = false;
+        const useEmailVerification = this.appState.get('serviceSettings.useEmailVerification');
         for(let i=0; i<contentDefinition.length; i++) {
             const item = contentDefinition[i];
-            let value = null;
+            let value = null, exposureKey = item.id, verificationStatus = '', afterValue = null,
+                oldEmailFound = this.data.security && this.data.security.verifyEmail && this.data.security.verifyEmail.oldEmail,
+                isVerified = this.data.security && this.data.security.verifyEmail && this.data.security.verifyEmail.verified;
             if(item.id === 'created') {
                 value = createDate(this.data[item.id].date);
+                exposureKey = 'created_date';
             } else if(item.id === 'edited' && this.data[item.id][0]) {
                 const lastIndex = this.data[item.id].length - 1;
                 value = createDate(this.data[item.id][lastIndex].date);
+            } else if(item.id === 'email' && useEmailVerification) {
+                verificationStatus = isVerified
+                    ? `&nbsp;&nbsp;&nbsp;&nbsp;(${getText('verified')})`
+                    : `&nbsp;&nbsp;&nbsp;&nbsp;(${getText('unverified')}:
+                        <a id="newVerificationLink" class="link">
+                            ${getText('new_verification_link').toLowerCase()}
+                        </a>)`;
+                value = this.data.email;
+                afterValue = oldEmailFound
+                    ? `(${getText('current_email_in_use_until_new_verified')}: ${this.data.security.verifyEmail.oldEmail})`
+                    : null;
+                if(!isVerified) createVerificationLink = true;
             } else {
                 value = this.data[item.id];
             }
             this.addChildDraw({
                 id: 'user-data-' + item.id,
-                template: '<div class="user-data-item">' +
-                    `<span class="user-data-item__label">${item.label} <span class="user-data-item__label--exposure">${this._showExposure(item.id)}</span></span>` +
-                    `<div class="user-data-item__value">${value || '&nbsp;'}</div>` +
-                '</div>',
+                template: `<div class="user-data-item">
+                    <span class="user-data-item__label">
+                        ${item.label}
+                        <span class="user-data-item__label--smaller">
+                            ${this._showExposure(exposureKey)}${verificationStatus}
+                        </span>
+                    </span>
+                    <div class="user-data-item__value">${value || '&nbsp;'}</div>
+                    ${afterValue
+                    ? `<span class="user-data-item__label--smaller">${afterValue}</span>`
+                    : ''
+                    }
+                </div>`,
+            });
+        }
+
+        if(useEmailVerification && createVerificationLink) {
+            this.addListener({
+                id: 'new-email-veri-link-id',
+                type: 'click',
+                target: document.getElementById('newVerificationLink'),
+                fn: () => {
+                    this.dialogForms.createEmptyFormDialog({
+                        id: 'new-email-verification',
+                        title: getText('send_new_email_verification_link'),
+                        onErrorFn: () => {},
+                        cancelButton: true,
+                    });
+                },
             });
         }
     }
@@ -127,6 +169,13 @@ class MyProfile extends Component {
                         },
                         onErrorsFn: () => { this.Dialog.unlock(); },
                         formLoadedFn: () => { this.Dialog.onResize(); },
+                        extraButton: {
+                            label: getText('cancel'),
+                            clickFn: (e) => {
+                                e.preventDefault();
+                                this.Dialog.disappear();
+                            },
+                        },
                     },
                     title: getText('change_password'),
                 });
@@ -185,7 +234,7 @@ class MyProfile extends Component {
                             this.Dialog.disappear();
                             this.Router.changeRoute('/logout');
                         },
-                        onErrorsFn: (ex, res) => {
+                        onErrorsFn: () => {
                             this.Dialog.unlock();
                         },
                         formLoadedFn: () => { this.Dialog.onResize(); },
