@@ -93,6 +93,10 @@ const userSchema = mongoose.Schema({
             },
             verified: Boolean,
         },
+        twoFactor: {
+            expires: Date,
+            nextCode: Number,
+        },
     },
     exposure: {
         username: Number,
