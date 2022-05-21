@@ -887,8 +887,8 @@ export const assetsObj = {
         fi: 'Kaksivaiheinen tunnistautuminen (2FA)',
     },
     two_factor_authentication_desc: {
-        en: 'Enable 2-factor authentication either as always or as an option for user\'s to choose it.',
-        fi: 'Aseta kaksivaiheinen tunnistautuminen päälle koko ajaksi kaikille tai aseta se käyttäjien määriteltäväksi.',
+        en: 'Enable 2-factor authentication either as always or as an option for user\'s to choose it. 2FA requires E-mail sending and E-mail verification to be set on.',
+        fi: 'Aseta kaksivaiheinen tunnistautuminen päälle koko ajaksi kaikille tai aseta se käyttäjien määriteltäväksi. 2FA vaatii sähköpostien lähetyksen ja sähköpostivahvistuksen päällelaittamisen.',
     },
     disabled: {
         en: 'Disabled',
@@ -909,5 +909,13 @@ export const assetsObj = {
     two_factor_code_lifetime_desc: {
         en: 'This setting determines how long a 2-factor authentication code is valid for (in minutes).',
         fi: 'Tämä asetus määrittää kuinka kauan yksi kaksivaiheisen autentikaation koodi on voimassa (elinikä minuuteissa).',
+    },
+    security: {
+        en: 'Security',
+        fi: 'Tietoturva',
+    },
+    user_two_factor_authentication_desc: {
+        en: 'Enable 2-factor authentication for your user account. It enhances the security of your account. Your E-mail needs to be verified for 2FA to work.',
+        fi: 'Aseta kaksivaiheinen tunnistautuminen päälle tilillesi. Se parantaa tilisi tietoturvaa. Sähköpostiosoitteesi tulee olla vahvistettu, jotta 2FA toimii.',
     },
 };

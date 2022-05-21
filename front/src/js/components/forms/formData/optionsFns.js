@@ -29,23 +29,6 @@ const optionsFns = {
         }
         return options;
     },
-    twoFactorAdminSettingOptions: () => {
-        const options = [
-            {
-                value: 0,
-                labelId: 'disabled',
-            },
-            {
-                value: 1,
-                labelId: 'enabled_always',
-            },
-            {
-                value: 2,
-                labelId: 'users_can_choose',
-            },
-        ];
-        return options;
-    },
 };
 
 export default optionsFns;

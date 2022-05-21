@@ -203,11 +203,13 @@ const adminSettingsFormData = {
                         id: 'use-two-factor-authentication',
                         labelId: 'two_factor_authentication',
                         descriptionId: 'two_factor_authentication_desc',
-                        defaultValue: 0,
-                        settingType: 'integer',
-                        getOptionsFn: 'twoFactorAdminSettingOptions',
-                        minValue: 0,
-                        maxValue: 2,
+                        defaultValue: 'disabled',
+                        settingType: 'string',
+                        options: [
+                            { value: 'disabled', labelId: 'disabled' },
+                            { value: 'enabled_always', labelId: 'enabled_always' },
+                            { value: 'users_can_choose', labelId: 'users_can_choose' },
+                        ],
                     },
                     {
                         // 2-factor authentication code lifetime in minutes

@@ -24,8 +24,8 @@ const adminSettingsFormData = {
         submitFields: [ 'table-sorting-setting' ],
         fieldsets: [
             {
-                // FIELDSET
-                id: 'user-settings-login-fs',
+                // Tables
+                id: 'user-settings-tables-fs',
                 fieldsetTitleId: 'tables',
                 fields: [
                     {
@@ -41,6 +41,22 @@ const adminSettingsFormData = {
                             { value: 'session', labelId: 'save_for_this_session' },
                             { value: 'browser', labelId: 'save_for_this_browser' },
                         ],
+                    },
+                ],
+            },
+            {
+                // Security
+                id: 'user-settings-security-fs',
+                fieldsetTitleId: 'security',
+                fields: [
+                    {
+                        // 2-factor authentication
+                        type: 'checkbox',
+                        id: 'enable-user-2fa-setting',
+                        labelId: 'two_factor_authentication',
+                        descriptionId: 'user_two_factor_authentication_desc',
+                        defaultValue: false,
+                        settingType: 'boolean',
                     },
                 ],
             },
