@@ -882,4 +882,32 @@ export const assetsObj = {
         en: 'Your account needs to be verified before it can be used. Check your E-mail. You have received a verification E-mail. You can also request a new verification E-mail or change your E-mail address.',
         fi: 'Vahvista tilisi ennen kuin voit käyttää sitä. Tarkista sähköpostisi. Olet saanut vahvistus-sähköpostiviestin. Voit myös pyytää uuden vahvistusviestin tai vaihtaa sähköpostiosoitteesi.',
     },
+    two_factor_authentication: {
+        en: '2-factor authentication (2FA)',
+        fi: 'Kaksivaiheinen tunnistautuminen (2FA)',
+    },
+    two_factor_authentication_desc: {
+        en: 'Enable 2-factor authentication either as always or as an option for user\'s to choose it.',
+        fi: 'Aseta kaksivaiheinen tunnistautuminen päälle koko ajaksi kaikille tai aseta se käyttäjien määriteltäväksi.',
+    },
+    disabled: {
+        en: 'Disabled',
+        fi: 'Pois käytöstä',
+    },
+    enabled_always: {
+        en: 'Enabled always',
+        fi: 'Aina päällä',
+    },
+    users_can_choose: {
+        en: 'Users can choose',
+        fi: 'Käyttäjät voivat valita',
+    },
+    two_factor_code_lifetime: {
+        en: '2FA code lifetime',
+        fi: '2FA-koodin elinikä',
+    },
+    two_factor_code_lifetime_desc: {
+        en: 'This setting determines how long a 2-factor authentication code is valid for (in minutes).',
+        fi: 'Tämä asetus määrittää kuinka kauan yksi kaksivaiheisen autentikaation koodi on voimassa (elinikä minuuteissa).',
+    },
 };

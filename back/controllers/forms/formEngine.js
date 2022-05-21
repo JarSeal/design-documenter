@@ -69,6 +69,7 @@ const checkbox = (field, value) => {
 };
 
 const dropdown = (field, value) => {
+    console.log('VALIDATAIONFGJKGFJDK JF DJKF DK FSDK FKDS FKD fsa::::', field, value);
     if(field.required && String(value).trim() === '') return 'Required';
     // Validate that the value passed is one of the options
     if(field.options) {
@@ -83,7 +84,7 @@ const dropdown = (field, value) => {
             logger.log('A value was presented that is not one of the options for a dropdown. (+ value, field)', value, field);
             return 'Unknown value';
         }
-    } else if(field.minValue && field.maxValue) {
+    } else if((field.minValue || field.minValue === 0) && (field.maxValue || field.maxValue === 0)) {
         if(field.minValue > value || field.maxValue < value) {
             logger.log('Value is out of validation range for a dropdown. (+ value, field)', value, field);
             return 'Value is out of validation range.';

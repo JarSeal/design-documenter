@@ -26,6 +26,7 @@ const adminSettingsFormData = {
             'user-registration-level', 'user-level-required-to-register', 'max-login-logs', 'max-edited-logs',
             'users-can-set-exposure-levels', 'use-users-exposure-levels', 'forgot-password-feature', 'new-pass-link-lifetime',
             'email-sending', 'email-host', 'email-username', 'email-password', 'use-email-verification',
+            'use-two-factor-authentication', 'two-factor-code-lifetime',
         ],
         fieldsets: [
             {
@@ -195,6 +196,29 @@ const adminSettingsFormData = {
                         descriptionId: 'use_email_verification_desc',
                         defaultValue: true,
                         settingType: 'boolean',
+                    },
+                    {
+                        // 2-factor authentication
+                        type: 'dropdown',
+                        id: 'use-two-factor-authentication',
+                        labelId: 'two_factor_authentication',
+                        descriptionId: 'two_factor_authentication_desc',
+                        defaultValue: 0,
+                        settingType: 'integer',
+                        getOptionsFn: 'twoFactorAdminSettingOptions',
+                        minValue: 0,
+                        maxValue: 2,
+                    },
+                    {
+                        // 2-factor authentication code lifetime in minutes
+                        type: 'textinput',
+                        id: 'two-factor-code-lifetime',
+                        labelId: 'two_factor_code_lifetime',
+                        descriptionId: 'two_factor_code_lifetime_desc',
+                        defaultValue: 10,
+                        required: true,
+                        settingType: 'integer',
+                        regex: '[0-9]+$',
                     },
                 ],
             },
