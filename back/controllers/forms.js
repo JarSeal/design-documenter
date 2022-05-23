@@ -273,15 +273,25 @@ const _formatSpecialForms = async (request, form) => {
             const fields = fs[i].fields;
             for(let j=0; j<fields.length; j++) {
                 if(fields[j].enabledId) {
-                    if(enabledSettings[fields[j].enabledId] === 'disabled') {
+                    if (enabledSettings[fields[j].enabledId] === 'disabled' ||
+                        enabledSettings[fields[j].enabledId] === 'enabled_always'
+                    ) {
                         removeSettings.push(fields[j].id);
                     }
                 }
             }
         }
-        // TODO: REMOVE THE FIELDS MENTIONED IN removeSettings here:
-        
-        return form;
+        const newForm = {
+            ...form,
+            fieldsets: form.fieldsets.map((fs) => {
+                const fields = fs.fields.filter((field) => !removeSettings.includes(field.id));
+                return {
+                    ...fs,
+                    fields,
+                };
+            }).filter((fs) => fs.fields.length),
+        };
+        return newForm;
     }
     return form;
 };

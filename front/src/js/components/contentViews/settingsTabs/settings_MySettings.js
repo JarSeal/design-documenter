@@ -31,8 +31,6 @@ class MySettings extends Component {
     _loadMySettings = async () => {
         const formData = await this.formDataApi.getData();
         const settingsData = await this.settingsDataApi.getData();
-        console.log('FORMDATA', formData);
-        console.log('SETTINGSDATA', settingsData);
         if(formData.redirectToLogin || settingsData.redirectToLogin) {
             this.viewTitle.showSpinner(false);
             this.Router.changeRoute('/logout?r=' + this.Router.getRoute(true));
