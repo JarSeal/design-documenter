@@ -7,7 +7,7 @@ const AdminSetting = require('./../models/adminSetting');
 const UserSetting = require('./../models/userSetting');
 const { createNewEditedArray } = require('./../utils/helpers');
 const { getAndValidateForm } = require('./forms/formEngine');
-const { getPublicSettings, getEnabledSettingsData, getFilteredSettings } = require('../utils/settingsService');
+const { getPublicSettings, getEnabledSettingsData, getFilteredSettings, checkIfAdminSettingEnabled } = require('../utils/settingsService');
 
 
 // Get all user settings values
@@ -51,11 +51,8 @@ settingsRouter.put('/', async (request, response) => {
             msg: 'Bad request.',
             settingValueNotFoundError: true,
         });
-    } else if(enabledSettings[setting.enabledId] !== undefined &&
-        (enabledSettings[setting.enabledId] === 'disabled' ||
-        enabledSettings[setting.enabledId] === 'enabled_always')
-    ) {
-        logger.error(`Could not update user setting. Setting is either disabled or always enabled (${enabledSettings[setting.enabledId]}). (+ body)`, body);
+    } else if(!checkIfAdminSettingEnabled(enabledSettings[setting.enabledId], setting.id)) {
+        logger.error(`Could not update user setting. Setting is either disabled, always enabled (${enabledSettings[setting.enabledId]}), or email or verification is not enabled. (+ body)`, body);
         return response.status(401).json({
             msg: 'Unauthorised',
             unauthorised: true,

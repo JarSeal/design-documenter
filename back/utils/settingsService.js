@@ -181,12 +181,21 @@ const getEnabledSettingsData = async (request) => {
 const getFilteredSettings = (settings, enabledSettings) => {
     return settings.filter(s => {
         if(!s.enabledId) return true;
-        if (enabledSettings[s.enabledId] !== undefined &&
-            (enabledSettings[s.enabledId] === 'disabled' ||
-            enabledSettings[s.enabledId] === 'enabled_always')
-        ) return false;
-        return true;
+        return checkIfAdminSettingEnabled(enabledSettings[s.enabledId], s.id);
     });
+};
+
+const checkIfAdminSettingEnabled = (settingValue, settingId) => {
+    if(settingId === 'enable-user-2fa-setting') {
+        const emailSendingEnabled = all['email-sending'];
+        const emailVerificationEnabled = all['use-email-verification'];
+        if ((settingValue !== undefined &&
+            (settingValue === 'disabled' ||
+            settingValue === 'enabled_always')) ||
+            (!emailSendingEnabled || !emailVerificationEnabled)
+        ) return false;
+    }
+    return true;
 };
 
 module.exports = {
@@ -194,5 +203,6 @@ module.exports = {
     getSetting,
     getPublicSettings,
     getEnabledSettingsData,
-    getFilteredSettings
+    getFilteredSettings,
+    checkIfAdminSettingEnabled,
 };

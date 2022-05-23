@@ -6,7 +6,7 @@ const User = require('./../models/user');
 const AdminSetting = require('./../models/adminSetting');
 const UserSetting = require('./../models/userSetting');
 const { validatePrivileges } = require('./forms/formEngine');
-const { getSetting, getEnabledSettingsData, getFilteredSettings } = require('../utils/settingsService');
+const { getSetting, getEnabledSettingsData, getFilteredSettings, checkIfAdminSettingEnabled } = require('../utils/settingsService');
 const { isValidObjectId } = require('mongoose');
 
 // Get all forms
@@ -273,9 +273,7 @@ const _formatSpecialForms = async (request, form) => {
             const fields = fs[i].fields;
             for(let j=0; j<fields.length; j++) {
                 if(fields[j].enabledId) {
-                    if (enabledSettings[fields[j].enabledId] === 'disabled' ||
-                        enabledSettings[fields[j].enabledId] === 'enabled_always'
-                    ) {
+                    if (!checkIfAdminSettingEnabled(enabledSettings[fields[j].enabledId], fields[j].id)) {
                         removeSettings.push(fields[j].id);
                     }
                 }
