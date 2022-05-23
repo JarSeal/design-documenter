@@ -16,15 +16,14 @@ settingsRouter.get('/', async (request, response) => {
     const formId = userSettingsFormData.formId;
     const error = await getAndValidateForm(formId, 'GET', request);
     if(error) {
-        response.status(error.code).json(error.obj);
-        return;
+        return response.status(error.code).json(error.obj);
     }
     
     const result = await UserSetting.find({ userId: request.session._id });
     const enabledSettings = await getEnabledSettingsData(request);
-    const filteredResults = getFilteredSettings(result, enabledSettings);
+    const filteredResult = getFilteredSettings(result, enabledSettings);
 
-    response.json(filteredResults);
+    response.json(filteredResult);
 });
 
 
@@ -34,25 +33,33 @@ settingsRouter.put('/', async (request, response) => {
     const body = request.body;
     const error = await getAndValidateForm(body.id, 'PUT', request);
     if(error) {
-        response.status(error.code).json(error.obj);
-        return;
+        return response.status(error.code).json(error.obj);
     }
 
     const setting = await UserSetting.findById(body.mongoId);
+    const enabledSettings = await getEnabledSettingsData(request);
+
     if(!setting) {
         logger.error('Could not find user setting. Setting was not found (id: ' + body.mongoId + '). (+ body)', body);
-        response.status(404).json({
+        return response.status(404).json({
             msg: 'Setting was not found.',
             settingNotFoundError: true,
         });
-        return;
     } else if(body[setting.settingId] === null || body[setting.settingId] === undefined) {
         logger.error('Could not find value with key \'' + setting.settingId + '\' in the payload for editing a user setting. (+ body)', body);
-        response.status(400).json({
+        return response.status(400).json({
             msg: 'Bad request.',
             settingValueNotFoundError: true,
         });
-        return;
+    } else if(enabledSettings[setting.enabledId] !== undefined &&
+        (enabledSettings[setting.enabledId] === 'disabled' ||
+        enabledSettings[setting.enabledId] === 'enabled_always')
+    ) {
+        logger.error(`Could not update user setting. Setting is either disabled or always enabled (${enabledSettings[setting.enabledId]}). (+ body)`, body);
+        return response.status(401).json({
+            msg: 'Unauthorised',
+            unauthorised: true,
+        });
     }
 
     const updatedUserSetting = {
@@ -62,11 +69,10 @@ settingsRouter.put('/', async (request, response) => {
     const savedSetting = await UserSetting.findByIdAndUpdate(body.mongoId, updatedUserSetting, { new: true });
     if(!savedSetting) {
         logger.error('Could not find user setting after save. Setting was not found (id: ' + body.mongoId + '). (+ body)', body);
-        response.status(404).json({
+        return response.status(404).json({
             msg: 'Setting was not found.',
             settingNotFoundError: true,
         });
-        return;
     }
     logger.log(`Setting '${savedSetting.settingId}' was changed (user setting).`);
     const publicSettings = await getPublicSettings(request);
@@ -80,8 +86,7 @@ settingsRouter.get('/admin', async (request, response) => {
     const formId = adminSettingsFormData.formId;
     const error = await getAndValidateForm(formId, 'GET', request);
     if(error) {
-        response.status(error.code).json(error.obj);
-        return;
+        return response.status(error.code).json(error.obj);
     }
     
     const result = await AdminSetting.find({});
@@ -106,25 +111,22 @@ settingsRouter.put('/admin', async (request, response) => {
     const body = request.body;
     const error = await getAndValidateForm(body.id, 'PUT', request);
     if(error) {
-        response.status(error.code).json(error.obj);
-        return;
+        return response.status(error.code).json(error.obj);
     }
 
     const setting = await AdminSetting.findById(body.mongoId);
     if(!setting) {
         logger.error('Could not find admin setting. Setting was not found (id: ' + body.mongoId + '). (+ body)', body);
-        response.status(404).json({
+        return response.status(404).json({
             msg: 'Setting was not found.',
             settingNotFoundError: true,
         });
-        return;
     } else if(body[setting.settingId] === null || body[setting.settingId] === undefined) {
         logger.error('Could not find value with key \'' + setting.settingId + '\' in the payload for editing an admin setting. (+ body)', body);
-        response.status(400).json({
+        return response.status(400).json({
             msg: 'Bad request.',
             settingValueNotFoundError: true,
         });
-        return;
     }
 
     const edited = await createNewEditedArray(setting.edited, request.session._id);
@@ -142,11 +144,10 @@ settingsRouter.put('/admin', async (request, response) => {
     const savedSetting = await AdminSetting.findByIdAndUpdate(body.mongoId, updatedAdminSetting, { new: true });
     if(!savedSetting) {
         logger.error('Could not find admin setting after save. Setting was not found (id: ' + body.mongoId + '). (+ body)', body);
-        response.status(404).json({
+        return response.status(404).json({
             msg: 'Setting was not found.',
             settingNotFoundError: true,
         });
-        return;
     }
     logger.log(`Setting '${savedSetting.settingId}' was changed (admin setting).`);
     const publicSettings = await getPublicSettings(request);

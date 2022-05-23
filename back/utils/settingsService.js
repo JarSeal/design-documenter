@@ -179,9 +179,12 @@ const getEnabledSettingsData = async (request) => {
 };
 
 const getFilteredSettings = (settings, enabledSettings) => {
-    return settings.filter((r) => {
-        if(!r.enabledId) return true;
-        if(enabledSettings[r.enabledId] !== undefined && enabledSettings[r.enabledId] === 'disabled') return false;
+    return settings.filter(s => {
+        if(!s.enabledId) return true;
+        if (enabledSettings[s.enabledId] !== undefined &&
+            (enabledSettings[s.enabledId] === 'disabled' ||
+            enabledSettings[s.enabledId] === 'enabled_always')
+        ) return false;
         return true;
     });
 };

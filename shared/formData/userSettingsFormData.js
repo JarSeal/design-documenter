@@ -21,7 +21,7 @@ const adminSettingsFormData = {
             labelId: 'save',
             class: 'save-button',
         },
-        submitFields: [],
+        submitFields: ['table-sorting-setting', 'enable-user-2fa-setting'],
         fieldsets: [
             {
                 // Tables
