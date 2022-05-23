@@ -69,7 +69,6 @@ const checkbox = (field, value) => {
 };
 
 const dropdown = (field, value) => {
-    console.log('VALIDATAIONFGJKGFJDK JF DJKF DK FSDK FKDS FKD fsa::::', field, value);
     if(field.required && String(value).trim() === '') return 'Required';
     // Validate that the value passed is one of the options
     if(field.options) {

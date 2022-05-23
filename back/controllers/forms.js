@@ -6,7 +6,7 @@ const User = require('./../models/user');
 const AdminSetting = require('./../models/adminSetting');
 const UserSetting = require('./../models/userSetting');
 const { validatePrivileges } = require('./forms/formEngine');
-const { getSetting } = require('../utils/settingsService');
+const { getSetting, getEnabledSettingsData, getFilteredSettings } = require('../utils/settingsService');
 const { isValidObjectId } = require('mongoose');
 
 // Get all forms
@@ -38,10 +38,12 @@ formsRouter.get('/:id', async (request, response) => {
         return response.status(error.code).json(error.obj);
     }
     
-    const form = result.form;
+    let form = result.form;
     form.id = result.formId;
     form.api = result.path;
     form.method = result.method;
+
+    form = await _formatSpecialForms(request, form);
 
     if(splitId.length) {
         form.data = await getAdditionalData(formId, splitId[1], request, result);
@@ -195,7 +197,12 @@ const getAdditionalData = async (formId, dataId, request, formData) => {
             await getSetting(request, dataId, false, true); // Creates the setting
             setting = await UserSetting.findOne({ settingId: dataId, userId: request.session._id });
         }
-        if(!setting) {
+        
+        // Check if current setting is enabled
+        const enabledSettings = await getEnabledSettingsData(request);
+        const settingInArray = getFilteredSettings([setting], enabledSettings);
+        
+        if(!setting || !settingInArray.length) {
             return {
                 _error: { code: 404,
                     obj: {
@@ -205,9 +212,10 @@ const getAdditionalData = async (formId, dataId, request, formData) => {
                 },
             };
         }
+
         setting[setting.settingId] = setting.value;
         const settingValue = {};
-        settingValue[setting.settingId] = setting.value;
+        settingValue[setting.settingId] = setting.value;    
         return settingValue;
     } else if(formId === 'reset-password-w-token-form') {
         const isTheFeatureOn = getSetting(request, 'forgot-password-feature', true);
@@ -254,6 +262,28 @@ const getAdditionalData = async (formId, dataId, request, formData) => {
             },
         };
     }
+};
+
+const _formatSpecialForms = async (request, form) => {
+    if(form.id === 'user-settings-form') {
+        const enabledSettings = await getEnabledSettingsData(request);
+        const fs = form.fieldsets;
+        const removeSettings = [];
+        for(let i=0; i<fs.length; i++) {
+            const fields = fs[i].fields;
+            for(let j=0; j<fields.length; j++) {
+                if(fields[j].enabledId) {
+                    if(enabledSettings[fields[j].enabledId] === 'disabled') {
+                        removeSettings.push(fields[j].id);
+                    }
+                }
+            }
+        }
+        // TODO: REMOVE THE FIELDS MENTIONED IN removeSettings here:
+        
+        return form;
+    }
+    return form;
 };
 
 module.exports = formsRouter;

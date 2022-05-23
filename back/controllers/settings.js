@@ -7,7 +7,7 @@ const AdminSetting = require('./../models/adminSetting');
 const UserSetting = require('./../models/userSetting');
 const { createNewEditedArray } = require('./../utils/helpers');
 const { getAndValidateForm } = require('./forms/formEngine');
-const { getPublicSettings } = require('../utils/settingsService');
+const { getPublicSettings, getEnabledSettingsData, getFilteredSettings } = require('../utils/settingsService');
 
 
 // Get all user settings values
@@ -21,8 +21,10 @@ settingsRouter.get('/', async (request, response) => {
     }
     
     const result = await UserSetting.find({ userId: request.session._id });
+    const enabledSettings = await getEnabledSettingsData(request);
+    const filteredResults = getFilteredSettings(result, enabledSettings);
 
-    response.json(result);
+    response.json(filteredResults);
 });
 
 

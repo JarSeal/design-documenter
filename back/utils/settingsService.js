@@ -85,6 +85,7 @@ const getDefaultValue = async (setting, request) => {
                     value: field.defaultValue,
                     defaultValue: field.defaultValue,
                     type: field.settingType,
+                    enabledId: field.enabledId,
                 });
                 await newSetting.save();
                 return field.defaultValue;
@@ -97,12 +98,12 @@ const getDefaultValue = async (setting, request) => {
 const getValue = (setting) => {
     if(setting.type === 'integer') {
         return parseInt(setting.value);
-    } else if(setting.type === 'boolean') {
-        return setting.value === 'true' ? true : false;
-    } else {
-        // String by default
-        return setting.value;
     }
+    if(setting.type === 'boolean') {
+        return setting.value === 'true' ? true : false;
+    }
+    // String by default
+    return setting.value;
 };
 
 const getPublicSettings = async (request, noReload) => {
@@ -164,8 +165,31 @@ const publicSettingsRemapping = {
     },
 };
 
+// Get relevant admin settings that might prevent
+// users from setting some settings
+const getEnabledSettingsData = async (request) => {
+    const enabledSettings = {};
+    let value, key;
+
+    key = 'use-two-factor-authentication';
+    value = await getSetting(request, key, true);
+    enabledSettings[key] = value;
+
+    return enabledSettings;
+};
+
+const getFilteredSettings = (settings, enabledSettings) => {
+    return settings.filter((r) => {
+        if(!r.enabledId) return true;
+        if(enabledSettings[r.enabledId] !== undefined && enabledSettings[r.enabledId] === 'disabled') return false;
+        return true;
+    });
+};
+
 module.exports = {
     getSettings,
     getSetting,
     getPublicSettings,
+    getEnabledSettingsData,
+    getFilteredSettings
 };

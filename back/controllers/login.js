@@ -122,7 +122,11 @@ loginRouter.post('/', async (request, response) => {
                     token: null,
                     oldEmail: null,
                     verified: null,
-                }
+                },
+                twoFactor: {
+                    expires: null,
+                    nextCode: null,
+                },
             };
     }
     // Check here if the user is under cooldown period

@@ -21,7 +21,7 @@ const adminSettingsFormData = {
             labelId: 'save',
             class: 'save-button',
         },
-        submitFields: [ 'table-sorting-setting' ],
+        submitFields: [],
         fieldsets: [
             {
                 // Tables
@@ -54,6 +54,7 @@ const adminSettingsFormData = {
                         type: 'checkbox',
                         id: 'enable-user-2fa-setting',
                         labelId: 'two_factor_authentication',
+                        enabledId: 'use-two-factor-authentication',
                         descriptionId: 'user_two_factor_authentication_desc',
                         defaultValue: false,
                         settingType: 'boolean',

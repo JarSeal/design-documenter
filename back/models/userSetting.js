@@ -25,6 +25,7 @@ const userSettingSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    enabledId: String,
 });
 
 userSettingSchema.plugin(uniqueValidator);
