@@ -15,7 +15,7 @@ const reloadSettings = async (request) => {
     if(loggedIn) userLevel = request.session.userLevel;
     for(let i=0; i<adminSettings.length; i++) {
         if(userLevel >= adminSettings[i].settingReadRight) {
-            all[adminSettings[i].settingId] = getValue(adminSettings[i]);
+            all[adminSettings[i].settingId] = parseValue(adminSettings[i]);
         }
     }
     if(loggedIn) {
@@ -31,7 +31,7 @@ const reloadSettings = async (request) => {
                 if(!setting) {
                     all[field.id] = await getDefaultValue(field.id, request);
                 } else {
-                    all[field.id] = getValue(setting);
+                    all[field.id] = parseValue(setting);
                 }
             }
         }
@@ -59,14 +59,14 @@ const getSetting = async (request, id, admin, noReload) => {
         let userLevel = 0;
         if(loggedIn) userLevel = request.session.userLevel;
         if(userLevel >= setting.settingReadRight) all[id] = setting
-            ? getValue(setting)
+            ? parseValue(setting)
             : await getDefaultValue(setting, request);
     }
     let value = all[id];
     if(value === undefined) {
         let setting = await UserSetting.findOne({ settingId: id, userId: request.session._id });
         value = setting
-            ? getValue(setting)
+            ? parseValue(setting)
             : await getDefaultValue(id, request);
     }
     return value;
@@ -95,7 +95,7 @@ const getDefaultValue = async (setting, request) => {
     return null;
 };
 
-const getValue = (setting) => {
+const parseValue = (setting) => {
     if(setting.type === 'integer') {
         return parseInt(setting.value);
     }
@@ -201,6 +201,7 @@ const checkIfAdminSettingEnabled = (settingValue, settingId) => {
 module.exports = {
     getSettings,
     getSetting,
+    parseValue,
     getPublicSettings,
     getEnabledSettingsData,
     getFilteredSettings,

@@ -1,12 +1,15 @@
 const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
 const loginRouter = require('express').Router();
 const User = require('./../models/user');
 const Form = require('./../models/form');
+const UserSetting = require('../models/userSetting');
 const logger = require('./../utils/logger');
 const { createNewLoginLogsArray } = require('./../utils/helpers');
 const { checkAccess, checkIfLoggedIn } = require('../utils/checkAccess');
 const { createRandomString } = require('../../shared/parsers');
-const { getSetting, getSettings, getPublicSettings } = require('../utils/settingsService');
+const { getSetting, getSettings, getPublicSettings, parseValue } = require('../utils/settingsService');
+const { sendEmailById } = require('../utils/emailService');
 
 loginRouter.post('/access', async (request, response) => {
 
@@ -102,134 +105,39 @@ loginRouter.post('/', async (request, response) => {
 
     // Check user
     const user = await User.findOne({ username: body.username });
-    const timeNow = new Date();
-    let userSecurity;
-    if(user) {
-        userSecurity = user.security
-            ? user.security
-            : {
-                loginAttempts: 0,
-                coolDown: false,
-                coolDownStarted: null,
-                lastLogins: [],
-                lastAttempts: [],
-                newPassLink: {
-                    token: null,
-                    sent: null,
-                    expires: null,
-                },
-                verifyEmail: {
-                    token: null,
-                    oldEmail: null,
-                    verified: null,
-                },
-                twoFactor: {
-                    expires: null,
-                    nextCode: null,
-                },
-            };
-    }
-    // Check here if the user is under cooldown period
-    if(userSecurity && userSecurity.coolDown && userSecurity.coolDownStarted) {
-        const cooldownTime = await getSetting(request, 'login-cooldown-time', true);
-        const coolDownEnds = new Date(new Date(userSecurity.coolDownStarted).getTime() + cooldownTime * 60000);
-        if(coolDownEnds < timeNow) {
-            // Cooldown has ended, clear attempts
-            userSecurity.loginAttempts = 0;
-            userSecurity.coolDown = false;
-            userSecurity.coolDownStarted = null;
-            userSecurity.lastAttempts = [];
-            const savedUser = await User.findByIdAndUpdate(user._id, { security: userSecurity }, { new: true });
-            if(!savedUser) {
-                logger.log('Could not clear user attempts after cooldown. User was not found (id: ' + user._id + ').');
-            }
-        } else {
-            // User is in cooldown period, no logging in allowed
-            return response.status(403).json({
-                error: 'user must wait a cooldown period before trying again',
-                cooldownTime: cooldownTime,
-                loggedIn: false,
-            });
-        }
-    }
-
-    const passwordCorrect = user === null
-        ? false
-        : await bcrypt.compare(body.password, user.passwordHash);
-    const browserId = body.browserId;
-
-    if(!(user && passwordCorrect && browserId && browserId.length === 32)) {
-        if(user) {
-            const maxLoginAttempts = await getSetting(request, 'max-login-attempts', true);
-            userSecurity.loginAttempts = userSecurity.loginAttempts + 1 || 1;
-            if(userSecurity.loginAttempts >= maxLoginAttempts) {
-                userSecurity.coolDown = true;
-                userSecurity.coolDownStarted = new Date();
-                logger.log('User set to cooldown period (id: ' + user._id + ').');
-            } else {
-                userSecurity.coolDown = false;
-                userSecurity.coolDownStarted = null;
-            }
-            
-            userSecurity.lastAttempts = userSecurity.lastAttempts || [];
-            userSecurity.lastAttempts.push({
-                date: new Date()
-            });
-
-            const savedUser = await User.findByIdAndUpdate(user._id, { security: userSecurity }, { new: true });
-            if(!savedUser) {
-                logger.log('Could not update user security data. User was not found (id: ' + user._id + ').');
-            }
-        }
-
-        return response.status(401).json({
-            error: 'invalid username and/or password',
-            loggedIn: false,
-        });
-    }
+    const userSecurity = _getUserSecurity(user);
 
     // Check form
-    const form = await Form.findOne({ formId: body.id });
-    if(!form) {
-        logger.error(`Could not find login form '${body.id}'.`);
-        return response.status(500).json({
-            error: 'form missing or invalid',
-            loggedIn: false,
-        });
-    } else {
-        if(form.editorOptions && form.editorOptions.loginAccessLevel
-            && user.userLevel < form.editorOptions.loginAccessLevel.value) {
-            logger.log(`User level is too small to log in from '${body.id}'. Current requirement is '${form.editorOptions.loginAccessLevel.value}' while the user has '${user.userLevel}'.`, user._id);
-            return response.status(401).json({
-                error: 'invalid username and/or password',
-                loggedIn: false,
-            });
-        }
+    const isFormInvalid = await _checkForm(user, body);
+    if(isFormInvalid) {
+        return response.status(isFormInvalid.statusCode).json(isFormInvalid.sendObj);
     }
 
-    // Clear expired newPassLink token and date
-    if(userSecurity.newPassLink && userSecurity.newPassLink.token && userSecurity.newPassLink.expires) {
-        const timeNow = (new Date()).getTime();
-        let expires = userSecurity.newPassLink.expires;
-        if(expires < timeNow) {
-            userSecurity.newPassLink.token = null;
-            userSecurity.newPassLink.expires = null;
-            userSecurity.newPassLink.sent = null;
-        }
+    // Check here if the user is under cooldown period
+    const isUnderCooldown = await _userUnderCooldown(user, request);
+    if(isUnderCooldown) {
+        return response.status(isUnderCooldown.statusCode).json(isUnderCooldown.sendObj);
     }
 
-    // Clear attempts
-    userSecurity.loginAttempts = 0;
-    userSecurity.coolDown = false;
-    userSecurity.coolDownStarted = null;
-    userSecurity.lastAttempts = [];
-    userSecurity.lastLogins = await createNewLoginLogsArray(userSecurity.lastLogins || [], {
-        date: new Date(),
-        browserId: body.browserId,
-    });
-    const savedUser = await User.findByIdAndUpdate(user._id, { security: userSecurity }, { new: true });
-    if(!savedUser) {
-        logger.log('Could not clear user attempts. User was not found (id: ' + user._id + ').');
+    // Check given password
+    const isPasswordWrong = await _checkGivenPassword(user, request);
+    if(isPasswordWrong) {
+        return response.status(isPasswordWrong.statusCode).json(isPasswordWrong.sendObj);
+    }
+
+    // Check 2FA
+    const is2FaEnabled = await _check2Fa(user, request);
+    if(is2FaEnabled) {
+        return response.status(is2FaEnabled.statusCode).json(is2FaEnabled.sendObj);
+    }
+
+    // After this part the login is successfull (without 2FA)
+    // ****************************************
+
+    // Clear newPassLink and attempts
+    const isNotCleared = await _clearNewPassLinkAndLoginAttempts(user, body);
+    if(isNotCleared) {
+        return response.status(isNotCleared.statusCode).json(isNotCleared.sendObj);
     }
 
     // Create a new session:
@@ -271,5 +179,235 @@ loginRouter.post('/', async (request, response) => {
             accountVerified,
         });
 });
+
+const _getUserSecurity = (user) => {
+    let userSecurity;
+    if(user) {
+        userSecurity = user.security ? user.security : {};
+    }
+    return {
+        ...{
+            loginAttempts: 0,
+            coolDown: false,
+            coolDownStarted: null,
+            lastLogins: [],
+            lastAttempts: [],
+            newPassLink: {
+                token: null,
+                sent: null,
+                expires: null,
+            },
+            verifyEmail: {
+                token: null,
+                oldEmail: null,
+                verified: null,
+            },
+            twoFactor: {
+                expires: null,
+                nextCode: null,
+            },
+        },
+        ...userSecurity,
+    };
+};
+
+const _userUnderCooldown = async (user, request) => {
+    const timeNow = new Date();
+    const userSecurity = _getUserSecurity(user);
+    if(userSecurity && userSecurity.coolDown && userSecurity.coolDownStarted) {
+        const cooldownTime = await getSetting(request, 'login-cooldown-time', true);
+        const coolDownEnds = new Date(new Date(userSecurity.coolDownStarted).getTime() + cooldownTime * 60000);
+        if(coolDownEnds < timeNow) {
+            // Cooldown has ended, clear attempts
+            userSecurity.loginAttempts = 0;
+            userSecurity.coolDown = false;
+            userSecurity.coolDownStarted = null;
+            userSecurity.lastAttempts = [];
+            const savedUser = await User.findByIdAndUpdate(user._id, { security: userSecurity }, { new: true });
+            if(!savedUser) {
+                logger.log('Could not clear user attempts after cooldown. User was not found (id: ' + user._id + ').');
+            }
+        } else {
+            // User is in cooldown period, no logging in allowed
+            return {
+                statusCode: 403,
+                sendObj: {
+                    error: 'user must wait a cooldown period before trying again',
+                    cooldownTime: cooldownTime,
+                    loggedIn: false,
+                },
+            };
+        }
+    }
+
+    // All good, no cooldown
+    return null;
+};
+
+const _invalidUsernameOrPasswordResponse = {
+    statusCode: 401,
+    sendObj: {
+        error: 'invalid username and/or password',
+        loggedIn: false,
+    },
+};
+
+const _getServerError = (loggedIn) => ({
+    statusCode: 500,
+    sendObj: {
+        error: 'internal server error',
+        loggedIn: loggedIn || false,
+    },
+});
+
+const _checkGivenPassword = async (user, request) => {
+    const userSecurity = _getUserSecurity(user);
+    const body = request.body;
+    const passwordCorrect = user === null
+        ? false
+        : await bcrypt.compare(body.password, user.passwordHash);
+    const browserId = body.browserId;
+
+    if(!(user && passwordCorrect && browserId && browserId.length === 32)) {
+        if(user) {
+            const maxLoginAttempts = await getSetting(request, 'max-login-attempts', true);
+            userSecurity.loginAttempts = userSecurity.loginAttempts + 1 || 1;
+            if(userSecurity.loginAttempts >= maxLoginAttempts) {
+                userSecurity.coolDown = true;
+                userSecurity.coolDownStarted = new Date();
+                logger.log('User set to cooldown period (id: ' + user._id + ').');
+            } else {
+                userSecurity.coolDown = false;
+                userSecurity.coolDownStarted = null;
+            }
+            
+            userSecurity.lastAttempts = userSecurity.lastAttempts || [];
+            userSecurity.lastAttempts.push({
+                date: new Date()
+            });
+
+            const savedUser = await User.findByIdAndUpdate(user._id, { security: userSecurity }, { new: true });
+            if(!savedUser) {
+                logger.log('Could not update user security data after password check. User was not found (id: ' + user._id + ').');
+            }
+        }
+
+        return _invalidUsernameOrPasswordResponse;
+    }
+
+    // Password correct
+    return null;
+};
+
+const _checkForm = async (user, body) => {
+    const form = await Form.findOne({ formId: body.id });
+    if(!form) {
+        logger.error(`Could not find login form '${body.id}'.`);
+        return {
+            statusCode: 500,
+            sendObj: {
+                error: 'form missing or invalid',
+                loggedIn: false,
+            },
+        };
+    } else {
+        if (form.editorOptions &&
+            form.editorOptions.loginAccessLevel &&
+            user.userLevel < form.editorOptions.loginAccessLevel.value
+        ) {
+            logger.log(`User level is too small to log in from '${body.id}'. Current requirement is '${form.editorOptions.loginAccessLevel.value}' while the user has '${user.userLevel}'.`, user._id);
+            return _invalidUsernameOrPasswordResponse;
+        }
+    }
+
+    // Form is OK
+    return null;
+};
+
+const _check2Fa = async (user, request) => {
+    const userSecurity = _getUserSecurity(user);
+    const settings = await getSettings(request);
+    if (!settings['email-sending'] ||
+        !settings['use-email-verification'] ||
+        settings['use-two-factor-authentication'] === 'disabled' ||
+        !userSecurity.verifyEmail.verified
+    ) {
+        // 2FA needs email-sending, use-email-verification,
+        // use-two-factor-authentication, and the user's
+        // email to be verified for this to work
+        return null;
+    }
+    if (settings['use-two-factor-authentication'] === 'users_can_choose') {
+        const user2FASetting = await await UserSetting.findOne({
+            settingId: 'enable-user-2fa-setting',
+            userId: mongoose.Types.ObjectId(user._id),
+        });
+        const user2FAValue = parseValue(user2FASetting);
+        // User has 2FA turned off
+        if(!user2FAValue) return null;
+    }
+
+    // Create and send a new 2FA code and respond
+    const timeNow = new Date();
+    const twoFactorLife = await getSetting(request, 'two-factor-code-lifetime', true);
+    const twoFactorCode = createRandomString(6, '0123456789QWERTY');
+    userSecurity.twoFactor = {
+        code: twoFactorCode,
+        expires: new Date(timeNow.getTime() + (twoFactorLife * 60000)),
+    };
+    const savedUser = await User.findByIdAndUpdate(user._id, { security: userSecurity }, { new: true });
+    if(!savedUser) {
+        logger.log('Could not update user security data for 2FA. User was not found (id: ' + user._id + ').');
+        return _getServerError();
+    }
+    const emailResult = await sendEmailById('two-factor-auth-email', {
+        to: savedUser.email,
+        twoFactorCode,
+        twoFactorLife,
+    }, request);
+    if(!emailResult.emailSent) {
+        return _getServerError();
+    }
+    return {
+        statusCode: 200,
+        sendObj: {
+            proceedToTwoFa: true,
+            loggedIn: false,
+        },
+    };
+};
+
+const _clearNewPassLinkAndLoginAttempts = async (user, body) => {
+    const userSecurity = _getUserSecurity(user);
+
+    // Clear expired newPassLink token and date
+    if(userSecurity.newPassLink && userSecurity.newPassLink.token && userSecurity.newPassLink.expires) {
+        const timeNow = (new Date()).getTime();
+        let expires = userSecurity.newPassLink.expires;
+        if(expires < timeNow) {
+            userSecurity.newPassLink.token = null;
+            userSecurity.newPassLink.expires = null;
+            userSecurity.newPassLink.sent = null;
+        }
+    }
+
+    // Clear attempts
+    userSecurity.loginAttempts = 0;
+    userSecurity.coolDown = false;
+    userSecurity.coolDownStarted = null;
+    userSecurity.lastAttempts = [];
+    userSecurity.lastLogins = await createNewLoginLogsArray(userSecurity.lastLogins || [], {
+        date: new Date(),
+        browserId: body.browserId,
+    });
+    const savedUser = await User.findByIdAndUpdate(user._id, { security: userSecurity }, { new: true });
+    if(!savedUser) {
+        logger.log('Could not clear user attempts. User was not found (id: ' + user._id + ').');
+        return _getServerError();
+    }
+
+    // All good
+    return null;
+};
 
 module.exports = loginRouter;

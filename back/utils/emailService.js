@@ -16,13 +16,13 @@ const sendEmailById = async (id, emailParams, request) => {
         logger.error('Could not setup Nodemailer transporter, because host, email, and/or pass is not set in the env variable nor in the admin settings.');
         return;
     } else {
-        host = settings['email-host'] && settings['email-host'].trim().length
+        host = !config.EMAIL_HOST && settings['email-host'] && settings['email-host'].trim().length
             ? settings['email-host']
             : config.EMAIL_HOST;
-        user = settings['email-username'] && settings['email-username'].trim().length
+        user = !config.EMAIL_USER && settings['email-username'] && settings['email-username'].trim().length
             ? settings['email-username']
             : config.EMAIL_USER;
-        pass = settings['email-password'] && settings['email-password'].trim().length
+        pass = !config.EMAIL_PASS && settings['email-password'] && settings['email-password'].trim().length
             ? settings['email-password']
             : config.EMAIL_PASS;
         if(settings['email-password'] && settings['email-password'].trim().length) {
@@ -57,12 +57,22 @@ const sendEmailById = async (id, emailParams, request) => {
             error: {
                 msg: 'emailParams.to missing',
                 toAddressMissing: true,
-            }
+            },
         };
     }
 
     // Get the email from mongo here
     const template = await Email.findOne({ emailId: id });
+    if(!template) {
+        logger.error('Email template not found. (+ emailId)', id);
+        return {
+            emailSent: false,
+            error: {
+                msg: 'Email template not found',
+                templateNotFound: true,
+            },
+        };
+    }
 
     // Placeholder replacing happens here (placeholder: $[variableName] ):
     // The variables that match the emailParams will be replaced with the value

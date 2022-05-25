@@ -13,11 +13,17 @@ const urlParamRoute = (route, recover) => {
     return route.replace(/**/g, '/');
 };
 
-const createRandomString = (length, simple) => {
-    let result = '';
-    const charactersSimple = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersComplex = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!$&%€';
-    const characters = simple ? charactersSimple : charactersComplex;
+const createRandomString = (length, charsOrPreset) => {
+    let result = '', characters = '';
+    if(typeof charsOrPreset === "boolean" || charsOrPreset === undefined) {
+        // charsOrPreset is a Boolean or undefined
+        const charactersSimple = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersComplex = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!$&%€';
+        characters = charsOrPreset ? charactersSimple : charactersComplex;
+    } else {
+        // charsOrPreset is a string of characters to be used
+        characters = charsOrPreset;
+    }
     const charactersLength = characters.length;
     for(let i=0; i<length; i++) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
