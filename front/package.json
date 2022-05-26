@@ -9,11 +9,12 @@
     "start": "cross-env NODE_ENV=development webpack serve --config config/webpack.dev.js",
     "build": "cross-env NODE_ENV=production webpack --config config/webpack.prod.js",
     "lint": "eslint . src config || true",
-    "prettify": "prettier --write 'src/**/*.js'"
+    "prettify": "prettier --write src/**/*.js"
   },
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "^3.3.0",
-    "axios": "^0.24.0"
+    "axios": "^0.24.0",
+    "prettier": "^2.6.2"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",
@@ -31,12 +32,13 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-import-resolver-webpack": "^0.13.1",
     "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-prettier": "4.0.0",
     "html-webpack-plugin": "^5.3.2",
     "mini-css-extract-plugin": "^2.4.2",
-    "node-sass": "^6.0.1",
     "postcss-loader": "^6.2.0",
     "postcss-preset-env": "^6.7.0",
     "raw-loader": "^4.0.2",
+    "sass": "^1.52.1",
     "sass-loader": "^12.2.0",
     "style-loader": "^3.3.0",
     "webpack": "^5.58.2",
@@ -47,5 +49,9 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:JarSeal/design-documenter"
+  },
+  "engines": {
+    "node": ">=16.13.2",
+    "yarn": ">=1.22.15"
   }
 }

@@ -4,8 +4,8 @@ const formData = require('./formData/formData');
 const emailData = require('./emailData/emailData');
 
 module.exports = {
-    CONFIG,
-    parsers,
-    formData,
-    emailData,
+  CONFIG,
+  parsers,
+  formData,
+  emailData,
 };

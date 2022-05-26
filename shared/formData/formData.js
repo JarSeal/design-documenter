@@ -1,4 +1,5 @@
 const loginBeaconFormData = require('./loginBeaconFormData');
+const loginTwoFABeaconFormData = require('./loginTwoFABeaconFormData');
 const newUserFormData = require('./newUserFormData');
 const newUniverseFormData = require('./newUniverseFormData');
 const readUsersFormData = require('./readUsersFormData');
@@ -18,24 +19,25 @@ const emailVerificationFormData = require('./emailVerificationFormData');
 const verifyAccountWToken = require('./verifyAccountWToken');
 
 const formData = [
-    loginBeaconFormData,
-    newUserFormData,
-    newUniverseFormData,
-    readUsersFormData,
-    deleteUsersFormData,
-    editUserFormData,
-    readOneUserFormData,
-    adminSettingsFormData,
-    userSettingsFormData,
-    readProfileFormData,
-    editProfileFormData,
-    editExposeProfileFormData,
-    deleteProfileFormData,
-    changePasswordFormData,
-    newPassRequestFormData,
-    newPassWTokenFormData,
-    emailVerificationFormData,
-    verifyAccountWToken,
+  loginBeaconFormData,
+  loginTwoFABeaconFormData,
+  newUserFormData,
+  newUniverseFormData,
+  readUsersFormData,
+  deleteUsersFormData,
+  editUserFormData,
+  readOneUserFormData,
+  adminSettingsFormData,
+  userSettingsFormData,
+  readProfileFormData,
+  editProfileFormData,
+  editExposeProfileFormData,
+  deleteProfileFormData,
+  changePasswordFormData,
+  newPassRequestFormData,
+  newPassWTokenFormData,
+  emailVerificationFormData,
+  verifyAccountWToken,
 ];
 
 module.exports = formData;

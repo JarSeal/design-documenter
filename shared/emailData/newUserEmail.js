@@ -1,11 +1,11 @@
 const linkButton = require('./emailComponents/linkButton');
 
 const newUserEmail = {
-    emailId: 'new-user-email',
-    fromName: 'Beacon JS',
-    defaultEmail: {
-        subject: 'New Account Registered',
-        text: `
+  emailId: 'new-user-email',
+  fromName: 'Beacon JS',
+  defaultEmail: {
+    subject: 'New Account Registered',
+    text: `
 Welcome
 -------
 
@@ -20,11 +20,11 @@ ${linkButton('Login', '$[mainBeaconUrl]')}
 Do not reply to this email, thank you.
 
 /Beacon JS`,
-    },
-    langs: {
-        fi: {
-            subject: 'Uusi tili rekisteröity',
-            text: `
+  },
+  langs: {
+    fi: {
+      subject: 'Uusi tili rekisteröity',
+      text: `
 Tervetuloa
 ----------
 
@@ -41,8 +41,8 @@ voit luoda [uuden salasanan]($[newPassRequestUrl]) itsellesi.
 Älkää vastatko tähän sähköpostiin, kiitos.
 
 /Beacon JS`,
-        },
     },
+  },
 };
 
 module.exports = newUserEmail;

@@ -1,9 +1,9 @@
 const deleteOwnAccountEmail = {
-    emailId: 'delete-own-account-email',
-    fromName: 'Beacon JS',
-    defaultEmail: {
-        subject: 'Account deleted',
-        text: `
+  emailId: 'delete-own-account-email',
+  fromName: 'Beacon JS',
+  defaultEmail: {
+    subject: 'Account deleted',
+    text: `
 Goodbye
 -------
 
@@ -15,11 +15,11 @@ You have deleted your own account. Thank you for being user with us!
 Do not reply to this email, thank you.
 
 /Beacon JS`,
-    },
-    langs: {
-        fi: {
-            subject: 'Tili poistettu',
-            text: `
+  },
+  langs: {
+    fi: {
+      subject: 'Tili poistettu',
+      text: `
 Näkemiin
 --------
 
@@ -31,8 +31,8 @@ Olet poistanut oman tilisi. Kiitos kun olet ollut yksi käyttäjistämme!
 Älkää vastatko tähän sähköpostiin, kiitos.
 
 /Beacon JS`,
-        },
     },
+  },
 };
 
 module.exports = deleteOwnAccountEmail;
