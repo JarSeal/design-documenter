@@ -102,25 +102,35 @@ class Login extends Component {
     }
 
     _afterLogin = (response) => {
-        if(response && response.data && response.data.loggedIn) {
+        if(response?.data?.proceedToTwoFa) {
+            this.appState.set('user.username', response.data.username);
+            this.appState.set('user.loggedIn', false);
+            this._rememberMe(response);
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirect = urlParams.get('r');
+            this.Router.changeRoute('/login/two' + (redirect ? `?r=${redirect}` : ''));
+        } else if(response?.data?.loggedIn) {
             this.appState.set('user.username', response.data.username);
             this.appState.set('user.loggedIn', true);
             this.appState.set('user.userLevel', response.data.userLevel);
             this.appState.set('user.verified', response.data.accountVerified);
             this.appState.set('serviceSettings', response.data.serviceSettings);
-            if(response.data.rememberMe) {
-                this.ls.setItem('u', response.data.username);
-                this.ls.setItem('ut', (new Date()).getTime());
-            } else {
-                this.ls.removeItem('u');
-                this.ls.removeItem('ut');
-            }
-
+            this._rememberMe(response);
             let nextRoute = '/';
             const urlParams = new URLSearchParams(window.location.search);
             const redirect = urlParams.get('r');
             if(redirect && redirect.length) nextRoute = redirect;
             this.Router.changeRoute(nextRoute);
+        }
+    }
+
+    _rememberMe = (response) => {
+        if(response.data.rememberMe) {
+            this.ls.setItem('u', response.data.username);
+            this.ls.setItem('ut', (new Date()).getTime());
+        } else {
+            this.ls.removeItem('u');
+            this.ls.removeItem('ut');
         }
     }
 }

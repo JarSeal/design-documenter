@@ -918,4 +918,24 @@ export const assetsObj = {
         en: 'Enable 2-factor authentication for your user account. It enhances the security of your account. Your E-mail needs to be verified for 2FA to work.',
         fi: 'Aseta kaksivaiheinen tunnistautuminen päälle tilillesi. Se parantaa tilisi tietoturvaa. Sähköpostiosoitteesi tulee olla vahvistettu, jotta 2FA toimii.',
     },
+    route_title_twofa_login: {
+        en: 'Provide two-factor-authentication code',
+        fi: 'Anna kaksivaiheisen tunnistautumisen koodi',
+    },
+    code: {
+        en: 'Code',
+        fi: 'Koodi',
+    },
+    login_twofa_description: {
+        en: 'Check your E-mail. The 2FA code has been E-mailed to you.',
+        fi: 'Tarkista sähköpostisi. 2FA-koodi on lähetetty sinulle.',
+    },
+    login_twofa_error_empty: {
+        en: 'Please provide the 2FA code.',
+        fi: 'Syötä 2FA-koodi.',
+    },
+    login_twofa_error_wrong: {
+        en: 'The 2FA code is either incorrect or expired.',
+        fi: 'Annettu 2FA-koodi on joko väärä tai poistunut käytöstä.',
+    },
 };

@@ -2,6 +2,7 @@ import FourOFour from './components/contentViews/FourOFour';
 import FourOOne from './components/contentViews/FourOOne';
 import Landing from './components/contentViews/Landing';
 import Login from './components/contentViews/Login';
+import LoginTwoFA from './components/contentViews/LoginTwoFA';
 import Logout from './components/contentViews/Logout';
 import NewUser from './components/contentViews/NewUser';
 import NewPassRequest from './components/contentViews/NewPassRequest';
@@ -36,6 +37,12 @@ const _conf = {
             id: 'route-login',
             source: Login,
             titleId: 'route_title_login',
+        },
+        {
+            route: '/login/two',
+            id: 'route-twofa-login',
+            source: LoginTwoFA,
+            titleId: 'route_title_twofa_login',
         },
         {
             route: '/uni',

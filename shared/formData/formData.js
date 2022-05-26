@@ -1,4 +1,5 @@
 const loginBeaconFormData = require('./loginBeaconFormData');
+const loginTwoFABeaconFormData = require('./loginTwoFABeaconFormData');
 const newUserFormData = require('./newUserFormData');
 const newUniverseFormData = require('./newUniverseFormData');
 const readUsersFormData = require('./readUsersFormData');
@@ -19,6 +20,7 @@ const verifyAccountWToken = require('./verifyAccountWToken');
 
 const formData = [
     loginBeaconFormData,
+    loginTwoFABeaconFormData,
     newUserFormData,
     newUniverseFormData,
     readUsersFormData,

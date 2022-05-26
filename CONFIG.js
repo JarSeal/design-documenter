@@ -40,6 +40,12 @@ const ROUTE_ACCESS = [
         editorRightsLevel: 8,
     },
     {
+        path: '/login/two',
+        formId: 'route-twofa-login',
+        useRightsLevel: 0,
+        editorRightsLevel: 8,
+    },
+    {
         path: '/uni/:universeId',
         formId: 'route-universe',
         useRightsLevel: 2,

@@ -99,13 +99,15 @@ loginRouter.post('/access', async (request, response) => {
     return response.json(result);
 });
 
+// Login, first phase if 2FA is enabled.
+// If 2FA is not disabled, then this is
+// the only route for Beacon login.
 loginRouter.post('/', async (request, response) => {
 
     const body = request.body;
 
-    // Check user
+    // Get user
     const user = await User.findOne({ username: body.username });
-    const userSecurity = _getUserSecurity(user);
 
     // Check form
     const isFormInvalid = await _checkForm(user, body);
@@ -114,7 +116,7 @@ loginRouter.post('/', async (request, response) => {
     }
 
     // Check here if the user is under cooldown period
-    const isUnderCooldown = await _userUnderCooldown(user, request);
+    const isUnderCooldown = await _userUnderCooldown(request, user);
     if(isUnderCooldown) {
         return response.status(isUnderCooldown.statusCode).json(isUnderCooldown.sendObj);
     }
@@ -126,7 +128,7 @@ loginRouter.post('/', async (request, response) => {
     }
 
     // Check 2FA
-    const is2FaEnabled = await _check2Fa(user, request);
+    const is2FaEnabled = await _check2Fa(user, request, body);
     if(is2FaEnabled) {
         return response.status(is2FaEnabled.statusCode).json(is2FaEnabled.sendObj);
     }
@@ -140,44 +142,45 @@ loginRouter.post('/', async (request, response) => {
         return response.status(isNotCleared.statusCode).json(isNotCleared.sendObj);
     }
 
-    // Create a new session:
-    request.session.username = user.username;
-    request.session.userLevel = user.userLevel;
-    request.session._id = user._id;
-    request.session.browserId = body.browserId;
-    request.session.loggedIn = true;
-    let sessionAge;
-    const settings = await getPublicSettings(request);
-    if(body['remember-me']) {
-        sessionAge = await getSetting(request, 'remember-me-session-age', true, true);
-        request.session.cookie.maxAge = sessionAge * 60 * 1000; // Milliseconds
-    } else {
-        sessionAge = await getSetting(request, 'session-age', true, true);
-        if(!sessionAge || sessionAge < 300) sessionAge = 300; // Minimum 5 minutes
-        request.session.cookie.maxAge = sessionAge * 60 * 1000; // Milliseconds
+    await _createSessionAndRespond(request, response, user, body);
+});
+
+// 2FA login for phase two to check the code.
+loginRouter.post('/two', async (request, response) => {
+
+    const body = request.body;
+
+    // Get user
+    const user = await User.findOne({ username: body.username });
+
+    // Check form
+    const isFormInvalid = await _checkForm(user, body);
+    if(isFormInvalid) {
+        return response.status(isFormInvalid.statusCode).json(isFormInvalid.sendObj);
     }
 
-    // Check email and account verification
-    let accountVerified = null;
-    request.session.verified = null;
-    if(settings.useEmailVerification && !userSecurity.verifyEmail.verified) {
-        accountVerified = false;
-        request.session.verified = false;
-    } else if(settings.useEmailVerification && userSecurity.verifyEmail.verified) {
-        accountVerified = true;
-        request.session.verified = true;
+    // Check here if the user is under cooldown period
+    const isUnderCooldown = await _userUnderCooldown(request, user);
+    if(isUnderCooldown) {
+        return response.status(isUnderCooldown.statusCode).json(isUnderCooldown.sendObj);
     }
 
-    response
-        .status(200)
-        .send({
-            loggedIn: true,
-            username: user.username,
-            userLevel: user.userLevel,
-            rememberMe: body['remember-me'],
-            serviceSettings: settings,
-            accountVerified,
-        });
+    // Check 2FA code
+    const isTwoFACodeInvalid = await _check2FACode(user, body);
+    if(isTwoFACodeInvalid) {
+        return response.status(isTwoFACodeInvalid.statusCode).json(isTwoFACodeInvalid.sendObj);
+    }
+
+    // After this part the 2FA login is successfull
+    // ********************************************
+
+    // Clear newPassLink and attempts
+    const isNotCleared = await _clearNewPassLinkAndLoginAttempts(user, body);
+    if(isNotCleared) {
+        return response.status(isNotCleared.statusCode).json(isNotCleared.sendObj);
+    }
+
+    await _createSessionAndRespond(request, response, user, body);
 });
 
 const _getUserSecurity = (user) => {
@@ -211,7 +214,7 @@ const _getUserSecurity = (user) => {
     };
 };
 
-const _userUnderCooldown = async (user, request) => {
+const _userUnderCooldown = async (request, user) => {
     const timeNow = new Date();
     const userSecurity = _getUserSecurity(user);
     if(userSecurity && userSecurity.coolDown && userSecurity.coolDownStarted) {
@@ -324,7 +327,7 @@ const _checkForm = async (user, body) => {
     return null;
 };
 
-const _check2Fa = async (user, request) => {
+const _check2Fa = async (user, request, body) => {
     const userSecurity = _getUserSecurity(user);
     const settings = await getSettings(request);
     if (!settings['email-sending'] ||
@@ -373,6 +376,8 @@ const _check2Fa = async (user, request) => {
         sendObj: {
             proceedToTwoFa: true,
             loggedIn: false,
+            username: savedUser.username,
+            rememberMe: body['remember-me'],
         },
     };
 };
@@ -407,6 +412,91 @@ const _clearNewPassLinkAndLoginAttempts = async (user, body) => {
     }
 
     // All good
+    return null;
+};
+
+const _createSessionAndRespond = async (request, response, user, body) => {
+    const userSecurity = _getUserSecurity(user);
+
+    // Create a new session:
+    request.session.username = user.username;
+    request.session.userLevel = user.userLevel;
+    request.session._id = user._id;
+    request.session.browserId = body.browserId;
+    request.session.loggedIn = true;
+    let sessionAge;
+    const settings = await getPublicSettings(request);
+    if(body['remember-me']) {
+        sessionAge = await getSetting(request, 'remember-me-session-age', true, true);
+        request.session.cookie.maxAge = sessionAge * 60 * 1000; // Milliseconds
+    } else {
+        sessionAge = await getSetting(request, 'session-age', true, true);
+        if(!sessionAge || sessionAge < 300) sessionAge = 300; // Minimum 5 minutes
+        request.session.cookie.maxAge = sessionAge * 60 * 1000; // Milliseconds
+    }
+
+    // Check email and account verification
+    let accountVerified = null;
+    request.session.verified = null;
+    if(settings.useEmailVerification && !userSecurity.verifyEmail.verified) {
+        accountVerified = false;
+        request.session.verified = false;
+    } else if(settings.useEmailVerification && userSecurity.verifyEmail.verified) {
+        accountVerified = true;
+        request.session.verified = true;
+    }
+
+    response
+        .status(200)
+        .send({
+            loggedIn: true,
+            username: user.username,
+            userLevel: user.userLevel,
+            rememberMe: body['remember-me'],
+            serviceSettings: settings,
+            accountVerified,
+        });
+};
+
+const _check2FACode = async (user, body) => {
+    const userSecurity = _getUserSecurity(user);
+    const userTwoFactor = userSecurity.twoFactor;
+    const code = body.twofacode;
+    const timestampNow = (new Date()).getTime();
+    const invalidCodeResponse = {
+        statusCode: 401,
+        sendObj: {
+            loggedIn: false,
+            error: 'invalid or expired code',
+        },
+    };
+
+    // Check validity of user data
+    if(!userSecurity || !userTwoFactor || !userTwoFactor.expires || !userTwoFactor.code) {
+        logger.log('Could not clear user attempts. User was not found (id: ' + user._id + ').');
+        return _getServerError();
+    }
+
+    // Check if code hasn't expired
+    if((new Date(userTwoFactor.expires)).getTime() < timestampNow) {
+        return invalidCodeResponse;
+    }
+
+    // Check if the code is correct
+    if(code !== userTwoFactor.code) {
+        return invalidCodeResponse;
+    }
+
+    // Clear two factor data
+    userSecurity.twoFactor.expires = null;
+    userSecurity.twoFactor.code = null;
+    const savedUser = await User.findByIdAndUpdate(user._id, { security: userSecurity }, { new: true });
+    if(!savedUser) {
+        logger.log('Could not clear user twoFactor data. User was not found (id: ' + user._id + ').');
+        return _getServerError();
+    }
+
+    // All good, proceed
     return null;
 };
 

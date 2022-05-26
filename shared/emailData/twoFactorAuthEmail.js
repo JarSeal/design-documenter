@@ -2,7 +2,7 @@ const twoFactorAuthEmail = {
     emailId: 'two-factor-auth-email',
     fromName: 'Beacon JS',
     defaultEmail: {
-        subject: '2FA Login Code',
+        subject: 'Login Code [$[twoFactorCode]]',
         text: `
 Welcome back!
 ---------------------------
