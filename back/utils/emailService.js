@@ -8,134 +8,143 @@ const { getSettings } = require('./settingsService');
 const confUI = require('../shared/').CONFIG.UI;
 
 const sendEmailById = async (id, emailParams, request) => {
-    const settings = await getSettings(request);
-    if(!settings['email-sending']) return;
+  const settings = await getSettings(request);
+  if (!settings['email-sending']) return;
 
-    let host, user, pass, from;
-    if((!config.EMAIL_HOST && !settings['email-host']) || (!config.EMAIL_USER && !settings['email-username']) || (!config.EMAIL_PASS && !settings['email-password'])) {
-        logger.error('Could not setup Nodemailer transporter, because host, email, and/or pass is not set in the env variable nor in the admin settings.');
-        return;
-    } else {
-        host = !config.EMAIL_HOST && settings['email-host'] && settings['email-host'].trim().length
-            ? settings['email-host']
-            : config.EMAIL_HOST;
-        user = !config.EMAIL_USER && settings['email-username'] && settings['email-username'].trim().length
-            ? settings['email-username']
-            : config.EMAIL_USER;
-        pass = !config.EMAIL_PASS && settings['email-password'] && settings['email-password'].trim().length
-            ? settings['email-password']
-            : config.EMAIL_PASS;
-        if(settings['email-password'] && settings['email-password'].trim().length) {
-            const bytes = CryptoJS.AES.decrypt(pass, process.env.SECRET);
-            pass = bytes.toString(CryptoJS.enc.Utf8);
-        }
-        from = user;
+  let host, user, pass, from;
+  if (
+    (!config.EMAIL_HOST && !settings['email-host']) ||
+    (!config.EMAIL_USER && !settings['email-username']) ||
+    (!config.EMAIL_PASS && !settings['email-password'])
+  ) {
+    logger.error(
+      'Could not setup Nodemailer transporter, because host, email, and/or pass is not set in the env variable nor in the admin settings.'
+    );
+    return;
+  } else {
+    host =
+      !config.EMAIL_HOST && settings['email-host'] && settings['email-host'].trim().length
+        ? settings['email-host']
+        : config.EMAIL_HOST;
+    user =
+      !config.EMAIL_USER && settings['email-username'] && settings['email-username'].trim().length
+        ? settings['email-username']
+        : config.EMAIL_USER;
+    pass =
+      !config.EMAIL_PASS && settings['email-password'] && settings['email-password'].trim().length
+        ? settings['email-password']
+        : config.EMAIL_PASS;
+    if (settings['email-password'] && settings['email-password'].trim().length) {
+      const bytes = CryptoJS.AES.decrypt(pass, process.env.SECRET);
+      pass = bytes.toString(CryptoJS.enc.Utf8);
     }
+    from = user;
+  }
 
-    const transporter = nodemailer.createTransport({
-        host,
-        auth: {
-            user,
-            pass,
-        },
-        port: 587, // port for secure SMTP
-        // secureConnection: false, // TLS requires secureConnection to be false
-        // tls: {
-        //     ciphers:'SSLv3',
-        //     rejectUnauthorized: false,
-        // },
-    });
+  const transporter = nodemailer.createTransport({
+    host,
+    auth: {
+      user,
+      pass,
+    },
+    port: 587, // port for secure SMTP
+    // secureConnection: false, // TLS requires secureConnection to be false
+    // tls: {
+    //     ciphers:'SSLv3',
+    //     rejectUnauthorized: false,
+    // },
+  });
 
-    const mainUrl = confUI.baseUrl + confUI.basePath;
-    emailParams.mainBeaconUrl = mainUrl;
-    emailParams.newPassRequestUrl = mainUrl + '/u/newpassrequest';
+  const mainUrl = confUI.baseUrl + confUI.basePath;
+  emailParams.mainBeaconUrl = mainUrl;
+  emailParams.newPassRequestUrl = mainUrl + '/u/newpassrequest';
 
-    if(!emailParams.to) {
-        logger.error('Email cannot be sent without a "to" address. (+ emailId)', id);
-        return {
-            emailSent: false,
-            error: {
-                msg: 'emailParams.to missing',
-                toAddressMissing: true,
-            },
-        };
-    }
-
-    // Get the email from mongo here
-    const template = await Email.findOne({ emailId: id });
-    if(!template) {
-        logger.error('Email template not found. (+ emailId)', id);
-        return {
-            emailSent: false,
-            error: {
-                msg: 'Email template not found',
-                templateNotFound: true,
-            },
-        };
-    }
-
-    // Placeholder replacing happens here (placeholder: $[variableName] ):
-    // The variables that match the emailParams will be replaced with the value
-    let subjectAndText = template.defaultEmail; // TODO: Do different languages here
-    let subject = subjectAndText.subject;
-    let text = subjectAndText.text;
-    const variables = extractVariables(text).concat(extractVariables(subject));
-    if(variables) {
-        for(let i=0; i<variables.length; i++) {
-            const v = variables[i];
-            const regex = new RegExp('\\$\\['+v+'\\]', 'g');
-            if(emailParams[v]) {
-                const replaceWith = emailParams[v];
-                subject = subject.replace(regex, replaceWith);
-                text = text.replace(regex, replaceWith);
-            }
-        }
-    }
-
-    const mailOptions = {
-        from,
-        to: emailParams.to,
-        subject,
-        text,
-        html: _wrapHtmlTemplate(marked.parse(text), template.fromName),
+  if (!emailParams.to) {
+    logger.error('Email cannot be sent without a "to" address. (+ emailId)', id);
+    return {
+      emailSent: false,
+      error: {
+        msg: 'emailParams.to missing',
+        toAddressMissing: true,
+      },
     };
+  }
 
-    try {
-        await transporter.sendMail(mailOptions);
-        logger.log(`Email with id "${id}" sent.`);
-        return {
-            emailSent: true,
-        };
-    } catch(ex) {
-        logger.error(`Could not send email (id: ${id}). (+ ex)`, ex);
-        return {
-            emailSent: false,
-            error: ex.error,
-        };
+  // Get the email from mongo here
+  const template = await Email.findOne({ emailId: id });
+  if (!template) {
+    logger.error('Email template not found. (+ emailId)', id);
+    return {
+      emailSent: false,
+      error: {
+        msg: 'Email template not found',
+        templateNotFound: true,
+      },
+    };
+  }
+
+  // Placeholder replacing happens here (placeholder: $[variableName] ):
+  // The variables that match the emailParams will be replaced with the value
+  let subjectAndText = template.defaultEmail; // TODO: Do different languages here
+  let subject = subjectAndText.subject;
+  let text = subjectAndText.text;
+  const variables = extractVariables(text).concat(extractVariables(subject));
+  if (variables) {
+    for (let i = 0; i < variables.length; i++) {
+      const v = variables[i];
+      const regex = new RegExp('\\$\\[' + v + '\\]', 'g');
+      if (emailParams[v]) {
+        const replaceWith = emailParams[v];
+        subject = subject.replace(regex, replaceWith);
+        text = text.replace(regex, replaceWith);
+      }
     }
+  }
+
+  const mailOptions = {
+    from,
+    to: emailParams.to,
+    subject,
+    text,
+    html: _wrapHtmlTemplate(marked.parse(text), template.fromName),
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    logger.log(`Email with id "${id}" sent.`);
+    return {
+      emailSent: true,
+    };
+  } catch (ex) {
+    logger.error(`Could not send email (id: ${id}). (+ ex)`, ex);
+    return {
+      emailSent: false,
+      error: ex.error,
+    };
+  }
 };
 
 const extractVariables = (text, startsWith, endsWith) => {
-    if(!startsWith) startsWith = '\\$\\[';
-    if(!endsWith) endsWith = '\\]';
-    const variables = [];
-    let releaseValveCounter = 0;
-    const _extractText = (strToParse) => {
-        releaseValveCounter++;
-        let foundVar = strToParse.match(startsWith+'(.*?)'+endsWith);
-        if(foundVar && foundVar.length > 1 && releaseValveCounter < 10000) {
-            foundVar = foundVar[1];
-            if(!variables.includes(foundVar)) variables.push(foundVar);
-            _extractText(strToParse.replace('$['+foundVar+']'));
-        }
-    };
-    _extractText(text);
-    return variables;
+  if (!startsWith) startsWith = '\\$\\[';
+  if (!endsWith) endsWith = '\\]';
+  const variables = [];
+  let releaseValveCounter = 0;
+  const _extractText = (strToParse) => {
+    releaseValveCounter++;
+    let foundVar = strToParse.match(startsWith + '(.*?)' + endsWith);
+    if (foundVar && foundVar.length > 1 && releaseValveCounter < 10000) {
+      foundVar = foundVar[1];
+      if (!variables.includes(foundVar)) variables.push(foundVar);
+      _extractText(strToParse.replace('$[' + foundVar + ']'));
+    }
+  };
+  _extractText(text);
+  return variables;
 };
 
 const _wrapHtmlTemplate = (content, fromName) => {
-    const bgColor = '#f7f7f7';
-    const html = `
+  const bgColor = '#f7f7f7';
+  const html = `
         <div style="margin:0;padding:0;" bgcolor="${bgColor}">
             <style type="text/css">
                 p, ol, ul, li, a, b, strong {
@@ -195,10 +204,10 @@ const _wrapHtmlTemplate = (content, fromName) => {
             </table>
         </div>
     `;
-    return html;
+  return html;
 };
 
 module.exports = {
-    sendEmailById,
-    extractVariables,
+  sendEmailById,
+  extractVariables,
 };

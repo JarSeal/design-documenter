@@ -7,8 +7,6 @@
     "camelcase": 1,
     "arrow-body-style": 1,
     "semi": [2, "always"],
-    "quotes": ["error", "single"],
-    "indent": ["error", 2],
     "prettier/prettier": ["error", { "endOfLine": "auto" }]
   },
   "env": {
@@ -16,7 +14,7 @@
     "browser": true,
     "es6": true
   },
-  "extends": ["eslint:recommended"],
+  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
