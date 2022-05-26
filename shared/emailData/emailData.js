@@ -6,12 +6,12 @@ const verifyAccountEmail = require('./verifyAccountEmail');
 const twoFactorAuthEmail = require('./twoFactorAuthEmail');
 
 const emailData = {
-    newUserEmail,
-    newPassLinkEmail,
-    deleteOwnAccountEmail,
-    passwordChangedEmail,
-    verifyAccountEmail,
-    twoFactorAuthEmail,
+  newUserEmail,
+  newPassLinkEmail,
+  deleteOwnAccountEmail,
+  passwordChangedEmail,
+  verifyAccountEmail,
+  twoFactorAuthEmail,
 };
 
 module.exports = emailData;

@@ -1,11 +1,11 @@
 const linkButton = require('./emailComponents/linkButton');
 
 const newPassLinkEmail = {
-    emailId: 'new-pass-link-email',
-    fromName: 'Beacon JS',
-    defaultEmail: {
-        subject: 'Reset Password Link',
-        text: `
+  emailId: 'new-pass-link-email',
+  fromName: 'Beacon JS',
+  defaultEmail: {
+    subject: 'Reset Password Link',
+    text: `
 Your Link is Ready, $[username]
 ---------------------------
 
@@ -20,8 +20,8 @@ If you did not request this, you can ignore this (only you have this message). T
 Do not reply to this email, thank you.
 
 /Beacon JS`,
-    },
-    langs: {},
+  },
+  langs: {},
 };
 
 module.exports = newPassLinkEmail;

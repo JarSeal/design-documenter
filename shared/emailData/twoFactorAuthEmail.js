@@ -1,9 +1,9 @@
 const twoFactorAuthEmail = {
-    emailId: 'two-factor-auth-email',
-    fromName: 'Beacon JS',
-    defaultEmail: {
-        subject: 'Login Code [$[twoFactorCode]]',
-        text: `
+  emailId: 'two-factor-auth-email',
+  fromName: 'Beacon JS',
+  defaultEmail: {
+    subject: 'Login Code [$[twoFactorCode]]',
+    text: `
 Welcome back!
 ---------------------------
 
@@ -22,8 +22,8 @@ If you are not trying to log in, you can ignore this (only you have this message
 Do not reply to this email, thank you.
 
 /Beacon JS`,
-    },
-    langs: {},
+  },
+  langs: {},
 };
 
 module.exports = twoFactorAuthEmail;

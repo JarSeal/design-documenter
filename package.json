@@ -2,16 +2,18 @@
   "name": "design-documenter",
   "version": "1.0.0",
   "scripts": {
-    "setup": "cd front && npm install && cd ../back && npm install && cd mongo && docker-compose up --no-start",
-    "setupFront": "cd front && npm install",
-    "setupBack": "cd back && npm install && cd mongo && docker-compose up --no-start",
+    "setup": "cd front && yarn install && cd ../back && yarn install && cd mongo && docker-compose up --no-start",
+    "setupFront": "cd front && yarn install",
+    "setupBack": "cd back && yarn install && cd mongo && docker-compose up --no-start",
     "startMongo": "cd back/mongo && docker-compose up -d",
     "stopMongo": "cd back/mongo && docker-compose down",
-    "dev": "concurrently --kill-others --names \"BACK,FRONT\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run devBack\" \"npm run devFront\"",
-    "devFront": "cd front && npm start",
-    "devBack": "cd back/mongo && docker-compose up -d && cd .. && npm run dev",
+    "dev": "concurrently --kill-others --names \"BACK,FRONT\" -c \"bgBlue.bold,bgMagenta.bold\" \"yarn run devBack\" \"npm run devFront\"",
+    "devFront": "cd front && yarn start",
+    "devBack": "cd back/mongo && docker-compose up -d && cd .. && yarn run dev",
     "devMongo": "docker exec -it beacondb mongo beacondb",
-    "lint": "cd front && npm run lint && cd ../back && npm run lint"
+    "lint": "cd front && yarn lint && cd ../back && yarn lint && eslint .",
+    "lint:shared": "eslint .",
+    "prettify": "prettier --write ./**/*.js"
   },
   "repository": {
     "type": "git",
@@ -23,10 +25,15 @@
     "url": "https://github.com/JarSeal/design-documenter/issues"
   },
   "homepage": "https://github.com/JarSeal/design-documenter#readme",
+  "dependencies": {
+    "prettier": "^2.6.2"
+  },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "concurrently": "^7.2.0",
-    "eslint": "^8.15.0"
+    "eslint": "^7.28.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "4.0.0"
   },
   "engines": {
     "node": ">=16.13.2",

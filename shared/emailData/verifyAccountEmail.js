@@ -1,11 +1,11 @@
 const linkButton = require('./emailComponents/linkButton');
 
 const verifyAccountEmail = {
-    emailId: 'verify-account-email',
-    fromName: 'Beacon JS',
-    defaultEmail: {
-        subject: 'Verify account email',
-        text: `
+  emailId: 'verify-account-email',
+  fromName: 'Beacon JS',
+  defaultEmail: {
+    subject: 'Verify account email',
+    text: `
 Almost there, $[username], please verify your E-mail
 ----------------------------------------------------
 
@@ -20,8 +20,8 @@ If you do not own this account, you can ignore this message.
 Do not reply to this email, thank you.
 
 /Beacon JS`,
-    },
-    langs: {},
+  },
+  langs: {},
 };
 
 module.exports = verifyAccountEmail;
