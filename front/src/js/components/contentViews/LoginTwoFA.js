@@ -10,7 +10,7 @@ class LoginTwoFA extends Component {
         this.appState = this.Router.commonData.appState;
         const username = this.appState.get('user.username');
         if(!username || this.appState.get('user.loggedIn')) {
-            this.Router.changeRoute('/');
+            this.Router.changeRoute('/', { replaceState: true });
         }
 
         this.viewTitle = this.addChild(new ViewTitle({
