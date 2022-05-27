@@ -1,11 +1,14 @@
-const CryptoJS = require('crypto-js');
-const nodemailer = require('nodemailer');
-const config = require('./config');
-const logger = require('./logger');
-const Email = require('../models/email');
-const marked = require('marked');
-const { getSettings } = require('./settingsService');
-const confUI = require('../shared/').CONFIG.UI;
+import CryptoJS from 'crypto-js';
+import nodemailer from 'nodemailer';
+import { marked } from 'marked';
+
+import config from './config.js';
+import logger from './logger.js';
+import Email from '../models/email.js';
+import { getSettings } from './settingsService.js';
+import CONFIG from '../shared/index.js';
+
+const confUI = CONFIG.UI;
 
 const sendEmailById = async (id, emailParams, request) => {
   const settings = await getSettings(request);
@@ -207,7 +210,4 @@ const _wrapHtmlTemplate = (content, fromName) => {
   return html;
 };
 
-module.exports = {
-  sendEmailById,
-  extractVariables,
-};
+export { sendEmailById, extractVariables };

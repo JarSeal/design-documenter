@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getLang, getText } from '../../helpers/lang';
-const shared = require('../../shared/index.js');
+import shared from '../../shared/index.js';
 import { Component, Logger, State } from '../../LIGHTER';
 import { _CONFIG } from '../../_CONFIG';
 import validationFns from './formData/validationFns';

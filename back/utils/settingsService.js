@@ -1,8 +1,8 @@
-const AdminSetting = require('../models/adminSetting');
-const Form = require('../models/form');
-const UserSetting = require('../models/userSetting');
-const userSettingsFormData = require('./../../shared/formData/userSettingsFormData');
-const { checkIfLoggedIn } = require('./checkAccess');
+import AdminSetting from '../models/adminSetting.js';
+import Form from '../models/form.js';
+import UserSetting from '../models/userSetting.js';
+import userSettingsFormData from '../../shared/formData/userSettingsFormData.js';
+import { checkIfLoggedIn } from './checkAccess.js';
 
 let all = {},
   onceLoaded = false;
@@ -200,7 +200,7 @@ const checkIfAdminSettingEnabled = (settingValue, settingId) => {
   return true;
 };
 
-module.exports = {
+export {
   getSettings,
   getSetting,
   parseValue,

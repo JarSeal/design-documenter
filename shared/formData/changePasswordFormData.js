@@ -1,4 +1,4 @@
-const CONFIG = require('./../../CONFIG').USER;
+import { USER } from '../../CONFIG.js';
 
 const changePasswordFormData = {
   formId: 'change-password-form',
@@ -35,7 +35,7 @@ const changePasswordFormData = {
             id: 'password',
             labelId: 'new_password',
             required: true,
-            minLength: CONFIG.password.minLength,
+            minLength: USER.password.minLength,
             maxLength: 50,
             password: true,
             validationFn: 'validatePass1',
@@ -68,4 +68,4 @@ const changePasswordFormData = {
   },
 };
 
-module.exports = changePasswordFormData;
+export default changePasswordFormData;

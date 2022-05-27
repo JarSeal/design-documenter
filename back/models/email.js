@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
+import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -56,4 +56,4 @@ emailSchema.set('toJSON', {
 
 const Email = mongoose.model('Email', emailSchema, 'emails');
 
-module.exports = Email;
+export default Email;

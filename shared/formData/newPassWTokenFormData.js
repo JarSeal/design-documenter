@@ -1,4 +1,4 @@
-const CONFIG = require('./../../CONFIG').USER;
+import { USER } from '../../CONFIG.js';
 
 const newPassWTokenFormData = {
   formId: 'reset-password-w-token-form',
@@ -34,7 +34,7 @@ const newPassWTokenFormData = {
             id: 'password',
             labelId: 'new_password',
             required: true,
-            minLength: CONFIG.password.minLength,
+            minLength: USER.password.minLength,
             maxLength: 50,
             password: true,
             validationFn: 'validatePass1',
@@ -56,4 +56,4 @@ const newPassWTokenFormData = {
   },
 };
 
-module.exports = newPassWTokenFormData;
+export default newPassWTokenFormData;

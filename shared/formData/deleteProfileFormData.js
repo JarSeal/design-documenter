@@ -56,4 +56,4 @@ const deleteProfileFormData = {
   },
 };
 
-module.exports = deleteProfileFormData;
+export default deleteProfileFormData;

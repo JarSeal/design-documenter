@@ -1,3 +1,3 @@
 // Shortcut to shared
-const shared = require('./../../../../shared');
-module.exports = shared;
+import shared from './../../../../shared/index.js';
+export default shared;

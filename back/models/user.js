@@ -1,7 +1,10 @@
-const CONFIG = require('./../shared').CONFIG.USER;
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
-const UserGroup = require('./userGroup');
+import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
+
+import UserGroup from './userGroup.js';
+import shared from '../shared/index.js';
+
+const CONFIG = shared.CONFIG.USER;
 UserGroup;
 
 mongoose.set('useFindAndModify', false);
@@ -120,4 +123,4 @@ userSchema.set('toJSON', {
 
 const User = mongoose.model('User', userSchema, 'users');
 
-module.exports = User;
+export default User;

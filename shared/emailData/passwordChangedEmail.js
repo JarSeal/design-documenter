@@ -16,4 +16,4 @@ Do not reply to this email, thank you.
   langs: {},
 };
 
-module.exports = passwordChangedEmail;
+export default passwordChangedEmail;

@@ -1,6 +1,9 @@
-const User = require('../models/user');
-const ObjectId = require('mongoose').Types.ObjectId;
-const { getSettings } = require('./settingsService');
+import mongoose from 'mongoose';
+
+import User from '../models/user.js';
+import { getSettings } from './settingsService.js';
+
+const ObjectId = mongoose.Types.ObjectId;
 
 const isValidObjectId = (id) => {
   if (ObjectId.isValid(id)) {
@@ -60,9 +63,4 @@ const checkIfEmailTaken = async (emailToCheck, userId) => {
   );
 };
 
-module.exports = {
-  isValidObjectId,
-  createNewEditedArray,
-  createNewLoginLogsArray,
-  checkIfEmailTaken,
-};
+export { isValidObjectId, createNewEditedArray, createNewLoginLogsArray, checkIfEmailTaken };

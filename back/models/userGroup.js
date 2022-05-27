@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
+import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -66,4 +66,4 @@ userGroupSchema.set('toJSON', {
 
 const UserGroup = mongoose.model('UserGroup', userGroupSchema, 'usergroups');
 
-module.exports = UserGroup;
+export default UserGroup;

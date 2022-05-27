@@ -21,4 +21,4 @@ const readUsersFormData = {
   },
 };
 
-module.exports = readUsersFormData;
+export default readUsersFormData;

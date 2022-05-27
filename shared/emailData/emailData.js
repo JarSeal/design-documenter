@@ -1,9 +1,9 @@
-const newUserEmail = require('./newUserEmail');
-const newPassLinkEmail = require('./newPassLinkEmail');
-const deleteOwnAccountEmail = require('./deleteOwnAccountEmail');
-const passwordChangedEmail = require('./passwordChangedEmail');
-const verifyAccountEmail = require('./verifyAccountEmail');
-const twoFactorAuthEmail = require('./twoFactorAuthEmail');
+import newUserEmail from './newUserEmail.js';
+import newPassLinkEmail from './newPassLinkEmail.js';
+import deleteOwnAccountEmail from './deleteOwnAccountEmail.js';
+import passwordChangedEmail from './passwordChangedEmail.js';
+import verifyAccountEmail from './verifyAccountEmail.js';
+import twoFactorAuthEmail from './twoFactorAuthEmail.js';
 
 const emailData = {
   newUserEmail,
@@ -14,4 +14,4 @@ const emailData = {
   twoFactorAuthEmail,
 };
 
-module.exports = emailData;
+export default emailData;

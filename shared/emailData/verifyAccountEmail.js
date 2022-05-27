@@ -1,4 +1,4 @@
-const linkButton = require('./emailComponents/linkButton');
+import linkButton from './emailComponents/linkButton.js';
 
 const verifyAccountEmail = {
   emailId: 'verify-account-email',
@@ -24,4 +24,4 @@ Do not reply to this email, thank you.
   langs: {},
 };
 
-module.exports = verifyAccountEmail;
+export default verifyAccountEmail;

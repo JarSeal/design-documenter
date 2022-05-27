@@ -1,11 +1,14 @@
-const CryptoJS = require('crypto-js');
-const logger = require('./../../utils/logger');
-const Form = require('./../../models/form');
-const AdminSetting = require('./../../models/adminSetting');
-const Email = require('./../../models/email');
-const formData = require('./../../shared').formData;
-const emailData = require('./../../shared').emailData;
-const routeAccess = require('./../../shared').CONFIG.ROUTE_ACCESS;
+import CryptoJS from 'crypto-js';
+
+import logger from '../../utils/logger.js';
+import Form from '../../models/form.js';
+import AdminSetting from '../../models/adminSetting.js';
+import Email from '../../models/email.js';
+import shared from '../../shared/index.js';
+
+const formData = shared.formData;
+const emailData = shared.emailData;
+const routeAccess = shared.CONFIG.ROUTE_ACCESS;
 
 const createPresetForms = async () => {
   let newForm, checkForm, adminSettings;
@@ -89,4 +92,4 @@ const _enCryptPass = (value) => {
   return ciphertext;
 };
 
-module.exports = createPresetForms;
+export default createPresetForms;

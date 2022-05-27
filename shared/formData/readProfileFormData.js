@@ -11,4 +11,4 @@ const readUsersFormData = {
   editorRightsGroups: [],
 };
 
-module.exports = readUsersFormData;
+export default readUsersFormData;

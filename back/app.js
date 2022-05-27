@@ -1,25 +1,25 @@
-const config = require('./utils/config');
-const express = require('express');
-require('express-async-errors');
+import express from 'express';
+import 'express-async-errors';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import csrf from 'csurf';
+
+import config from './utils/config.js';
+import usersRouter from './controllers/users.js';
+import loginRouter from './controllers/login.js';
+import formsRouter from './controllers/forms.js';
+import universesRouter from './controllers/universes.js';
+import settingsRouter from './controllers/settings.js';
+import healthRouter from './controllers/health.js';
+import middleware from './utils/middleware.js';
+import logger from './utils/logger.js';
+import createPresetForms from './controllers/forms/createPresetForms.js';
+import { createRandomString } from '../shared/parsers.js';
+
 const app = express();
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
-const csrf = require('csurf');
-const usersRouter = require('./controllers/users');
-const loginRouter = require('./controllers/login');
-const formsRouter = require('./controllers/forms');
-const universesRouter = require('./controllers/universes');
-const settingsRouter = require('./controllers/settings');
-const healthRouter = require('./controllers/health');
-const middleware = require('./utils/middleware');
-const logger = require('./utils/logger');
-const mongoose = require('mongoose');
-const createPresetForms = require('./controllers/forms/createPresetForms');
-const { createRandomString } = require('../shared/parsers');
-
 process.env.TZ = 'Europe/London';
-
 logger.info('connecting to', config.MONGODB_URI);
 
 mongoose
@@ -112,4 +112,4 @@ if (process.env.NODE_ENV === 'test') {
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 
-module.exports = app;
+export default app;

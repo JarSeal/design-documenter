@@ -1,4 +1,4 @@
-const USER = {
+export const USER = {
   username: {
     minLength: 5,
   },
@@ -16,7 +16,7 @@ const USER = {
   },
 };
 
-const UI = {
+export const UI = {
   langs: ['en'],
   apiBaseUrl: 'http://localhost:3001',
   baseUrl: 'http://localhost:8080',
@@ -26,7 +26,7 @@ const UI = {
   bbarSize: 64,
 };
 
-const ROUTE_ACCESS = [
+export const ROUTE_ACCESS = [
   {
     path: '/',
     formId: 'route-landing',
@@ -109,7 +109,7 @@ const ROUTE_ACCESS = [
   },
 ];
 
-const USER_LEVELS = [
+export const USER_LEVELS = [
   {
     userLevel: 9,
     labelId: 'user_level_9',
@@ -132,7 +132,7 @@ const USER_LEVELS = [
   },
 ];
 
-module.exports = {
+export default {
   USER,
   UI,
   ROUTE_ACCESS,

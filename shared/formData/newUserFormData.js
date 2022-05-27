@@ -1,4 +1,4 @@
-const CONFIG = require('./../../CONFIG').USER;
+import { USER } from '../../CONFIG.js';
 
 const newUserFormData = {
   formId: 'new-user-form',
@@ -40,7 +40,7 @@ const newUserFormData = {
             id: 'username',
             labelId: 'username',
             required: true,
-            minLength: CONFIG.username.minLength,
+            minLength: USER.username.minLength,
             maxLength: 24,
             regex:
               '^[a-zA-Z0-9åöäñüéèêâîôûčßàìòùóçęįųķļņģëïõžšæøėēūāīÅÖÄÑÜÉÈÊÂÎÔÛČẞÀÌÒÙÓÇĘĮŲĶĻŅĢËÏÕŽŠÆØĖĒŪĀĪ]+$', // Current langs: finnish, english, swedish, norwegian, danish, german, french, spanish, italian, estonian, latvian, lithuanian
@@ -51,8 +51,8 @@ const newUserFormData = {
             type: 'textinput',
             id: 'name',
             labelId: 'name',
-            required: CONFIG.name.required,
-            minLength: CONFIG.name.minLength,
+            required: USER.name.required,
+            minLength: USER.name.minLength,
             maxLength: 40,
             regex:
               '[a-zA-ZåöäñüéèêâîôûčßàìòùóçęįųķļņģëïõžšæøėēūāīÅÖÄÑÜÉÈÊÂÎÔÛČẞÀÌÒÙÓÇĘĮŲĶĻŅĢËÏÕŽŠÆØĖĒŪĀĪ]+$', // Current langs: finnish, english, swedish, norwegian, danish, german, french, spanish, italian, estonian, latvian, lithuanian
@@ -64,7 +64,7 @@ const newUserFormData = {
             type: 'textinput',
             id: 'email',
             labelId: 'email',
-            required: CONFIG.email.required,
+            required: USER.email.required,
             maxLength: 50,
             email: true,
           },
@@ -75,7 +75,7 @@ const newUserFormData = {
             id: 'password',
             labelId: 'password',
             required: true,
-            minLength: CONFIG.password.minLength,
+            minLength: USER.password.minLength,
             maxLength: 50,
             password: true,
             validationFn: 'validatePass1',
@@ -98,4 +98,4 @@ const newUserFormData = {
   },
 };
 
-module.exports = newUserFormData;
+export default newUserFormData;

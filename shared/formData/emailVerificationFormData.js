@@ -21,4 +21,4 @@ const emailVerificationFormData = {
   },
 };
 
-module.exports = emailVerificationFormData;
+export default emailVerificationFormData;

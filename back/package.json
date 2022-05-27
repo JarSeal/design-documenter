@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "engines": {
     "node": ">=16.13.2",
     "yarn": ">=1.22.15"
@@ -44,6 +45,8 @@
     "eslint": "^7.28.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "4.0.0",
+    "eslint-config-import": "^0.13.0",
+    "eslint-plugin-import": "2.25.4",
     "jest": "^26.6.0",
     "nodemon": "^2.0.4"
   },

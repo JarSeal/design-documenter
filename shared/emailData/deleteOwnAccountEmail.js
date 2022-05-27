@@ -35,4 +35,4 @@ Olet poistanut oman tilisi. Kiitos kun olet ollut yksi käyttäjistämme!
   },
 };
 
-module.exports = deleteOwnAccountEmail;
+export default deleteOwnAccountEmail;

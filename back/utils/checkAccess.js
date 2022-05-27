@@ -66,7 +66,4 @@ const checkSettings = (check, settings, session) => {
   return true;
 };
 
-module.exports = {
-  checkAccess,
-  checkIfLoggedIn,
-};
+export { checkAccess, checkIfLoggedIn };

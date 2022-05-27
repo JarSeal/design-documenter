@@ -1,18 +1,21 @@
-const CryptoJS = require('crypto-js');
-const settingsRouter = require('express').Router();
-const adminSettingsFormData = require('./../../shared/formData/adminSettingsFormData');
-const userSettingsFormData = require('./../../shared/formData/userSettingsFormData');
-const logger = require('./../utils/logger');
-const AdminSetting = require('./../models/adminSetting');
-const UserSetting = require('./../models/userSetting');
-const { createNewEditedArray } = require('./../utils/helpers');
-const { getAndValidateForm } = require('./forms/formEngine');
-const {
+import CryptoJS from 'crypto-js';
+import { Router } from 'express';
+
+import UserSetting from '../models/userSetting.js';
+import AdminSetting from '../models/adminSetting.js';
+import logger from '../utils/logger.js';
+import adminSettingsFormData from '../../shared/formData/adminSettingsFormData.js';
+import userSettingsFormData from '../../shared/formData/userSettingsFormData.js';
+import { createNewEditedArray } from './../utils/helpers.js';
+import { getAndValidateForm } from './forms/formEngine.js';
+import {
   getPublicSettings,
   getEnabledSettingsData,
   getFilteredSettings,
   checkIfAdminSettingEnabled,
-} = require('../utils/settingsService');
+} from '../utils/settingsService.js';
+
+const settingsRouter = Router();
 
 // Get all user settings values
 settingsRouter.get('/', async (request, response) => {
@@ -183,4 +186,4 @@ settingsRouter.put('/admin', async (request, response) => {
   response.json(publicSettings);
 });
 
-module.exports = settingsRouter;
+export default settingsRouter;

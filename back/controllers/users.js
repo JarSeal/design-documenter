@@ -1,22 +1,26 @@
-const bcrypt = require('bcrypt');
-const { isValidObjectId, createNewEditedArray, checkIfEmailTaken } = require('./../utils/helpers');
-const usersRouter = require('express').Router();
-const CONFIG = require('./../shared').CONFIG;
-const readUsersFormData = require('./../../shared/formData/readUsersFormData');
-const readOneUserFormData = require('./../../shared/formData/readOneUserFormData');
-const readProfileFormData = require('./../../shared/formData/readProfileFormData');
-const editExposeProfileFormData = require('./../../shared/formData/editExposeProfileFormData');
-const verifyAccountWToken = require('./../../shared/formData/verifyAccountWToken');
-const emailVerificationFormData = require('./../../shared/formData/emailVerificationFormData');
-const logger = require('./../utils/logger');
-const User = require('./../models/user');
-const UserSetting = require('./../models/userSetting');
-const Form = require('./../models/form');
-const { getAndValidateForm, getUserExposure } = require('./forms/formEngine');
-const { checkIfLoggedIn } = require('./../utils/checkAccess');
-const { sendEmailById } = require('../utils/emailService');
-const { createRandomString } = require('../../shared/parsers');
-const { getSetting } = require('../utils/settingsService');
+import bcrypt from 'bcrypt';
+import { Router } from 'express';
+
+import { isValidObjectId, createNewEditedArray, checkIfEmailTaken } from '../utils/helpers.js';
+import shared from '../shared/index.js';
+import readUsersFormData from '../../shared/formData/deleteUsersFormData.js';
+import readOneUserFormData from '../../shared/formData/readOneUserFormData.js';
+import readProfileFormData from '../../shared/formData/readProfileFormData.js';
+import editExposeProfileFormData from '../../shared/formData/editExposeProfileFormData.js';
+import verifyAccountWToken from '../../shared/formData/verifyAccountWToken.js';
+import emailVerificationFormData from './../../shared/formData/emailVerificationFormData.js';
+import logger from '../utils/logger.js';
+import User from '../models/user.js';
+import UserSetting from '../models/userSetting.js';
+import Form from '../models/form.js';
+import { getAndValidateForm, getUserExposure } from './forms/formEngine.js';
+import { checkIfLoggedIn } from '../utils/checkAccess.js';
+import { sendEmailById } from '../utils/emailService.js';
+import { createRandomString } from '../../shared/parsers.js';
+import { getSetting } from '../utils/settingsService.js';
+
+const usersRouter = Router();
+const CONFIG = shared.CONFIG;
 
 // Get all users (for admins)
 usersRouter.get('/', async (request, response) => {
@@ -485,7 +489,7 @@ usersRouter.put('/own/profile', async (request, response) => {
       userNotFoundError: true,
     });
   }
-  const newEmailToken = verifyEmail['security.verifyEmail'].token;
+  const newEmailToken = verifyEmail['security.verifyEmail']?.token;
   if (newEmailToken) {
     sendEmailById(
       'verify-account-email',
@@ -963,4 +967,4 @@ const _createOldEmail = async (request, user, newEmail) => {
   return verifyEmail;
 };
 
-module.exports = usersRouter;
+export default usersRouter;

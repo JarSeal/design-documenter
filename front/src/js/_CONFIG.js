@@ -14,7 +14,9 @@ import OneUser from './components/contentViews/OneUser';
 import Universe from './components/contentViews/Universe';
 import { getText } from './helpers/lang';
 import { checkRouteAccess, checkAccountVerification } from './helpers/storage';
-const conf = require('./shared').CONFIG.UI;
+import shared from './shared/index.js';
+
+const conf = shared.CONFIG.UI;
 
 const _conf = {
   langFn: getText,

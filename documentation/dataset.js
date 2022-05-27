@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 // Documentation:
 // Example of a Dataset
 
@@ -28,4 +30,3 @@ const dataset = {
     deleteRightGroups: [], // Array[mongo group _id] or String
   },
 };
-dataset;

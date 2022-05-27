@@ -4,4 +4,4 @@ const linkButton = (text, url) => {
 </a>`;
 };
 
-module.exports = linkButton;
+export default linkButton;

@@ -1,4 +1,4 @@
-const linkButton = require('./emailComponents/linkButton');
+import linkButton from './emailComponents/linkButton.js';
 
 const newUserEmail = {
   emailId: 'new-user-email',
@@ -45,4 +45,4 @@ voit luoda [uuden salasanan]($[newPassRequestUrl]) itsellesi.
   },
 };
 
-module.exports = newUserEmail;
+export default newUserEmail;

@@ -48,4 +48,4 @@ const loginTwoFABeaconFormData = {
   },
 };
 
-module.exports = loginTwoFABeaconFormData;
+export default loginTwoFABeaconFormData;

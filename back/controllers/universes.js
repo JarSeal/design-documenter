@@ -1,8 +1,11 @@
-const universeRouter = require('express').Router();
-const logger = require('./../utils/logger');
-const Universe = require('./../models/universe');
-const Form = require('./../models/form');
-const { validateFormData } = require('./forms/formEngine');
+import { Router } from 'express';
+
+import Universe from '../models/universe.js';
+import Form from '../models/form.js';
+import logger from '../utils/logger.js';
+import { validateFormData } from './forms/formEngine.js';
+
+const universeRouter = Router();
 
 // Get all universes
 universeRouter.get('/', async (request, response) => {
@@ -65,4 +68,4 @@ universeRouter.post('/', async (request, response) => {
   response.json(savedUniverse);
 });
 
-module.exports = universeRouter;
+export default universeRouter;

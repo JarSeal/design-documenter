@@ -1,22 +1,22 @@
-const loginBeaconFormData = require('./loginBeaconFormData');
-const loginTwoFABeaconFormData = require('./loginTwoFABeaconFormData');
-const newUserFormData = require('./newUserFormData');
-const newUniverseFormData = require('./newUniverseFormData');
-const readUsersFormData = require('./readUsersFormData');
-const deleteUsersFormData = require('./deleteUsersFormData');
-const editUserFormData = require('./editUserFormData');
-const readOneUserFormData = require('./readOneUserFormData');
-const adminSettingsFormData = require('./adminSettingsFormData');
-const userSettingsFormData = require('./userSettingsFormData');
-const readProfileFormData = require('./readProfileFormData');
-const editProfileFormData = require('./editProfileFormData');
-const editExposeProfileFormData = require('./editExposeProfileFormData');
-const deleteProfileFormData = require('./deleteProfileFormData');
-const changePasswordFormData = require('./changePasswordFormData');
-const newPassRequestFormData = require('./newPassRequestFormData');
-const newPassWTokenFormData = require('./newPassWTokenFormData');
-const emailVerificationFormData = require('./emailVerificationFormData');
-const verifyAccountWToken = require('./verifyAccountWToken');
+import loginBeaconFormData from './loginBeaconFormData.js';
+import loginTwoFABeaconFormData from './loginTwoFABeaconFormData.js';
+import newUserFormData from './newUserFormData.js';
+import newUniverseFormData from './newUniverseFormData.js';
+import readUsersFormData from './readUsersFormData.js';
+import deleteUsersFormData from './deleteUsersFormData.js';
+import editUserFormData from './editUserFormData.js';
+import readOneUserFormData from './readOneUserFormData.js';
+import adminSettingsFormData from './adminSettingsFormData.js';
+import userSettingsFormData from './userSettingsFormData.js';
+import readProfileFormData from './readProfileFormData.js';
+import editProfileFormData from './editProfileFormData.js';
+import editExposeProfileFormData from './editExposeProfileFormData.js';
+import deleteProfileFormData from './deleteProfileFormData.js';
+import changePasswordFormData from './changePasswordFormData.js';
+import newPassRequestFormData from './newPassRequestFormData.js';
+import newPassWTokenFormData from './newPassWTokenFormData.js';
+import emailVerificationFormData from './emailVerificationFormData.js';
+import verifyAccountWToken from './verifyAccountWToken.js';
 
 const formData = [
   loginBeaconFormData,
@@ -40,4 +40,4 @@ const formData = [
   verifyAccountWToken,
 ];
 
-module.exports = formData;
+export default formData;

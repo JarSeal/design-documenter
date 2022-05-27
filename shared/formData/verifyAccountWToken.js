@@ -11,4 +11,4 @@ const verifyAccountWToken = {
   editorRightsGroups: [],
 };
 
-module.exports = verifyAccountWToken;
+export default verifyAccountWToken;

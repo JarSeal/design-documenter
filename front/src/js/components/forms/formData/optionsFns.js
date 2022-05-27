@@ -1,4 +1,6 @@
-const conf = require('../../../shared').CONFIG;
+import shared from '../../../shared';
+
+const conf = shared.CONFIG;
 
 const optionsFns = {
   userLevels: (args) => {

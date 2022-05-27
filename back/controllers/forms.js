@@ -1,18 +1,22 @@
-const CryptoJS = require('crypto-js');
-const formsRouter = require('express').Router();
-const logger = require('./../utils/logger');
-const Form = require('./../models/form');
-const User = require('./../models/user');
-const AdminSetting = require('./../models/adminSetting');
-const UserSetting = require('./../models/userSetting');
-const { validatePrivileges } = require('./forms/formEngine');
-const {
+import CryptoJS from 'crypto-js';
+import { Router } from 'express';
+import mongoose from 'mongoose';
+
+import User from '../models/user.js';
+import Form from '../models/form.js';
+import UserSetting from '../models/userSetting.js';
+import AdminSetting from '../models/adminSetting.js';
+import logger from '../utils/logger.js';
+import { validatePrivileges } from './forms/formEngine.js';
+import {
   getSetting,
   getEnabledSettingsData,
   getFilteredSettings,
   checkIfAdminSettingEnabled,
-} = require('../utils/settingsService');
-const { isValidObjectId } = require('mongoose');
+} from '../utils/settingsService.js';
+
+const formsRouter = Router();
+const isValidObjectId = mongoose.isValidObjectId;
 
 // Get all forms
 formsRouter.get('/', async (request, response) => {
@@ -316,4 +320,4 @@ const _formatSpecialForms = async (request, form) => {
   return form;
 };
 
-module.exports = formsRouter;
+export default formsRouter;

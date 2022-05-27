@@ -112,4 +112,4 @@ const editExposeProfileFormData = {
   },
 };
 
-module.exports = editExposeProfileFormData;
+export default editExposeProfileFormData;

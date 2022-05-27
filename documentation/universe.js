@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 // Documentation:
 // Example of a Universe
 
@@ -28,4 +30,3 @@ const universe = {
     user: '[mongo user _id]', // String [required], mongo user id
   },
 };
-universe;

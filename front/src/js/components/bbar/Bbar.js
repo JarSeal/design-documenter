@@ -1,4 +1,4 @@
-import bbar from './bbar.html';
+import bbar from './bbar.html?raw';
 import { _CONFIG } from '../../_CONFIG';
 import MainMenu from './MainMenu';
 import './Bbar.scss';

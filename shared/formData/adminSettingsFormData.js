@@ -284,4 +284,4 @@ const adminSettingsFormData = {
   },
 };
 
-module.exports = adminSettingsFormData;
+export default adminSettingsFormData;

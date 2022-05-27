@@ -1,4 +1,4 @@
-const CONFIG = require('./../../CONFIG').USER;
+import { USER } from '../../CONFIG.js';
 
 const editProfileFormData = {
   formId: 'edit-profile-form',
@@ -41,8 +41,8 @@ const editProfileFormData = {
             type: 'textinput',
             id: 'name',
             labelId: 'name',
-            required: CONFIG.name.required,
-            minLength: CONFIG.name.minLength,
+            required: USER.name.required,
+            minLength: USER.name.minLength,
             maxLength: 40,
             regex:
               '[a-zA-ZåöäñüéèêâîôûčßàìòùóçęįųķļņģëïõžšæøėēūāīÅÖÄÑÜÉÈÊÂÎÔÛČẞÀÌÒÙÓÇĘĮŲĶĻŅĢËÏÕŽŠÆØĖĒŪĀĪ]+$', // Current langs: finnish, english, swedish, norwegian, danish, german, french, spanish, italian, estonian, latvian, lithuanian
@@ -54,7 +54,7 @@ const editProfileFormData = {
             type: 'textinput',
             id: 'email',
             labelId: 'email',
-            required: CONFIG.email.required,
+            required: USER.email.required,
             maxLength: 50,
             email: true,
           },
@@ -75,4 +75,4 @@ const editProfileFormData = {
   },
 };
 
-module.exports = editProfileFormData;
+export default editProfileFormData;

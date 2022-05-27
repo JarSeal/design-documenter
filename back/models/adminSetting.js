@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
+import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -51,4 +51,4 @@ adminSettingSchema.set('toJSON', {
 
 const AdminSetting = mongoose.model('AdminSetting', adminSettingSchema, 'adminsettings');
 
-module.exports = AdminSetting;
+export default AdminSetting;

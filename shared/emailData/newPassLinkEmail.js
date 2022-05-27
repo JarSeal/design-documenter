@@ -1,4 +1,4 @@
-const linkButton = require('./emailComponents/linkButton');
+import linkButton from './emailComponents/linkButton.js';
 
 const newPassLinkEmail = {
   emailId: 'new-pass-link-email',
@@ -24,4 +24,4 @@ Do not reply to this email, thank you.
   langs: {},
 };
 
-module.exports = newPassLinkEmail;
+export default newPassLinkEmail;

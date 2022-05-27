@@ -61,4 +61,4 @@ const loginBeaconFormData = {
   },
 };
 
-module.exports = loginBeaconFormData;
+export default loginBeaconFormData;

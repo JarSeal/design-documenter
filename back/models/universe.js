@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
+import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -91,4 +91,4 @@ universeSchema.set('toJSON', {
 
 const Universe = mongoose.model('Universe', universeSchema, 'universes');
 
-module.exports = Universe;
+export default Universe;

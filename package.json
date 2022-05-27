@@ -1,6 +1,7 @@
 {
   "name": "design-documenter",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "setup": "cd front && yarn install && cd ../back && yarn install && cd mongo && docker-compose up --no-start",
     "setupFront": "cd front && yarn install",
@@ -8,7 +9,7 @@
     "startMongo": "cd back/mongo && docker-compose up -d",
     "stopMongo": "cd back/mongo && docker-compose down",
     "dev": "concurrently --kill-others --names \"BACK,FRONT\" -c \"bgBlue.bold,bgMagenta.bold\" \"yarn run devBack\" \"npm run devFront\"",
-    "devFront": "cd front && yarn start",
+    "devFront": "cd front && yarn dev",
     "devBack": "cd back/mongo && docker-compose up -d && cd .. && yarn run dev",
     "devMongo": "docker exec -it beacondb mongo beacondb",
     "lint": "cd front && yarn lint && cd ../back && yarn lint && eslint .",
@@ -33,7 +34,9 @@
     "concurrently": "^7.2.0",
     "eslint": "^7.28.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "4.0.0"
+    "eslint-plugin-prettier": "4.0.0",
+    "eslint-config-import": "^0.13.0",
+    "eslint-plugin-import": "2.25.4"
   },
   "engines": {
     "node": ">=16.13.2",

@@ -1,22 +1,22 @@
-const validateEmail = (email) => {
+export const validateEmail = (email) => {
   const regex =
     // eslint-disable-next-line
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return regex.test(email);
 };
 
-const validateSimpleId = (id) => {
+export const validateSimpleId = (id) => {
   const regex = /^[a-zA-Z0-9-_]+$/;
   return regex.test(id);
 };
 
-const urlParamRoute = (route, recover) => {
+export const urlParamRoute = (route, recover) => {
   if (!recover) return route.replace(/\//g, '**');
   // eslint-disable-next-line
   return route.replace(/**/g, '/');
 };
 
-const createRandomString = (length, charsOrPreset) => {
+export const createRandomString = (length, charsOrPreset) => {
   let result = '',
     characters = '';
   if (typeof charsOrPreset === 'boolean' || charsOrPreset === undefined) {
@@ -35,16 +35,12 @@ const createRandomString = (length, charsOrPreset) => {
   return result;
 };
 
-const thisLine = () => {
+export const thisLine = () => {
   const e = new Error();
   const curCallerFileAndPos = e.stack.split('\n')[2].replace('at ');
   return curCallerFileAndPos;
 };
 
-module.exports = {
-  validateEmail,
-  validateSimpleId,
-  urlParamRoute,
-  createRandomString,
-  thisLine,
-};
+const parsers = { validateEmail, validateSimpleId, urlParamRoute, createRandomString, thisLine };
+
+export default parsers;

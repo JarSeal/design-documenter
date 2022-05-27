@@ -1,13 +1,14 @@
-const csrf = require('csurf');
-const Form = require('../../models/form');
-const shared = require('../../shared');
-const logger = require('./../../utils/logger');
-const { checkAccess, checkIfLoggedIn } = require('../../utils/checkAccess');
-const { getSettings } = require('../../utils/settingsService');
-const editExposeProfileFormData = require('../../../shared/formData/editExposeProfileFormData');
-const AdminSetting = require('../../models/adminSetting');
+import csrf from 'csurf';
 
-const getAndValidateForm = async (formId, method, request) => {
+import Form from '../../models/form.js';
+import shared from '../../shared/index.js';
+import logger from './../../utils/logger.js';
+import { checkAccess, checkIfLoggedIn } from '../../utils/checkAccess.js';
+import { getSettings } from '../../utils/settingsService.js';
+import editExposeProfileFormData from '../../../shared/formData/editExposeProfileFormData.js';
+import AdminSetting from '../../models/adminSetting.js';
+
+export const getAndValidateForm = async (formId, method, request) => {
   let error = null;
   const formData = await Form.findOne({ formId });
 
@@ -29,7 +30,7 @@ const getAndValidateForm = async (formId, method, request) => {
   return error;
 };
 
-const validateField = (form, key, value) => {
+export const validateField = (form, key, value) => {
   if (key === 'id') return null;
 
   let fieldsets = form.fieldsets;
@@ -123,14 +124,14 @@ const textArea = (field, value) => {
   return null;
 };
 
-const checkAllowedFieldTypes = (type) => {
+export const checkAllowedFieldTypes = (type) => {
   if (type === 'divider' || type === 'subheading' || type === 'subdescription') {
     return null;
   }
   return 'Field type not found.';
 };
 
-const validateKeys = (form, keys) => {
+export const validateKeys = (form, keys) => {
   if (keys.length < 2) return false;
   const submitFields = form.submitFields;
   let keysFound = 0;
@@ -145,7 +146,7 @@ const validateKeys = (form, keys) => {
   return keysFound === submitFields.length;
 };
 
-const validateFormData = async (formData, request) => {
+export const validateFormData = async (formData, request) => {
   const body = request.body;
   if (!formData || !formData.form) {
     return {
@@ -185,7 +186,7 @@ const validateFormData = async (formData, request) => {
   return null;
 };
 
-const validatePrivileges = async (form, request) => {
+export const validatePrivileges = async (form, request) => {
   const settings = await getSettings(request, true);
   if (form.useRightsLevel && form.useRightsLevel !== 0) {
     const sess = request.session;
@@ -216,14 +217,14 @@ const validatePrivileges = async (form, request) => {
   }
 };
 
-const csrfProtection = csrf({ cookie: false });
+export const csrfProtection = csrf({ cookie: false });
 let crsfToken = null;
-const csrfNewToken = (request) => {
+export const csrfNewToken = (request) => {
   if (request.crsfToken && !crsfToken) crsfToken = request.crsfToken;
   return crsfToken();
 };
 
-const getUserExposure = async (user) => {
+export const getUserExposure = async (user) => {
   const exposeDefaultsFormId = editExposeProfileFormData.formId;
   const defaultValues = await Form.findOne({ formId: exposeDefaultsFormId });
   const usersCanEditSetting = await AdminSetting.findOne({
@@ -251,7 +252,7 @@ const getUserExposure = async (user) => {
   return exposures;
 };
 
-module.exports = {
+const formEngine = {
   getAndValidateForm,
   validateField,
   validateKeys,
@@ -261,3 +262,5 @@ module.exports = {
   csrfNewToken,
   getUserExposure,
 };
+
+export default formEngine;

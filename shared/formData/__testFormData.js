@@ -123,4 +123,4 @@ const testFormData = {
   ],
 };
 
-module.exports = testFormData;
+export default testFormData;

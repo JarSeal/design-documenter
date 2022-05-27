@@ -43,4 +43,4 @@ const newPassRequestFormData = {
   },
 };
 
-module.exports = newPassRequestFormData;
+export default newPassRequestFormData;

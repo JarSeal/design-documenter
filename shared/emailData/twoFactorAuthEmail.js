@@ -26,4 +26,4 @@ Do not reply to this email, thank you.
   langs: {},
 };
 
-module.exports = twoFactorAuthEmail;
+export default twoFactorAuthEmail;

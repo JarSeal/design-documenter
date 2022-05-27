@@ -1,20 +1,23 @@
-const bcrypt = require('bcrypt');
-const mongoose = require('mongoose');
-const loginRouter = require('express').Router();
-const User = require('./../models/user');
-const Form = require('./../models/form');
-const UserSetting = require('../models/userSetting');
-const logger = require('./../utils/logger');
-const { createNewLoginLogsArray } = require('./../utils/helpers');
-const { checkAccess, checkIfLoggedIn } = require('../utils/checkAccess');
-const { createRandomString } = require('../../shared/parsers');
-const {
+import bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
+import { Router } from 'express';
+
+import User from '../models/user.js';
+import Form from '../models/form.js';
+import UserSetting from '../models/userSetting.js';
+import logger from '../utils/logger.js';
+import { createNewLoginLogsArray } from '../utils/helpers.js';
+import { checkAccess, checkIfLoggedIn } from '../utils/checkAccess.js';
+import { createRandomString } from '../../shared/parsers.js';
+import {
   getSetting,
   getSettings,
   getPublicSettings,
   parseValue,
-} = require('../utils/settingsService');
-const { sendEmailById } = require('../utils/emailService');
+} from '../utils/settingsService.js';
+import { sendEmailById } from '../utils/emailService.js';
+
+const loginRouter = Router();
 
 loginRouter.post('/access', async (request, response) => {
   const result = {};
@@ -547,4 +550,4 @@ const _check2FACode = async (user, body) => {
   return null;
 };
 
-module.exports = loginRouter;
+export default loginRouter;

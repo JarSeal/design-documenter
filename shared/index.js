@@ -1,9 +1,9 @@
-const CONFIG = require('./../CONFIG');
-const parsers = require('./parsers');
-const formData = require('./formData/formData');
-const emailData = require('./emailData/emailData');
+import CONFIG from './../CONFIG.js';
+import parsers from './parsers.js';
+import formData from './formData/formData.js';
+import emailData from './emailData/emailData.js';
 
-module.exports = {
+export default {
   CONFIG,
   parsers,
   formData,

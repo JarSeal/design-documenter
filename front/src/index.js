@@ -1,5 +1,5 @@
-import '@/styles/index.scss';
-import Base from '@/js/Base';
+import './styles/index.scss';
+import Base from './js/Base';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 document.addEventListener('DOMContentLoaded', () => {

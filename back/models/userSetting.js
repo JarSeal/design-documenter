@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
+import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -40,4 +40,4 @@ userSettingSchema.set('toJSON', {
 
 const UserSetting = mongoose.model('UserSetting', userSettingSchema, 'usersettings');
 
-module.exports = UserSetting;
+export default UserSetting;

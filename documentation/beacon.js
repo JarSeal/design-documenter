@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 // Documentation:
 // Example of a Beacon
 
@@ -91,4 +93,3 @@ const dataTypes = [
     },
   },
 ];
-dataTypes;

@@ -61,4 +61,4 @@ const newUniverseFormData = {
   },
 };
 
-module.exports = newUniverseFormData;
+export default newUniverseFormData;

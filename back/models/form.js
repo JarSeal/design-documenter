@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
+import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -67,4 +67,4 @@ formSchema.set('toJSON', {
 
 const Form = mongoose.model('Form', formSchema, 'forms');
 
-module.exports = Form;
+export default Form;

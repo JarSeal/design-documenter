@@ -1,7 +1,6 @@
 {
   "root": true,
   "env": {
-    "commonjs": true,
     "es2021": true,
     "node": true
   },
@@ -11,6 +10,7 @@
     "SharedArrayBuffer": "readonly"
   },
   "parserOptions": {
+    "sourceType": "module",
     "ecmaVersion": 2020
   },
   "plugins": ["prettier"],
