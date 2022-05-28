@@ -6,13 +6,21 @@ import config from './config.js';
 import logger from './logger.js';
 import Email from '../models/email.js';
 import { getSettings } from './settingsService.js';
-import CONFIG from '../shared/index.js';
+import shared from '../shared/index.js';
 
-const confUI = CONFIG.UI;
+const confUI = shared.CONFIG.UI;
 
 const sendEmailById = async (id, emailParams, request) => {
   const settings = await getSettings(request);
   if (!settings['email-sending']) return;
+
+  if (!confUI) {
+    logger.error('Undefined configuration, (confUI = shared.CONFIG.UI).');
+    return {
+      emailSent: false,
+      error: 'Undefined config',
+    };
+  }
 
   let host, user, pass, from;
   if (
@@ -23,7 +31,10 @@ const sendEmailById = async (id, emailParams, request) => {
     logger.error(
       'Could not setup Nodemailer transporter, because host, email, and/or pass is not set in the env variable nor in the admin settings.'
     );
-    return;
+    return {
+      emailSent: false,
+      error: 'Invalid or undefined email config',
+    };
   } else {
     host =
       !config.EMAIL_HOST && settings['email-host'] && settings['email-host'].trim().length
@@ -58,7 +69,7 @@ const sendEmailById = async (id, emailParams, request) => {
     // },
   });
 
-  const mainUrl = confUI.baseUrl + confUI.basePath;
+  const mainUrl = confUI?.baseUrl + confUI?.basePath;
   emailParams.mainBeaconUrl = mainUrl;
   emailParams.newPassRequestUrl = mainUrl + '/u/newpassrequest';
 
