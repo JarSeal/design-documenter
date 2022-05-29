@@ -1,7 +1,12 @@
 import bcrypt from 'bcrypt';
 import { Router } from 'express';
 
-import { isValidObjectId, createNewEditedArray, checkIfEmailTaken } from '../utils/helpers.js';
+import {
+  isValidObjectId,
+  createNewEditedArray,
+  checkIfEmailTaken,
+  getUserEmail,
+} from '../utils/helpers.js';
 import shared from '../shared/index.js';
 import readUsersFormData from '../../shared/formData/deleteUsersFormData.js';
 import readOneUserFormData from '../../shared/formData/readOneUserFormData.js';
@@ -633,14 +638,17 @@ usersRouter.post('/own/delete', async (request, response) => {
       });
     }
 
-    sendEmailById(
-      'delete-own-account-email',
-      {
-        to: user.email,
-        username: user.username,
-      },
-      request
-    );
+    const email = getUserEmail(user);
+    if (email) {
+      sendEmailById(
+        'delete-own-account-email',
+        {
+          to: email,
+          username: user.username,
+        },
+        request
+      );
+    }
 
     return response.json({ userDeleted: true });
   });
@@ -679,14 +687,17 @@ usersRouter.post('/own/changepass', async (request, response) => {
     });
   }
 
-  sendEmailById(
-    'password-changed-email',
-    {
-      to: user.email,
-      username: user.username,
-    },
-    request
-  );
+  const email = getUserEmail(user);
+  if (email) {
+    sendEmailById(
+      'password-changed-email',
+      {
+        to: user.email,
+        username: user.username,
+      },
+      request
+    );
+  }
 
   response.json(savedUser);
 });
@@ -810,14 +821,17 @@ usersRouter.post('/newpass', async (request, response) => {
     });
   }
 
-  sendEmailById(
-    'password-changed-email',
-    {
-      to: user.email,
-      username: user.username,
-    },
-    request
-  );
+  const email = getUserEmail(user);
+  if (email) {
+    sendEmailById(
+      'password-changed-email',
+      {
+        to: user.email,
+        username: user.username,
+      },
+      request
+    );
+  }
 
   return response.json({ passwordUpdated: true });
 });

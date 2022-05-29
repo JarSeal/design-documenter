@@ -63,4 +63,14 @@ const checkIfEmailTaken = async (emailToCheck, userId) => {
   );
 };
 
-export { isValidObjectId, createNewEditedArray, createNewLoginLogsArray, checkIfEmailTaken };
+const getUserEmail = (user) => {
+  return user.security?.verifyEmail?.verified ? user.email : user.security?.verifyEmail?.oldEmail;
+};
+
+export {
+  isValidObjectId,
+  createNewEditedArray,
+  createNewLoginLogsArray,
+  checkIfEmailTaken,
+  getUserEmail,
+};
