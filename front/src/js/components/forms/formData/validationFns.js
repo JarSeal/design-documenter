@@ -14,7 +14,11 @@ const validationFns = {
         id,
       });
       fieldErrors.set('password', { errorMsg: ' ' });
-    } else if (val.length >= minLength && val === components['password-again'].value) {
+      console.log('PASS1');
+    } else if (
+      (minLength === undefined || val.length >= minLength) &&
+      val === components['password-again'].value
+    ) {
       fieldErrors.set('password-again', false);
       fieldErrors.set('password', false);
     }
@@ -31,13 +35,15 @@ const validationFns = {
         id,
       });
       if (!fieldErrors.get('password')) fieldErrors.set('password', { errorMsg: ' ' });
+      console.log('PASS2', minLength);
     } else if (
       val.length >= 1 &&
-      pass1Val.length >= minLength &&
-      val === components['password'].value
+      val === components['password'].value &&
+      (minLength === undefined || pass1Val.length >= minLength)
     ) {
       fieldErrors.set('password-again', false);
       fieldErrors.set('password', false);
+      console.log('PASS2_2');
     }
     components['password'].displayFieldError();
   },
