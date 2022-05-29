@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "setup": "cd front && yarn install && cd ../back && yarn install && cd mongo && docker-compose up --no-start",
+    "setup": "cd front && yarn install && cd ../back && yarn install && cd mongo && docker-compose up --no-start && cd ../.. && yarn install",
     "setupFront": "cd front && yarn install",
     "setupBack": "cd back && yarn install && cd mongo && docker-compose up --no-start",
     "startMongo": "cd back/mongo && docker-compose up -d",
