@@ -201,7 +201,7 @@ usersRouter.put('/', async (request, response) => {
   }
 
   const user = await User.findById(body.userId);
-  const verifyEmail = _createOldEmail(request, user, body.email);
+  const verifyEmail = await _createOldEmail(request, user, body.email);
   const edited = await createNewEditedArray(user.edited, request.session._id);
   const updatedUser = Object.assign(
     {},
@@ -474,7 +474,7 @@ usersRouter.put('/own/profile', async (request, response) => {
     });
   }
 
-  const verifyEmail = _createOldEmail(request, user, body.email);
+  const verifyEmail = await _createOldEmail(request, user, body.email);
   const edited = await createNewEditedArray(user.edited, userId);
   const updatedUser = Object.assign(
     {},
